@@ -5,6 +5,7 @@ package stream.data;
 
 import stream.data.filter.ExpressionCompiler;
 import stream.data.filter.Expression;
+import stream.util.Parameter;
 
 /**
  * @author chris
@@ -28,8 +29,14 @@ public abstract class ConditionedDataProcessor implements DataProcessor {
 	/**
 	 * @param condition the condition to set
 	 */
+	@Parameter( name = "condition", required = false )
 	public void setCondition(String condition) {
 		try {
+			if( condition == null || "".equals( condition.trim() ) ){
+				condition = null;
+				return;
+			}
+			
 			this.condition = ExpressionCompiler.parse( condition );
 		} catch (Exception e ){
 			throw new RuntimeException( e.getMessage() );

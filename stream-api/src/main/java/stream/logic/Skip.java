@@ -5,6 +5,7 @@ package stream.logic;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
+import stream.util.Description;
 
 /**
  * <p>
@@ -15,6 +16,8 @@ import stream.data.Data;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  *
  */
+@Description( text="",
+			  group="Data Stream.Logic" )
 public class Skip extends ConditionedDataProcessor {
 
 

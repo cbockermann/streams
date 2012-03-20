@@ -1,12 +1,13 @@
 package stream.data.mapper;
 
+import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
-import stream.data.DataProcessor;
 import stream.util.Description;
+import stream.util.MacroExpander;
 
 @Description( group="Data Stream.Processing.Transformations.Data" )
 public class SetValue
-    implements DataProcessor
+    extends ConditionedDataProcessor
 {
     String key;
     String value;
@@ -16,9 +17,10 @@ public class SetValue
      * 
      */
     @Override
-    public Data process(Data data) {
+    public Data processMatchingData(Data data) {
         if( key != null && value != null ){
-            data.put( key, value );
+        	String val = MacroExpander.expand( value, data );
+            data.put( key, val );
         }
         
         return data;

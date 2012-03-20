@@ -3,11 +3,13 @@ package stream.data.mapper;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.DataProcessor;
+import stream.util.Description;
 
 /**
  * @author blom
  * 
  */
+@Description( group="Data Stream.Processing.Transformations.Attributes" )
 public class TrimKeys implements DataProcessor {
 
 	@Override
@@ -17,7 +19,5 @@ public class TrimKeys implements DataProcessor {
 			d.put(key.trim(), data.get(key));
 		}
 		return d;
-
 	}
-
 }

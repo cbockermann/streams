@@ -13,4 +13,13 @@ package stream.data;
  * 
  */
 public interface DataProcessor extends Processor<Data, Data> {
+
+	/**
+	 * Process the given unit of data.
+	 * 
+	 * @param data
+	 *            The data item to be processed.
+	 * @return The data after being processed.
+	 */
+	public Data process(Data data);
 }

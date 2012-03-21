@@ -1,16 +1,16 @@
 package stream.data.mapper;
 
+import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
 import stream.util.Description;
 
 /**
  * @author blom
  * 
  */
-@Description( group="Data Stream.Processing.Transformations.Attributes" )
-public class TrimKeys implements DataProcessor {
+@Description(group = "Data Stream.Processing.Transformations.Attributes")
+public class TrimKeys extends AbstractDataProcessor {
 
 	@Override
 	public Data process(Data data) {

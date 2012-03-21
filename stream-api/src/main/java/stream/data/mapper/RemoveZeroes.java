@@ -6,17 +6,17 @@ package stream.data.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.data.DataProcessor;
 import stream.data.DataUtils;
 import stream.util.Description;
 
 /**
  * @author chris
- *
+ * 
  */
-@Description( group="Data Stream.Processing.Transformations.Data" )
-public class RemoveZeroes implements DataProcessor {
+@Description(group = "Data Stream.Processing.Transformations.Data")
+public class RemoveZeroes extends AbstractDataProcessor {
 
 	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
@@ -25,22 +25,21 @@ public class RemoveZeroes implements DataProcessor {
 	public Data process(Data data) {
 		List<String> remove = new ArrayList<String>();
 
+		for (String key : data.keySet()) {
 
-		for( String key : data.keySet() ){
-			
-			if( DataUtils.isSpecial( key ) )
+			if (DataUtils.isSpecial(key))
 				continue;
-			
+
 			try {
-				Double val = new Double( data.get( key ).toString() );
-				if( val == 0.0d )
-					remove.add( key );
+				Double val = new Double(data.get(key).toString());
+				if (val == 0.0d)
+					remove.add(key);
 			} catch (Exception e) {
 			}
 		}
 
-		for( String key : remove ){
-			data.remove( key );
+		for (String key : remove) {
+			data.remove(key);
 		}
 
 		return data;

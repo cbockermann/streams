@@ -7,6 +7,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import stream.plugin.DataStreamPlugin;
+
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
@@ -22,7 +24,7 @@ import fact.plugin.FactEventStream;
 
 /**
  * @author chris
- *
+ * 
  */
 public class FactEventReader extends Operator {
 
@@ -30,16 +32,16 @@ public class FactEventReader extends Operator {
 	public final static String FITS_DRS_FILE = "Drs file";
 	public final static String KEEP_UNCALIBRATED = "Keep uncalibrated data";
 
-	final OutputPort output = getOutputPorts().createPort( "fact event stream" );
+	final OutputPort output = getOutputPorts().createPort(
+			DataStreamPlugin.DATA_STREAM_PORT_NAME);
 
 	/**
 	 * @param description
 	 */
 	public FactEventReader(OperatorDescription description) {
 		super(description);
-		producesOutput( FactEventStream.class );
+		producesOutput(FactEventStream.class);
 	}
-
 
 	/**
 	 * @see com.rapidminer.operator.Operator#doWork()
@@ -48,39 +50,43 @@ public class FactEventReader extends Operator {
 	public void doWork() throws OperatorException {
 
 		try {
-			File fitsFile = getParameterAsFile( FITS_DATA_FILE );
+			File fitsFile = getParameterAsFile(FITS_DATA_FILE);
 			URL fitsData = fitsFile.toURI().toURL();
-			FactDataStream stream = new FactDataStream( fitsData );
+			FactDataStream stream = new FactDataStream(fitsData);
 
-			File drsFile = getParameterAsFile( FITS_DRS_FILE );
-			if( drsFile != null ){
+			File drsFile = getParameterAsFile(FITS_DRS_FILE);
+			if (drsFile != null) {
 				DrsCalibration drs = new DrsCalibration();
-				drs.setDrsFile( drsFile.getAbsolutePath() );
-				//stream.setDrsFile( drsFile.getAbsolutePath() );
-				
-				Boolean b = getParameterAsBoolean( KEEP_UNCALIBRATED );
-				drs.setKeepData( b );
-				stream.addPreprocessor( drs );
+				drs.setDrsFile(drsFile.getAbsolutePath());
+				// stream.setDrsFile( drsFile.getAbsolutePath() );
+
+				Boolean b = getParameterAsBoolean(KEEP_UNCALIBRATED);
+				drs.setKeepData(b);
+				stream.addPreprocessor(drs);
 			}
-			
-			FactEventStream feStream = new FactEventStream( stream );
-			output.deliver( feStream );
-			
+
+			FactEventStream feStream = new FactEventStream(stream);
+			output.deliver(feStream);
+
 		} catch (Exception e) {
-			throw new UserError( this, e, -1 );
+			throw new UserError(this, e, -1);
 		}
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.rapidminer.operator.Operator#getParameterTypes()
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
 		List<ParameterType> types = super.getParameterTypes();
-		types.add( new ParameterTypeFile( FITS_DATA_FILE, "The fits file to read from", null, false ) );
-		types.add( new ParameterTypeFile( FITS_DRS_FILE, "The DRS file for calibration", null, true ) );
-		types.add( new ParameterTypeBoolean( KEEP_UNCALIBRATED, "Keep uncalibrated data", false ) );
+		types.add(new ParameterTypeFile(FITS_DATA_FILE,
+				"The fits file to read from", null, false));
+		types.add(new ParameterTypeFile(FITS_DRS_FILE,
+				"The DRS file for calibration", null, true));
+		types.add(new ParameterTypeBoolean(KEEP_UNCALIBRATED,
+				"Keep uncalibrated data", false));
 		return types;
 	}
 }

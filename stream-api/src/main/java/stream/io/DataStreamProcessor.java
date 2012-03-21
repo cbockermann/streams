@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataProcessor;
 
@@ -23,33 +24,30 @@ import stream.data.DataProcessor;
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public class DataStreamProcessor 
-	implements DataStream, DataProcessor
-{
+public class DataStreamProcessor extends AbstractDataProcessor implements
+		DataStream {
 	/* A global logger for this class */
-	static Logger log = LoggerFactory.getLogger( DataStreamProcessor.class );
-	
+	static Logger log = LoggerFactory.getLogger(DataStreamProcessor.class);
+
 	/* The source from which this processor chain reads */
 	DataStream source;
-	
+
 	/* The attribute/type mapping for this stream */
-	Map<String,Class<?>> finalAttributes = null;
-	
+	Map<String, Class<?>> finalAttributes = null;
+
 	/* The list of data preprocessors */
 	List<DataProcessor> processors = new ArrayList<DataProcessor>();
-	
-	
-	public DataStreamProcessor(){
+
+	public DataStreamProcessor() {
 		source = null;
 	}
-	
-	
-	public DataStreamProcessor( DataStream stream ){
+
+	public DataStreamProcessor(DataStream stream) {
 		source = stream;
 	}
-	
+
 	/**
 	 * @return the source
 	 */
@@ -58,18 +56,19 @@ public class DataStreamProcessor
 	}
 
 	/**
-	 * @param source the source to set
+	 * @param source
+	 *            the source to set
 	 */
 	public void setSource(DataStream source) {
 		this.source = source;
 	}
-	
-	public void addDataProcessor( DataProcessor proc ){
-		processors.add( proc );
+
+	public void addDataProcessor(DataProcessor proc) {
+		processors.add(proc);
 	}
-	
-	public void removeDataProcessor( DataProcessor proc ){
-		processors.remove( proc );
+
+	public void removeDataProcessor(DataProcessor proc) {
+		processors.remove(proc);
 	}
 
 	/**
@@ -77,9 +76,9 @@ public class DataStreamProcessor
 	 */
 	@Override
 	public Map<String, Class<?>> getAttributes() {
-		if( finalAttributes != null )
+		if (finalAttributes != null)
 			return finalAttributes;
-		
+
 		return source.getAttributes();
 	}
 
@@ -89,65 +88,59 @@ public class DataStreamProcessor
 	@Override
 	public Data readNext() throws Exception {
 		Data data = source.readNext();
-		if( data == null )
+		if (data == null)
 			return null;
-		return process( data );
+		return process(data);
 	}
 
-	
-	public Data readNext( Data data ) throws Exception {
+	public Data readNext(Data data) throws Exception {
 		return readNext();
 	}
-	
-	
+
 	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {
-		
-		log.trace( "Processing item with {} processors", processors.size() );
-		
+
+		log.trace("Processing item with {} processors", processors.size());
+
 		Data data = input;
-		if( input == null )
+		if (input == null)
 			return null;
-		
-		for( DataProcessor p : processors ){
-			log.trace( "Processing item with processor {}", p );
-			data = p.process( data );
+
+		for (DataProcessor p : processors) {
+			log.trace("Processing item with processor {}", p);
+			data = p.process(data);
 		}
 
-		if( finalAttributes == null && data != null ){
-			finalAttributes = new LinkedHashMap<String,Class<?>>();
-			for( String key : data.keySet() ){
-				if( data.get( key ).getClass().equals( Double.class ) )
-					finalAttributes.put( key, Double.class );
+		if (finalAttributes == null && data != null) {
+			finalAttributes = new LinkedHashMap<String, Class<?>>();
+			for (String key : data.keySet()) {
+				if (data.get(key).getClass().equals(Double.class))
+					finalAttributes.put(key, Double.class);
 				else
-					finalAttributes.put( key, String.class );
+					finalAttributes.put(key, String.class);
 			}
 		}
 		return data;
 	}
 
-
 	@Override
 	public void addPreprocessor(DataProcessor proc) {
-		this.processors.add( proc );
+		this.processors.add(proc);
 	}
-
 
 	@Override
 	public void addPreprocessor(int idx, DataProcessor proc) {
-		this.processors.add( idx, proc );
+		this.processors.add(idx, proc);
 	}
-
 
 	@Override
 	public List<DataProcessor> getPreprocessors() {
 		return processors;
 	}
-	
-	
-	public void close(){
+
+	public void close() {
 	}
 }

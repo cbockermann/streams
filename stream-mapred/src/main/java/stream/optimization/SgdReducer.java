@@ -18,37 +18,33 @@ import stream.mapred.StreamReducer;
  * </p>
  * 
  * @author Christian Bockermann
- *
+ * 
  */
-public class SgdReducer 
-	extends StreamReducer
-{
-	static Logger log = LoggerFactory.getLogger( SgdReducer.class );
-	
+public class SgdReducer extends StreamReducer {
+	static Logger log = LoggerFactory.getLogger(SgdReducer.class);
+
 	Double testCount = 0.0d;
 	Double testError = 0.0d;
 	Data result;
-	
 
 	public void init() throws Exception {
 		result = new DataImpl();
 	}
 
-	
-	public Data process( Data item ){
+	public Data process(Data item) {
 
 		try {
-			for( String key : item.keySet() ){
-				Serializable val = item.get( key );
-				if( val instanceof Double ){
+			for (String key : item.keySet()) {
+				Serializable val = item.get(key);
+				if (val instanceof Double) {
 					Double value = (Double) val;
-					if( result.get( key ) == null ){
-						result.put( key, value );
+					if (result.get(key) == null) {
+						result.put(key, value);
 					} else {
-						result.put( key, value + (Double) result.get( key ) );
+						result.put(key, value + (Double) result.get(key));
 					}
 				} else {
-					result.put( key, item.get( key ) );
+					result.put(key, item.get(key));
 				}
 			}
 
@@ -61,18 +57,16 @@ public class SgdReducer
 		return item;
 	}
 
-
 	public void finish() throws Exception {
-		write( result );
+		write(result);
 	}
 
-
-	public static void main( String[] args ) throws Exception {
+	public static void main(String[] args) throws Exception {
 		SgdReducer reducer = new SgdReducer();
 
 		InputStream in = System.in;
 		OutputStream out = System.out;
-		reducer.init( in, out );
+		reducer.init(in, out);
 		reducer.reduce();
 	}
 }

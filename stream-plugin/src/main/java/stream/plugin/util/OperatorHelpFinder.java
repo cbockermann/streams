@@ -31,7 +31,7 @@ public class OperatorHelpFinder {
 		URL url = OperatorGenerator.class.getResource( doc );
 		if( url != null ){
 			String txt = URLUtilities.readContent( url );
-			log.info( "Found documentation at {}", url );
+			log.debug( "Found documentation at {}", url );
 
 			MarkdownProcessor markdown = new MarkdownProcessor();
 			String html = markdown.markdown( txt );
@@ -43,7 +43,7 @@ public class OperatorHelpFinder {
 				}
 			}
 
-			log.info( "Html documentation:\n{}", html.trim() );
+			log.debug( "Html documentation:\n{}", html.trim() );
 			return html;
 		}
 		

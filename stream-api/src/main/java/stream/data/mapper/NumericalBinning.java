@@ -3,29 +3,26 @@
  */
 package stream.data.mapper;
 
+import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.data.DataProcessor;
 import stream.data.DataUtils;
 
 /**
  * @author chris
- *
+ * 
  */
-public class NumericalBinning implements DataProcessor {
+public class NumericalBinning extends AbstractDataProcessor {
 
 	Double minimum = 0.0d;
-	
+
 	Double maximum = 10.0d;
-	
+
 	Integer bins = 10;
-	
+
 	String include = ".*";
-	
+
 	double[] buckets = null;
-	
-	
-	
-	
+
 	/**
 	 * @return the minimum
 	 */
@@ -34,7 +31,8 @@ public class NumericalBinning implements DataProcessor {
 	}
 
 	/**
-	 * @param minimum the minimum to set
+	 * @param minimum
+	 *            the minimum to set
 	 */
 	public void setMinimum(Double minimum) {
 		this.minimum = minimum;
@@ -48,7 +46,8 @@ public class NumericalBinning implements DataProcessor {
 	}
 
 	/**
-	 * @param maximum the maximum to set
+	 * @param maximum
+	 *            the maximum to set
 	 */
 	public void setMaximum(Double maximum) {
 		this.maximum = maximum;
@@ -62,7 +61,8 @@ public class NumericalBinning implements DataProcessor {
 	}
 
 	/**
-	 * @param bins the bins to set
+	 * @param bins
+	 *            the bins to set
 	 */
 	public void setBins(Integer bins) {
 		this.bins = bins;
@@ -77,19 +77,22 @@ public class NumericalBinning implements DataProcessor {
 	}
 
 	/**
-	 * @param include the include to set
+	 * @param include
+	 *            the include to set
 	 */
 	public void setInclude(String include) {
 		this.include = include;
 	}
-	
-	
-	private void init(){
-		buckets = new double[ Math.max( 1, bins )];
+
+	/**
+	 * @see stream.data.AbstractDataProcessor#init()
+	 */
+	public void init() throws Exception {
+		buckets = new double[Math.max(1, bins)];
 		double step = (maximum - minimum) / bins.doubleValue();
 		buckets[0] = 0.0d;
-		for( int i = 1; i < buckets.length; i++ ){
-			buckets[i] = buckets[i-1] + step;
+		for (int i = 1; i < buckets.length; i++) {
+			buckets[i] = buckets[i - 1] + step;
 		}
 	}
 
@@ -98,26 +101,33 @@ public class NumericalBinning implements DataProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-		
-		if( buckets == null )
-			init();
-		
-		for( String key : DataUtils.getKeys( data ) ){
-			if( (include == null || key.matches( include )) && data.get( key ).getClass() == Double.class )
-				data.put( key, map( (Double) data.get( key ) ) );
+
+		if (buckets == null) {
+			try {
+				init();
+			} catch (Exception e) {
+				throw new RuntimeException("Initialization failed: "
+						+ e.getMessage());
+			}
 		}
-		
+
+		for (String key : DataUtils.getKeys(data)) {
+			if ((include == null || key.matches(include))
+					&& data.get(key).getClass() == Double.class)
+				data.put(key, map((Double) data.get(key)));
+		}
+
 		return data;
 	}
-	
-	protected String map( Double d ){
-		if( d < buckets[0] )
+
+	protected String map(Double d) {
+		if (d < buckets[0])
 			return "bucket[first]";
-		
-		for( int i = 0; i < buckets.length; i++ )
-			if( i + 1 < buckets.length && buckets[i + 1 ] > d )
+
+		for (int i = 0; i < buckets.length; i++)
+			if (i + 1 < buckets.length && buckets[i + 1] > d)
 				return "bucket[" + i + "]";
-		
+
 		return "bucket[last]";
 	}
 }

@@ -3,6 +3,34 @@
   <operator>
     <name>Data Stream Process</name>
     <synopsis/>
+    <help>
+
+&lt;p&gt;The &lt;em&gt;DataStreamProcess&lt;/em&gt; operator is a simple operator which will
+iteratively read data items from a given data stream and apply
+all its inner operators to each of the data items.&lt;/p&gt;
+
+&lt;h2&gt;Conditioned Processing&lt;/h2&gt;
+
+&lt;p&gt;An optional condition can be specified, which is a boolean expression
+following the syntax of the &lt;a href="http://sfb876.cs.tu-dortmund.de/streams/stream-api/filter-language.html"&gt;stream-api filter language&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A simple example is given below, which will result in processing only
+the events, whose attribute &lt;code&gt;x1&lt;/code&gt; is larger than 5:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;   x1 @gt 5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The same filter can also be specified at &lt;code&gt;x1 &amp;gt; 5&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Result Buffering&lt;/h2&gt;
+
+&lt;p&gt;If the inner operators produce resulting data items, these can be
+buffered as output and will be provided as a new stream to other
+&lt;em&gt;DataStreamProcessor&lt;/em&gt;s connected to the output port.&lt;/p&gt;
+
+&lt;p&gt;As buffering is currently performed in main memory, it is recommended
+to provide a buffer size to not exceed any memory limits.&lt;/p&gt;
+</help>
     <key>Data Stream Process</key>
   </operator>
   <operator>
@@ -21,6 +49,35 @@ will be collected before an example-set is emitted.&lt;/p&gt;
     <name>Stream to ExampleSet</name>
     <synopsis/>
     <key>Stream to ExampleSet</key>
+  </operator>
+  <operator>
+    <name>Message</name>
+    <synopsis/>
+    <key>Message</key>
+  </operator>
+  <operator>
+    <name>Skip</name>
+    <synopsis/>
+    <help>&lt;p&gt;This processor will simply skip all events matching a
+given condition. If no condition is specified, the processor
+will skip all events.&lt;/p&gt;
+
+&lt;p&gt;The condition must be a bool expression created from numerical
+operators like &lt;code&gt;@eq&lt;/code&gt;, &lt;code&gt;@gt&lt;/code&gt;, &lt;code&gt;@ge&lt;/code&gt;, &lt;code&gt;@lt&lt;/code&gt; or &lt;code&gt;@le&lt;/code&gt;. In addition
+to those numerical tests the &lt;code&gt;@rx&lt;/code&gt; operator followed by a regular
+expression can be used.&lt;/p&gt;
+
+&lt;p&gt;The general syntax is&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;   variable  operator  argument
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For example, the following expression will check the value of
+attribute &lt;code&gt;x1&lt;/code&gt; against the 0.5 threshold:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;   x1 @gt 0.5
+&lt;/code&gt;&lt;/pre&gt;</help>
+    <key>Skip</key>
   </operator>
   <operator>
     <name>Print Data</name>
@@ -174,6 +231,11 @@ i.e. the list above will have the same effect as the following:&lt;/p&gt;
     <key>RemoveAttributes</key>
   </operator>
   <operator>
+    <name>TrimKeys</name>
+    <synopsis/>
+    <key>TrimKeys</key>
+  </operator>
+  <operator>
     <name>MapValueToID</name>
     <synopsis/>
     <help>&lt;p&gt;This processor provides a way to map values of a specific feature
@@ -259,7 +321,22 @@ value:&lt;/p&gt;
   <operator>
     <name>ExampleSet DataStream</name>
     <synopsis/>
+    <help>
+
+&lt;p&gt;This operator simply creates a &lt;em&gt;data stream&lt;/em&gt; handle from an existing
+example set. The example set will most likely remain in main memory
+and the resulting &lt;em&gt;data stream&lt;/em&gt; handle will provide a sequential access
+to each of the examples.&lt;/p&gt;
+
+&lt;p&gt;The operator is intended to work as adapter for existing datasets to be
+processed stream-wise.&lt;/p&gt;
+</help>
     <key>ExampleSet DataStream</key>
+  </operator>
+  <operator>
+    <name>FACT Event Stream</name>
+    <synopsis/>
+    <key>FACT Event Stream</key>
   </operator>
   <operator>
     <name>LogDataStream</name>

@@ -16,23 +16,24 @@ public class Shuffle {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		
-		URL url = new URL( "file:///Users/chris/iris.csv" );
-		CsvStream stream = new CsvStream( url );
-		
+
+		URL url = new URL("file:///Users/chris/iris.csv");
+		CsvStream stream = new CsvStream(url);
+
 		List<Data> items = new ArrayList<Data>();
 		Data item = stream.readNext();
-		while( item != null ){
-			items.add( item );
+		while (item != null) {
+			items.add(item);
 			item = stream.readNext();
 		}
-		
-		Collections.shuffle( items, new Random( System.currentTimeMillis() ) );
-		DataStreamWriter writer = new DataStreamWriter( new File( "/Users/chris/iris-shuffled.csv" ), ";" );
-		
-		for( Data data : items ){
-			writer.dataArrived( data );
+
+		Collections.shuffle(items, new Random(System.currentTimeMillis()));
+		DataStreamWriter writer = new DataStreamWriter(new File(
+				"/Users/chris/iris-shuffled.csv"), ";");
+
+		for (Data data : items) {
+			writer.dataArrived(data);
 		}
-		writer.close();
+		writer.finish();
 	}
 }

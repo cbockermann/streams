@@ -21,30 +21,26 @@ package stream.data.filter;
 
 import java.io.Serializable;
 
+public class ConditionLE extends BinaryOperator {
+	/** The unique class ID */
+	private static final long serialVersionUID = -6196215282881485160L;
 
-public class ConditionLE
-    extends BinaryOperator
-{
-    /** The unique class ID */
-    private static final long serialVersionUID = -6196215282881485160L;
+	public ConditionLE() {
+		super("@le", "<=", "=<");
+	}
 
-    public ConditionLE()
-    {
-        super( "@le", "<=", "=<"  );
-    }
-    
+	/**
+	 * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
+	 */
+	public boolean eval(Serializable input, String pattern) {
+		if (isNumeric(pattern)) {
+			try {
+				return (new Double(input + "").compareTo(new Double(pattern))) <= 0;
+			} catch (Exception e) {
+			}
+		}
 
-    /**
-     * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String, java.lang.String)
-     */
-    public boolean eval( Serializable input, String pattern ){
-    	if( isNumeric( pattern ) ){
-    		try {
-    			return (new Double( input + "" ).compareTo( new Double( pattern ) ) ) <= 0;
-    		} catch (Exception e) {
-    		}
-    	}
-    	
-    	return ( "" + input).compareTo( pattern ) >= 0;
-    }
+		return ("" + input).compareTo(pattern) <= 0;
+	}
 }

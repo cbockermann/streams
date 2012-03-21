@@ -21,11 +21,11 @@ import stream.util.Parameter;
 
 /**
  * @author chris
- *
+ * 
  */
-public abstract class Script implements DataProcessor {
+public abstract class Script extends AbstractDataProcessor {
 
-	static Logger log = LoggerFactory.getLogger( Script.class );
+	static Logger log = LoggerFactory.getLogger(Script.class);
 
 	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
@@ -36,17 +36,14 @@ public abstract class Script implements DataProcessor {
 	protected File file;
 	transient protected String theScript = null;
 
-	
-	public Script( ScriptEngine engine ){
-		if( engine == null )
-			throw new RuntimeException( "No ScriptEngine found!" );
+	public Script(ScriptEngine engine) {
+		if (engine == null)
+			throw new RuntimeException("No ScriptEngine found!");
 		this.scriptEngine = engine;
 	}
 
-	
-	protected Script(){
+	protected Script() {
 	}
-	
 
 	/**
 	 * @return the file
@@ -55,15 +52,14 @@ public abstract class Script implements DataProcessor {
 		return file;
 	}
 
-
 	/**
-	 * @param file the file to set
+	 * @param file
+	 *            the file to set
 	 */
-	@Parameter( required = false )
+	@Parameter(required = false)
 	public void setFile(File file) {
 		this.file = file;
 	}
-
 
 	/**
 	 * @return the embedded
@@ -72,15 +68,14 @@ public abstract class Script implements DataProcessor {
 		return embedded;
 	}
 
-
 	/**
-	 * @param embedded the embedded to set
+	 * @param embedded
+	 *            the embedded to set
 	 */
-	@Parameter( required = false )
+	@Parameter(required = false)
 	public void setScript(EmbeddedContent embedded) {
 		this.embedded = embedded;
 	}
-
 
 	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
@@ -90,45 +85,44 @@ public abstract class Script implements DataProcessor {
 
 		try {
 			String script = loadScript();
-			log.info( "Script loaded is:\n{}", script );
+			log.info("Script loaded is:\n{}", script);
 
 			ScriptContext ctx = scriptEngine.getContext();
 
-			//log.info( "Binding data-item to 'data'" );
-			ctx.setAttribute( "data", data, ScriptContext.ENGINE_SCOPE );
+			// log.info( "Binding data-item to 'data'" );
+			ctx.setAttribute("data", data, ScriptContext.ENGINE_SCOPE);
 
-			scriptEngine.put( "data", data );
-			
-			
-			log.info( "Evaluating script..." );
-			scriptEngine.eval(script, ctx );
+			scriptEngine.put("data", data);
 
-		} catch (Exception e){
-			log.error( "Failed to execute script: {}", e.getMessage() );
-			if( log.isDebugEnabled() )
+			log.info("Evaluating script...");
+			scriptEngine.eval(script, ctx);
+
+		} catch (Exception e) {
+			log.error("Failed to execute script: {}", e.getMessage());
+			if (log.isDebugEnabled())
 				e.printStackTrace();
 
-			throw new RuntimeException( "Script execution error: " + e.getMessage() );
+			throw new RuntimeException("Script execution error: "
+					+ e.getMessage());
 		}
 
-		log.info( "Returning data: {}", data );
+		log.info("Returning data: {}", data);
 		return data;
 	}
 
-
 	protected String loadScript() throws Exception {
 
-		if( theScript == null ){
-			
-			if( embedded != null ){
-				log.info( "Using embedded content..." );
+		if (theScript == null) {
+
+			if (embedded != null) {
+				log.info("Using embedded content...");
 				theScript = embedded.getContent();
 				return theScript;
 			}
 
-			if( file != null ){
-				log.debug( "Reading script from file {}", file );
-				theScript = loadScript( new FileInputStream( file ) );
+			if (file != null) {
+				log.debug("Reading script from file {}", file);
+				theScript = loadScript(new FileInputStream(file));
 				return theScript;
 			}
 		}
@@ -136,18 +130,14 @@ public abstract class Script implements DataProcessor {
 		return theScript;
 	}
 
-
-
-
-
-	protected String loadScript( InputStream in ) throws Exception {
-		log.debug( "Loading script from input-stream {}", in );
+	protected String loadScript(InputStream in) throws Exception {
+		log.debug("Loading script from input-stream {}", in);
 		StringBuffer s = new StringBuffer();
-		BufferedReader reader = new BufferedReader( new InputStreamReader( in ) );
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String line = reader.readLine();
-		while( line != null ){
-			s.append( line + "\n" );
-			log.debug( "Appending line: {}", line );
+		while (line != null) {
+			s.append(line + "\n");
+			log.debug("Appending line: {}", line);
 			line = reader.readLine();
 		}
 		reader.close();

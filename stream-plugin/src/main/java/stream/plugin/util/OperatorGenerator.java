@@ -276,7 +276,8 @@ public class OperatorGenerator {
 					"stream.data",
 					"stream.data.mapper",
 					"stream.data.test",
-					"stream.learner"
+					"stream.learner",
+					"stream.logic"
 			};
 
 

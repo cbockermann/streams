@@ -7,7 +7,7 @@ import com.rapidminer.operator.OperatorDescription;
 
 /**
  * @author chris
- *
+ * 
  */
 public class SelectSlicesOperator extends AbstractFactEventProcessor {
 
@@ -16,6 +16,6 @@ public class SelectSlicesOperator extends AbstractFactEventProcessor {
 	 * @param clazz
 	 */
 	public SelectSlicesOperator(OperatorDescription description) {
-		super(description, fact.data.CutSlices.class );
+		super(description, fact.data.CutSlices.class);
 	}
 }

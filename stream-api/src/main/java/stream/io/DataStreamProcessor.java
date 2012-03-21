@@ -112,6 +112,8 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 		for (DataProcessor p : processors) {
 			log.trace("Processing item with processor {}", p);
 			data = p.process(data);
+			if (data == null)
+				return null;
 		}
 
 		if (finalAttributes == null && data != null) {

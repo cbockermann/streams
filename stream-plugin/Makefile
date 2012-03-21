@@ -17,3 +17,6 @@ install: build-plugin
 	cp target/DataStream-Plugin-0.1-SNAPSHOT.jar $(RAPIDMINER_HOME)/lib/plugins
 
 all:	compile-api build-plugin
+
+clean:
+	mvn clean

@@ -336,6 +336,47 @@ processed stream-wise.&lt;/p&gt;
   <operator>
     <name>FACT Event Stream</name>
     <synopsis/>
+    <help>
+
+&lt;p&gt;This operator provides a &lt;em&gt;data stream handle&lt;/em&gt; that reads data
+from FITS files as produced by the FACT telescope. Each data item
+that can be retrieved from the stream resembles a single FACT
+event, i.e. an observation by the telescope.&lt;/p&gt;
+
+&lt;p&gt;The single data items consists of several features, such as the
+&lt;code&gt;EventNum&lt;/code&gt;, the &lt;code&gt;TriggerType&lt;/code&gt; and also the &lt;code&gt;Data&lt;/code&gt;, which is a large
+array of 432000 elements (1440 x 300).&lt;/p&gt;
+
+&lt;h2&gt;DRS Calibration&lt;/h2&gt;
+
+&lt;p&gt;The &lt;em&gt;FactEventReader&lt;/em&gt; operator also provides DRS calibration if a
+DRS calibration data file has been specified. In that case, the
+&lt;code&gt;Data&lt;/code&gt; feature is converted into a 432000 element array with calibrated
+data values.&lt;/p&gt;
+
+&lt;h2&gt;Event Keys&lt;/h2&gt;
+
+&lt;p&gt;Despite the &lt;code&gt;EventNum&lt;/code&gt;, &lt;code&gt;TriggerType&lt;/code&gt; and &lt;code&gt;Data&lt;/code&gt; each event provides
+additional attributes/keys as outlined in the following.&lt;/p&gt;
+
+&lt;table&gt;
+
+&lt;tr&gt;
+  &lt;th&gt;Key&lt;/th&gt;
+  &lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+  &lt;td&gt;&lt;b&gt;@id&lt;/b&gt;&lt;/td&gt;
+  &lt;td&gt;This attributes contains a special string that uniquely identified
+      a single event by its recording date, run-number and event number.
+      For example the id `2011/11/27/42/1` refers to the 1st event recorded
+      in run 42 on the 27th of November 2011.
+  &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+</help>
     <key>FACT Event Stream</key>
   </operator>
   <operator>

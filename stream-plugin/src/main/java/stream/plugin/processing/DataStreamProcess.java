@@ -78,7 +78,7 @@ public class DataStreamProcess extends
 			}
 			log.info("Applying filter {} to data-stream", condition);
 		} catch (Exception e) {
-			throw new UserError(this, e, -1);
+			throw new UserError(this, e, "filter.syntax.error", e.getMessage());
 		}
 
 		List<Operator> nested = this.getImmediateChildren();

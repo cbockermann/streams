@@ -4,6 +4,7 @@
 package stream.io;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -92,6 +93,16 @@ public class DataStreamWriter extends AbstractDataProcessor implements
 	public DataStreamWriter(OutputStream out, String separator) {
 		p = new PrintStream(out);
 		this.separator = separator;
+	}
+
+	
+	
+	
+	@Override
+	public void init() throws Exception {
+		if(p==null){
+			throw new FileNotFoundException("File " + url +" not found");
+		}
 	}
 
 	public void setAttributeFilter(String filter) {

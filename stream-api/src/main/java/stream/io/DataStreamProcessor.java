@@ -145,4 +145,33 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 
 	public void close() {
 	}
+
+	/**
+	 * @see stream.data.AbstractDataProcessor#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		super.init();
+
+		for (DataProcessor p : processors) {
+			p.init();
+		}
+	}
+
+	/**
+	 * @see stream.data.AbstractDataProcessor#finish()
+	 */
+	@Override
+	public void finish() throws Exception {
+		super.finish();
+
+		for (DataProcessor p : processors) {
+			try {
+				p.finish();
+			} catch (Exception e) {
+				log.error("Error while finishing processor '{}': {}", p,
+						e.getMessage());
+			}
+		}
+	}
 }

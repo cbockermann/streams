@@ -20,6 +20,7 @@
 		<module>stream-log</module>
 	 	<module>stream-mapred</module>
 		<module>stream-plugin</module>
+		<module>stream-plotter</module>
 	</modules>
 
 	<repositories>	

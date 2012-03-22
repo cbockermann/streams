@@ -34,10 +34,10 @@ public class ConditionGT extends BinaryOperator {
 	 *      java.lang.String)
 	 */
 	public boolean eval(Serializable input, String pattern) {
-		if (isNumeric(pattern)) {
+		if (isNumeric(input)) {
 			try {
-				Double v = new Double(pattern);
-				Double w = new Double(input + "");
+				Double v = new Double(input + "");
+				Double w = new Double(pattern);
 				int rc = v.compareTo(w);
 				return rc > 0;
 			} catch (Exception e) {

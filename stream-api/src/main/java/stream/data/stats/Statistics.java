@@ -13,24 +13,33 @@ import java.util.Map;
  */
 public class Statistics extends LinkedHashMap<String, Double> {
 
-	/** The unique class ID*/
+	/** The unique class ID */
 	private static final long serialVersionUID = 5994452860264445162L;
-	
+
 	String name = "";
 	String key = "";
-	
-	public String getName(){
+
+	public Statistics() {
+	}
+
+	public Statistics(String name) {
+		this.name = name;
+	}
+
+	public Statistics(Statistics stats) {
+		this(stats.getName());
+		this.add(stats);
+	}
+
+	public String getName() {
 		return this.name;
 	}
-	
-	public Statistics setName( String name ){
+
+	public Statistics setName(String name) {
 		this.name = name;
 		return this;
 	}
-	
-	
-	
-	
+
 	/**
 	 * @return the key
 	 */
@@ -39,7 +48,8 @@ public class Statistics extends LinkedHashMap<String, Double> {
 	}
 
 	/**
-	 * @param key the key to set
+	 * @param key
+	 *            the key to set
 	 */
 	public Statistics setKey(String key) {
 		this.key = key;
@@ -51,88 +61,96 @@ public class Statistics extends LinkedHashMap<String, Double> {
 	 * 
 	 * @param st
 	 */
-	public synchronized void add( Map<String,Double> st ){
-		for( String key : st.keySet() ){
-			Double d = get( key );
-			if( d == null )
-				d = st.get( key );
+	public synchronized void add(Map<String, Double> st) {
+		for (String key : st.keySet()) {
+			Double d = get(key);
+			if (d == null)
+				d = st.get(key);
 			else
-				d += st.get( key );
-			
-			put( key, d );
+				d += st.get(key);
+
+			put(key, d);
 		}
 	}
-	
-	
-	public synchronized void substract( Map<String,Double> st ){
-		for( String key : st.keySet() ){
-			Double d = get( key );
-			if( d == null )
-				d = -st.get( key );
+
+	public synchronized void add(Statistics st) {
+		for (String key : st.keySet()) {
+			Double d = get(key);
+			if (d == null)
+				d = st.get(key);
 			else
-				d -= st.get( key );
-			
-			put( key, d );
+				d += st.get(key);
+
+			put(key, d);
 		}
 	}
-	
-	
-	public synchronized void max( Map<String,Double> st ){
-		
-		List<String> keys = new LinkedList<String>( this.keySet() );
-		for( String k : st.keySet() )
-			if( ! keys.contains( k ) )
-				keys.add( k );
-		
-		for( String key : keys )
-			this.put( key, max( get( key ), st.get( key ) ) );
+
+	public synchronized void substract(Map<String, Double> st) {
+		for (String key : st.keySet()) {
+			Double d = get(key);
+			if (d == null)
+				d = -st.get(key);
+			else
+				d -= st.get(key);
+
+			put(key, d);
+		}
 	}
-	
-	private Double max( Double d1, Double d2 ){
-		if( d1 == null && d2 == null )
+
+	public synchronized void max(Map<String, Double> st) {
+
+		List<String> keys = new LinkedList<String>(this.keySet());
+		for (String k : st.keySet())
+			if (!keys.contains(k))
+				keys.add(k);
+
+		for (String key : keys)
+			this.put(key, max(get(key), st.get(key)));
+	}
+
+	private Double max(Double d1, Double d2) {
+		if (d1 == null && d2 == null)
 			return Double.NaN;
-		
-		if( d1 == null )
+
+		if (d1 == null)
 			return d2;
-		
-		if( d2 == null )
+
+		if (d2 == null)
 			return d1;
-		
-		return Math.max( d1, d2 );
+
+		return Math.max(d1, d2);
 	}
-	
-	public Statistics divideBy( String key ){
+
+	public Statistics divideBy(String key) {
 		Statistics st = new Statistics();
-		st.putAll( this );
-		
-		Double x = get( key );
-		if( x == null || x == 0.0d )
+		st.putAll(this);
+
+		Double x = get(key);
+		if (x == null || x == 0.0d)
 			return st;
-		
-		for( String k : keySet() ){
-			if( ! k.equals( key ) ){
-				Double val = get( k );
-				st.put( k, val / x );
+
+		for (String k : keySet()) {
+			if (!k.equals(key)) {
+				Double val = get(k);
+				st.put(k, val / x);
 			}
 		}
 		return st;
 	}
-	
-	
-	public Statistics divideBy( Double val ){
+
+	public Statistics divideBy(Double val) {
 		Statistics st = new Statistics();
-		for( String k : keySet() )
-			st.put( k, get(k) / val );
-		
+		for (String k : keySet())
+			st.put(k, get(k) / val);
+
 		return st;
 	}
-	
-	
-	public void add( String key, Double val ){
-		if( this.containsKey( key ) ){
-			Double d = get( key ) + val;
-			put( key, d );
+
+	public void add(String key, Double val) {
+		if (this.containsKey(key)) {
+			Double d = get(key) + val;
+			put(key, d);
 		} else
-			put( key, val );
+			put(key, val);
 	}
 }

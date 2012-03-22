@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>streams</artifactId>
+    <groupId>org.jwall</groupId>
+    <version>1.0</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <artifactId>stream-plotter</artifactId>
+  <name>stream-plotter</name>
+  <description>A small package providing various plotter processors for the stream-api</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.jwall</groupId>
+  		<artifactId>stream-api</artifactId>
+  		<version>[1.3.1,)</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.jfree</groupId>
+  		<artifactId>jfreechart</artifactId>
+  		<version>1.0.14</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-log4j12</artifactId>
+  		<version>1.6.4</version>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.12</version>
+  		<scope>test</scope>
+  	</dependency>
+  </dependencies>
+</project>

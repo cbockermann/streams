@@ -1,0 +1,18 @@
+<experiment source="log">
+
+	<Stream id="log" class="stream.io.CsvStream"
+		url="classpath:/multi-golf.csv.gz" />
+
+	<Process input="log">
+	
+		<SetValue key="temperature" value="3.7" condition="temperature @eq cold" />
+		<SetValue key="temperature" value="21.4" condition="temperature @eq mild" />
+		<SetValue key="temperature" value="40.1" condition="temperature @eq hot" />
+	
+	
+		<PrintData />
+		<stream.plotter.LiveStreamPlotter keys="temperature" keepOpen="true" />	
+		
+	</Process>
+	
+</experiment>

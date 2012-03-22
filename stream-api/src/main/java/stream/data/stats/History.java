@@ -26,6 +26,8 @@ public abstract class History<T> implements Serializable {
 	/** The unique class ID */
 	private static final long serialVersionUID = 9079427772146519028L;
 
+	public final static long MILLISECOND = 1L;
+
 	/* A time constant for seconds */
 	public final static long SECOND = 1000L;
 

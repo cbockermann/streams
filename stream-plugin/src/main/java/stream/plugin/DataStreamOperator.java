@@ -100,6 +100,13 @@ public abstract class DataStreamOperator extends Operator implements
 
 			setup = true;
 
+			try {
+				processor.init();
+			} catch (Exception e) {
+				throw new UserError(this, e, "Failed to initialize processor: "
+						+ e.getMessage());
+			}
+
 		} else {
 			log.debug("Operator already set up...");
 		}
@@ -138,6 +145,34 @@ public abstract class DataStreamOperator extends Operator implements
 	}
 
 	public void reset() {
+	}
+
+	/**
+	 * @see com.rapidminer.operator.Operator#processStarts()
+	 */
+	@Override
+	public void processStarts() throws OperatorException {
+		super.processStarts();
+		try {
+			processor.init();
+		} catch (Exception e) {
+			throw new UserError(this, e, "Failed to initialize operator: "
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * @see com.rapidminer.operator.Operator#processFinished()
+	 */
+	@Override
+	public void processFinished() throws OperatorException {
+		super.processFinished();
+		try {
+			processor.finish();
+		} catch (Exception e) {
+			throw new UserError(this, e, "Failed to finish operator: "
+					+ e.getMessage());
+		}
 	}
 
 	/**

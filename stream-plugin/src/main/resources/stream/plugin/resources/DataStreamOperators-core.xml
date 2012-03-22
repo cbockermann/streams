@@ -63,6 +63,12 @@
 
 	</group>
 
+	<group key="Data Stream.Monitoring">
+		<operator>
+			<key>Statistics Logger</key>
+			<class>stream.plugin.monitoring.StatisticsLoggerOperator</class>
+		</operator>
+	</group>
 
 	<group key="Data Stream.Output">
 	</group>

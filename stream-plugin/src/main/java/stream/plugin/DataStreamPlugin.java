@@ -9,6 +9,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.plugin.monitoring.StreamPlotView;
+
+import com.rapidminer.gui.MainFrame;
+
 /**
  * @author chris
  * 
@@ -24,6 +28,14 @@ public final class DataStreamPlugin {
 	public final static String DATA_ITEM_PORT_NAME = "data item";
 
 	public final static String DATA_STREAM_PORT_NAME = "stream";
+
+	final static StreamPlotView streamPlotView = new StreamPlotView();
+
+	static MainFrame mainframe;
+
+	public static StreamPlotView getStreamPlotView() {
+		return streamPlotView;
+	}
 
 	public static void initPlugin() {
 
@@ -44,5 +56,14 @@ public final class DataStreamPlugin {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void initGui(MainFrame mf) {
+		mainframe = mf;
+		mainframe.registerDockable(streamPlotView);
+	}
+
+	public static MainFrame getMainFrame() {
+		return mainframe;
 	}
 }

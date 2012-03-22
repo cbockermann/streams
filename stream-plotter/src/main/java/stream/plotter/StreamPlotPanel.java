@@ -35,7 +35,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.general.DatasetChangeEvent;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.slf4j.Logger;
@@ -73,7 +72,6 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		// super("Stream Monitor");
 
 		setLayout(new BorderLayout());
-		setBorder(new EmptyBorder(4, 4, 4, 4));
 
 		JPanel fp = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		fp.setBorder(null);
@@ -114,6 +112,7 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 
 		final JFreeChart chart = new JFreeChart(plot);
 		final ChartPanel p = new ChartPanel(chart);
+		chart.setBackgroundPaint(this.getBackground());
 		chart.setTitle("Stream Statistics Monitor");
 		chart.getTitle().setPaint(Color.DARK_GRAY);
 		p.addChartMouseListener(new ChartMouseListener() {
@@ -158,13 +157,17 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 			}
 
 		});
-		p.setBackground(this.getBackground());
-		p.setBorder(null);
 		p.setBorder(new EmptyBorder(8, 8, 8, 8));
-		this.setBackground(Color.LIGHT_GRAY);
 		add(p, BorderLayout.CENTER);
 
 		this.setSteps(stepSlider.getValue());
+	}
+
+	public void reset() {
+		series.removeAllSeries();
+		seriesMap.clear();
+		pivotValue = -1.0d;
+		plot.datasetChanged(new DatasetChangeEvent(this, series));
 	}
 
 	public void removeKey(String key) {
@@ -180,6 +183,10 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		ValueAxis range = plot.getDomainAxis();
 		range.setFixedAutoRange(steps.doubleValue());
 		plot.axisChanged(new AxisChangeEvent(range));
+
+		for (int i = 0; i < series.getSeriesCount(); i++) {
+			series.getSeries(i).setMaximumItemCount(steps);
+		}
 	}
 
 	public Integer getSteps() {
@@ -188,53 +195,6 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 
 	public void addValueListener(ValueListener v) {
 		listener.add(v);
-	}
-
-	public void plot(String name, float[] data) {
-		clearSeries();
-		addSeries(name, data);
-		/*
-		 * double[] d = new double[data.length]; for( int i = 0; i <
-		 * data.length; i++ ){ d[i] = data[i]; } plot( name, d );
-		 */
-	}
-
-	public void clearSeries() {
-		series.removeAllSeries();
-	}
-
-	public void plot(String name, double[] data) {
-		series.removeAllSeries();
-		series.addSeries(createSeries(name, data));
-		plot.datasetChanged(null);
-	}
-
-	public void addSeries(String name, double[] data) {
-		series.addSeries(createSeries(name, data));
-	}
-
-	public void addSeries(String name, float[] data) {
-		series.addSeries(createSeries(name, data));
-	}
-
-	public XYDataset createDataset(String name, double[] data) {
-		return new XYSeriesCollection(createSeries(name, data));
-	}
-
-	public XYSeries createSeries(String name, float[] data) {
-		XYSeries series = new XYSeries(name);
-		for (int i = 0; i < data.length; i++) {
-			series.add((double) i, data[i]);
-		}
-		return series;
-	}
-
-	public XYSeries createSeries(String name, double[] data) {
-		XYSeries series = new XYSeries(name);
-		for (int i = 0; i < data.length; i++) {
-			series.add((double) i, data[i]);
-		}
-		return series;
 	}
 
 	/**
@@ -285,6 +245,7 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 			XYSeries series = seriesMap.get(key);
 			if (series == null) {
 				series = new XYSeries(key);
+				series.setMaximumItemCount(this.getSteps());
 				this.series.addSeries(series);
 				seriesMap.put(key, series);
 			}

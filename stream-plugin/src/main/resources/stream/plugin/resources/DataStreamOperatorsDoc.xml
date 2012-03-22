@@ -51,6 +51,22 @@ will be collected before an example-set is emitted.&lt;/p&gt;
     <key>Stream to ExampleSet</key>
   </operator>
   <operator>
+    <name>Delay</name>
+    <synopsis/>
+    <help>&lt;p&gt;This simple processor puts a delay into the data processing. The
+delay can be specified in various units with the simple time format
+being specified like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  40ms
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;for specifying a delay of 40 milliseconds. Other units for &lt;code&gt;day&lt;/code&gt;,
+&lt;code&gt;hour&lt;/code&gt;, &lt;code&gt;minute&lt;/code&gt; and so on work as well. &lt;/p&gt;
+
+&lt;p&gt;The units can also be combined as in &lt;code&gt;1 second 30ms&lt;/code&gt;.&lt;/p&gt;</help>
+    <key>Delay</key>
+  </operator>
+  <operator>
     <name>Message</name>
     <synopsis/>
     <key>Message</key>
@@ -83,6 +99,11 @@ attribute &lt;code&gt;x1&lt;/code&gt; against the 0.5 threshold:&lt;/p&gt;
     <name>Print Data</name>
     <synopsis/>
     <key>Print Data</key>
+  </operator>
+  <operator>
+    <name>Statistics Logger</name>
+    <synopsis/>
+    <key>Statistics Logger</key>
   </operator>
   <operator>
     <name>CreateID</name>
@@ -233,6 +254,18 @@ i.e. the list above will have the same effect as the following:&lt;/p&gt;
   <operator>
     <name>TrimKeys</name>
     <synopsis/>
+    <help>&lt;p&gt;This operator removes leading and trailing whitespaces from all
+keys of a data item, i.e. the item&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; x1  =1.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;will be transformed to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; x1=1.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;as the key "&lt;code&gt;x1&lt;/code&gt;" will be renamed to "&lt;code&gt;x1&lt;/code&gt;" (without the quotes).&lt;/p&gt;</help>
     <key>TrimKeys</key>
   </operator>
   <operator>
@@ -297,6 +330,11 @@ value:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;  &amp;lt;SetValue key="attribute1" value="abc" /&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;</help>
     <key>SetValue</key>
+  </operator>
+  <operator>
+    <name>Timestamp</name>
+    <synopsis/>
+    <key>Timestamp</key>
   </operator>
   <operator>
     <name>AccessLogStream</name>

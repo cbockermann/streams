@@ -94,11 +94,25 @@
 
 	</group>
 
+	<group key="Data Stream.Monitoring">
+		<operator>
+			<key>Statistics Logger</key>
+			<class>stream.plugin.monitoring.StatisticsLoggerOperator</class>
+		</operator>
+	<operator>
+      <key>Print Data</key>
+      <class>stream.data.test.PrintDataOperator</class>
+    </operator>
+  </group>
 
 	<group key="Data Stream.Output">
 	</group>
 
 <group key="Data Stream.Logic">
+    <operator>
+      <key>Delay</key>
+      <class>stream.logic.DelayOperator</class>
+    </operator>
     <operator>
       <key>Message</key>
       <class>stream.logic.MessageOperator</class>
@@ -106,12 +120,6 @@
     <operator>
       <key>Skip</key>
       <class>stream.logic.SkipOperator</class>
-    </operator>
-  </group>
-  <group key="Data Stream.Monitoring">
-    <operator>
-      <key>Print Data</key>
-      <class>stream.data.test.PrintDataOperator</class>
     </operator>
   </group>
   <group key="Data Stream.Processing.Annotations">
@@ -164,6 +172,10 @@
     <operator>
       <key>SetValue</key>
       <class>stream.plugin.processing.transform.SetValueOperator</class>
+    </operator>
+    <operator>
+      <key>Timestamp</key>
+      <class>stream.plugin.processing.transform.TimestampOperator</class>
     </operator>
   </group>
 </operators>

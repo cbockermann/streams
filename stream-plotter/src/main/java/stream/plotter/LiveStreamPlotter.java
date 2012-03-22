@@ -10,25 +10,47 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.util.Parameter;
 import stream.util.ParameterUtils;
 
 /**
  * @author chris
  * 
  */
-public class LiveStreamPlotter extends ConditionedDataProcessor {
+public class LiveStreamPlotter extends DataVisualizer {
 
 	static Logger log = LoggerFactory.getLogger(LiveStreamPlotter.class);
 	JFrame frame;
 	StreamPlotPanel plotPanel;
 
+	Integer history = 1000;
 	String[] keys = null;
-	Integer width = 1024;
-	Integer height = 400;
 	boolean keepOpen = false;
+
+	String xaxis = null;
+
+	Double ymin = null;
+	Double ymax = null;
+
+	String yrange = "";
+
+	/**
+	 * @return the yrange
+	 */
+	public String getYrange() {
+		return yrange;
+	}
+
+	/**
+	 * @param yrange
+	 *            the yrange to set
+	 */
+	@Parameter(required = false, description = "The range of the Y-axis to be plotted. Format is  'min;max' (without quotes, min/max need to be numbers)")
+	public void setYrange(String yrange) {
+		this.yrange = yrange;
+	}
 
 	/**
 	 * @return the keys
@@ -41,38 +63,9 @@ public class LiveStreamPlotter extends ConditionedDataProcessor {
 	 * @param keys
 	 *            the keys to set
 	 */
+	@Parameter(required = false, description = "The attributes/features to be plotted (non-numerical features will be ignored)")
 	public void setKeys(String keys) {
 		this.keys = ParameterUtils.split(keys);
-	}
-
-	/**
-	 * @return the width
-	 */
-	public Integer getWidth() {
-		return width;
-	}
-
-	/**
-	 * @param width
-	 *            the width to set
-	 */
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	/**
-	 * @return the height
-	 */
-	public Integer getHeight() {
-		return height;
-	}
-
-	/**
-	 * @param height
-	 *            the height to set
-	 */
-	public void setHeight(Integer height) {
-		this.height = height;
 	}
 
 	/**
@@ -91,16 +84,44 @@ public class LiveStreamPlotter extends ConditionedDataProcessor {
 	}
 
 	/**
+	 * @return the history
+	 */
+	public Integer getHistory() {
+		return history;
+	}
+
+	/**
+	 * @param history
+	 *            the history to set
+	 */
+	@Parameter(required = false, description = "The number of samples displayed in the plot (i.e. the 'window size' of the plot)")
+	public void setHistory(Integer history) {
+		this.history = history;
+	}
+
+	/**
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
 	public void init() throws Exception {
 		frame = new JFrame();
+
+		if (yrange != null && !"".equals(yrange.trim())) {
+			String[] range = yrange.split("(:|,|;)");
+			ymin = new Double(range[0]);
+			ymax = new Double(range[1]);
+		}
+
 		plotPanel = new StreamPlotPanel();
+		plotPanel.setSteps(Math.max(5, history));
+
+		if (ymin != null && ymax != null) {
+			plotPanel.plot.getRangeAxis().setRange(ymin, ymax);
+		}
 
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(plotPanel, BorderLayout.CENTER);
-		frame.setSize(1024, 400);
+		frame.setSize(width, height);
 		frame.setVisible(true);
 	}
 

@@ -187,6 +187,7 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		for (int i = 0; i < series.getSeriesCount(); i++) {
 			series.getSeries(i).setMaximumItemCount(steps);
 		}
+		stepField.setText(steps + "");
 	}
 
 	public Integer getSteps() {

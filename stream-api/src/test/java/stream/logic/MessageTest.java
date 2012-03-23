@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.io.RandomStream;
+import stream.logger.Message;
 
 /**
  * @author chris

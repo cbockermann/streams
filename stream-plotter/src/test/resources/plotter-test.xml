@@ -14,7 +14,7 @@
 		<!-- 
 		<PrintData />
 		 -->
-		<stream.plotter.LiveStreamPlotter keys="temperature" keepOpen="true" history="100" width="500" yrange="20.2;50.2"/>	
+		<stream.plotter.LiveStreamPlotter keys="temperature" keepOpen="true" history="500" width="1024" yrange="20.2;50.2"/>	
 		
 	</Process>
 	

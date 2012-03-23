@@ -1,4 +1,4 @@
-package stream.filter;
+package stream.data.filter;
 
 import java.io.Serializable;
 

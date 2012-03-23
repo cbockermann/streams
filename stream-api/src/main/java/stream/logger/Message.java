@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.logic;
+package stream.logger;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
@@ -14,7 +14,7 @@ import stream.util.Parameter;
  * @author chris
  * 
  */
-@Description(text = "", group = "Data Stream.Logic")
+@Description(text = "", group = "Data Stream.Monitoring")
 public class Message extends ConditionedDataProcessor {
 	Expression filter;
 	String txt;

@@ -6,6 +6,7 @@ package stream.plotter;
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.util.Parameter;
+import stream.util.SimpleTimeParser;
 
 /**
  * <p>
@@ -20,6 +21,7 @@ public abstract class DataVisualizer extends ConditionedDataProcessor {
 
 	Integer width = 1024;
 	Integer height = 400;
+	Long updateInterval = 1000L;
 
 	/**
 	 * @return the width
@@ -51,6 +53,25 @@ public abstract class DataVisualizer extends ConditionedDataProcessor {
 	@Parameter(required = false, min = 0.0d, max = 1536.0, description = "Preferred height of the visualization component")
 	public void setHeight(Integer height) {
 		this.height = height;
+	}
+
+	/**
+	 * @return the updateInterval
+	 */
+	public Long getUpdateInterval() {
+		return updateInterval;
+	}
+
+	/**
+	 * @param updateInterval
+	 *            the updateInterval to set
+	 */
+	public void setUpdateInterval(String updateInterval) {
+		try {
+			this.updateInterval = SimpleTimeParser.parseTime(updateInterval);
+		} catch (Exception e) {
+			this.updateInterval = 1000L;
+		}
 	}
 
 	/**

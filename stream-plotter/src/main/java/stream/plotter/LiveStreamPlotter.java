@@ -23,7 +23,7 @@ public class LiveStreamPlotter extends DataVisualizer {
 
 	static Logger log = LoggerFactory.getLogger(LiveStreamPlotter.class);
 	JFrame frame;
-	StreamPlotPanel plotPanel;
+	final StreamPlotPanel plotPanel = new StreamPlotPanel();
 
 	Integer history = 1000;
 	String[] keys = null;
@@ -35,6 +35,12 @@ public class LiveStreamPlotter extends DataVisualizer {
 	Double ymax = null;
 
 	String yrange = "";
+
+	Thread updateThread = new Thread() {
+		public void run() {
+
+		}
+	};
 
 	/**
 	 * @return the yrange
@@ -97,6 +103,9 @@ public class LiveStreamPlotter extends DataVisualizer {
 	@Parameter(required = false, description = "The number of samples displayed in the plot (i.e. the 'window size' of the plot)")
 	public void setHistory(Integer history) {
 		this.history = history;
+		if (plotPanel != null) {
+			plotPanel.setSteps(history);
+		}
 	}
 
 	/**
@@ -112,7 +121,6 @@ public class LiveStreamPlotter extends DataVisualizer {
 			ymax = new Double(range[1]);
 		}
 
-		plotPanel = new StreamPlotPanel();
 		plotPanel.setSteps(Math.max(5, history));
 
 		if (ymin != null && ymax != null) {
@@ -160,7 +168,7 @@ public class LiveStreamPlotter extends DataVisualizer {
 			}
 		}
 
-		plotPanel.dataArrived(stats);
+		// plotPanel.dataArrived(stats);
 		return data;
 	}
 }

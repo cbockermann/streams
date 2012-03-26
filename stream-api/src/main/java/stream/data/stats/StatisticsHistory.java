@@ -1,7 +1,9 @@
 package stream.data.stats;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p>
@@ -34,6 +36,12 @@ public class StatisticsHistory extends History<Statistics> {
 	 */
 	public StatisticsHistory(long t, long history) {
 		super(t, history);
+	}
+
+	public StatisticsHistory(StatisticsHistory h) {
+		super(h.stepSize, h.historyLength);
+		this.seriesKeys.addAll(h.seriesKeys);
+		this.map.putAll(h.map);
 	}
 
 	public LinkedList<String> getSeriesKeys() {
@@ -132,5 +140,16 @@ public class StatisticsHistory extends History<Statistics> {
 		}
 
 		return this;
+	}
+
+	public List<Statistics> getData() {
+		List<Statistics> list = new ArrayList<Statistics>();
+		for (Long key : map.keySet()) {
+			Statistics st = new Statistics();
+			st.add("@timestamp", new Double(key));
+			st.add(map.get(key));
+			list.add(st);
+		}
+		return list;
 	}
 }

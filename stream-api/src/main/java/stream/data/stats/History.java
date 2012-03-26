@@ -1,6 +1,7 @@
 package stream.data.stats;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -183,5 +184,13 @@ public abstract class History<T> implements Serializable {
 		long first = last() - this.getLength();
 		long t = first + i * stepSize;
 		return adjust(t);
+	}
+
+	public List<T> getData() {
+		List<T> list = new ArrayList<T>();
+		for (Long key : map.keySet()) {
+			list.add(map.get(key));
+		}
+		return list;
 	}
 }

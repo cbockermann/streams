@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,15 +19,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.io.DataStream;
 import stream.io.DataStreamProcessor;
+import stream.io.DataStreamQueue;
 import stream.util.ObjectFactory;
 import stream.util.ParameterInjection;
 
 public class StreamRunner {
 	static Logger log = LoggerFactory.getLogger(StreamRunner.class);
 	ObjectFactory objectFactory = ObjectFactory.newInstance();
+
+	boolean openListeners = false;
 
 	Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
 
@@ -36,7 +41,14 @@ public class StreamRunner {
 	 */
 	Map<String, List<DataProcessor>> processors = new LinkedHashMap<String, List<DataProcessor>>();
 
+	Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
+
 	public StreamRunner(URL url) throws Exception {
+		this(url, false);
+	}
+
+	public StreamRunner(URL url, boolean openListeners) throws Exception {
+		this.openListeners = openListeners;
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(url.openStream());
@@ -111,7 +123,7 @@ public class StreamRunner {
 				Element child = (Element) node;
 
 				/*
-                 */
+				 */
 				DataStreamProcessor proc = new DataStreamProcessor();
 				Map<String, String> attr = objectFactory.getAttributes(child);
 				String src = attr.get("source");
@@ -143,13 +155,27 @@ public class StreamRunner {
 				}
 			}
 		}
+
+		if (openListeners) {
+			for (String input : processors.keySet()) {
+				if (streams.get(input) == null) {
+					log.debug("Creating listener-queue for input-key '{}'",
+							input);
+
+					DataStreamQueue q = new DataStreamQueue();
+					listeners.put(input, q);
+					streams.put(input, q);
+				}
+			}
+		}
+
 	}
 
 	public List<DataProcessor> getDataProcessors(Element child)
 			throws Exception {
 		List<DataProcessor> processors = new ArrayList<DataProcessor>();
 		NodeList proc = child.getChildNodes(); // .getElementsByTagName(
-												// "Processor");
+		// "Processor");
 		for (int j = 0; j < proc.getLength(); j++) {
 			Node n = proc.item(j);
 			String name = n.getNodeName();
@@ -208,9 +234,26 @@ public class StreamRunner {
 		return stream;
 	}
 
+	public DataStream getStream(String key) {
+
+		DataStream stream = streams.get(key);
+		if (stream != null)
+			return stream;
+
+		stream = listeners.get(key);
+		if (stream == null && openListeners) {
+			log.info("Creating new listener-queue for {}", key);
+			DataStreamQueue queue = new DataStreamQueue();
+			listeners.put(key, queue);
+			return queue;
+		}
+
+		return stream;
+	}
+
 	public void run() throws Exception {
 
-		if (streams.isEmpty())
+		if (streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");
 
 		log.info("Need to handle {} sources: {}", streams.size(),
@@ -219,9 +262,9 @@ public class StreamRunner {
 		List<StreamProcess> processes = new ArrayList<StreamProcess>();
 
 		for (String key : streams.keySet()) {
-			DataStream input = streams.get(key);
+			DataStream input = getStream(key);
 			log.debug("Creating new StreamProcess for stream {}", key);
-
+			log.debug("   process {} is reading from {}", key, input);
 			StreamProcess p = new StreamProcess(null, input);
 			List<DataProcessor> proc = processors.get(key);
 			if (proc != null && !proc.isEmpty()) {
@@ -245,8 +288,10 @@ public class StreamRunner {
 		for (StreamProcess spu : processes) {
 			log.debug("Starting stream-process [{}]", spu.getProcessId());
 			spu.start();
+			log.debug("Stream-process started.");
 		}
 
+		log.debug("waiting for processes to finish...");
 		while (!processes.isEmpty()) {
 			log.debug("{} processes running", processes.size());
 			Iterator<StreamProcess> it = processes.iterator();
@@ -263,6 +308,18 @@ public class StreamRunner {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public Set<String> getStreamListenerNames() {
+		return listeners.keySet();
+	}
+
+	public void dataArrived(String key, Data item) {
+		if (listeners.containsKey(key)) {
+			listeners.get(key).dataArrived(item);
+		} else {
+			log.warn("No listener defined for {}", key);
 		}
 	}
 }

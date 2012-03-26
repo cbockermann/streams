@@ -89,6 +89,7 @@ public class StreamProcess extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {
+		log.debug(" ##  StreamProcessing.run()");
 		running = true;
 
 		for (DataProcessor proc : processors) {
@@ -103,7 +104,10 @@ public class StreamProcess extends Thread {
 
 		long cnt = 0;
 		try {
+			log.debug("Starting to read from stream {}", input);
 			Data item = input.readNext();
+			log.debug("First item is: {}", item);
+
 			while (item != null && (limit < 0 || cnt < limit)) {
 				cnt++;
 				log.debug("Processing {}", item);

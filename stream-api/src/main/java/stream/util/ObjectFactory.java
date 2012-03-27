@@ -101,9 +101,21 @@ public class ObjectFactory extends VariableContext {
 		//
 		Object object = clazz.newInstance();
 
+		Map<String, String> p = new HashMap<String, String>();
+		for (String key : parameter.keySet()) {
+			if (parameter.get(key).indexOf("%{") >= 0) {
+				String orig = parameter.get(key);
+				String expanded = expand(orig);
+				p.put(key, expanded);
+				log.debug("Expanded {} to {}", orig, expanded);
+			} else
+				p.put(key, parameter.get(key));
+		}
+
 		// Inject the parameters into the object...
 		//
-		ParameterInjection.inject(object, parameter);
+		log.info("Injecting parameters: {}", p);
+		ParameterInjection.inject(object, p);
 		return object;
 	}
 

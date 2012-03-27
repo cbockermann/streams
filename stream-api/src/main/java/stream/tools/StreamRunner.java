@@ -81,7 +81,8 @@ public class StreamRunner {
 		}
 
 		context = new ExperimentContext(name);
-
+		context.getProperties().putAll(getProperties(root));
+		objectFactory.addVariables(context.getProperties());
 		NodeList children = root.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -179,6 +180,29 @@ public class StreamRunner {
 			}
 		}
 
+	}
+
+	public Map<String, String> getProperties(Element element) {
+		Map<String, String> props = new LinkedHashMap<String, String>();
+		NodeList ch = element.getChildNodes();
+		for (int i = 0; i < ch.getLength(); i++) {
+			Node child = ch.item(i);
+			if (child instanceof Element) {
+				Element el = (Element) child;
+				if (el.getNodeName().equalsIgnoreCase("property")) {
+
+					String key = el.getAttribute("name");
+					String value = el.getAttribute("value");
+
+					if (key != null && !"".equals(key.trim()) && value != null
+							&& !"".equals(value.trim())) {
+						props.put(key, value);
+					}
+				}
+			}
+		}
+		log.debug("Found properties: {}", props);
+		return props;
 	}
 
 	public List<DataProcessor> getDataProcessors(Element child)

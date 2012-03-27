@@ -3,9 +3,13 @@
 	<Stream id="log" class="stream.io.CsvStream" limit="5" separator="___"
 		url="file:/Users/chris/t3.csv" /> <!--  http://kirmes.cs.uni-dortmund.de/data/random-stream.csv.gz" />  -->
 
+
+	<property name="group" value="A,B,C" />
+	<property name="slowdown" value="1500ms" />
+
 	<Process input="log">
 
-		<Delay time="1000ms" /> 		
+		<Delay time="%{slowdown}" /> 		
  		<Enqueue ref="queue" />
  		<Message id="1" txt="Processor[log] processing item..." />
 		

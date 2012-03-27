@@ -1,0 +1,22 @@
+<experiment source="log" import="stream.logic,stream.logger">
+
+	<Stream id="log" class="stream.io.CsvStream" limit="5" separator="___"
+		url="file:/Users/chris/t3.csv" /> <!--  http://kirmes.cs.uni-dortmund.de/data/random-stream.csv.gz" />  -->
+
+	<Process input="log">
+
+		<Delay time="1000ms" /> 		
+ 		<Enqueue ref="queue" />
+ 		<Message id="1" txt="Processor[log] processing item..." />
+		
+	</Process>
+	
+	<Process input="queue">
+		
+ 		<Message txt="Processor[queue] processing item..." />
+ 		<Apply ref="1" />
+		<PrintData />
+	
+	</Process>
+	
+</experiment>

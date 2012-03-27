@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.Context;
 import stream.io.DataStream;
 
 /**
@@ -27,9 +28,12 @@ public class StreamProcess extends Thread {
 	boolean running = false;
 	String processId;
 	Long limit = -1L;
+	Context context;
 
-	public StreamProcess(String processId, DataStream input) {
+	public StreamProcess(String processId, Context ctx,
+			DataStream input) {
 		this.processId = processId;
+		this.context = ctx;
 		if (this.processId == null || "".equals(processId.trim())) {
 			synchronized (LAST_ID) {
 				this.processId = "spu:" + LAST_ID++;
@@ -38,9 +42,9 @@ public class StreamProcess extends Thread {
 		this.input = input;
 	}
 
-	public StreamProcess(String processId, DataStream input,
-			DataProcessor output) {
-		this(processId, input);
+	public StreamProcess(String processId, Context ctx,
+			DataStream input, DataProcessor output) {
+		this(processId, ctx, input);
 		addDataProcessor(output);
 	}
 
@@ -51,6 +55,21 @@ public class StreamProcess extends Thread {
 
 	public void removeDataProcessor(DataProcessor proc) {
 		processors.remove(proc);
+	}
+
+	/**
+	 * @return the context
+	 */
+	public Context getContext() {
+		return context;
+	}
+
+	/**
+	 * @param context
+	 *            the context to set
+	 */
+	public void setContext(Context context) {
+		this.context = context;
 	}
 
 	/**
@@ -94,7 +113,7 @@ public class StreamProcess extends Thread {
 
 		for (DataProcessor proc : processors) {
 			try {
-				proc.init();
+				proc.init(context);
 			} catch (Exception e) {
 				log.error("Failed to initialize processor '{}': {}", proc,
 						e.getMessage());

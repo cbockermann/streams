@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
+import stream.data.Context;
 
 /**
  * <p>
@@ -95,13 +96,10 @@ public class DataStreamWriter extends AbstractDataProcessor implements
 		this.separator = separator;
 	}
 
-	
-	
-	
 	@Override
-	public void init() throws Exception {
-		if(p==null){
-			throw new FileNotFoundException("File " + url +" not found");
+	public void init(Context ctx) throws Exception {
+		if (p == null) {
+			throw new FileNotFoundException("File " + url + " not found");
 		}
 	}
 

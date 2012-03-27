@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.DataUtils;
+import stream.data.Context;
 import stream.data.vector.Vector;
 import stream.io.DataStreamWriter;
 import stream.io.SparseDataStreamWriter;
@@ -71,7 +72,7 @@ public class SgdMapper extends StatefulStreamMapper {
 	 * @see stream.hadoop.StreamMapper#startBlock()
 	 */
 	@Override
-	public void init() {
+	public void init(Context ctx) {
 		//
 		// this is for stateful persistent weight vectors only
 		//

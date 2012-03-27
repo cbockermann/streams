@@ -10,12 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataListener;
+import stream.data.Processor;
 
 /**
  * @author chris
  * 
  */
-public class DataStreamQueue extends AbstractDataStream implements DataListener {
+public class DataStreamQueue extends AbstractDataStream implements
+		DataListener, Processor {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
 	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
@@ -85,5 +87,14 @@ public class DataStreamQueue extends AbstractDataStream implements DataListener 
 	@Override
 	public void dataArrived(Data item) {
 		queue.add(item);
+	}
+
+	/**
+	 * @see stream.data.Processor#process(stream.data.Data)
+	 */
+	@Override
+	public Data process(Data input) {
+		queue.add(input);
+		return input;
 	}
 }

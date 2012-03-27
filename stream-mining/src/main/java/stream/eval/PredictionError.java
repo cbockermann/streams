@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.Context;
 import stream.data.stats.Statistics;
 import stream.learner.LabelPredictor;
 import stream.learner.Learner;
@@ -160,7 +161,7 @@ public class PredictionError<T> extends
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 	}
 
 	/**

@@ -36,6 +36,10 @@
       <class>stream.io.CsvStreamOperator</class>
     </operator>
     <operator>
+      <key>JSONStream</key>
+      <class>stream.io.JSONStreamOperator</class>
+    </operator>
+    <operator>
       <key>LogDataStream</key>
       <class>stream.io.LogDataStreamOperator</class>
     </operator>

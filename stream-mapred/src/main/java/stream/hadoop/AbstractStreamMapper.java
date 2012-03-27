@@ -59,7 +59,7 @@ public abstract class AbstractStreamMapper implements StreamMapper {
 
 	public void run(InputStream in, OutputStream out) throws Exception {
 		outputStream = new PrintStream(out);
-		this.init();
+		this.init(null);
 
 		DataStream stream = this.createDataStream(in);
 		Data item = stream.readNext();

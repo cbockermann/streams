@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.Measurable;
+import stream.data.Context;
 import stream.plugin.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.util.ParameterInjection;
@@ -174,8 +175,8 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		processor.init();
+	public void init(Context ctx) throws Exception {
+		processor.init(ctx);
 	}
 
 	/**

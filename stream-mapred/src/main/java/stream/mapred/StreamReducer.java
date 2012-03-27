@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import stream.data.Data;
+import stream.data.Context;
 import stream.io.DataStream;
 import stream.io.DataStreamFactory;
 import stream.io.DataStreamWriter;
@@ -39,7 +40,7 @@ public abstract class StreamReducer extends AbstractDataProcessor implements
 	}
 
 	public void reduce() throws Exception {
-		init();
+		init(null);
 		long count = 0L;
 		Data item = read();
 		while (item != null) {
@@ -58,7 +59,7 @@ public abstract class StreamReducer extends AbstractDataProcessor implements
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 	}
 
 	/**

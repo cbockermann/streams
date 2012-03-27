@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.Context;
 
 /**
  * <p>
@@ -150,11 +151,11 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	 * @see stream.data.AbstractDataProcessor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		super.init();
+	public void init(Context ctx) throws Exception {
+		super.init(ctx);
 
 		for (DataProcessor p : processors) {
-			p.init();
+			p.init(ctx);
 		}
 	}
 

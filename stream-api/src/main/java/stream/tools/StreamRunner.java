@@ -31,7 +31,9 @@ public class StreamRunner {
 	static Logger log = LoggerFactory.getLogger(StreamRunner.class);
 	ObjectFactory objectFactory = ObjectFactory.newInstance();
 
-	boolean openListeners = false;
+	boolean openListeners = true;
+
+	ExperimentContext context = new ExperimentContext();
 
 	Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
 
@@ -44,7 +46,7 @@ public class StreamRunner {
 	Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
 
 	public StreamRunner(URL url) throws Exception {
-		this(url, false);
+		this(url, true);
 	}
 
 	public StreamRunner(URL url, boolean openListeners) throws Exception {
@@ -72,6 +74,13 @@ public class StreamRunner {
 				}
 			}
 		}
+
+		String name = root.getAttribute("name");
+		if (name == null) {
+			name = "local";
+		}
+
+		context = new ExperimentContext(name);
 
 		NodeList children = root.getChildNodes();
 
@@ -165,6 +174,7 @@ public class StreamRunner {
 					DataStreamQueue q = new DataStreamQueue();
 					listeners.put(input, q);
 					streams.put(input, q);
+					context.register(input, q);
 				}
 			}
 		}
@@ -181,12 +191,12 @@ public class StreamRunner {
 			String name = n.getNodeName();
 			if (n instanceof Element) {
 
+				DataProcessor p = null;
+
 				if ((name.equalsIgnoreCase("processor") || name
 						.equalsIgnoreCase("mapper"))) {
 					try {
-						DataProcessor processor = (DataProcessor) objectFactory
-								.create((Element) n);
-						processors.add(processor);
+						p = (DataProcessor) objectFactory.create((Element) n);
 					} catch (ClassNotFoundException cnfe) {
 						log.error("Failed to create object for class {}",
 								cnfe.getMessage());
@@ -198,16 +208,24 @@ public class StreamRunner {
 
 					try {
 						log.debug("Trying to generate object from {}", n);
-						DataProcessor p = (DataProcessor) objectFactory
-								.create((Element) n);
+						p = (DataProcessor) objectFactory.create((Element) n);
 						log.debug("Created generic data-processor {}", p);
-						processors.add(p);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 
 				}
 
+				if (p != null) {
+					log.debug("Adding data processor...");
+					processors.add(p);
+				}
+
+				String id = ((Element) n).getAttribute("id");
+				if (id != null && !"".equals(id.trim())) {
+					log.debug("Registering processor with attribute '{}'", id);
+					context.register(id, p);
+				}
 			}
 		}
 		return processors;
@@ -265,7 +283,7 @@ public class StreamRunner {
 			DataStream input = getStream(key);
 			log.debug("Creating new StreamProcess for stream {}", key);
 			log.debug("   process {} is reading from {}", key, input);
-			StreamProcess p = new StreamProcess(null, input);
+			StreamProcess p = new StreamProcess(null, context, input);
 			List<DataProcessor> proc = processors.get(key);
 			if (proc != null && !proc.isEmpty()) {
 				log.debug("Adding {} processors to stream-process {}",

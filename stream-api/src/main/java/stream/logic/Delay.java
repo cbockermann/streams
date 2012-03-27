@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
+import stream.data.Context;
 import stream.util.Description;
 import stream.util.SimpleTimeParser;
 
@@ -46,8 +47,8 @@ public class Delay extends ConditionedDataProcessor {
 	 * @see stream.data.AbstractDataProcessor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		super.init();
+	public void init(Context ctx) throws Exception {
+		super.init(ctx);
 		if (time != null && !"".equals(time.trim()))
 			milliseconds = SimpleTimeParser.parseTime(time);
 		else

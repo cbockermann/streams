@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.data.Context;
 import stream.util.Parameter;
 import stream.util.ParameterUtils;
 
@@ -112,7 +113,7 @@ public class LiveStreamPlotter extends DataVisualizer {
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 		frame = new JFrame();
 
 		if (yrange != null && !"".equals(yrange.trim())) {

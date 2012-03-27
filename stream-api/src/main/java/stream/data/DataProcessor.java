@@ -12,7 +12,24 @@ package stream.data;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public interface DataProcessor extends Processor<Data, Data> {
+public interface DataProcessor extends Processor {
+
+	/**
+	 * This method is called once at initialization/setup time after the object
+	 * has been instantiated and AFTER all parameters have been injected.
+	 * 
+	 * @throws Exception
+	 */
+	public void init(Context context) throws Exception;
+
+	/**
+	 * This method is called at the time where the complete system is torn down.
+	 * This may be used to close file-handles, connections or clean up internal
+	 * memory.
+	 * 
+	 * @throws Exception
+	 */
+	public void finish() throws Exception;
 
 	/**
 	 * Process the given unit of data.

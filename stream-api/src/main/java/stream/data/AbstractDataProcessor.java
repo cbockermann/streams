@@ -9,11 +9,14 @@ package stream.data;
  */
 public abstract class AbstractDataProcessor implements DataProcessor {
 
+	protected Context context;
+
 	/**
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
+		context = ctx;
 	}
 
 	/**

@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.Measurable;
+import stream.data.Context;
 import stream.plugin.util.ParameterTypeDiscovery;
+import stream.tools.ExperimentContext;
 import stream.util.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
@@ -30,6 +32,7 @@ import com.rapidminer.parameter.ParameterType;
  */
 public abstract class DataStreamOperator extends Operator implements
 		Measurable, DataProcessor {
+	final static ExperimentContext context = new ExperimentContext();
 	static Logger log = LoggerFactory.getLogger(DataStreamOperator.class);
 
 	final InputPort input = getInputPorts().createPort(
@@ -101,7 +104,7 @@ public abstract class DataStreamOperator extends Operator implements
 			setup = true;
 
 			try {
-				processor.init();
+				processor.init(context);
 			} catch (Exception e) {
 				throw new UserError(this, e, "Failed to initialize processor: "
 						+ e.getMessage());
@@ -154,7 +157,7 @@ public abstract class DataStreamOperator extends Operator implements
 	public void processStarts() throws OperatorException {
 		super.processStarts();
 		try {
-			processor.init();
+			processor.init(context);
 		} catch (Exception e) {
 			throw new UserError(this, e, "Failed to initialize operator: "
 					+ e.getMessage());
@@ -214,8 +217,8 @@ public abstract class DataStreamOperator extends Operator implements
 	 * @see stream.data.Processor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		processor.init();
+	public void init(Context ctx) throws Exception {
+		processor.init(ctx);
 	}
 
 	/**

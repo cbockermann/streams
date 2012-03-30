@@ -9,13 +9,13 @@ import stream.learner.Learner;
 
 public class TrainProcessor extends AbstractDataProcessor {
 
-	Map<String, Learner<Data, ?>> learners = new LinkedHashMap<String, Learner<Data, ?>>();
+	Map<String, Learner<?>> learners = new LinkedHashMap<String, Learner<?>>();
 
-	public void addLearner(String name, Learner<Data, ?> learner) {
+	public void addLearner(String name, Learner<?> learner) {
 		learners.put(name, learner);
 	}
 
-	public Learner<Data, ?> removeLearner(String name) {
+	public Learner<?> removeLearner(String name) {
 		return learners.remove(name);
 	}
 

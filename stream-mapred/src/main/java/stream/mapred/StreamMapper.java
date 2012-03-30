@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.data.Context;
 import stream.io.CsvStream;
 import stream.io.DataStream;
+import stream.runtime.Context;
 
 /**
  * This class implements a simple map job, that reads data from standard input

@@ -3,74 +3,69 @@
  */
 package stream.learner.tree;
 
+import java.io.Serializable;
+
 import stream.data.Data;
-import stream.learner.Classifier;
 import stream.learner.LearnerUtils;
 import stream.model.PredictionModel;
 
-
 /**
  * <p>
- * This class implements a general model tree, which basically is a decision tree
- * with prediction models at its leaf nodes.
+ * This class implements a general model tree, which basically is a decision
+ * tree with prediction models at its leaf nodes.
  * </p>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
- *
+ * 
  */
-public class ModelTree<I extends NodeInfo,O> 
-	extends TreeNode<I>
-	implements PredictionModel<Data,O> 
+public class ModelTree<I extends NodeInfo, O extends Serializable> extends
+		TreeNode<I>
+// implements PredictionModel<O>
 {
 	/** The unique class ID */
 	private static final long serialVersionUID = 4855897886594236180L;
 
-	
-	Classifier<Data,O> model;
-	
+	PredictionModel<O> model;
+
 	SplitCriterion<I> splitCrierion;
 
 	/**
 	 * @param name
 	 * @param parent
 	 */
-	public ModelTree(String name, TreeNode<I> parent, SplitCriterion<I> splitCrit ) {
+	public ModelTree(String name, TreeNode<I> parent,
+			SplitCriterion<I> splitCrit) {
 		super(name, null, parent);
 		splitCrierion = splitCrit;
 	}
-	
 
 	/**
 	 * @return the model
 	 */
-	public Classifier<Data, O> getModel() {
+	public PredictionModel<O> getModel() {
 		return model;
 	}
 
-
 	/**
-	 * @param model the model to set
+	 * @param model
+	 *            the model to set
 	 */
-	public void setModel(Classifier<Data, O> model) {
+	public void setModel(PredictionModel<O> model) {
 		this.model = model;
 	}
-
 
 	/**
 	 * @see stream.model.PredictionModel#predict(java.lang.Object)
 	 */
-	@Override
-	public O predict(Data item) {
-		
-		ModelTree<I,O> leaf = getLeaf( item );
-		if( leaf != null )
-			return leaf.model.predict(item);
+	public Data process(Data item) {
 
-		return null;
+		ModelTree<I, O> leaf = getLeaf(item);
+		if (leaf != null)
+			return leaf.model.process(item); // .predict(item);
+
+		return item;
 	}
-	
 
-	
 	/**
 	 * This method traverses the tree by testing the given data item at each
 	 * inner node until reaching a leaf.
@@ -78,55 +73,55 @@ public class ModelTree<I extends NodeInfo,O>
 	 * @param item
 	 * @return
 	 */
-	public ModelTree<I,O> getLeaf( Data item ){
-		
-		if( this.isLeaf() )
-			return this;
-		
-		if( this.value == null )
-			throw new RuntimeException( "Weird error! This node is not a leaf, but also does not contain a threshold value!" );
+	public ModelTree<I, O> getLeaf(Data item) {
 
-		if( LearnerUtils.isNumerical( getName(), item ) ){
+		if (this.isLeaf())
+			return this;
+
+		if (this.value == null)
+			throw new RuntimeException(
+					"Weird error! This node is not a leaf, but also does not contain a threshold value!");
+
+		if (LearnerUtils.isNumerical(getName(), item)) {
 			//
 			// This checks for the best matching successor based on numerical
 			// intervals obtained from each sibling
 			//
-			Double val = LearnerUtils.getDouble( getName(), item );
-			ModelTree<I,O> child = getChildFor( val );
-			if( child != null )
-				return child.getLeaf( item );
-			
+			Double val = LearnerUtils.getDouble(getName(), item);
+			ModelTree<I, O> child = getChildFor(val);
+			if (child != null)
+				return child.getLeaf(item);
+
 		} else {
 			// check for matching child on nominal attribute value
 			//
-			ModelTree<I,O> child = getChildFor( item.get( getName() ).toString() );
-			if( child != null )
-				return child.getLeaf( item );
+			ModelTree<I, O> child = getChildFor(item.get(getName()).toString());
+			if (child != null)
+				return child.getLeaf(item);
 		}
-		
+
 		return null;
 	}
-	
-	
+
 	/**
 	 * This method checks all siblings of the current node and returns the
-	 * successor that matches the given value. This method handles the case
-	 * of a real-valued condition.
+	 * successor that matches the given value. This method handles the case of a
+	 * real-valued condition.
 	 * 
 	 * @param val
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ModelTree<I,O> getChildFor( Double val ){
+	public ModelTree<I, O> getChildFor(Double val) {
 		//
-		// the very first sibbling corresponds to  ] -infinity; value ]
+		// the very first sibbling corresponds to ] -infinity; value ]
 		//
 		Double lower = Double.NEGATIVE_INFINITY;
-		
-		for( int i = 0; i < children.size(); i++ ){
-			ModelTree<I,O> child = (ModelTree<I,O>) children.get(i);
+
+		for (int i = 0; i < children.size(); i++) {
+			ModelTree<I, O> child = (ModelTree<I, O>) children.get(i);
 			Double upper = (Double) child.value;
-			if( lower < val && val <= upper ){
+			if (lower < val && val <= upper) {
 				return child;
 			} else {
 				lower = upper;
@@ -134,8 +129,7 @@ public class ModelTree<I extends NodeInfo,O>
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * This method returns the child for the given nominal value.
 	 * 
@@ -143,13 +137,13 @@ public class ModelTree<I extends NodeInfo,O>
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ModelTree<I,O> getChildFor( String value ){
+	public ModelTree<I, O> getChildFor(String value) {
 		//
 		// check for matching child on nominal attribute value
 		//
-		for( int i = 0; i < children.size(); i++ ){
-			ModelTree<I,O> child = (ModelTree<I,O>) children.get(i);
-			if( child.value.equals( value ) )
+		for (int i = 0; i < children.size(); i++) {
+			ModelTree<I, O> child = (ModelTree<I, O>) children.get(i);
+			if (child.value.equals(value))
 				return child;
 		}
 		return null;

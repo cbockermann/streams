@@ -20,10 +20,9 @@ public class DataStreamOracle extends AbstractDataProcessor {
 	static Logger log = LoggerFactory.getLogger(DataStreamOracle.class);
 
 	/* The learning algorithm of this oracle */
-	Learner<Data, PredictionModel<Data, Serializable>> learner;
+	Learner<PredictionModel<Serializable>> learner;
 
-	public DataStreamOracle(
-			Learner<Data, PredictionModel<Data, Serializable>> learner) {
+	public DataStreamOracle(Learner<PredictionModel<Serializable>> learner) {
 		this.learner = learner;
 	}
 
@@ -33,7 +32,7 @@ public class DataStreamOracle extends AbstractDataProcessor {
 	@Override
 	public Data process(Data arg0) {
 		log.debug("Processing datum {}", arg0);
-		PredictionModel<Data, Serializable> model = learner.getModel();
+		PredictionModel<Serializable> model = learner.getModel();
 		Serializable prediction = model.predict(arg0);
 
 		for (String key : arg0.keySet()) {
@@ -42,7 +41,7 @@ public class DataStreamOracle extends AbstractDataProcessor {
 			}
 		}
 
-		String predLabel = "@pred:" + model.toString();
+		String predLabel = "@prediction:" + model.toString();
 		log.debug("   oracle's prediction is: {} = {}", predLabel, prediction);
 		arg0.put(predLabel, prediction);
 		return arg0;

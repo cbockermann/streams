@@ -1,4 +1,4 @@
-<experiment source="log" import="stream.logic">
+<experiment import="stream.logic">
 
 	<property name="group1" value="Att1,Att2" />
 

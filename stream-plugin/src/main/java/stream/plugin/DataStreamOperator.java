@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.Measurable;
-import stream.data.Context;
 import stream.plugin.util.ParameterTypeDiscovery;
-import stream.tools.ExperimentContext;
+import stream.runtime.ContainerContext;
+import stream.runtime.Context;
 import stream.util.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
@@ -32,7 +32,7 @@ import com.rapidminer.parameter.ParameterType;
  */
 public abstract class DataStreamOperator extends Operator implements
 		Measurable, DataProcessor {
-	final static ExperimentContext context = new ExperimentContext();
+	final static ContainerContext context = new ContainerContext();
 	static Logger log = LoggerFactory.getLogger(DataStreamOperator.class);
 
 	final InputPort input = getInputPorts().createPort(
@@ -214,7 +214,7 @@ public abstract class DataStreamOperator extends Operator implements
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

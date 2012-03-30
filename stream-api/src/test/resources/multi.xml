@@ -1,6 +1,6 @@
-<experiment source="log" import="stream.logic,stream.logger">
+<experiment import="stream.logic,stream.logger">
 
-	<Stream id="log" class="stream.io.CsvStream" limit="5" separator="___"
+	<Stream id="log" class="stream.io.CsvStream" limit="50" separator="___"
 		url="file:/Users/chris/t3.csv" /> <!--  http://kirmes.cs.uni-dortmund.de/data/random-stream.csv.gz" />  -->
 
 
@@ -9,7 +9,6 @@
 
 	<Process input="log">
 
-		<Delay time="%{slowdown}" /> 		
  		<Enqueue ref="queue" />
  		<Message id="1" txt="Processor[log] processing item..." />
 		
@@ -17,8 +16,9 @@
 	
 	<Process input="queue">
 		
+		
+		<Delay time="%{slowdown}" />
  		<Message txt="Processor[queue] processing item..." />
- 		<Apply ref="1" />
 		<PrintData />
 	
 	</Process>

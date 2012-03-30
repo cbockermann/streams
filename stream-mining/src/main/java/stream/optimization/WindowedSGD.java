@@ -79,11 +79,11 @@ public class WindowedSGD extends StochasticGradientDescent {
 
 
 	/**
-	 * @see stream.optimization.StochasticGradientDescent#init()
+	 * @see stream.optimization.StochasticGradientDescent#reset()
 	 */
 	@Override
-	public void init() {
-		super.init();
+	public void reset() {
+		super.reset();
 
 		// ensure that the windowSize is at least 1
 		//

@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.Measurable;
-import stream.data.Context;
 import stream.plugin.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
+import stream.runtime.Context;
 import stream.util.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
@@ -172,7 +172,7 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

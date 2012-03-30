@@ -1,21 +1,24 @@
-<experiment source="log" import="stream.plotter,stream.data.filter">
+<container import="stream.plotter,stream.data.filter">
 
-	<Stream id="log" class="stream.io.CsvStream"
+	<stream id="log" class="stream.io.CsvStream"
 		url="classpath:/multi-golf.csv.gz" />
 
 	<Process input="log">
+		<MapKeys from="play" to="@label" />
+		<BinaryLabels />
+		<ParseDouble keys="@label" />
 	
 		<SetValue key="temperature" value="3.7" condition="temperature @eq cold" />
 		<SetValue key="temperature" value="21.4" condition="temperature @eq mild" />
 		<SetValue key="temperature" value="40.1" condition="temperature @eq hot" />
 	
-		<stream.logic.Delay time="50ms" />
 	
 		<!-- 
-		<PrintData />
+		<stream.logic.Delay time="10ms" />
 		 -->
-		<stream.plotter.LiveStreamPlotter keys="temperature" keepOpen="true" history="500" width="1024" yrange="20.2;50.2"/>	
+		<PrintData />
+		<stream.plotter.LiveStreamPlotter title="Temperature" keys="temperature" keepOpen="true" history="500" width="1024" yrange="20.2;50.2" updateInterval="1"/>	
 		
 	</Process>
 	
-</experiment>
+</container>

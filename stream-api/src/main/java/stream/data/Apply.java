@@ -6,6 +6,8 @@ package stream.data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.runtime.Context;
+
 /**
  * @author chris
  * 
@@ -31,7 +33,7 @@ public class Apply extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init(stream.data.Context)
+	 * @see stream.data.AbstractDataProcessor#init(stream.runtime.Context)
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

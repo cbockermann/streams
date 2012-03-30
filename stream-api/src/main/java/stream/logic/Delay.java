@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
-import stream.data.Context;
+import stream.runtime.Context;
 import stream.util.Description;
 import stream.util.SimpleTimeParser;
 

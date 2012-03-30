@@ -16,30 +16,29 @@ import stream.data.Data;
 import stream.model.Distribution;
 import stream.model.NominalDistributionModel;
 import stream.model.NumericalDistributionModel;
+import stream.model.PredictionModel;
 
 /**
  * <p>
- * This class implements a NaiveBayes classifier. It combines the learning algorithm and
- * the model implementation in one. The implementation provides support for numerical
- * (Double) and nominal (String) attributes.
+ * This class implements a NaiveBayes classifier. It combines the learning
+ * algorithm and the model implementation in one. The implementation provides
+ * support for numerical (Double) and nominal (String) attributes.
  * </p>
  * <p>
- * The implementation is a strictly incremental one and supports memory limitation. The
- * memory limitation is carried out by truncating the distribution models built for each
- * of the observed attributes.
+ * The implementation is a strictly incremental one and supports memory
+ * limitation. The memory limitation is carried out by truncating the
+ * distribution models built for each of the observed attributes.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public class NaiveBayesWOP 
-extends AbstractClassifier<Data,String>
-{
+public class NaiveBayesWOP extends AbstractClassifier<String> {
 	/** The unique class ID */
 	private static final long serialVersionUID = 1095437834368310484L;
 
 	/* The global logger for this class */
-	static Logger log = LoggerFactory.getLogger( NaiveBayesWOP.class );
+	static Logger log = LoggerFactory.getLogger(NaiveBayesWOP.class);
 
 	/* The attribute used as label */
 	String labelAttribute = null;
@@ -51,29 +50,27 @@ extends AbstractClassifier<Data,String>
 	Distribution<String> classDistribution = null; // createNominalDistribution();
 
 	/* A map providing the distributions of the attributes (nominal,numerical) */
-	Map<String,Distribution<?>> distributions = new HashMap<String,Distribution<?>>();
-
+	Map<String, Distribution<?>> distributions = new HashMap<String, Distribution<?>>();
 
 	/**
-	 * Create a new NaiveBayes instance. The label attribute is automatically determined
-	 * by the learner, if not explicitly set with the <code>setLabelAttribute</code>
-	 * method.
+	 * Create a new NaiveBayes instance. The label attribute is automatically
+	 * determined by the learner, if not explicitly set with the
+	 * <code>setLabelAttribute</code> method.
 	 */
-	public NaiveBayesWOP(){
+	public NaiveBayesWOP() {
 		classDistribution = createNominalDistribution();
 	}
 
-
 	/**
-	 * Create a new NaiveBayes instance which uses the specified attribute as label.
+	 * Create a new NaiveBayes instance which uses the specified attribute as
+	 * label.
 	 * 
 	 * @param labelAttribute
 	 */
-	public NaiveBayesWOP( String labelAttribute ){
+	public NaiveBayesWOP(String labelAttribute) {
 		this();
-		setLabelAttribute( labelAttribute );
+		setLabelAttribute(labelAttribute);
 	}
-
 
 	/**
 	 * @return the labelAttribute
@@ -82,14 +79,13 @@ extends AbstractClassifier<Data,String>
 		return labelAttribute;
 	}
 
-
 	/**
-	 * @param labelAttribute the labelAttribute to set
+	 * @param labelAttribute
+	 *            the labelAttribute to set
 	 */
 	public void setLabelAttribute(String labelAttribute) {
 		this.labelAttribute = labelAttribute;
 	}
-
 
 	/**
 	 * @return the laplaceCorrection
@@ -98,35 +94,37 @@ extends AbstractClassifier<Data,String>
 		return laplaceCorrection;
 	}
 
-
 	/**
-	 * @param laplaceCorrection the laplaceCorrection to set
+	 * @param laplaceCorrection
+	 *            the laplaceCorrection to set
 	 */
 	public void setLaplaceCorrection(Double laplaceCorrection) {
 		this.laplaceCorrection = laplaceCorrection;
 	}
 
-
 	/**
 	 * @see stream.model.PredictionModel#predict(java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public String predict(Data item) {
+	public String classify(Data item) {
 
-		Map<String,Double> classLikeli = new LinkedHashMap<String,Double>();
-		log.debug( "Predicting one of these classes: {}", classDistribution.getElements() );
+		Map<String, Double> classLikeli = new LinkedHashMap<String, Double>();
+		log.debug("Predicting one of these classes: {}",
+				classDistribution.getElements());
 
-		for( String label : getClassDistribution().getElements() ){
-			// 9/14  class likelihoods
+		for (String label : getClassDistribution().getElements()) {
+			// 9/14 class likelihoods
 			//
-			Double cl = getClassDistribution().getCount( label ).doubleValue(); //.getHistogram().get( label );
-			log.debug( "class likelihood for class '" + label + "' is {} / {}", cl, getClassDistribution().getCount() );
-			Double p_label = getClassDistribution().getHistogram().get( label ) / this.getClassDistribution().getCount();
-			classLikeli.put( label, p_label );
-			classLikeli.put( label, 1.0d );
+			Double cl = getClassDistribution().getCount(label).doubleValue(); // .getHistogram().get(
+																				// label
+																				// );
+			log.debug("class likelihood for class '" + label + "' is {} / {}",
+					cl, getClassDistribution().getCount());
+			Double p_label = getClassDistribution().getHistogram().get(label)
+					/ this.getClassDistribution().getCount();
+			classLikeli.put(label, p_label);
+			classLikeli.put(label, 1.0d);
 		}
-
 
 		//
 		// compute the class likelihood for each class:
@@ -135,53 +133,57 @@ extends AbstractClassifier<Data,String>
 		String maxClass = null;
 		Double totalLikelihood = 0.0d;
 
-		for( String clazz : classLikeli.keySet() ){
+		for (String clazz : classLikeli.keySet()) {
 
-			Double likelihood = classLikeli.get( clazz );
+			Double likelihood = classLikeli.get(clazz);
 
-			for( String attribute : item.keySet() ){
+			for (String attribute : item.keySet()) {
 
-				if( !this.labelAttribute.equals( attribute ) ){
+				if (!this.labelAttribute.equals(attribute)) {
 
-					Object value = item.get( attribute );
-					if( value.getClass().equals( Double.class ) ){
+					Object value = item.get(attribute);
+					if (value.getClass().equals(Double.class)) {
 						//
 						// multiplying probability for double value
 						//
-						Distribution<Double> dist = (Distribution<Double>) distributions.get(clazz);
-						likelihood *= dist.prob( (Double) value );
+						Distribution<Double> dist = (Distribution<Double>) distributions
+								.get(clazz);
+						likelihood *= dist.prob((Double) value);
 
 					} else {
 						//
 						// determine likelihood for nominal value
 						//
-						String feature = this.getNominalCondition( attribute, item);
+						String feature = this.getNominalCondition(attribute,
+								item);
 
-						Double d = ((Distribution<String>) distributions.get( clazz )).getCount( feature ).doubleValue();
-						Double total = this.getClassDistribution().getCount( clazz ).doubleValue();
+						Double d = ((Distribution<String>) distributions
+								.get(clazz)).getCount(feature).doubleValue();
+						Double total = this.getClassDistribution()
+								.getCount(clazz).doubleValue();
 
-						if( d == null || d == 0.0d ){
+						if (d == null || d == 0.0d) {
 							d = laplaceCorrection;
 							total += laplaceCorrection;
 						}
 
-						log.debug( "  likelihood for {}  is  {}  |" + clazz + " ", feature, d / total );
-						likelihood *= ( d / total );
+						log.debug("  likelihood for {}  is  {}  |" + clazz
+								+ " ", feature, d / total);
+						likelihood *= (d / total);
 					}
 				}
 			}
 
-			classLikeli.put( clazz, likelihood );
+			classLikeli.put(clazz, likelihood);
 			totalLikelihood += likelihood;
 		}
 
-
 		// determine most likely class
 		//
-		for( String clazz : classLikeli.keySet() ){
-			Double likelihood = classLikeli.get( clazz ) / totalLikelihood;
-			log.debug( "probability for {} is {}", clazz, likelihood );
-			if( maxClass == null || likelihood > max ){
+		for (String clazz : classLikeli.keySet()) {
+			Double likelihood = classLikeli.get(clazz) / totalLikelihood;
+			log.debug("probability for {} is {}", clazz, likelihood);
+			if (maxClass == null || likelihood > max) {
 				maxClass = clazz;
 				max = likelihood;
 			}
@@ -190,11 +192,9 @@ extends AbstractClassifier<Data,String>
 		return maxClass;
 	}
 
-
-	public String getNominalCondition( String attribute, Data item ){
-		return attribute + "='" + item.get( attribute ) + "'";
+	public String getNominalCondition(String attribute, Data item) {
+		return attribute + "='" + item.get(attribute) + "'";
 	}
-
 
 	/**
 	 * @see stream.learner.Learner#learn(java.lang.Object)
@@ -206,127 +206,129 @@ extends AbstractClassifier<Data,String>
 		//
 		// determine the label attribute, if not already set
 		//
-		if( labelAttribute == null ){
-			for( String name : item.keySet() )
-				if( name.startsWith( "_class" ) ){
+		if (labelAttribute == null) {
+			for (String name : item.keySet())
+				if (name.startsWith("_class")) {
 					labelAttribute = name;
 					break;
 				}
 		}
 
-
-		if( item.get( labelAttribute ) == null ){
-			log.warn( "Not processing unlabeled data item {}", item );
+		if (item.get(labelAttribute) == null) {
+			log.warn("Not processing unlabeled data item {}", item);
 			return;
 		}
 
-		String clazz = item.get( labelAttribute ).toString();
-		log.debug( "Learning from example with label={}", clazz );
-		if( this.classDistribution == null )
-			this.classDistribution = new NominalDistributionModel<String>(); //this.createNominalDistribution();
+		String clazz = item.get(labelAttribute).toString();
+		log.debug("Learning from example with label={}", clazz);
+		if (this.classDistribution == null)
+			this.classDistribution = new NominalDistributionModel<String>(); // this.createNominalDistribution();
 
-
-		if( log.isDebugEnabled() ){
-			log.debug( "Classes: {}", classDistribution.getElements() );
-			for( String t : classDistribution.getElements() )
-				log.debug( "    {}:  {}", t, classDistribution.getCount( t ) );
+		if (log.isDebugEnabled()) {
+			log.debug("Classes: {}", classDistribution.getElements());
+			for (String t : classDistribution.getElements())
+				log.debug("    {}:  {}", t, classDistribution.getCount(t));
 		}
 		//
 		// For learning we update the distributions of each attribute
 		//
-		for( String attribute : item.keySet() ){
+		for (String attribute : item.keySet()) {
 
-			if( attribute.equalsIgnoreCase( labelAttribute ) ){
+			if (attribute.equalsIgnoreCase(labelAttribute)) {
 				//
 				// adjust the class label distribution
 				//
-				classDistribution.update( clazz );
+				classDistribution.update(clazz);
 
 			} else {
 
-				Object obj = item.get( attribute );
+				Object obj = item.get(attribute);
 
-				if( obj.getClass().equals( Double.class ) ){
+				if (obj.getClass().equals(Double.class)) {
 					Double value = (Double) obj;
-					log.debug( "Handling numerical case ({}) with value  {}", obj, value );
+					log.debug("Handling numerical case ({}) with value  {}",
+							obj, value);
 					//
 					// manage the case of an numerical attribute
 					//
-					Distribution<Double> numDist = (Distribution<Double>) distributions.get( attribute );
-					if( numDist == null ){
+					Distribution<Double> numDist = (Distribution<Double>) distributions
+							.get(attribute);
+					if (numDist == null) {
 						numDist = this.createNumericalDistribution();
-						log.debug( "Creating new numerical distribution model for attribute {}", attribute );
-						distributions.put( attribute, numDist );
+						log.debug(
+								"Creating new numerical distribution model for attribute {}",
+								attribute);
+						distributions.put(attribute, numDist);
 					}
-					numDist.update( value );
+					numDist.update(value);
 
 				} else {
 
-					String value = this.getNominalCondition( attribute, item );
-					log.debug( "Handling nominal case for [ {} | {} ]", value, "class=" + clazz );
+					String value = this.getNominalCondition(attribute, item);
+					log.debug("Handling nominal case for [ {} | {} ]", value,
+							"class=" + clazz);
 
 					//
 					// adapt the nominal distribution for this attribute
 					//
-					Distribution<String> nomDist = (Distribution<String>) distributions.get( clazz );
-					if( nomDist == null ){
+					Distribution<String> nomDist = (Distribution<String>) distributions
+							.get(clazz);
+					if (nomDist == null) {
 						nomDist = this.createNominalDistribution();
-						log.debug( "Creating new nominal distribution model for attribute {}, {}", attribute, "class=" + clazz );
-						distributions.put( clazz, nomDist );
+						log.debug(
+								"Creating new nominal distribution model for attribute {}, {}",
+								attribute, "class=" + clazz);
+						distributions.put(clazz, nomDist);
 					}
-					nomDist.update( value );
+					nomDist.update(value);
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * Returns the class distribution of the current state of the algorithm.
 	 * 
 	 * @return
 	 */
-	public Distribution<String> getClassDistribution(){
-		if( classDistribution == null )
+	public Distribution<String> getClassDistribution() {
+		if (classDistribution == null)
 			classDistribution = createNominalDistribution();
 
 		return this.classDistribution;
 	}
-
-
 
 	/**
 	 * <p>
 	 * Returns the set of numerical distributions of this model.
 	 * </p>
 	 * 
-	 * @return The set of numerical distributions, currently known to this classifier.
+	 * @return The set of numerical distributions, currently known to this
+	 *         classifier.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Distribution<Double>> getNumericalDistributions(){
+	public List<Distribution<Double>> getNumericalDistributions() {
 		List<Distribution<Double>> numDists = new ArrayList<Distribution<Double>>();
-		for( Distribution<?> d : distributions.values() ){
-			if( d instanceof NumericalDistributionModel )
-				numDists.add( (Distribution<Double>) d );
+		for (Distribution<?> d : distributions.values()) {
+			if (d instanceof NumericalDistributionModel)
+				numDists.add((Distribution<Double>) d);
 		}
 
 		return numDists;
 	}
 
-
 	/**
 	 * <p>
-	 * This method creates a new distribution model for nominal values. It can be overwritten
-	 * by subclasses to make use of a more sophisticated/space-limited assessment of nominal
-	 * distributions.
+	 * This method creates a new distribution model for nominal values. It can
+	 * be overwritten by subclasses to make use of a more
+	 * sophisticated/space-limited assessment of nominal distributions.
 	 * </p>
 	 * 
 	 * @return A new, empty distribution model.
 	 */
-	public Distribution<String> createNominalDistribution(){
+	public Distribution<String> createNominalDistribution() {
 		return new NominalDistributionModel<String>();
 	}
-
 
 	/**
 	 * <p>
@@ -335,7 +337,32 @@ extends AbstractClassifier<Data,String>
 	 * 
 	 * @return A new, empty distribution model.
 	 */
-	public Distribution<Double> createNumericalDistribution(){
-		return new NumericalDistributionModel( 1000, 1.0 );
+	public Distribution<Double> createNumericalDistribution() {
+		return new NumericalDistributionModel(getId(), 1000, 1.0);
+	}
+
+	/**
+	 * @see stream.learner.Learner#getModel()
+	 */
+	@Override
+	public PredictionModel<String> getModel() {
+		return new PredictionModel<String>(getId()) {
+			/** The unique class ID */
+			private static final long serialVersionUID = -6697890687009434719L;
+
+			@Override
+			public String predict(Data item) {
+				return classify(item);
+			}
+		};
+	}
+
+	/**
+	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 */
+	@Override
+	public Data process(Data data) {
+		learn(data);
+		return data;
 	}
 }

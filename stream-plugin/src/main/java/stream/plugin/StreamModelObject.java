@@ -13,23 +13,22 @@ import com.rapidminer.operator.Annotations;
 
 /**
  * @author chris
- *
+ * 
  */
 public class StreamModelObject extends AbstractIOObject {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 7903408876270725612L;
 
-	PredictionModel<Data,Serializable> model;
-	
-	
-	public StreamModelObject(){
+	PredictionModel<Serializable> model;
+
+	public StreamModelObject() {
 	}
 
-	public StreamModelObject( PredictionModel<Data,Serializable> model ){
+	public StreamModelObject(PredictionModel<Serializable> model) {
 		this.model = model;
 	}
-	
+
 	/**
 	 * @see com.rapidminer.operator.IOObject#getAnnotations()
 	 */
@@ -38,13 +37,13 @@ public class StreamModelObject extends AbstractIOObject {
 		Annotations annotations = new Annotations();
 		return annotations;
 	}
-	
-	public PredictionModel<Data,Serializable> getPredictionModel(){
+
+	public PredictionModel<Serializable> getPredictionModel() {
 		return model;
 	}
-	
-	public void apply( Data item ){
-		Serializable prediction = model.predict( item );
-		item.put( "@prediction", prediction );
+
+	public void apply(Data item) {
+		Serializable prediction = model.predict(item);
+		item.put("@prediction", prediction);
 	}
 }

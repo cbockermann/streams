@@ -14,8 +14,8 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.tools.URLUtilities;
 import stream.util.Description;
+import stream.util.URLUtilities;
 
 /**
  * @author chris

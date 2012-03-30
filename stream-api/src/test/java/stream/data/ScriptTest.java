@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.tools.StreamRunner;
+import stream.runtime.ProcessContainer;
 
 /**
  * @author chris
@@ -25,9 +25,9 @@ public class ScriptTest {
 	public void test() {
 
 		try {
-			URL url = StreamRunner.class.getResource( "/script-example.xml" );
+			URL url = ProcessContainer.class.getResource( "/script-example.xml" );
 			log.info( "Running experiment from {}", url );
-			StreamRunner runner = new StreamRunner( url );
+			ProcessContainer runner = new ProcessContainer( url );
 			runner.run();
 		} catch (Exception e) {
 			e.printStackTrace();

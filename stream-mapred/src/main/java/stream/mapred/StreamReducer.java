@@ -4,11 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import stream.data.Data;
-import stream.data.Context;
 import stream.io.DataStream;
 import stream.io.DataStreamFactory;
 import stream.io.DataStreamWriter;
 import stream.io.SparseDataStream;
+import stream.runtime.Context;
 
 public abstract class StreamReducer extends AbstractDataProcessor implements
 		Reducer {
@@ -56,7 +56,7 @@ public abstract class StreamReducer extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

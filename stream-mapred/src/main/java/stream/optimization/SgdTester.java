@@ -36,7 +36,7 @@ public class SgdTester extends AbstractDataProcessor {
 		loss.setLambda(lambda);
 		sgd = new StochasticGradientDescent(loss);
 		// sgd.useGaussianKernel(0.001, 2048, false);
-		sgd.init();
+		sgd.reset();
 
 	}
 

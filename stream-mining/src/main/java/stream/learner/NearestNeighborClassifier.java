@@ -13,74 +13,67 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.model.NominalDistributionModel;
 
-public class NearestNeighborClassifier 
-	extends AbstractClassifier<Data, String> 
-{
+public class NearestNeighborClassifier extends AbstractClassifier<String> {
 	/** The unique class ID */
 	private static final long serialVersionUID = 5905212783119820145L;
-	
-	static Logger log = LoggerFactory.getLogger( NearestNeighborClassifier.class );
-	
+
+	static Logger log = LoggerFactory
+			.getLogger(NearestNeighborClassifier.class);
+
 	String labelAttribute = null;
 	List<Data> items = new ArrayList<Data>();
-	
-	
+
 	/**
 	 * @see stream.learner.AbstractClassifier#predict(java.lang.Object)
 	 */
-	@Override
-	public String predict(Data item) {
+	public String classify(Data item) {
 
-		if( labelAttribute == null || items.isEmpty() )
+		if (labelAttribute == null || items.isEmpty())
 			return "?";
-		
-		TreeSet<Data> neighbors = new TreeSet<Data>( new Distance( item ) );
-		neighbors.addAll( items );
-		
+
+		TreeSet<Data> neighbors = new TreeSet<Data>(new Distance(item));
+		neighbors.addAll(items);
+
 		NominalDistributionModel<String> dist = new NominalDistributionModel<String>();
 		Iterator<Data> it = neighbors.iterator();
-		while( it.hasNext() ){
+		while (it.hasNext()) {
 			Data datum = it.next();
-			Serializable label = datum.get( labelAttribute );
-			dist.update( label.toString() );
+			Serializable label = datum.get(labelAttribute);
+			dist.update(label.toString());
 		}
-		
-		return MajorityClass.getMajorityClass( dist );
+
+		return MajorityClass.getMajorityClass(dist);
 	}
-	
 
 	/**
 	 * @see stream.learner.AbstractClassifier#learn(java.lang.Object)
 	 */
 	@Override
 	public void learn(Data item) {
-		
-		if( labelAttribute == null ){
-			labelAttribute = LearnerUtils.detectLabelAttribute( item );
-			if( labelAttribute == null ){
-				log.error( "Failed to detect label for item: {}", item );
+
+		if (labelAttribute == null) {
+			labelAttribute = LearnerUtils.detectLabelAttribute(item);
+			if (labelAttribute == null) {
+				log.error("Failed to detect label for item: {}", item);
 			}
 		}
-		
-		if( labelAttribute == null || item.get( labelAttribute ) == null ){
-			log.warn( "Ignoring item !" );
+
+		if (labelAttribute == null || item.get(labelAttribute) == null) {
+			log.warn("Ignoring item !");
 			return;
 		}
-		
-		items.add( item );
+
+		items.add(item);
 	}
-	
-	
-	public static class Distance 
-		implements Comparator<Data>
-	{
+
+	public static class Distance implements Comparator<Data> {
 		Data pivot;
-		
-		public Distance( Data pivot ){
+
+		public Distance(Data pivot) {
 			this.pivot = pivot;
 		}
-		
-		public Double distance( Data x1, Data x2 ){
+
+		public Double distance(Data x1, Data x2) {
 			return 0.0d;
 		}
 
@@ -89,9 +82,9 @@ public class NearestNeighborClassifier
 		 */
 		@Override
 		public int compare(Data arg0, Data arg1) {
-			Double d1 = distance( pivot, arg0 );
-			Double d2 = distance( pivot, arg1 );
-			return d1.compareTo( d2 );
+			Double d1 = distance(pivot, arg0);
+			Double d2 = distance(pivot, arg1);
+			return d1.compareTo(d2);
 		}
 	}
 }

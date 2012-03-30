@@ -10,7 +10,7 @@ import stream.io.DataStream;
 import stream.plugin.DataSourceObject;
 import stream.plugin.util.OperatorUtils;
 import stream.plugin.util.ParameterTypeDiscovery;
-import stream.tools.StreamRunner;
+import stream.runtime.ProcessContainer;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
@@ -94,12 +94,12 @@ public abstract class DataStreamReader<D extends DataStream> extends Operator {
 	public D createDataStream( Class<D> dataStreamClass, Map<String,String> parameters ) throws Exception {
 		parameters.put( "class", dataStreamClass.getName() );
 		try {	
-			D stream = (D) StreamRunner.createStream( parameters );
+			D stream = (D) ProcessContainer.createStream( parameters );
 			return stream;
 		} catch (Exception e) {
 			String url = parameters.get( "url" );
 			parameters.put( "url", "file:" + url );
-			D stream = (D) StreamRunner.createStream( parameters );
+			D stream = (D) ProcessContainer.createStream( parameters );
 			return stream;
 		}
 	}

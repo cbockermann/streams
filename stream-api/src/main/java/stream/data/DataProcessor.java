@@ -3,6 +3,8 @@
  */
 package stream.data;
 
+import stream.runtime.Context;
+
 /**
  * <p>
  * This interface provides a simple processing unit for streaming data.

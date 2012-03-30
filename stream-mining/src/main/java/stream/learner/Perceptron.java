@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.Measurable;
-import stream.data.vector.Vector;
 import stream.data.vector.InputVector;
+import stream.data.vector.Vector;
 import edu.udo.cs.pg542.util.Kernel;
 
 /**
@@ -17,13 +17,11 @@ import edu.udo.cs.pg542.util.Kernel;
  * 
  * @author Helge Homburg, Christian Bockermann
  */
-public class Perceptron 
-	extends AbstractClassifier<Data,Double>
-	implements Measurable
-{
+public class Perceptron extends AbstractClassifier<Double> implements
+		Measurable {
 	private static final long serialVersionUID = -3263838547557335984L;
 
-	static Logger log = LoggerFactory.getLogger( Perceptron.class );
+	static Logger log = LoggerFactory.getLogger(Perceptron.class);
 
 	/* The learning rate gamma */
 	Double learnRate = 1.0d;
@@ -37,7 +35,6 @@ public class Perceptron
 	double beta0 = 0.0d;
 	Vector beta = new Vector();
 
-	
 	public Perceptron() {
 		this(Kernel.INNER_PRODUCT, 0.05);
 	}
@@ -46,29 +43,28 @@ public class Perceptron
 		this(Kernel.INNER_PRODUCT, learnRate);
 	}
 
-	public Perceptron(int kernelType, double learnRate) {       
-		//this.model = new HyperplaneModel(kernelType);
-		//this.model.initModel( new LinkedHashMap<String,Double>(), 0.0d );
+	public Perceptron(int kernelType, double learnRate) {
+		// this.model = new HyperplaneModel(kernelType);
+		// this.model.initModel( new LinkedHashMap<String,Double>(), 0.0d );
 		this.learnRate = learnRate;
 	}
 
-	public Vector getWeightsVector(){
+	public Vector getWeightsVector() {
 		return beta;
 	}
-	
-	public void setWeightsVector( Vector v ){
+
+	public void setWeightsVector(Vector v) {
 		beta = v;
 	}
-	
-	public Double getIntercept(){
+
+	public Double getIntercept() {
 		return beta0;
 	}
-	
-	public void setIntercept( Double b ){
+
+	public void setIntercept(Double b) {
 		beta0 = b;
 	}
-	
-	
+
 	/**
 	 * @return the labelAttribute
 	 */
@@ -77,7 +73,8 @@ public class Perceptron
 	}
 
 	/**
-	 * @param labelAttribute the labelAttribute to set
+	 * @param labelAttribute
+	 *            the labelAttribute to set
 	 */
 	public void setLabelAttribute(String labelAttribute) {
 		this.labelAttribute = labelAttribute;
@@ -91,12 +88,12 @@ public class Perceptron
 	}
 
 	/**
-	 * @param learnRate the learnRate to set
+	 * @param learnRate
+	 *            the learnRate to set
 	 */
 	public void setLearnRate(Double learnRate) {
 		this.learnRate = learnRate;
 	}
-
 
 	/**
 	 * @see stream.learner.Learner#learn(java.lang.Object)
@@ -104,67 +101,63 @@ public class Perceptron
 	@Override
 	public void learn(Data item) {
 
-		if( labelAttribute == null )
-			labelAttribute = LearnerUtils.detectLabelAttribute( item );
+		if (labelAttribute == null)
+			labelAttribute = LearnerUtils.detectLabelAttribute(item);
 
-
-		if( labelAttribute == null ){
-			log.info( "No label defined!" );
+		if (labelAttribute == null) {
+			log.info("No label defined!");
 			return;
 		}
 
-		Serializable val = item.get( labelAttribute );
-		if( val == null ){
-		    log.error( "No label value found for '{}'", labelAttribute );
-		    return;
+		Serializable val = item.get(labelAttribute);
+		if (val == null) {
+			log.error("No label value found for '{}'", labelAttribute);
+			return;
 		}
-		
+
 		Double label = null;
-		
-		if( val instanceof Double ){
-		    label = (Double) val;
+
+		if (val instanceof Double) {
+			label = (Double) val;
 		} else {
-		    log.error( "Only numerical labels {-1.0d, +1.0d } are supported by this learner!" );
-		    return;
+			log.error("Only numerical labels {-1.0d, +1.0d } are supported by this learner!");
+			return;
 		}
-		
-		if( label < 0.0d )
-		    label = -1.0d;
+
+		if (label < 0.0d)
+			label = -1.0d;
 		else
-		    label = 1.0d;
+			label = 1.0d;
 
-		InputVector example = createSparseVector( item );
+		InputVector example = createSparseVector(item);
 
-		//---reading label
+		// ---reading label
 		// ---start computation
-		Double prediction = this.predict(example);
-		if( prediction < 0.0d )
+		Double prediction = this.classify(example);
+		if (prediction < 0.0d)
 			prediction = -1.0d;
 		else
 			prediction = 1.0d;
-		
-		if ( prediction * label < 0 ) {
+
+		if (prediction * label < 0) {
 			double direction = label;
-			beta0 = beta0 + ( learnRate * direction );
-			beta = beta.add( learnRate * direction, example );
+			beta0 = beta0 + (learnRate * direction);
+			beta = beta.add(learnRate * direction, example);
 		}
 	}
 
-	
-	
-	public Double predict( InputVector example ){
-		double pred = beta0 + example.innerProduct( beta );
+	public Double classify(InputVector example) {
+		double pred = beta0 + example.innerProduct(beta);
 		return pred;
 	}
-	
 
 	/**
 	 * @see stream.model.PredictionModel#predict(java.lang.Object)
 	 */
 	@Override
-	public Double predict(Data item) {
-		InputVector example = createSparseVector( item );
-		if( predict( example ) < 0.0d )
+	public Double classify(Data item) {
+		InputVector example = createSparseVector(item);
+		if (classify(example) < 0.0d)
 			return -1.0d;
 		else
 			return 1.0d;
@@ -176,14 +169,13 @@ public class Perceptron
 		// size of beta0 (64 bit)
 		// + size of weight-vector beta
 		//
-		return  8.0d + beta.getByteSize();
+		return 8.0d + beta.getByteSize();
 	}
-	
-	
-	public void printModel(){
-		log.info( "----------------------------------------" );
-		log.info( "beta0 = {}", beta0 );
-		log.info( "beat = {}", beta );
-		log.info( "----------------------------------------" );
+
+	public void printModel() {
+		log.info("----------------------------------------");
+		log.info("beta0 = {}", beta0);
+		log.info("beat = {}", beta);
+		log.info("----------------------------------------");
 	}
 }

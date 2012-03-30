@@ -20,6 +20,7 @@ import stream.data.stats.Statistics;
 import stream.data.stats.StatisticsListener;
 import stream.io.DataStreamListener;
 import stream.learner.Learner;
+import stream.learner.evaluation.ConfusionMatrix;
 
 /**
  * <p>
@@ -31,8 +32,7 @@ import stream.learner.Learner;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class TestAndTrain<D, L extends Learner<D, ?>> implements
-		DataStreamListener {
+public class TestAndTrain<L extends Learner<?>> implements DataStreamListener {
 
 	static Logger log = LoggerFactory.getLogger(TestAndTrain.class);
 
@@ -51,20 +51,19 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 
 	Map<String, Statistics> total = new HashMap<String, Statistics>();
 
-	@SuppressWarnings("rawtypes")
 	MemoryUsage memoryUsage = new MemoryUsage();
 	Statistics totalError = new Statistics();
 	Statistics maxMem = new Statistics();
-	AbstractTest<D, Learner<D, ?>> test;
-	Mapper<Data, D> dataMapper;
+	AbstractTest<Learner<?>> test;
+	Mapper<Data, Data> dataMapper;
 
-	public TestAndTrain(AbstractTest<D, Learner<D, ?>> test) {
+	public TestAndTrain(AbstractTest<Learner<?>> test) {
 		this(null, test);
 	}
 
 	@SuppressWarnings("unchecked")
-	public TestAndTrain(Mapper<Data, D> dataMapper,
-			AbstractTest<D, Learner<D, ?>> test) {
+	public TestAndTrain(Mapper<Data, Data> dataMapper,
+			AbstractTest<Learner<?>> test) {
 		this.dataMapper = dataMapper;
 		this.test = test;
 
@@ -79,7 +78,7 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 			// stuff...
 			//
 			log.info("Using implicit data-mapping of class {}", test.getClass());
-			this.dataMapper = (Mapper<Data, D>) test;
+			this.dataMapper = (Mapper<Data, Data>) test;
 		}
 	}
 
@@ -91,7 +90,6 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 		return matrices;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Statistics test(Data data) {
 
 		if (tests == 0 || tests % this.getTestInterval() != 0)
@@ -138,14 +136,14 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 	}
 
 	public void train(Data data) {
-		D value = map(data);
+		Data value = map(data);
 
 		test.getBaselineLearner().learn(value);
 
-		Map<String, Learner<D, ?>> learner = test.getLearnerCollection();
+		Map<String, Learner<?>> learner = test.getLearnerCollection();
 
 		for (String key : learner.keySet()) {
-			Learner<D, ?> learn = (Learner<D, ?>) learner.get(key);
+			Learner<?> learn = (Learner<?>) learner.get(key);
 			learn.learn(value);
 		}
 
@@ -155,7 +153,7 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 	/**
 	 * @return the dataMapper
 	 */
-	public Mapper<Data, D> getDataMapper() {
+	public Mapper<Data, Data> getDataMapper() {
 		return dataMapper;
 	}
 
@@ -163,7 +161,7 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 	 * @param dataMapper
 	 *            the dataMapper to set
 	 */
-	public void setDataMapper(Mapper<Data, D> dataMapper) {
+	public void setDataMapper(Mapper<Data, Data> dataMapper) {
 		this.dataMapper = dataMapper;
 	}
 
@@ -194,19 +192,18 @@ public class TestAndTrain<D, L extends Learner<D, ?>> implements
 		return this.testInterval;
 	}
 
-	public void addLearner(String name, Learner<D, ?> learner) {
+	public void addLearner(String name, Learner<?> learner) {
 		test.getLearnerCollection().put(name, learner);
 	}
 
-	public Map<String, Learner<D, ?>> getLearner() {
+	public Map<String, Learner<?>> getLearner() {
 		return test.getLearnerCollection();
 	}
 
-	@SuppressWarnings("unchecked")
-	public D map(Data data) {
+	public Data map(Data data) {
 		try {
 			if (dataMapper == null)
-				return (D) data;
+				return data;
 
 			return dataMapper.map(data);
 		} catch (Exception e) {

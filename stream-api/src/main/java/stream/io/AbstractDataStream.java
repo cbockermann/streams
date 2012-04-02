@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
+import stream.data.Processor;
 import stream.runtime.annotations.Parameter;
 
 /**
@@ -38,7 +38,7 @@ public abstract class AbstractDataStream implements DataStream {
 	Long limit = -1L;
 	Long count = 0L;
 
-	ArrayList<DataProcessor> preprocessors = new ArrayList<DataProcessor>();
+	ArrayList<Processor> preprocessors = new ArrayList<Processor>();
 
 	protected AbstractDataStream() {
 	}
@@ -125,23 +125,23 @@ public abstract class AbstractDataStream implements DataStream {
 		this.password = password;
 	}
 
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return this.preprocessors;
 	}
 
-	public void addPreprocessor(DataProcessor proc) {
+	public void addPreprocessor(Processor proc) {
 		preprocessors.add(proc);
 	}
 
-	public void addPreprocessor(int idx, DataProcessor proc) {
+	public void addPreprocessor(int idx, Processor proc) {
 		preprocessors.add(idx, proc);
 	}
 
-	public boolean removePreprocessor(DataProcessor proc) {
+	public boolean removePreprocessor(Processor proc) {
 		return preprocessors.remove(proc);
 	}
 
-	public DataProcessor removePreprocessor(int idx) {
+	public Processor removePreprocessor(int idx) {
 		return preprocessors.remove(idx);
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractDataStream implements DataStream {
 			// Hand over the item to all pre-processors. If one of them
 			// discards the item, we will continue reading the next one.
 			//
-			for (DataProcessor proc : preprocessors) {
+			for (Processor proc : preprocessors) {
 				datum = proc.process(datum);
 				if (datum == null)
 					break;

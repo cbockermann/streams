@@ -12,7 +12,7 @@ import java.util.Random;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
+import stream.data.Processor;
 
 /**
  * @author chris
@@ -20,7 +20,7 @@ import stream.data.DataProcessor;
  */
 public class RandomStream implements DataStream {
 
-	final List<DataProcessor> processors = new ArrayList<DataProcessor>();
+	final List<Processor> processors = new ArrayList<Processor>();
 	final Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 
 	Random rnd = new Random();
@@ -60,7 +60,7 @@ public class RandomStream implements DataStream {
 			item.put(key, rnd.nextDouble());
 		}
 
-		for (DataProcessor proc : processors) {
+		for (Processor proc : processors) {
 			item = proc.process(item);
 		}
 
@@ -78,7 +78,7 @@ public class RandomStream implements DataStream {
 	 * @see stream.io.DataStream#addPreprocessor(stream.data.DataProcessor)
 	 */
 	@Override
-	public void addPreprocessor(DataProcessor proc) {
+	public void addPreprocessor(Processor proc) {
 		processors.add(proc);
 	}
 
@@ -86,7 +86,7 @@ public class RandomStream implements DataStream {
 	 * @see stream.io.DataStream#addPreprocessor(int, stream.data.DataProcessor)
 	 */
 	@Override
-	public void addPreprocessor(int idx, DataProcessor proc) {
+	public void addPreprocessor(int idx, Processor proc) {
 		processors.add(idx, proc);
 	}
 
@@ -94,7 +94,7 @@ public class RandomStream implements DataStream {
 	 * @see stream.io.DataStream#getPreprocessors()
 	 */
 	@Override
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return processors;
 	}
 

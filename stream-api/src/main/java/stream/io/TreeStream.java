@@ -13,45 +13,42 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
+import stream.data.Processor;
 import stream.data.TreeNode;
 
-
 /**
- * A tree stream is a simple entity that reads and parses trees, one tree per line.
- * The trees are expected to be in the default NLP format:
+ * A tree stream is a simple entity that reads and parses trees, one tree per
+ * line. The trees are expected to be in the default NLP format:
+ * 
  * <pre>
  *    ( ROOT ( A1 ( A1.1 ) ( A1.2 ) ) ( A2 ) )
  * </pre>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
 public class TreeStream implements DataStream {
 
-	static Logger log = LoggerFactory.getLogger( TreeStream.class );
+	static Logger log = LoggerFactory.getLogger(TreeStream.class);
 	String treeAttribute = "tree";
 	BufferedReader reader;
 	DefaultTreeParser treeParser;
-	Map<String, Class<?>> attributes = new LinkedHashMap<String,Class<?>>();
-	final List<DataProcessor> processors = new ArrayList<DataProcessor>();
-	
-	public TreeStream( URL url ) throws Exception {
-		reader = new BufferedReader( new InputStreamReader( url.openStream() ) );
+	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+	final List<Processor> processors = new ArrayList<Processor>();
+
+	public TreeStream(URL url) throws Exception {
+		reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		treeParser = new DefaultTreeParser();
-		attributes.put( "tree", TreeNode.class );
+		attributes.put("tree", TreeNode.class);
 	}
-	
-	
+
 	public String getTreeAttribute() {
 		return treeAttribute;
 	}
 
-
 	public void setTreeAttribute(String treeAttribute) {
 		this.treeAttribute = treeAttribute;
 	}
-
 
 	/**
 	 * @see stream.io.DataStream#getAttributes()
@@ -61,58 +58,50 @@ public class TreeStream implements DataStream {
 		return attributes;
 	}
 
-	
 	/**
 	 * @see stream.io.DataStream#readNext()
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext( new DataImpl() );
+		return readNext(new DataImpl());
 	}
 
-	
 	/**
 	 * @see stream.io.DataStream#readNext(stream.data.Data)
 	 */
 	@Override
 	public Data readNext(Data datum) throws Exception {
 		String line = reader.readLine();
-		
+
 		// skip comment lines
 		//
-		while( line != null && line.startsWith( "#" ) )
+		while (line != null && line.startsWith("#"))
 			line = reader.readLine();
-		
-		if( line == null )
+
+		if (line == null)
 			return null;
-		
-		TreeNode tree = treeParser.parse( line );
-		
-		datum.put( treeAttribute, tree );
+
+		TreeNode tree = treeParser.parse(line);
+
+		datum.put(treeAttribute, tree);
 		return datum;
 	}
 
-
 	@Override
-	public void addPreprocessor(DataProcessor proc) {
-		processors.add( proc );
+	public void addPreprocessor(Processor proc) {
+		processors.add(proc);
 	}
 
-
 	@Override
-	public void addPreprocessor(int idx, DataProcessor proc) {
-		processors.add( idx, proc );
+	public void addPreprocessor(int idx, Processor proc) {
+		processors.add(idx, proc);
 	}
 
-
 	@Override
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return processors;
 	}
-	
-	
 
-	
 	/**
 	 * @see stream.io.DataStream#close()
 	 */
@@ -121,8 +110,8 @@ public class TreeStream implements DataStream {
 		try {
 			reader.close();
 		} catch (Exception e) {
-			log.error( "Failed to properly close reader: {}", e.getMessage() );
-			if( log.isDebugEnabled() )
+			log.error("Failed to properly close reader: {}", e.getMessage());
+			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
 	}

@@ -3,26 +3,25 @@ package stream.generator;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.data.DataProcessor;
+import stream.data.Processor;
 import stream.io.DataStream;
 
 public abstract class GeneratorDataStream implements DataStream {
 
-	final List<DataProcessor> processors = new ArrayList<DataProcessor>();
-	
+	final List<Processor> processors = new ArrayList<Processor>();
 
 	@Override
-	public void addPreprocessor(DataProcessor proc) {
-		processors.add( proc );
+	public void addPreprocessor(Processor proc) {
+		processors.add(proc);
 	}
 
 	@Override
-	public void addPreprocessor(int idx, DataProcessor proc) {
-		processors.add( idx, proc );
+	public void addPreprocessor(int idx, Processor proc) {
+		processors.add(idx, proc);
 	}
 
 	@Override
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return processors;
 	}
 

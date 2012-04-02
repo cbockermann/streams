@@ -30,13 +30,6 @@ public class Identity extends StreamReducer {
 	static Logger log = LoggerFactory.getLogger(Identity.class);
 
 	/**
-	 * @see stream.mapred.Reducer#init()
-	 */
-	@Override
-	public void init() throws Exception {
-	}
-
-	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
 	 */
 	public Data process(Data item) {

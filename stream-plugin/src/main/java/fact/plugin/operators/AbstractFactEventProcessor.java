@@ -13,6 +13,7 @@ import stream.data.DataProcessor;
 import stream.data.Measurable;
 import stream.plugin.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
+import stream.runtime.Context;
 import stream.util.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
@@ -171,11 +172,11 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
-	public void init() throws Exception {
-		processor.init();
+	public void init(Context ctx) throws Exception {
+		processor.init(ctx);
 	}
 
 	/**

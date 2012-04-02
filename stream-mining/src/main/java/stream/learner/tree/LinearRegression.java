@@ -4,9 +4,7 @@ import java.util.Map;
 
 import stream.learner.Regressor;
 
-public interface LinearRegression<D> 
-	extends Regressor<D>
-{
+public interface LinearRegression extends Regressor {
 	public void setParameters(Map<String, Object> parameters);
 
 }

@@ -3,6 +3,7 @@
  */
 package stream.eval;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.stats.Statistics;
-import stream.learner.LabelPredictor;
 import stream.learner.Learner;
+import stream.learner.evaluation.ConfusionMatrix;
+import stream.learner.evaluation.LossFunction;
 import stream.model.PredictionModel;
+import stream.runtime.Context;
 
 /**
  * <p>
@@ -26,9 +29,8 @@ import stream.model.PredictionModel;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class PredictionError<T> extends
-		AbstractTest<Data, Learner<Data, PredictionModel<Data, T>>> implements
-		DataProcessor {
+public class PredictionError<T extends Serializable> extends
+		AbstractTest<Learner<PredictionModel<T>>> implements DataProcessor {
 
 	/* The global logger for this class */
 	static Logger log = LoggerFactory.getLogger(PredictionError.class);
@@ -61,8 +63,7 @@ public class PredictionError<T> extends
 	};
 
 	public PredictionError() {
-		super(null,
-				new HashMap<String, Learner<Data, PredictionModel<Data, T>>>());
+		super(null, new HashMap<String, Learner<PredictionModel<T>>>());
 		this.setBaselineLearner(new LabelPredictor<T>());
 	}
 
@@ -70,18 +71,17 @@ public class PredictionError<T> extends
 	 * @param baseLine
 	 * @param learner
 	 */
-	public PredictionError(Learner<Data, PredictionModel<Data, T>> baseLine,
-			Map<String, Learner<Data, PredictionModel<Data, T>>> learner) {
+	public PredictionError(Learner<PredictionModel<T>> baseLine,
+			Map<String, Learner<PredictionModel<T>>> learner) {
 		super(baseLine, learner);
 	}
 
-	public PredictionError(
-			Map<String, Learner<Data, PredictionModel<Data, T>>> learner) {
+	public PredictionError(Map<String, Learner<PredictionModel<T>>> learner) {
 		super(null, learner);
 		this.setBaselineLearner(new LabelPredictor<T>());
 	}
 
-	public PredictionError(Learner<Data, PredictionModel<Data, T>> learner) {
+	public PredictionError(Learner<PredictionModel<T>> learner) {
 		this();
 		this.setBaselineLearner(new LabelPredictor<T>());
 		this.addLearner(learner.toString(), learner);
@@ -122,8 +122,7 @@ public class PredictionError<T> extends
 	 * @see stream.eval.AbstractTest#test(java.util.Map, java.lang.Object)
 	 */
 	@Override
-	public Statistics test(
-			Map<String, Learner<Data, PredictionModel<Data, T>>> learners,
+	public Statistics test(Map<String, Learner<PredictionModel<T>>> learners,
 			Data data) {
 		log.debug("Determining prediction error for data: {}", data);
 
@@ -133,8 +132,8 @@ public class PredictionError<T> extends
 
 		for (String key : this.getLearnerCollection().keySet()) {
 			log.debug("Testing learner {}", key);
-			Learner<Data, PredictionModel<Data, T>> learner = learners.get(key);
-			PredictionModel<Data, T> model = learner.getModel();
+			Learner<PredictionModel<T>> learner = learners.get(key);
+			PredictionModel<T> model = learner.getModel();
 			T pred = model.predict(data);
 
 			ConfusionMatrix<String> m = getConfusionMatrix(key);
@@ -157,10 +156,10 @@ public class PredictionError<T> extends
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 	}
 
 	/**

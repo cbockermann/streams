@@ -4,7 +4,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import stream.tools.StreamRunner;
+import stream.runtime.ProcessContainer;
 
 public class StreamRunnerTest
 {
@@ -18,8 +18,8 @@ public class StreamRunnerTest
      * @param args
      */
     public static void main( String[] args ) throws Exception {
-        URL url = StreamRunner.class.getResource( "/demo-shop.xml" );
-        StreamRunner runner = new StreamRunner( url );
+        URL url = ProcessContainer.class.getResource( "/demo-shop.xml" );
+        ProcessContainer runner = new ProcessContainer( url );
         runner.run();
     }
 }

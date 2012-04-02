@@ -53,7 +53,7 @@ public class SgdTestMapper extends StreamMapper {
 			Data weights = stream.readNext();
 			Vector weightsVector = Vector.createSparseVector( weights );
 
-			sgd.init();
+			sgd.reset();
 			sgd.setWeightVector( weightsVector );
 			
 			if( weights.get( "b" ) != null ){

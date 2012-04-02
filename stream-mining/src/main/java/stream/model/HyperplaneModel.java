@@ -11,29 +11,30 @@ import edu.udo.cs.pg542.util.Kernel;
  * <p>
  * Data model for separating Hyperplanes.
  * </p>
- *  
+ * 
  * @author Helge Homburg, Christian Bockermann
  */
-public class HyperplaneModel implements PredictionModel<Data, Double> {
+public class HyperplaneModel extends PredictionModel<Double> {
 
 	private static final long serialVersionUID = 6049635362534065136L;
 
 	private Kernel kernel;
 
-	Map<String,Double> weights = new LinkedHashMap<String,Double>();
+	Map<String, Double> weights = new LinkedHashMap<String, Double>();
 
 	private double bias;
 
-	public HyperplaneModel(int kernelType) {
+	public HyperplaneModel(String name, int kernelType) {
+		super(name);
 		this.kernel = new Kernel(kernelType);
 	}
 
-	public void initModel( Map<String,Double> weights, Double bias) {
+	public void initModel(Map<String, Double> weights, Double bias) {
 		this.weights = weights;
 		this.bias = bias;
 	}
 
-	public Map<String,Double> getWeights() {
+	public Map<String, Double> getWeights() {
 		return weights;
 	}
 
@@ -41,7 +42,7 @@ public class HyperplaneModel implements PredictionModel<Data, Double> {
 		return bias;
 	}
 
-	public void setWeights( Map<String,Double> weights) {
+	public void setWeights(Map<String, Double> weights) {
 		this.weights = weights;
 	}
 
@@ -54,20 +55,16 @@ public class HyperplaneModel implements PredictionModel<Data, Double> {
 	 */
 	@Override
 	public Double predict(Data item) {
-		Map<String,Double> example = LearnerUtils.getNumericVector( item );
+		Map<String, Double> example = LearnerUtils.getNumericVector(item);
 
 		double distance = 0.0;
-		distance = kernel.getDistance( example, weights );
-		distance += bias;  
+		distance = kernel.getDistance(example, weights);
+		distance += bias;
 		return distance;
 		/*
-		if (distance < 0) {
-			return 0.0d;
-		} else {
-			return 1.0d;
-		}
+		 * if (distance < 0) { return 0.0d; } else { return 1.0d; }
 		 */
-	}   
+	}
 
 	/**
 	 * Delivers a String representation of the hyperplane model
@@ -76,9 +73,9 @@ public class HyperplaneModel implements PredictionModel<Data, Double> {
 	public String toString() {
 		StringBuffer output = new StringBuffer();
 		output.append("Hyperplane:\n\n");
-		output.append("bias: "+bias+"\n");
-		for( String key : weights.keySet() )
-			output.append( "weight["+ key +"]: " + weights.get( key ) + "\n");
-		return output.toString();		
+		output.append("bias: " + bias + "\n");
+		for (String key : weights.keySet())
+			output.append("weight[" + key + "]: " + weights.get(key) + "\n");
+		return output.toString();
 	}
-}      
+}

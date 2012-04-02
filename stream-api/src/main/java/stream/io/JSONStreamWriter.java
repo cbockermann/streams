@@ -5,6 +5,7 @@ package stream.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 
 import net.minidev.json.JSONObject;
@@ -27,6 +28,10 @@ public class JSONStreamWriter extends DataStreamWriter {
 
 	public JSONStreamWriter(URL url) throws Exception {
 		super(url);
+	}
+
+	public JSONStreamWriter(OutputStream out) throws Exception {
+		super(out);
 	}
 
 	/**

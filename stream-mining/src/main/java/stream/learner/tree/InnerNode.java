@@ -2,7 +2,6 @@ package stream.learner.tree;
 
 import java.io.Serializable;
 
-import stream.data.Data;
 import stream.learner.Regressor;
 
 public class InnerNode extends RegressionTreeNode implements Serializable {
@@ -29,8 +28,8 @@ public class InnerNode extends RegressionTreeNode implements Serializable {
 	 */
 	private RegressionTreeNode rightChild;
 
-
-	public InnerNode(String feature, Serializable value, Regressor<Data> linearRegression, int n){
+	public InnerNode(String feature, Serializable value,
+			Regressor linearRegression, int n) {
 		this.feature = feature;
 		this.value = value;
 		this.leftChild = new LeafNode(this, false, linearRegression, n);
@@ -39,45 +38,53 @@ public class InnerNode extends RegressionTreeNode implements Serializable {
 
 	/**
 	 * traverses node to find matching leaf node
-	 * @param value a valid value for the associated feature
-	 * @return next node following the path of the given value, null if node does not exists
+	 * 
+	 * @param value
+	 *            a valid value for the associated feature
+	 * @return next node following the path of the given value, null if node
+	 *         does not exists
 	 */
-	public RegressionTreeNode traverseNode(Serializable value){
-		if(value instanceof Number && this.value instanceof Number){
+	public RegressionTreeNode traverseNode(Serializable value) {
+		if (value instanceof Number && this.value instanceof Number) {
 			Double number = ((Number) value).doubleValue();
 			return this.traverseNumericalNode(number);
-		}else{
+		} else {
 			return this.traverseNominalNode(value);
 		}
 	}
 
 	/**
 	 * traverses numerical node to find matching leaf node
-	 * @param value a valid value for the associated feature
-	 * @return next node following the path of the given value, null if node does not exists
+	 * 
+	 * @param value
+	 *            a valid value for the associated feature
+	 * @return next node following the path of the given value, null if node
+	 *         does not exists
 	 */
 	private RegressionTreeNode traverseNumericalNode(Double v) {
 		double val = (Double) this.value;
-		if(v.compareTo(val) <= 0){
+		if (v.compareTo(val) <= 0) {
 			return this.leftChild;
-		}else{
+		} else {
 			return this.rightChild;
 		}
 	}
 
 	/**
 	 * traverses nominal node to find matching leaf node
-	 * @param value a valid value for the associated feature
-	 * @return next node following the path of the given value, null if node does not exists
+	 * 
+	 * @param value
+	 *            a valid value for the associated feature
+	 * @return next node following the path of the given value, null if node
+	 *         does not exists
 	 */
 	private RegressionTreeNode traverseNominalNode(Serializable value) {
-		if(value.equals(this.value)){
+		if (value.equals(this.value)) {
 			return this.leftChild;
-		}else{
+		} else {
 			return this.rightChild;
 		}
 	}
-
 
 	/**
 	 * @return name of feature associated with this node
@@ -102,7 +109,9 @@ public class InnerNode extends RegressionTreeNode implements Serializable {
 
 	/**
 	 * sets new left child of this node
-	 * @param leftChild RegressionTreeNode to be left child of this node
+	 * 
+	 * @param leftChild
+	 *            RegressionTreeNode to be left child of this node
 	 */
 	public void setLeftChild(RegressionTreeNode leftChild) {
 		this.leftChild = leftChild;
@@ -110,31 +119,34 @@ public class InnerNode extends RegressionTreeNode implements Serializable {
 
 	/**
 	 * sets new right child of this node
-	 * @param rightChild RegressionTreeNode to be right child of this node
+	 * 
+	 * @param rightChild
+	 *            RegressionTreeNode to be right child of this node
 	 */
 	public void setRightChild(RegressionTreeNode rightChild) {
 		this.rightChild = rightChild;
 	}
 
 	@Override
-	public String toString(int blanks){
+	public String toString(int blanks) {
 		StringBuffer out = new StringBuffer();
-		int length = 8 + this.feature.length() + this.value.toString().length() + blanks;
+		int length = 8 + this.feature.length() + this.value.toString().length()
+				+ blanks;
 		out.append(this.rightChild.toString(length + 4));
 		out.append(LINE_SEPATATOR);
-		for(int i = 0; i < blanks; i++){
+		for (int i = 0; i < blanks; i++) {
 			out.append(" ");
 		}
-		if(blanks > 0){
+		if (blanks > 0) {
 			out.append("-- ");
 		}
 		String compare;
-		if(this.value instanceof Number){
+		if (this.value instanceof Number) {
 			compare = "<=";
-		}else{
+		} else {
 			compare = "=";
 		}
-		out.append("("+this.feature+ compare +this.value.toString()+")");
+		out.append("(" + this.feature + compare + this.value.toString() + ")");
 		out.append(LINE_SEPATATOR);
 		out.append(this.leftChild.toString(length + 4));
 		return out.toString();

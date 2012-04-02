@@ -15,7 +15,7 @@ import stream.model.PredictionModel;
 public class TestThenTrainProcessor extends AbstractDataProcessor {
 	static Logger log = LoggerFactory.getLogger(TestThenTrainProcessor.class);
 
-	List<Learner<Data, PredictionModel<Data, Serializable>>> learners = new ArrayList<Learner<Data, PredictionModel<Data, Serializable>>>();
+	List<Learner<PredictionModel<Serializable>>> learners = new ArrayList<Learner<PredictionModel<Serializable>>>();
 
 	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
@@ -23,10 +23,10 @@ public class TestThenTrainProcessor extends AbstractDataProcessor {
 	@Override
 	public Data process(Data data) {
 
-		for (Learner<Data, PredictionModel<Data, Serializable>> learner : learners) {
-			PredictionModel<Data, Serializable> model = learner.getModel();
+		for (Learner<PredictionModel<Serializable>> learner : learners) {
+			PredictionModel<Serializable> model = learner.getModel();
 			Serializable prediction = model.predict(data);
-			data.put("@pred:" + learner.toString(), prediction);
+			data.put("@prediction:" + model.getName(), prediction);
 		}
 
 		return data;

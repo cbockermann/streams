@@ -14,15 +14,7 @@ package stream.data;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public interface Processor<I, O> {
-
-	/**
-	 * This method is called once at initialization/setup time after the object
-	 * has been instantiated and AFTER all parameters have been injected.
-	 * 
-	 * @throws Exception
-	 */
-	public void init() throws Exception;
+public interface Processor {
 
 	/**
 	 * This is the main method for processing items. This method is called
@@ -31,14 +23,6 @@ public interface Processor<I, O> {
 	 * @param input
 	 * @return
 	 */
-	public O process(I input);
+	public Data process(Data input);
 
-	/**
-	 * This method is called at the time where the complete system is torn down.
-	 * This may be used to close file-handles, connections or clean up internal
-	 * memory.
-	 * 
-	 * @throws Exception
-	 */
-	public void finish() throws Exception;
 }

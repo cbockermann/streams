@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
+import stream.runtime.Context;
 import stream.util.Description;
 import stream.util.Parameter;
 
@@ -118,8 +119,8 @@ public class Timestamp extends AbstractDataProcessor {
 	 * @see stream.data.AbstractDataProcessor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		super.init();
+	public void init(Context ctx) throws Exception {
+		super.init(ctx);
 
 		if (getFormat() != null && getFrom() != null) {
 			dateFormat = new SimpleDateFormat(getFormat());

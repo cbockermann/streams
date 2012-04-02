@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.stats.Statistics;
 import stream.data.stats.StatisticsStreamWriter;
-import stream.eval.LossFunction;
 import stream.eval.PredictionError;
 import stream.io.DataStream;
 import stream.io.SvmLightDataStream;
 import stream.learner.Perceptron;
+import stream.learner.evaluation.LossFunction;
 
 public class SGDTest {
 
@@ -90,7 +90,7 @@ public class SGDTest {
 		loss.setLambda( lambda );
 		StochasticGradientDescent sgd = new StochasticGradientDescent( loss );
 		//sgd.useGaussianKernel(0.001, 2048, true);
-		sgd.init( );
+		sgd.reset( );
 		// gamma values
 		// 0.001 adult
 		// 0.01 mnist

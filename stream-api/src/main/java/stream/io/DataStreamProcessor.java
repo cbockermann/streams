@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.runtime.Context;
 
 /**
  * <p>
@@ -119,10 +120,13 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 		if (finalAttributes == null && data != null) {
 			finalAttributes = new LinkedHashMap<String, Class<?>>();
 			for (String key : data.keySet()) {
-				if (data.get(key).getClass().equals(Double.class))
-					finalAttributes.put(key, Double.class);
-				else
-					finalAttributes.put(key, String.class);
+				if (data.get(key) != null) {
+					if (data.get(key).getClass().equals(Double.class))
+						finalAttributes.put(key, Double.class);
+					else
+						finalAttributes.put(key, String.class);
+
+				}
 			}
 		}
 		return data;
@@ -150,11 +154,11 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	 * @see stream.data.AbstractDataProcessor#init()
 	 */
 	@Override
-	public void init() throws Exception {
-		super.init();
+	public void init(Context ctx) throws Exception {
+		super.init(ctx);
 
 		for (DataProcessor p : processors) {
-			p.init();
+			p.init(ctx);
 		}
 	}
 

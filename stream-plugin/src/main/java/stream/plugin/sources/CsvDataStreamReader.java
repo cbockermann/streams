@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import stream.io.CsvStream;
-import stream.tools.StreamRunner;
+import stream.runtime.ProcessContainer;
 
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.parameter.ParameterType;
@@ -46,7 +46,7 @@ public class CsvDataStreamReader extends DataStreamReader<CsvStream> {
 
 	public CsvStream createDataStream( Class<CsvStream> dataStreamClass, Map<String,String> parameters ) throws Exception {
 		parameters.put( "class", dataStreamClass.getName() );
-		CsvStream stream = (CsvStream) StreamRunner.createStream( parameters );
+		CsvStream stream = (CsvStream) ProcessContainer.createStream( parameters );
 		return stream;
 	}
 }

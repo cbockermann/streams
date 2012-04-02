@@ -25,179 +25,169 @@ import stream.util.Parameter;
 
 /**
  * @author chris
- *
+ * 
  */
-public abstract class AbstractDataStream 
-    implements DataStream 
-{
-    static Logger log = LoggerFactory.getLogger( AbstractDataStream.class );
-    
-    URL url;
-    String username;
-    String password;
-    LinkedHashMap<String,Class<?>> attributes = new LinkedHashMap<String,Class<?>>();
-    BufferedReader reader;
-    Long limit = -1L;
-    Long count = 0L;
+public abstract class AbstractDataStream implements DataStream {
+	static Logger log = LoggerFactory.getLogger(AbstractDataStream.class);
 
-    ArrayList<DataProcessor> preprocessors = new ArrayList<DataProcessor>();
+	URL url;
+	String username;
+	String password;
+	LinkedHashMap<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+	BufferedReader reader;
+	Long limit = -1L;
+	Long count = 0L;
 
+	ArrayList<DataProcessor> preprocessors = new ArrayList<DataProcessor>();
 
-    public AbstractDataStream( URL url ) throws Exception {
-        this.url = url;
-        //initReader();
-    }
+	protected AbstractDataStream() {
+	}
 
-    public AbstractDataStream( URL url, String username, String password ) throws Exception {
-        this.url = url;
-        this.username = username;
-        this.password = password;
-        this.initReader();
-    }
+	public AbstractDataStream(URL url) throws Exception {
+		this.url = url;
+		// initReader();
+	}
 
+	public AbstractDataStream(URL url, String username, String password)
+			throws Exception {
+		this.url = url;
+		this.username = username;
+		this.password = password;
+		this.initReader();
+	}
 
-    protected void initReader() throws Exception {
+	protected void initReader() throws Exception {
 
-        if( username != null && password != null ){
-            Authenticator.setDefault( new Authenticator(){
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication( username, password.toCharArray() );
-                }
-            });
-        }
+		if (username != null && password != null) {
+			Authenticator.setDefault(new Authenticator() {
+				@Override
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password
+							.toCharArray());
+				}
+			});
+		}
 
-        if( url.getFile().endsWith( ".gz" ) )
-            reader = new BufferedReader( new InputStreamReader( new GZIPInputStream( url.openStream() ) ) );
-        else
-            reader = new BufferedReader( new InputStreamReader( url.openStream() ) );
-        readHeader();
-    }
+		if (url.getFile().endsWith(".gz"))
+			reader = new BufferedReader(new InputStreamReader(
+					new GZIPInputStream(url.openStream())));
+		else
+			reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		readHeader();
+	}
 
-    public AbstractDataStream( InputStream in ) throws Exception {
-        reader = new BufferedReader( new InputStreamReader( in ) );
-        //readHeader();
-    }
+	public AbstractDataStream(InputStream in) throws Exception {
+		reader = new BufferedReader(new InputStreamReader(in));
+		// readHeader();
+	}
 
+	public Map<String, Class<?>> getAttributes() {
+		return attributes;
+	}
 
-    public Map<String,Class<?>> getAttributes(){
-        return attributes;
-    }
+	public Long getLimit() {
+		return limit;
+	}
 
+	public void setLimit(Long limit) {
+		this.limit = limit;
+	}
 
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
 
+	/**
+	 * @param username
+	 *            the username to set
+	 */
+	@Parameter(name = "username", required = false)
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public Long getLimit() {
-        return limit;
-    }
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
 
-    public void setLimit(Long limit) {
-        this.limit = limit;
-    }
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	@Parameter(name = "password", required = false)
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    /**
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
+	public List<DataProcessor> getPreprocessors() {
+		return this.preprocessors;
+	}
 
+	public void addPreprocessor(DataProcessor proc) {
+		preprocessors.add(proc);
+	}
 
-    /**
-     * @param username the username to set
-     */
-    @Parameter( name = "username", required=false )
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void addPreprocessor(int idx, DataProcessor proc) {
+		preprocessors.add(idx, proc);
+	}
 
+	public boolean removePreprocessor(DataProcessor proc) {
+		return preprocessors.remove(proc);
+	}
 
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
+	public DataProcessor removePreprocessor(int idx) {
+		return preprocessors.remove(idx);
+	}
 
-
-    /**
-     * @param password the password to set
-     */
-    @Parameter( name = "password", required=false )
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public List<DataProcessor> getPreprocessors(){
-        return this.preprocessors;
-    }
-
-    public void addPreprocessor( DataProcessor proc ){
-        preprocessors.add( proc );
-    }
-
-    public void addPreprocessor( int idx, DataProcessor proc ){
-        preprocessors.add( idx, proc );
-    }
-
-    public boolean removePreprocessor( DataProcessor proc ){
-        return preprocessors.remove( proc );
-    }
-
-    public DataProcessor removePreprocessor( int idx ){
-        return preprocessors.remove( idx );
-    }
-
-
-
-
-    /**
+	/**
      * 
      */
-    public abstract void readHeader() throws Exception;
+	public abstract void readHeader() throws Exception;
 
+	public abstract Data readItem(Data instance) throws Exception;
 
-    public abstract Data readItem( Data instance ) throws Exception;
+	/**
+	 * @see stream.io.DataStream#readNext()
+	 */
+	public final Data readNext(Data item) throws Exception {
 
+		if (limit > 0 && count >= limit)
+			return null;
 
-    /**
-     * @see stream.io.DataStream#readNext()
-     */
-    public final Data readNext( Data item ) throws Exception {
+		Data datum = null;
+		while (datum == null) {
 
-        if( limit > 0 && count >= limit )
-            return null;
+			//
+			// If the source is empty (i.e. readItem(..) returned null), we
+			// cannot continue, so we leave by returning null
+			//
+			datum = readItem(item);
+			if (datum == null) {
+				log.debug("End-of-stream reached!");
+				return null;
+			}
 
-        Data datum = null;
-        while( datum == null ){
-            
-            //
-            // If the source is empty (i.e. readItem(..) returned null), we
-            // cannot continue, so we leave by returning null
-            //
-            datum = readItem( item );
-            if( datum == null ){
-                log.debug( "End-of-stream reached!" );
-                return null;
-            }
+			//
+			// Hand over the item to all pre-processors. If one of them
+			// discards the item, we will continue reading the next one.
+			//
+			for (DataProcessor proc : preprocessors) {
+				datum = proc.process(datum);
+				if (datum == null)
+					break;
+			}
+		}
+		count++;
+		return datum;
+	}
 
-            //
-            // Hand over the item to all pre-processors. If one of them
-            // discards the item, we will continue reading the next one.
-            //
-            for( DataProcessor proc : preprocessors ){
-                datum = proc.process( datum );
-                if( datum == null )
-                    break;
-            }
-        }
-        count++;
-        return datum;
-    }
-
-
-    public Data readNext() throws Exception {
-        return readNext( new DataImpl() );
-    }
+	public Data readNext() throws Exception {
+		return readNext(new DataImpl());
+	}
 }

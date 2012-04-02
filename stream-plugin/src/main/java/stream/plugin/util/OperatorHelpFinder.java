@@ -8,7 +8,7 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.tools.URLUtilities;
+import stream.util.URLUtilities;
 
 import com.petebevin.markdown.MarkdownProcessor;
 

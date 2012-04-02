@@ -12,6 +12,7 @@ import stream.data.Data;
 import stream.data.DataImpl;
 import stream.io.DataStreamWriter;
 import stream.util.Base64Codec;
+import stream.util.URLUtilities;
 
 public class StreamLogger {
 	static Logger log = LoggerFactory.getLogger(StreamLogger.class);

@@ -1,5 +1,7 @@
 package stream.model;
 
+import stream.learner.Model;
+
 /**
  * <p>
  * An output extension to the model interface which returns

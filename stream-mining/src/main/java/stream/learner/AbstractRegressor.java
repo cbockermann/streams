@@ -3,45 +3,55 @@
  */
 package stream.learner;
 
-import stream.model.PredictionModel;
+import stream.data.AbstractDataProcessor;
+import stream.data.Data;
 
 /**
  * @author chris
- *
+ * 
  */
-public abstract class AbstractRegressor<D> 
-	implements Regressor<D> {
+public abstract class AbstractRegressor extends AbstractDataProcessor implements
+		Regressor {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 951585509815153514L;
+
+	String id;
 
 	/**
 	 * @see stream.model.PredictionModel#predict(java.lang.Object)
 	 */
 	@Override
-	public abstract Double predict(D item);
+	public abstract Double classify(Data item);
 
-	
 	/**
-	 * @see stream.learner.Learner#getModel()
+	 * @return the id
 	 */
-	@Override
-	public PredictionModel<D, Double> getModel() {
-		return this;
+	public String getId() {
+		return id;
 	}
 
-	
 	/**
-	 * @see stream.learner.Learner#init()
+	 * @param id
+	 *            the id to set
 	 */
-	@Override
-	public void init() {
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	
 	/**
-	 * @see stream.learner.Learner#learn(java.lang.Object)
+	 * @see stream.data.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
-	public abstract void learn(D item);
+	public Data process(Data data) {
+		learn(data);
+		return data;
+	}
+
+	/**
+	 * @see stream.learner.Learner#reset()
+	 */
+	@Override
+	public void reset() {
+	}
 }

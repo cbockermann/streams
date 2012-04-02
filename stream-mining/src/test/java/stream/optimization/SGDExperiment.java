@@ -14,7 +14,6 @@ import stream.data.Data;
 import stream.data.plotter.StreamPlotter;
 import stream.data.stats.Statistics;
 import stream.data.stats.StatisticsStreamWriter;
-import stream.eval.LossFunction;
 import stream.eval.PredictionError;
 import stream.eval.TestAndTrain;
 import stream.io.DataStream;
@@ -22,274 +21,266 @@ import stream.io.SvmLightDataStream;
 import stream.learner.Classifier;
 import stream.learner.Learner;
 import stream.learner.Perceptron;
+import stream.learner.evaluation.LossFunction;
 
 public class SGDExperiment {
 
-    static Logger log = LoggerFactory.getLogger( SGDExperiment.class );
+	static Logger log = LoggerFactory.getLogger(SGDExperiment.class);
 
-    
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	TestAndTrain<Data,Classifier<Data,Double>> evaluation = new TestAndTrain<Data,Classifier<Data,Double>>( new PredictionError() );
-	List<Classifier<Data,Double>> classifiers = new ArrayList<Classifier<Data,Double>>();
-	
+	TestAndTrain<Classifier<Double>> evaluation = new TestAndTrain<Classifier<Double>>(
+			new PredictionError());
+	List<Classifier<Double>> classifiers = new ArrayList<Classifier<Double>>();
+
 	File output;
-	
-	
-	
-	public SGDExperiment( File outputDirectory ) throws Exception {
-		if( !outputDirectory.isDirectory() )
+
+	public SGDExperiment(File outputDirectory) throws Exception {
+		if (!outputDirectory.isDirectory())
 			outputDirectory.mkdirs();
-		
+
 		output = outputDirectory;
-		
 
-    	StreamPlotter errorPlot = new StreamPlotter( "Events", new File( output.getAbsolutePath() + File.separator + "model-error.png" ) );
-		errorPlot.setTitle( "Model Error" );
-		evaluation.addPerformanceListener( errorPlot );
+		StreamPlotter errorPlot = new StreamPlotter("Events", new File(
+				output.getAbsolutePath() + File.separator + "model-error.png"));
+		errorPlot.setTitle("Model Error");
+		evaluation.addPerformanceListener(errorPlot);
 	}
-	
-    
-    @Test
-    public void testDummy(){
-    }
-    
 
-    public static List<Data> read( DataStream stream, int num ){
-        List<Data> dataset = new ArrayList<Data>();
+	@Test
+	public void testDummy() {
+	}
 
-        int i = 0;
-        try {
-            Data data = stream.readNext();
-            while( i < num && data != null ){
-                dataset.add( data );
-                data = stream.readNext();
-                i++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	public static List<Data> read(DataStream stream, int num) {
+		List<Data> dataset = new ArrayList<Data>();
 
-        return dataset;
-    }
+		int i = 0;
+		try {
+			Data data = stream.readNext();
+			while (i < num && data != null) {
+				dataset.add(data);
+				data = stream.readNext();
+				i++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    
-    public void train( Classifier<Data,Double> learner, Collection<Data> trainingData ){
-    	List<Classifier<Data,Double>> learners = new ArrayList<Classifier<Data,Double>>();
-    	learners.add( learner );
-    	train( learners, trainingData );
-    }
-    
-    
-    public void train( Collection<Data> trainingData ){
-    	long start = System.currentTimeMillis();
-    	
-    	for( Data item : trainingData ){
-    		evaluation.dataArrived( item );
-    	}
-    	
-    	log.info( "Training {} classifiers required {} ms", evaluation.getLearner().size(), System.currentTimeMillis() - start );
-    }
-    
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void train( List<Classifier<Data,Double>> learner, Collection<Data> trainingData ){
-    	
+		return dataset;
+	}
+
+	public void train(Classifier<Double> learner, Collection<Data> trainingData) {
+		List<Classifier<Double>> learners = new ArrayList<Classifier<Double>>();
+		learners.add(learner);
+		train(learners, trainingData);
+	}
+
+	public void train(Collection<Data> trainingData) {
+		long start = System.currentTimeMillis();
+
+		for (Data item : trainingData) {
+			evaluation.dataArrived(item);
+		}
+
+		log.info("Training {} classifiers required {} ms", evaluation
+				.getLearner().size(), System.currentTimeMillis() - start);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void train(List<Classifier<Double>> learner,
+			Collection<Data> trainingData) {
+
 		PredictionError performance = new PredictionError();
-    	for( Learner l : learner ){
-    		performance.addLearner( l.toString(), l );
-    	}
-    			
-    	long start = System.currentTimeMillis();
-    	//
-    	//
-    	for( Data item : trainingData ){
-    		for( Learner<Data,?> learningAlgo : learner ){
-    			learningAlgo.learn( item );
-    		}
-    	}
-    	
-    	log.info( "Training of {} algorithms required {} ms", learner.size(), System.currentTimeMillis() - start );
-    }
-    
-    
-    public void test( Collection<Data> testData ){
-    	
-    }
-    
-    
-    public void init(){
-    	for( Learner<Data,?> l : evaluation.getLearner().values() ){
-    		l.init();
-    	}
-    	
-    	
-    }
-    
-    public void add( Classifier<Data,Double> classifier ){
-    	evaluation.addLearner( classifier.toString(), classifier );
-    	classifiers.add( classifier );
-    }
-    
-    
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws Exception {
-        try {
-        	
-        	File output = new File( "/tmp/output" );
-        	if( ! output.isDirectory() )
-        		output.mkdirs();
-        	final Statistics stats = new Statistics();
-        	
-        	String url = "http://kirmes.cs.uni-dortmund.de/data/ccat.tr";
-        	url = "file:///Users/chris/sgd/rcv1_ccat/ccat.tr";
-        	url = "file:///Users/chris/sgd/adult/adult.tr";
-        	SvmLightDataStream stream = new SvmLightDataStream( url );
-        	stream.setLimit( 10000L );
-        	String testUrl = "file:///Users/chris/sgd/rcv1_ccat/ccat.tt";
-        	testUrl = "file:///Users/chris/sgd/adult/adult.tt";
+		for (Learner l : learner) {
+			performance.addLearner(l.toString(), l);
+		}
 
-        	
-        	List<Data> trainingData = read( stream, 10000 );
-        	//List<Data> testData = null;
-        	
-        	
-        	SGDExperiment experiment = new SGDExperiment( output );
-        	
-        	
-        	
-        	experiment.init();
+		long start = System.currentTimeMillis();
+		//
+		//
+		for (Data item : trainingData) {
+			for (Learner<?> learningAlgo : learner) {
+				learningAlgo.learn(item);
+			}
+		}
 
-        	
-        	for( int i = 0; i < 10; i++ ){
-        		Collections.shuffle( trainingData );
-        		experiment.train(trainingData);
-        	}
-        	
-        	experiment.testDummy();
-        	
-        	
+		log.info("Training of {} algorithms required {} ms", learner.size(),
+				System.currentTimeMillis() - start);
+	}
 
-            long start = System.currentTimeMillis();
+	public void test(Collection<Data> testData) {
 
-            List<Data> train = read( stream, 10000 );
-            log.info( "{} examples read in {} ms.", train.size(), System.currentTimeMillis() - start );
+	}
 
-            //Collections.shuffle( train, new Random( System.currentTimeMillis() ) );
+	public void init() {
+		for (Learner<?> l : evaluation.getLearner().values()) {
+			l.reset();
+		}
 
-            start = System.currentTimeMillis();
-            List<Data> test = read( new SvmLightDataStream( testUrl ), 10000 );
-            log.info( "{} test examples read in {}ms", test.size(), System.currentTimeMillis() - start );
+	}
 
-            SvmHingeLoss loss = new SvmHingeLoss();
-            loss.setLambda( 1.0e-6 );
-            StochasticGradientDescent sgd = new StochasticGradientDescent( loss );
-            sgd.init();
+	public void add(Classifier<Double> classifier) {
+		evaluation.addLearner(classifier.toString(), classifier);
+		classifiers.add(classifier);
+	}
 
-            WindowedSGD winSgd = new WindowedSGD( loss );
-            winSgd.init();
-            winSgd.setWindowSize( 5000 );
-            winSgd.setPasses( 10 );
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) throws Exception {
+		try {
 
-            start = System.currentTimeMillis();
+			File output = new File("/tmp/output");
+			if (!output.isDirectory())
+				output.mkdirs();
+			final Statistics stats = new Statistics();
 
-            Perceptron perceptron = new Perceptron();
+			String url = "http://kirmes.cs.uni-dortmund.de/data/ccat.tr";
+			url = "file:///Users/chris/sgd/rcv1_ccat/ccat.tr";
+			url = "file:///Users/chris/sgd/adult/adult.tr";
+			SvmLightDataStream stream = new SvmLightDataStream(url);
+			stream.setLimit(10000L);
+			String testUrl = "file:///Users/chris/sgd/rcv1_ccat/ccat.tt";
+			testUrl = "file:///Users/chris/sgd/adult/adult.tt";
 
-            StatisticsStreamWriter normPlot = new StatisticsStreamWriter( new File( "/tmp/squared-norm.stats" ) );
-            int limit = Integer.MAX_VALUE;
-            int i = 0;
-            int passes = 1;
+			List<Data> trainingData = read(stream, 10000);
+			// List<Data> testData = null;
 
+			SGDExperiment experiment = new SGDExperiment(output);
 
-            // multi-pass loop for iterating over the stream multiple times
-            //
-            for( int pass = 0; pass < passes; pass++ ){
-                log.info( "pass {}", pass );
+			experiment.init();
 
-                // the training loop for the classifiers
-                //
-                for( Data item : train ){
+			for (int i = 0; i < 10; i++) {
+				Collections.shuffle(trainingData);
+				experiment.train(trainingData);
+			}
 
-                    perceptron.learn( item );
-                    sgd.learn( item );
-                    winSgd.learn( item );
+			experiment.testDummy();
 
-                    //
-                    // log the squared norm value every 1000th example
-                    //
-                    if( i > 0 && i % 1000 == 0 ){
-                        double norm = sgd.w.norm();
-                        double wnorm = winSgd.w.snorm();
-                        stats.clear();
-                        stats.add( "iteration", new Double(i) );
-                        stats.add( "sq-norm", norm );
-                        stats.add( "windowed.sq-norm", wnorm );
-                        normPlot.dataArrived( stats );
-                        log.info( "Iteration {}", i );
-                    }
+			long start = System.currentTimeMillis();
 
-                    i++;
-                    if( i > limit )
-                        break;
-                }
-            }
+			List<Data> train = read(stream, 10000);
+			log.info("{} examples read in {} ms.", train.size(),
+					System.currentTimeMillis() - start);
 
-            log.info( "{} training passes completed.", passes );
-            log.info( "Training on {} examples required {} ms", train.size(), (System.currentTimeMillis()-start) );
+			// Collections.shuffle( train, new Random(
+			// System.currentTimeMillis() ) );
 
+			start = System.currentTimeMillis();
+			List<Data> test = read(new SvmLightDataStream(testUrl), 10000);
+			log.info("{} test examples read in {}ms", test.size(),
+					System.currentTimeMillis() - start);
 
-            // setup of the prediction error
-            //
-            PredictionError<Double> performance = new PredictionError<Double>();
-            performance.setLossFunction( new LossFunction<Double>(){
-                @Override
-                public double loss(Double x1, Double x2) {
-                    if( x1 * x2 > 0 )
-                        return 0;
+			SvmHingeLoss loss = new SvmHingeLoss();
+			loss.setLambda(1.0e-6);
+			StochasticGradientDescent sgd = new StochasticGradientDescent(loss);
+			sgd.reset();
 
-                    return 1;
-                }
-            });
+			WindowedSGD winSgd = new WindowedSGD(loss);
+			winSgd.reset();
+			winSgd.setWindowSize(5000);
+			winSgd.setPasses(10);
 
-            performance.addLearner( "SGD", sgd );
-            performance.addLearner( "Perceptron", perceptron );
-            performance.addLearner( "WindowedSGD", winSgd );
+			start = System.currentTimeMillis();
 
-            // iterate over the test-set and determine the prediction error
-            // using the performance data-processor
-            //
-            start = System.currentTimeMillis();
-            double pos = 0;
-            double neg = 0;
+			Perceptron perceptron = new Perceptron();
 
-            for( Data item : test ){
-                performance.process( item );
+			StatisticsStreamWriter normPlot = new StatisticsStreamWriter(
+					new File("/tmp/squared-norm.stats"));
+			int limit = Integer.MAX_VALUE;
+			int i = 0;
+			int passes = 1;
 
-                Double label = (Double) item.get( "@label" );
-                if( label < 0.0d )
-                    neg += 1.0d;
-                else
-                    pos += 1.0d;
-            }
+			// multi-pass loop for iterating over the stream multiple times
+			//
+			for (int pass = 0; pass < passes; pass++) {
+				log.info("pass {}", pass);
 
-            log.info( "sgd predicted {} times -1 and {} times +1", neg, pos );
+				// the training loop for the classifiers
+				//
+				for (Data item : train) {
 
-            log.info( "Testing on {} examples required {} ms", test.size(), (System.currentTimeMillis() - start ) );
-            // output of the accuracy for all learners
-            //
-            for( String learnerName : performance.getLearnerCollection().keySet() ){
-                log.info( "accuracy( {} ) = {}", learnerName, performance.getConfusionMatrix( learnerName ).calculateAccuracy() );
-            }		
+					perceptron.learn(item);
+					sgd.learn(item);
+					winSgd.learn(item);
 
-            double major = pos / (pos+neg);
-            if( neg > pos )
-                major = neg / (pos+neg);
-            log.info( "Error of majority vote is: {}", major );
+					//
+					// log the squared norm value every 1000th example
+					//
+					if (i > 0 && i % 1000 == 0) {
+						double norm = sgd.w.norm();
+						double wnorm = winSgd.w.snorm();
+						stats.clear();
+						stats.add("iteration", new Double(i));
+						stats.add("sq-norm", norm);
+						stats.add("windowed.sq-norm", wnorm);
+						normPlot.dataArrived(stats);
+						log.info("Iteration {}", i);
+					}
 
-        } catch (Exception e) {
-            log.error( "Failed to run test: {}", e.getMessage() );
-            e.printStackTrace();
-        }
-    }
+					i++;
+					if (i > limit)
+						break;
+				}
+			}
+
+			log.info("{} training passes completed.", passes);
+			log.info("Training on {} examples required {} ms", train.size(),
+					(System.currentTimeMillis() - start));
+
+			// setup of the prediction error
+			//
+			PredictionError<Double> performance = new PredictionError<Double>();
+			performance.setLossFunction(new LossFunction<Double>() {
+				@Override
+				public double loss(Double x1, Double x2) {
+					if (x1 * x2 > 0)
+						return 0;
+
+					return 1;
+				}
+			});
+
+			performance.addLearner("SGD", sgd);
+			performance.addLearner("Perceptron", perceptron);
+			performance.addLearner("WindowedSGD", winSgd);
+
+			// iterate over the test-set and determine the prediction error
+			// using the performance data-processor
+			//
+			start = System.currentTimeMillis();
+			double pos = 0;
+			double neg = 0;
+
+			for (Data item : test) {
+				performance.process(item);
+
+				Double label = (Double) item.get("@label");
+				if (label < 0.0d)
+					neg += 1.0d;
+				else
+					pos += 1.0d;
+			}
+
+			log.info("sgd predicted {} times -1 and {} times +1", neg, pos);
+
+			log.info("Testing on {} examples required {} ms", test.size(),
+					(System.currentTimeMillis() - start));
+			// output of the accuracy for all learners
+			//
+			for (String learnerName : performance.getLearnerCollection()
+					.keySet()) {
+				log.info("accuracy( {} ) = {}", learnerName, performance
+						.getConfusionMatrix(learnerName).calculateAccuracy());
+			}
+
+			double major = pos / (pos + neg);
+			if (neg > pos)
+				major = neg / (pos + neg);
+			log.info("Error of majority vote is: {}", major);
+
+		} catch (Exception e) {
+			log.error("Failed to run test: {}", e.getMessage());
+			e.printStackTrace();
+		}
+	}
 }

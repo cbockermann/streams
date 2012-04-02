@@ -3,7 +3,7 @@
  */
 package stream.data.test;
 
-import stream.data.AbstractDataProcessor;
+import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.util.Description;
 
@@ -16,13 +16,13 @@ import stream.util.Description;
  * 
  */
 @Description(group = "Data Stream.Monitoring", name = "Print Data")
-public class PrintData extends AbstractDataProcessor {
+public class PrintData extends ConditionedDataProcessor {
 
 	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
-	public Data process(Data data) {
+	public Data processMatchingData(Data data) {
 
 		if (data == null)
 			return null;

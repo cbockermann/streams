@@ -12,65 +12,62 @@ import stream.model.NominalDistributionModel;
 
 /**
  * @author chris
- *
+ * 
  */
-public class MajorityClass extends AbstractClassifier<Data, String> {
+public class MajorityClass extends AbstractClassifier<String> {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 2843128554725059166L;
-	
-	static Logger log = LoggerFactory.getLogger( MajorityClass.class );
+
+	static Logger log = LoggerFactory.getLogger(MajorityClass.class);
 
 	Distribution<String> dist = new NominalDistributionModel<String>();
-	
+
 	String labelAttribute = null;
-	
+
 	/**
 	 * @see stream.learner.AbstractClassifier#learn(java.lang.Object)
 	 */
 	@Override
 	public void learn(Data item) {
-		
-		if( labelAttribute == null ){
-			labelAttribute = LearnerUtils.detectLabelAttribute( item );
-				
+
+		if (labelAttribute == null) {
+			labelAttribute = LearnerUtils.detectLabelAttribute(item);
+
 		}
-		
-		if( labelAttribute == null ){
-			log.warn( "Ignoring unlabeled example (no label defined for MajorityClass learner)!" );
+
+		if (labelAttribute == null) {
+			log.warn("Ignoring unlabeled example (no label defined for MajorityClass learner)!");
 			return;
 		}
-		
-		dist.update( item.get( labelAttribute ).toString() );
+
+		dist.update(item.get(labelAttribute).toString());
 	}
 
-	
 	/**
 	 * @see stream.learner.AbstractClassifier#predict(java.lang.Object)
 	 */
 	@Override
-	public String predict(Data item) {
-		
-		if( labelAttribute == null )
-			log.error( "No label-attribute defined!" );
-		
-		if( dist.getCount() == 0 )
+	public String classify(Data item) {
+
+		if (labelAttribute == null)
+			log.error("No label-attribute defined!");
+
+		if (dist.getCount() == 0)
 			return "?";
-		
-		
+
 		String major = null;
 		Integer max = null;
-		
-		for( String key : dist.getElements() ){
-			if( major == null || dist.getCount( key ) > max ){
+
+		for (String key : dist.getElements()) {
+			if (major == null || dist.getCount(key) > max) {
 				major = key;
-				max = dist.getCount( key );
+				max = dist.getCount(key);
 			}
 		}
-		
+
 		return major;
 	}
-
 
 	/**
 	 * @return the labelAttribute
@@ -79,23 +76,22 @@ public class MajorityClass extends AbstractClassifier<Data, String> {
 		return labelAttribute;
 	}
 
-
 	/**
-	 * @param labelAttribute the labelAttribute to set
+	 * @param labelAttribute
+	 *            the labelAttribute to set
 	 */
 	public void setLabelAttribute(String labelAttribute) {
 		this.labelAttribute = labelAttribute;
 	}
-	
-	
-	public static String getMajorityClass( NominalDistributionModel<String> dist ){
+
+	public static String getMajorityClass(NominalDistributionModel<String> dist) {
 		String major = null;
 		Integer max = null;
-		
-		for( String key : dist.getElements() ){
-			if( major == null || dist.getCount( key ) > max ){
+
+		for (String key : dist.getElements()) {
+			if (major == null || dist.getCount(key) > max) {
 				major = key;
-				max = dist.getCount( key );
+				max = dist.getCount(key);
 			}
 		}
 		return major;

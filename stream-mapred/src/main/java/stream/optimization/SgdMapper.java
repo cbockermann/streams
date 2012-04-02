@@ -47,7 +47,7 @@ public class SgdMapper extends StatefulStreamMapper {
 		loss.setLambda(lambda);
 		sgd = new StochasticGradientDescent(loss);
 		// sgd.useGaussianKernel(0.001, 2048, false);
-		sgd.init();
+		sgd.reset();
 	}
 
 	public void setLambda(Double d) {
@@ -55,7 +55,7 @@ public class SgdMapper extends StatefulStreamMapper {
 		SvmHingeLoss loss = new SvmHingeLoss();
 		loss.setLambda(lambda);
 		sgd = new StochasticGradientDescent(loss);
-		sgd.init();
+		sgd.reset();
 	}
 
 	public Double getLambda() {

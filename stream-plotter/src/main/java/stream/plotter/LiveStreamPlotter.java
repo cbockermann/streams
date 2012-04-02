@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.runtime.Context;
 import stream.util.Parameter;
 import stream.util.ParameterUtils;
 
@@ -35,6 +36,7 @@ public class LiveStreamPlotter extends DataVisualizer {
 	Double ymax = null;
 
 	String yrange = "";
+	Long processed = 0L;
 
 	Thread updateThread = new Thread() {
 		public void run() {
@@ -109,10 +111,10 @@ public class LiveStreamPlotter extends DataVisualizer {
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 		frame = new JFrame();
 
 		if (yrange != null && !"".equals(yrange.trim())) {
@@ -154,6 +156,8 @@ public class LiveStreamPlotter extends DataVisualizer {
 	@Override
 	public Data processMatchingData(Data data) {
 
+		processed++;
+
 		if (keys == null) {
 			plotPanel.dataArrived(data);
 			return data;
@@ -168,7 +172,9 @@ public class LiveStreamPlotter extends DataVisualizer {
 			}
 		}
 
-		// plotPanel.dataArrived(stats);
+		if (this.updateInterval == null || updateInterval % processed == 0)
+			plotPanel.dataArrived(stats);
+
 		return data;
 	}
 }

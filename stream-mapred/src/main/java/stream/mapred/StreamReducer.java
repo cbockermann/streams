@@ -8,6 +8,7 @@ import stream.io.DataStream;
 import stream.io.DataStreamFactory;
 import stream.io.DataStreamWriter;
 import stream.io.SparseDataStream;
+import stream.runtime.Context;
 
 public abstract class StreamReducer extends AbstractDataProcessor implements
 		Reducer {
@@ -39,7 +40,7 @@ public abstract class StreamReducer extends AbstractDataProcessor implements
 	}
 
 	public void reduce() throws Exception {
-		init();
+		init(null);
 		long count = 0L;
 		Data item = read();
 		while (item != null) {
@@ -55,10 +56,10 @@ public abstract class StreamReducer extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.Processor#init()
+	 * @see stream.data.Processor#reset()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 	}
 
 	/**

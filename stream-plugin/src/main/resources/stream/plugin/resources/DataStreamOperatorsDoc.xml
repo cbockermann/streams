@@ -418,6 +418,13 @@ additional attributes/keys as outlined in the following.&lt;/p&gt;
     <key>FACT Event Stream</key>
   </operator>
   <operator>
+    <name>JSONStream</name>
+    <synopsis/>
+    <help>&lt;p&gt;This data stream reads JSON objects from the source (file/url) and
+returns the corresponding Data items.&lt;/p&gt;</help>
+    <key>JSONStream</key>
+  </operator>
+  <operator>
     <name>LogDataStream</name>
     <synopsis/>
     <key>LogDataStream</key>

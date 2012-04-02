@@ -17,6 +17,7 @@ import stream.io.DataStreamWriter;
 import stream.io.SparseDataStreamWriter;
 import stream.optimization.StochasticGradientDescent;
 import stream.optimization.SvmHingeLoss;
+import stream.runtime.Context;
 
 public class SgdMapper extends StatefulStreamMapper {
 	public static Integer id = 0;
@@ -49,7 +50,7 @@ public class SgdMapper extends StatefulStreamMapper {
 		loss.setLambda(lambda);
 		sgd = new StochasticGradientDescent(loss);
 		// sgd.useGaussianKernel(0.001, 2048, false);
-		sgd.init();
+		sgd.reset();
 	}
 
 	/**
@@ -71,7 +72,7 @@ public class SgdMapper extends StatefulStreamMapper {
 	 * @see stream.hadoop.StreamMapper#startBlock()
 	 */
 	@Override
-	public void init() {
+	public void init(Context ctx) {
 		//
 		// this is for stateful persistent weight vectors only
 		//

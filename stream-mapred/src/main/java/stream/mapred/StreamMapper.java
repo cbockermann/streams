@@ -9,33 +9,30 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.io.CsvStream;
 import stream.io.DataStream;
-
+import stream.runtime.Context;
 
 /**
- * This class implements a simple map job, that reads data from standard
- * input and processes the data in one block (list of data items). The
- * data is assumed to be in SVM light format (sparse).
+ * This class implements a simple map job, that reads data from standard input
+ * and processes the data in one block (list of data items). The data is assumed
+ * to be in SVM light format (sparse).
  * 
  * @author Christian Bockermann
- *
+ * 
  */
-public abstract class StreamMapper
-	extends AbstractDataProcessor
-	implements Mapper 
-{
+public abstract class StreamMapper extends AbstractDataProcessor implements
+		Mapper {
 	/* The logger for this class */
-	static Logger log = LoggerFactory.getLogger( StreamMapper.class );
-	boolean verbose = "true".equalsIgnoreCase( System.getProperty( "mapper.verbose" ) );
-
+	static Logger log = LoggerFactory.getLogger(StreamMapper.class);
+	boolean verbose = "true".equalsIgnoreCase(System
+			.getProperty("mapper.verbose"));
 
 	/**
 	 * @see stream.mapred.Mapper#init()
 	 */
 	@Override
-	public void init() throws Exception {
+	public void init(Context ctx) throws Exception {
 	}
 
-	
 	/**
 	 * @see stream.mapred.Mapper#finish()
 	 */
@@ -43,34 +40,32 @@ public abstract class StreamMapper
 	public void finish() throws Exception {
 	}
 
-	
-	
 	/**
 	 * @see stream.mapred.AbstractDataProcessor#createDataInputStream(java.io.InputStream)
 	 */
 	@Override
 	public DataStream createDataInputStream(InputStream in) throws Exception {
-		if( "csv".equalsIgnoreCase( System.getProperty( "mapper.input.format" ) ) )
-			return new CsvStream( in );
-		
-		return super.createDataInputStream( in );
+		if ("csv".equalsIgnoreCase(System.getProperty("mapper.input.format")))
+			return new CsvStream(in);
+
+		return super.createDataInputStream(in);
 	}
 
-	
-	public final void run( InputStream in, OutputStream out ) throws Exception {
-		this.init( in, out );
+	public final void run(InputStream in, OutputStream out) throws Exception {
+		this.init(in, out);
 		this.init();
-		
+
 		Data item = read();
 		long count = 0L;
-		while( item != null ){
+		while (item != null) {
 			count++;
-			process( item );
-			if( verbose && count % 10000 == 0)
-				log.debug( "Mapper '{}': {} data items processed", getClass(), count );
+			process(item);
+			if (verbose && count % 10000 == 0)
+				log.debug("Mapper '{}': {} data items processed", getClass(),
+						count);
 			item = read();
 		}
-		
+
 		finish();
 	}
 }

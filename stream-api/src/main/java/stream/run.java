@@ -3,7 +3,7 @@ package stream;
 import java.io.File;
 import java.net.URL;
 
-import stream.tools.StreamRunner;
+import stream.runtime.ProcessContainer;
 
 public class run
 {
@@ -36,7 +36,7 @@ public class run
         		url = new URL( args[0] );
 
         	System.out.println( "Reading experiment layout from " + url );
-        	StreamRunner runner = new StreamRunner( url );
+        	ProcessContainer runner = new ProcessContainer( url );
         	System.out.println( "Starting stream experiment..." );
         	runner.run();
         	

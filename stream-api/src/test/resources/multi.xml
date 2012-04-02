@@ -11,7 +11,6 @@
 
  		<Enqueue ref="queue" />
  		<Message id="1" txt="Processor[log] processing item..." />
-		
 	</Process>
 	
 	<Process input="queue">

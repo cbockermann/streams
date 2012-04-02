@@ -82,8 +82,9 @@ public class ObjectFactory extends VariableContext {
 		Map<String, String> params = getAttributes(node);
 		Object obj = create(this.findClassForElement(node), params);
 		Map<String, String> realParams = ParameterInjection.extract(obj);
-		for (String key : realParams.keySet())
+		for (String key : realParams.keySet()) {
 			node.setAttribute(key, realParams.get(key));
+		}
 
 		return obj;
 	}

@@ -21,6 +21,7 @@ import org.w3c.dom.NodeList;
 
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.DataProcessorList;
 import stream.io.DataStream;
 import stream.io.DataStreamProcessor;
 import stream.io.DataStreamQueue;
@@ -226,32 +227,40 @@ public class ProcessContainer {
 		NodeList proc = child.getChildNodes();
 		for (int j = 0; j < proc.getLength(); j++) {
 			Node n = proc.item(j);
-			String name = n.getNodeName();
 			if (n instanceof Element) {
 
 				DataProcessor p = null;
+				try {
+					Element el = (Element) n;
 
-				if ((name.equalsIgnoreCase("processor") || name
-						.equalsIgnoreCase("mapper"))) {
-					try {
-						p = (DataProcessor) objectFactory.create((Element) n);
-					} catch (ClassNotFoundException cnfe) {
-						log.error("Failed to create object for class {}",
-								cnfe.getMessage());
-						throw cnfe;
-					} catch (Exception e) {
-						e.printStackTrace();
+					log.debug("Trying to generate object from {}", el);
+					p = (DataProcessor) objectFactory.create((Element) el);
+
+					if (el.hasChildNodes() && p instanceof DataProcessorList) {
+
+						NodeList ch = el.getChildNodes();
+						for (int i = 0; i < ch.getLength(); i++) {
+
+							try {
+								if (ch.item(i).getNodeType() == Node.ELEMENT_NODE) {
+									List<DataProcessor> nested = getDataProcessors((Element) ch
+											.item(i));
+
+									for (DataProcessor nestedProcessor : nested) {
+										((DataProcessorList) p)
+												.addDataProcessor(nestedProcessor);
+									}
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
 					}
-				} else {
 
-					try {
-						log.debug("Trying to generate object from {}", n);
-						p = (DataProcessor) objectFactory.create((Element) n);
-						log.debug("Created generic data-processor {}", p);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
+					log.debug("Created generic data-processor {}", p);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
 				if (p != null) {
@@ -269,7 +278,7 @@ public class ProcessContainer {
 		return processors;
 	}
 
-	public static DataStream createStream(Map<String, String> params)
+	private static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
 		Constructor<?> constr = clazz.getConstructor(URL.class);

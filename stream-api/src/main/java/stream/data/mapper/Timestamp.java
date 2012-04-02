@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
-import stream.util.Description;
-import stream.util.Parameter;
+import stream.runtime.annotations.Description;
+import stream.runtime.annotations.Parameter;
 
 /**
  * <p>

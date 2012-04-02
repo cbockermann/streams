@@ -14,6 +14,7 @@ import stream.data.Measurable;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.ContainerContext;
 import stream.runtime.Context;
+import stream.runtime.VariableContext;
 import stream.util.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
@@ -93,7 +94,8 @@ public abstract class DataStreamOperator extends Operator implements
 			}
 
 			try {
-				ParameterInjection.inject(processor, params);
+				ParameterInjection.inject(processor, params,
+						new VariableContext());
 			} catch (Exception e) {
 				log.error(
 						"Failed to set parameters for DataStream Operator '{}': {}",

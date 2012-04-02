@@ -5,8 +5,8 @@ package stream.plotter;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
-import stream.util.Parameter;
-import stream.util.SimpleTimeParser;
+import stream.runtime.annotations.Parameter;
+import stream.util.parser.TimeParser;
 
 /**
  * <p>
@@ -68,7 +68,7 @@ public abstract class DataVisualizer extends ConditionedDataProcessor {
 	 */
 	public void setUpdateInterval(String updateInterval) {
 		try {
-			this.updateInterval = SimpleTimeParser.parseTime(updateInterval);
+			this.updateInterval = TimeParser.parseTime(updateInterval);
 		} catch (Exception e) {
 			this.updateInterval = 1000L;
 		}

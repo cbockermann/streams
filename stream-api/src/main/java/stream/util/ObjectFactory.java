@@ -15,11 +15,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import stream.runtime.VariableContext;
+import stream.runtime.annotations.EmbeddedContent;
+
 /**
- * @author chris
+ * This class implements a generic object factory that is able to instantiate
+ * objects from XML elements.
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public class ObjectFactory extends VariableContext {
+
 	static Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 	static Map<String, Integer> globalObjectNumbers = new HashMap<String, Integer>();
 	final static Map<String, String> classNames = new HashMap<String, String>();
@@ -27,7 +34,7 @@ public class ObjectFactory extends VariableContext {
 	final static String[] DEFAULT_PACKAGES = new String[] { "", "stream.data.",
 			"stream.data.mapper.", "stream.data.tree.", "stream.filter.",
 			"stream.data.filter.", "stream.data.stats.", "stream.data.vector.",
-			"stream.data.test.", "stream.logic" };
+			"stream.data.test.", "stream.logic", "stream.flow" };
 
 	final List<String> searchPath = new ArrayList<String>();
 
@@ -35,7 +42,7 @@ public class ObjectFactory extends VariableContext {
 		super(new HashMap<String, String>());
 
 		for (String pkg : DEFAULT_PACKAGES) {
-			searchPath.add(pkg);
+			addPackage(pkg);
 		}
 	}
 
@@ -75,12 +82,8 @@ public class ObjectFactory extends VariableContext {
 		Map<String, String> params = getAttributes(node);
 		Object obj = create(this.findClassForElement(node), params);
 		Map<String, String> realParams = ParameterInjection.extract(obj);
-		for (String key : realParams.keySet())
+		for (String key : realParams.keySet()) {
 			node.setAttribute(key, realParams.get(key));
-
-		if (obj instanceof Configurable) {
-			Configurable c = (Configurable) obj;
-			c.init(node);
 		}
 
 		return obj;
@@ -103,6 +106,9 @@ public class ObjectFactory extends VariableContext {
 
 		Map<String, String> p = new HashMap<String, String>();
 		for (String key : parameter.keySet()) {
+			//
+			// TODO: move the macro-expansion into the ParameterInjection!
+			//
 			if (parameter.get(key).indexOf("%{") >= 0) {
 				String orig = parameter.get(key);
 				String expanded = expand(orig);
@@ -115,7 +121,7 @@ public class ObjectFactory extends VariableContext {
 		// Inject the parameters into the object...
 		//
 		log.info("Injecting parameters: {}", p);
-		ParameterInjection.inject(object, p);
+		ParameterInjection.inject(object, p, this);
 		return object;
 	}
 

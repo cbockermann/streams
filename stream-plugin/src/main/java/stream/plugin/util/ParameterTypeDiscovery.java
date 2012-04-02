@@ -13,8 +13,9 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.mapper.HideFeature;
-import stream.util.EmbeddedContent;
-import stream.util.Parameter;
+import stream.runtime.VariableContext;
+import stream.runtime.annotations.EmbeddedContent;
+import stream.runtime.annotations.Parameter;
 import stream.util.ParameterDiscovery;
 import stream.util.ParameterInjection;
 
@@ -284,7 +285,8 @@ public class ParameterTypeDiscovery {
 	public static void inject(Object object, Map<String, Object> parameters) {
 		try {
 			log.debug("Using ParameterInjection to set parameters...");
-			ParameterInjection.inject(object, parameters);
+			ParameterInjection
+					.inject(object, parameters, new VariableContext());
 		} catch (Exception e) {
 			log.error("Failed to inject parameters: {}", e.getMessage());
 			if (log.isDebugEnabled())
@@ -299,7 +301,7 @@ public class ParameterTypeDiscovery {
 		params.put("key", "x");
 		HideFeature proc = new HideFeature();
 
-		ParameterInjection.inject(proc, params);
+		ParameterInjection.inject(proc, params, new VariableContext());
 
 		Data datum = new DataImpl();
 		datum.put("x", 1.0d);

@@ -8,8 +8,8 @@ import java.io.Serializable;
 import org.jwall.web.audit.processor.DNSLookupProcessor;
 
 import stream.data.Data;
-import stream.util.Description;
-import stream.util.Parameter;
+import stream.runtime.annotations.Description;
+import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris

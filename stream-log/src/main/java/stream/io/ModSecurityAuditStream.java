@@ -12,7 +12,7 @@ import org.jwall.web.audit.io.AuditEventReader;
 import org.jwall.web.audit.io.ModSecurity2AuditReader;
 
 import stream.data.Data;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 /**
  * <p>

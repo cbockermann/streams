@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.logic;
+package stream.flow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

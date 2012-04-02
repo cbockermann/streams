@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.Processor;
 import stream.io.DataStream;
 
 /**
@@ -23,7 +24,7 @@ public class Process extends Thread {
 	static Integer LAST_ID = 0;
 	DataStream input;
 	DataProcessor output;
-	List<DataProcessor> processors = new ArrayList<DataProcessor>();
+	List<Processor> processors = new ArrayList<Processor>();
 	boolean running = false;
 	String processId;
 	Long limit = -1L;
@@ -46,12 +47,12 @@ public class Process extends Thread {
 		addDataProcessor(output);
 	}
 
-	public void addDataProcessor(DataProcessor proc) {
+	public void addDataProcessor(Processor proc) {
 		if (!processors.contains(proc))
 			processors.add(proc);
 	}
 
-	public void removeDataProcessor(DataProcessor proc) {
+	public void removeDataProcessor(Processor proc) {
 		processors.remove(proc);
 	}
 
@@ -109,9 +110,10 @@ public class Process extends Thread {
 		log.debug(" ##  StreamProcessing.run()");
 		running = true;
 
-		for (DataProcessor proc : processors) {
+		for (Processor proc : processors) {
 			try {
-				proc.init(context);
+				if (proc instanceof DataProcessor)
+					((DataProcessor) proc).init(context);
 			} catch (Exception e) {
 				log.error("Failed to initialize processor '{}': {}", proc,
 						e.getMessage());
@@ -129,7 +131,7 @@ public class Process extends Thread {
 				cnt++;
 				log.debug("Processing {}", item);
 
-				for (DataProcessor proc : processors) {
+				for (Processor proc : processors) {
 					log.trace("pushing copy of item to processor {}", proc);
 					item = proc.process(item);
 					if (item == null)
@@ -143,9 +145,11 @@ public class Process extends Thread {
 		}
 		log.debug("{} items processed.", cnt);
 
-		for (DataProcessor proc : processors) {
+		for (Processor proc : processors) {
 			try {
-				proc.finish();
+				if (proc instanceof DataProcessor) {
+					((DataProcessor) proc).finish();
+				}
 			} catch (Exception e) {
 				log.error("Failed to finish processor '{}': {}", proc,
 						e.getMessage());

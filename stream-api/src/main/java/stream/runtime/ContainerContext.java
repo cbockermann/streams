@@ -9,7 +9,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author chris
  * 
@@ -25,7 +24,7 @@ public class ContainerContext extends DefaultLookupService implements Context {
 
 	public ContainerContext(String name) {
 		super(name);
-		log.info("Creating experiment-context '{}'", name);
+		log.debug("Creating experiment-context '{}'", name);
 	}
 
 	public Map<String, String> getProperties() {

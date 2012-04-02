@@ -9,16 +9,17 @@ import org.slf4j.LoggerFactory;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.Processor;
-import stream.util.Description;
+import stream.runtime.Context;
+import stream.runtime.annotations.Description;
 
 /**
  * @author chris
  * 
  */
-@Description(name = "Apply Model", group = "Data Stream.Mining")
-public class ApplyModel extends AbstractDataProcessor {
+@Description(name = "Prediction", group = "Data Stream.Mining")
+public class Prediction extends AbstractDataProcessor {
 
-	static Logger log = LoggerFactory.getLogger(ApplyModel.class);
+	static Logger log = LoggerFactory.getLogger(Prediction.class);
 
 	String ref;
 
@@ -38,6 +39,22 @@ public class ApplyModel extends AbstractDataProcessor {
 	}
 
 	/**
+	 * @see stream.data.AbstractDataProcessor#init(stream.runtime.Context)
+	 */
+	@Override
+	public void init(Context ctx) throws Exception {
+		super.init(ctx);
+
+		Object o = context.lookup(getRef());
+		if (!(o instanceof ModelProvider)) {
+			throw new Exception(
+					"Referenced element '"
+							+ getRef()
+							+ "' does not provide a prediction model! (Implementation of ModelProvider expected!)");
+		}
+	}
+
+	/**
 	 * @see stream.data.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
@@ -53,7 +70,7 @@ public class ApplyModel extends AbstractDataProcessor {
 				return modelProvider.getModel().process(data);
 			} else {
 				log.error(
-						"Referenced processor '{}' is not a learner/does not provide a model!",
+						"Referenced element '{}' is not a learner/does not provide a model!",
 						p);
 			}
 

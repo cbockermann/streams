@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.DataProcessor;
 import stream.io.DataStream;
 import stream.io.DataStreamWriter;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 import stream.util.MacroExpander;
 
 /**

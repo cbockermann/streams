@@ -5,7 +5,7 @@ package stream.data;
 
 import stream.data.filter.Expression;
 import stream.data.filter.ExpressionCompiler;
-import stream.util.Parameter;
+import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris

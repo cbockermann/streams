@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.learner.Regressor;
 import stream.model.PredictionModel;
+import stream.runtime.VariableContext;
 import stream.util.ObjectFactory;
 import stream.util.ParameterInjection;
 
@@ -50,7 +51,7 @@ public class RegressionTreeModel extends PredictionModel<Double> {
 		Map<String, String> ps = new LinkedHashMap<String, String>();
 		for (String key : parameters.keySet())
 			ps.put(key, parameters.get(key).toString());
-		ParameterInjection.inject(regression, ps);
+		ParameterInjection.inject(regression, ps, new VariableContext());
 		root = new LeafNode(null, false, regression, 0);
 	}
 

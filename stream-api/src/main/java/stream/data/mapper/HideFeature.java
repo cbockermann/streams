@@ -3,7 +3,7 @@ package stream.data.mapper;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
-import stream.util.Parameter;
+import stream.runtime.annotations.Parameter;
 
 public class HideFeature extends AbstractDataProcessor {
 

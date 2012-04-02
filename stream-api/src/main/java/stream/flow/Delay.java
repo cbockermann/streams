@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.logic;
+package stream.flow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
-import stream.util.Description;
-import stream.util.SimpleTimeParser;
+import stream.runtime.annotations.Description;
+import stream.util.parser.TimeParser;
 
 /**
  * A simple processor that artificially delays the data processing by a
@@ -50,7 +50,7 @@ public class Delay extends ConditionedDataProcessor {
 	public void init(Context ctx) throws Exception {
 		super.init(ctx);
 		if (time != null && !"".equals(time.trim()))
-			milliseconds = SimpleTimeParser.parseTime(time);
+			milliseconds = TimeParser.parseTime(time);
 		else
 			milliseconds = 0L;
 	}

@@ -4,20 +4,29 @@
 package stream.learner.evaluation;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
+import stream.runtime.annotations.Description;
 import stream.util.ParameterUtils;
 
 /**
- * @author chris
+ * <p>
+ * This class implements a generic prediction error evaluator. The prediction
+ * error(s) are added to the data item...
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
+@Description(name = "PredictionError", group = "Data Stream.Mining.Evaluation")
 public class PredictionError extends AbstractDataProcessor {
 
-	final LossFunction<Serializable> loss = new ZeroOneLoss<Serializable>();
+	LossFunction<Serializable> loss = new ZeroOneLoss<Serializable>();
 	String prefix = "@error:";
-	String label;
+	String label = "@label";
 	String[] learner;
 
 	/**
@@ -75,13 +84,39 @@ public class PredictionError extends AbstractDataProcessor {
 		if (labelValue == null)
 			return data;
 
-		for (String classifier : learner) {
-			Serializable pred = data.get("@prediction:" + classifier);
-			if (pred != null) {
-				Double error = loss.loss(labelValue, pred);
-				data.put(prefix + classifier, error);
+		Map<String, Double> errors = new LinkedHashMap<String, Double>();
+
+		//
+		// if the user specified the learner names, we only check these...
+		//
+		if (learner != null) {
+			for (String classifier : learner) {
+				Serializable pred = data.get(Data.PREDICTION_PREFIX + ":"
+						+ classifier);
+				if (pred != null) {
+					Double error = loss.loss(labelValue, pred);
+					errors.put(prefix + classifier, error);
+				}
+			}
+		} else {
+			//
+			// if no learner names/refs have been specified, we compute
+			// prediction errors for all predictions in the data item
+			//
+			for (String key : data.keySet()) {
+				if (key.startsWith(Data.PREDICTION_PREFIX)) {
+					Serializable pred = data.get(key);
+					String errKey = key.replaceFirst(Data.PREDICTION_PREFIX,
+							prefix);
+
+					Double error = loss.loss(labelValue, pred);
+					errors.put(errKey, error);
+				}
 			}
 		}
+
+		for (String err : errors.keySet())
+			data.put(err, errors.get(err));
 
 		return data;
 	}

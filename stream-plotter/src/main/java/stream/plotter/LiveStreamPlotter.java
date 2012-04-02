@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.runtime.Context;
-import stream.util.Parameter;
+import stream.runtime.annotations.Parameter;
 import stream.util.ParameterUtils;
 
 /**

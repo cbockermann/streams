@@ -30,6 +30,7 @@ import stream.eval.TestAndTrain;
 import stream.io.DataSource;
 import stream.io.DataStream;
 import stream.learner.Learner;
+import stream.runtime.VariableContext;
 import stream.util.ObjectFactory;
 import stream.util.ParameterInjection;
 
@@ -71,7 +72,7 @@ public class ExperimentFactory {
 
 		// Inject the parameters into the learner...
 		//
-		ParameterInjection.inject(learner, parameter);
+		ParameterInjection.inject(learner, parameter, new VariableContext());
 		return (Learner<?>) learner;
 	}
 
@@ -525,7 +526,8 @@ public class ExperimentFactory {
 		test.getLearnerCollection().putAll(learner);
 
 		TestAndTrain testAndTrain = new TestAndTrain(null, test);
-		ParameterInjection.inject(testAndTrain, evaluationAttributes);
+		ParameterInjection.inject(testAndTrain, evaluationAttributes,
+				new VariableContext());
 		return testAndTrain;
 	}
 }

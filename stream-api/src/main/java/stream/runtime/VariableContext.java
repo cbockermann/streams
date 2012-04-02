@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.util;
+package stream.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,11 @@ public class VariableContext {
 	public final static String VAR_SUFFIX = "}";
 
 	/* The variables available in this context */
-	Map<String, String> variables = new HashMap<String, String>();
+	protected Map<String, String> variables = new HashMap<String, String>();
+
+	public VariableContext() {
+		this(new HashMap<String, String>());
+	}
 
 	public VariableContext(VariableContext root) {
 		variables = new HashMap<String, String>();

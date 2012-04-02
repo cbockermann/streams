@@ -5,9 +5,9 @@ package stream.logger;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
-import stream.data.filter.Expression;
 import stream.runtime.annotations.Description;
 import stream.runtime.annotations.Parameter;
+import stream.runtime.expressions.Expression;
 import stream.util.MacroExpander;
 
 /**
@@ -45,7 +45,7 @@ public class Message extends ConditionedDataProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 
-		if (filter == null || filter.matches(data)) {
+		if (filter == null || filter.matches(context, data)) {
 			String msg = MacroExpander.expand(getTxt(), data);
 			System.out.println(msg);
 		}

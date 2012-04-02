@@ -15,6 +15,7 @@ import stream.runtime.Context;
 public class DataProcessorList implements DataProcessor {
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
+	protected Context context;
 
 	/**
 	 * @see stream.data.Processor#process(stream.data.Data)
@@ -41,6 +42,7 @@ public class DataProcessorList implements DataProcessor {
 	 */
 	@Override
 	public void init(Context context) throws Exception {
+		this.context = context;
 		for (Processor p : processors) {
 			if (p instanceof DataProcessor) {
 				((DataProcessor) p).init(context);

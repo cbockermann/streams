@@ -67,4 +67,17 @@ public class ProcessContextImpl implements ProcessContext {
 	public void set(String key, Object o) {
 		context.put(key, o);
 	}
+
+	/**
+	 * @see stream.runtime.Context#resolve(java.lang.String)
+	 */
+	@Override
+	public Object resolve(String variable) {
+		if (!variable.startsWith("%{process.")) {
+			return containerContext.resolve(variable);
+		}
+
+		return get(variable.substring("%{process.".length(),
+				variable.length() - 1));
+	}
 }

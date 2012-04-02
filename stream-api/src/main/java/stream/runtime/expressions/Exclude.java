@@ -1,4 +1,4 @@
-package stream.data.filter;
+package stream.runtime.expressions;
 
 import java.io.Serializable;
 
@@ -8,14 +8,18 @@ import stream.data.Data;
 /**
  * <p>
  * This filter simply checks the value of a given key/feature against a regular
- * expression. If the feature is <code>null</code> or the does <b>not</b> match
- * the regular expression, the data item is discarded.
+ * expression. If the feature value does match the regular expression, the data
+ * item is discarded.
+ * </p>
+ * <p>
+ * A non-existing feature value (i.e. <code>null</code>) will be treated as the
+ * string <code>null</code>.
  * </p>
  * 
- * @author chris@jwall.org
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class Include extends AbstractDataProcessor {
+public class Exclude extends AbstractDataProcessor {
 	String key;
 	String regex;
 
@@ -59,7 +63,10 @@ public class Include extends AbstractDataProcessor {
 			return data;
 
 		Serializable val = data.get(key);
-		if (val != null && val.toString().matches(regex))
+		if (val == null)
+			val = "null";
+
+		if (val.toString().matches(regex))
 			return data;
 
 		return null;

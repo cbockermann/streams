@@ -3,9 +3,9 @@
  */
 package stream.data;
 
-import stream.data.filter.Expression;
-import stream.data.filter.ExpressionCompiler;
 import stream.runtime.annotations.Parameter;
+import stream.runtime.expressions.Expression;
+import stream.runtime.expressions.ExpressionCompiler;
 
 /**
  * @author chris
@@ -44,7 +44,7 @@ public abstract class ConditionedDataProcessor extends AbstractDataProcessor {
 	}
 
 	public boolean matches(Data item) {
-		return (condition == null || condition.matches(item));
+		return (condition == null || condition.matches(context, item));
 	}
 
 	/**

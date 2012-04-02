@@ -17,9 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
-import java.io.Serializable;
 
 public class ConditionLT extends BinaryOperator {
 	/** The unique class ID */
@@ -30,10 +29,10 @@ public class ConditionLT extends BinaryOperator {
 	}
 
 	/**
-	 * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean eval(Serializable input, String pattern) {
+	public boolean eval(Object input, String pattern) {
 		if (isNumeric(input)) {
 			try {
 				Double v = new Double("" + input);

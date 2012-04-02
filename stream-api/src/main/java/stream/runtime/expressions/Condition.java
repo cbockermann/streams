@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
 import java.io.Serializable;
 

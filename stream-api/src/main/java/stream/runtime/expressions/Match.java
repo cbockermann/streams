@@ -1,14 +1,13 @@
 /**
  * 
  */
-package stream.data.filter;
-
-import java.io.Serializable;
+package stream.runtime.expressions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
+import stream.runtime.Context;
 
 /**
  * @author chris
@@ -32,9 +31,10 @@ public class Match implements Expression {
 		this.negated = o.isNegated();
 	}
 
-	public boolean matches(Data item) {
+	public boolean matches(Context ctx, Data item) {
 
-		Serializable featureValue = item.get(variable);
+		Object featureValue = ExpressionResolver.resolve(variable, ctx, item);
+		// Serializable featureValue = item.get(variable);
 		if (op instanceof BinaryOperator) {
 			BinaryOperator binOp = (BinaryOperator) op;
 			boolean match = binOp.eval(featureValue, this.value);

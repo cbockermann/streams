@@ -17,36 +17,35 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
-import java.io.Serializable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>
- * Instances of this class check all values for the given variable if they
- * start with a pre-defined substring.
+ * Instances of this class match all values for the given variable against the
+ * specified regular expression.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public class ConditionBeginsWith
-	extends BinaryOperator
-{
-    /** The unique class ID */
-    private static final long serialVersionUID = 6247657062073419253L;
-    static Logger log = LoggerFactory.getLogger( ConditionBeginsWith.class );
-    
-    public ConditionBeginsWith() {
-        super( "@beginsWith" );
-    }
+public class ConditionRX extends BinaryOperator {
+	/** The unique class ID */
+	private static final long serialVersionUID = 6247657062073419253L;
 
-    
-    public boolean eval( Serializable input, String value ){
-    	return value != null && input != null && input.toString().startsWith( value );
-    }
+	public ConditionRX() {
+		super("@rx");
+	}
+
+	/**
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
+	 */
+	public boolean eval(Object input, String p) {
+		Pattern pattern = Pattern.compile(p);
+		Matcher m = pattern.matcher(input + "");
+		return m.matches();
+	}
 }

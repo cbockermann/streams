@@ -11,6 +11,8 @@ import org.junit.Test;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.runtime.LocalContext;
+import stream.runtime.expressions.ExpressionCompiler;
 
 /**
  * @author chris
@@ -39,7 +41,8 @@ public class ExpressionTest {
 	}
 
 	protected boolean eval(Data item, String expression) throws Exception {
-		return ExpressionCompiler.parse(expression).matches(item);
+		return ExpressionCompiler.parse(expression).matches(new LocalContext(),
+				item);
 	}
 
 	@Test

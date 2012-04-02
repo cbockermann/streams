@@ -17,17 +17,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
+/**
+ * <p>
+ * This condition checks for equality.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * 
+ */
+public class ConditionEQ extends BinaryOperator {
+	/** The unique class ID */
+	private static final long serialVersionUID = -7185932909087120854L;
 
-public class ExpressionException
-    extends Exception
-{
-    /** The unique class ID */
-    private static final long serialVersionUID = -8863841755957428654L;
-    
-    
-    public ExpressionException( String msg ){
-        super( msg );
-    }
+	public ConditionEQ() {
+		super("@eq", "=", "==", "!=");
+	}
+
+	public boolean eval(Object input, String pattern) {
+		return input != null && input.toString().equals(pattern);
+	}
 }

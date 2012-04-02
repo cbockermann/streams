@@ -17,30 +17,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
-
-import java.io.Serializable;
+package stream.runtime.expressions;
 
 
-/**
- * <p>
- * This condition checks for equality.
- * </p>
- * 
- * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
- */
-public class ConditionEQ
-	extends BinaryOperator
-{
+public class ConditionPM extends BinaryOperator {
+
 	/** The unique class ID */
-	private static final long serialVersionUID = -7185932909087120854L;
+	private static final long serialVersionUID = 125867770986401362L;
 
-	public ConditionEQ() {
-		super( "@eq", "=", "==", "!=" );
+	public ConditionPM() {
+		super("@pm");
 	}
 
-	public boolean eval( Serializable input, String pattern ){
-		return input != null && input.toString().equals( pattern );
+	public boolean eval(Object input, String patterns) {
+		return matches("" + input, patterns);
+	}
+
+	/**
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
+	 */
+	public boolean matches(String pattern, String input) {
+		String[] ps = pattern.split("\\s+");
+
+		for (String p : ps)
+			if (input.indexOf(p) >= 0)
+				return true;
+
+		return false;
 	}
 }

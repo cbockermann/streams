@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import stream.data.Data;
 import stream.data.DataProcessor;
 import stream.data.DataProcessorList;
+import stream.data.Processor;
 import stream.io.DataStream;
 import stream.io.DataStreamProcessor;
 import stream.io.DataStreamQueue;
@@ -31,7 +32,8 @@ import stream.util.ParameterInjection;
 public class ProcessContainer {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
-	ObjectFactory objectFactory = ObjectFactory.newInstance();
+
+	final ObjectFactory objectFactory = ObjectFactory.newInstance();
 
 	boolean openListeners = true;
 
@@ -160,14 +162,21 @@ public class ProcessContainer {
 					log.error("No input defined for processor-chain {}", node);
 				}
 
-				List<DataProcessor> procs = this.getDataProcessors(child);
-				log.debug("Adding {} processors to processing-chain",
-						procs.size());
-				for (DataProcessor p : procs)
-					proc.addDataProcessor(p);
+				List<Processor> procs = new ArrayList<Processor>();
 
-				log.debug("Processor [{}] is handling stream '{}'",
-						attr.get("id"), src);
+				NodeList pnodes = child.getChildNodes();
+				for (int j = 0; j < pnodes.getLength(); j++) {
+
+					Node cnode = pnodes.item(j);
+					if (cnode.getNodeType() == Node.ELEMENT_NODE) {
+						Processor p = createProcessor((Element) cnode);
+						if (p != null) {
+							log.debug("Found processor...");
+							procs.add(p);
+							proc.addDataProcessor(p);
+						}
+					}
+				}
 
 				if (src != null) {
 					List<DataProcessor> ps = this.processors.get(src);
@@ -221,64 +230,91 @@ public class ProcessContainer {
 		return props;
 	}
 
-	public List<DataProcessor> getDataProcessors(Element child)
-			throws Exception {
-		List<DataProcessor> processors = new ArrayList<DataProcessor>();
-		NodeList proc = child.getChildNodes();
-		for (int j = 0; j < proc.getLength(); j++) {
-			Node n = proc.item(j);
-			if (n instanceof Element) {
+	public Processor createProcessor(Element child) throws Exception {
 
-				DataProcessor p = null;
-				try {
-					Element el = (Element) n;
+		Object o = objectFactory.create(child);
+		if (o instanceof Processor) {
 
-					log.debug("Trying to generate object from {}", el);
-					p = (DataProcessor) objectFactory.create((Element) el);
+			if (o instanceof DataProcessorList) {
 
-					if (el.hasChildNodes() && p instanceof DataProcessorList) {
+				NodeList children = child.getChildNodes();
+				for (int i = 0; i < children.getLength(); i++) {
 
-						NodeList ch = el.getChildNodes();
-						for (int i = 0; i < ch.getLength(); i++) {
+					Node node = children.item(i);
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
 
-							try {
-								if (ch.item(i).getNodeType() == Node.ELEMENT_NODE) {
-									List<DataProcessor> nested = getDataProcessors((Element) ch
-											.item(i));
+						Element element = (Element) node;
+						Processor proc = createProcessor(element);
+						if (proc != null) {
 
-									for (DataProcessor nestedProcessor : nested) {
-										((DataProcessorList) p)
-												.addDataProcessor(nestedProcessor);
-									}
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							((DataProcessorList) o).addDataProcessor(proc);
+						} else {
+							log.warn(
+									"Nested element {} is not of type 'stream.data.Processor': ",
+									node.getNodeName());
 						}
-
 					}
-
-					log.debug("Created generic data-processor {}", p);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				if (p != null) {
-					log.debug("Adding data processor...");
-					processors.add(p);
-				}
-
-				String id = ((Element) n).getAttribute("id");
-				if (id != null && !"".equals(id.trim())) {
-					log.debug("Registering processor with attribute '{}'", id);
-					context.register(id, p);
 				}
 			}
+
+			if (child.hasAttribute("id")
+					&& !"".equals(child.getAttribute("id").trim())) {
+				log.debug(
+						"Registiering processor with id '{}' in look-up service",
+						child.getAttribute("id"));
+				context.register(child.getAttribute("id").trim(), (Processor) o);
+			}
+
+			return (Processor) o;
 		}
-		return processors;
+
+		return null;
 	}
 
-	private static DataStream createStream(Map<String, String> params)
+	/*
+	 * private List<Processor> getDataProcessors(Element child) throws Exception
+	 * { List<Processor> processors = new ArrayList<Processor>(); NodeList proc
+	 * = child.getChildNodes(); for (int j = 0; j < proc.getLength(); j++) {
+	 * Node n = proc.item(j); if (n instanceof Element) {
+	 * 
+	 * DataProcessor p = null; try { Element el = (Element) n;
+	 * 
+	 * log.debug("Trying to generate object from {}", el); p = (DataProcessor)
+	 * objectFactory.create((Element) el);
+	 * 
+	 * if (el.hasChildNodes() && p instanceof DataProcessorList) {
+	 * 
+	 * NodeList ch = el.getChildNodes(); for (int i = 0; i < ch.getLength();
+	 * i++) { Node nestedNode = ch.item(i); try { if (ch.item(i).getNodeType()
+	 * == Node.ELEMENT_NODE) {
+	 * 
+	 * List<Processor> nested = getDataProcessors((Element) nestedNode); if
+	 * (nested.isEmpty()) {
+	 * 
+	 * Object o = objectFactory .create((Element) nestedNode); if (o instanceof
+	 * DataProcessor) { ((DataProcessorList) p)
+	 * .addDataProcessor((DataProcessor) o); }
+	 * 
+	 * } else { for (Processor nestedProcessor : nested) { ((DataProcessorList)
+	 * p) .addDataProcessor(nestedProcessor); }
+	 * 
+	 * } } } catch (Exception e) { e.printStackTrace(); } }
+	 * 
+	 * }
+	 * 
+	 * log.debug("Created generic data-processor {}", p); } catch (Exception e)
+	 * { e.printStackTrace(); }
+	 * 
+	 * if (p != null) { log.debug("Adding data processor...");
+	 * processors.add(p); }
+	 * 
+	 * String id = ((Element) n).getAttribute("id"); if (id != null &&
+	 * !"".equals(id.trim())) {
+	 * log.debug("Registering processor with attribute '{}'", id);
+	 * context.register(id, p); } } } return processors; }
+	 */
+
+	public static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
 		Constructor<?> constr = clazz.getConstructor(URL.class);

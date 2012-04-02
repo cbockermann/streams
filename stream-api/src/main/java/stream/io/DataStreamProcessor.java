@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataProcessor;
+import stream.data.Processor;
 import stream.runtime.Context;
 
 /**
@@ -39,7 +40,7 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	Map<String, Class<?>> finalAttributes = null;
 
 	/* The list of data preprocessors */
-	List<DataProcessor> processors = new ArrayList<DataProcessor>();
+	List<Processor> processors = new ArrayList<Processor>();
 
 	public DataStreamProcessor() {
 		source = null;
@@ -64,11 +65,11 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 		this.source = source;
 	}
 
-	public void addDataProcessor(DataProcessor proc) {
+	public void addDataProcessor(Processor proc) {
 		processors.add(proc);
 	}
 
-	public void removeDataProcessor(DataProcessor proc) {
+	public void removeDataProcessor(Processor proc) {
 		processors.remove(proc);
 	}
 
@@ -110,7 +111,7 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 		if (input == null)
 			return null;
 
-		for (DataProcessor p : processors) {
+		for (Processor p : processors) {
 			log.trace("Processing item with processor {}", p);
 			data = p.process(data);
 			if (data == null)
@@ -133,17 +134,17 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	}
 
 	@Override
-	public void addPreprocessor(DataProcessor proc) {
+	public void addPreprocessor(Processor proc) {
 		this.processors.add(proc);
 	}
 
 	@Override
-	public void addPreprocessor(int idx, DataProcessor proc) {
+	public void addPreprocessor(int idx, Processor proc) {
 		this.processors.add(idx, proc);
 	}
 
 	@Override
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return processors;
 	}
 
@@ -157,8 +158,9 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	public void init(Context ctx) throws Exception {
 		super.init(ctx);
 
-		for (DataProcessor p : processors) {
-			p.init(ctx);
+		for (Processor p : processors) {
+			if (p instanceof DataProcessor)
+				((DataProcessor) p).init(ctx);
 		}
 	}
 
@@ -169,9 +171,10 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	public void finish() throws Exception {
 		super.finish();
 
-		for (DataProcessor p : processors) {
+		for (Processor p : processors) {
 			try {
-				p.finish();
+				if (p instanceof DataProcessor)
+					((DataProcessor) p).finish();
 			} catch (Exception e) {
 				log.error("Error while finishing processor '{}': {}", p,
 						e.getMessage());

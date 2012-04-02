@@ -67,7 +67,7 @@ public class StatisticsLoggerOperator extends DataItemProcessorOperator {
 		//
 		log.info("Executing stream-operator's doWork()");
 
-		DataObject datum = input.getDataOrNull();
+		DataObject datum = input.getData(DataObject.class); // .getDataOrNull();
 		log.debug("input datum is: {}", datum);
 		if (datum == null) {
 			log.debug("No input received, returning from work.");

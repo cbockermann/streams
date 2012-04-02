@@ -8,60 +8,55 @@ import java.util.Map;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
+import stream.data.Processor;
 
 public class ListDataStream implements DataStream {
 
-	final List<DataProcessor> processors = new ArrayList<DataProcessor>();
+	final List<Processor> processors = new ArrayList<Processor>();
 	List<Data> data;
 	int pos = 0;
-	
-	public ListDataStream( Collection<? extends Data> items ){
-		data = new ArrayList<Data>( items );
+
+	public ListDataStream(Collection<? extends Data> items) {
+		data = new ArrayList<Data>(items);
 		pos = 0;
 	}
-	
-	
+
 	@Override
 	public Map<String, Class<?>> getAttributes() {
-		return new HashMap<String,Class<?>>();
+		return new HashMap<String, Class<?>>();
 	}
 
 	@Override
 	public Data readNext() throws Exception {
-		return readNext( new DataImpl() );
+		return readNext(new DataImpl());
 	}
 
 	@Override
 	public Data readNext(Data datum) throws Exception {
-		if( pos < data.size() ){
-			datum.putAll( data.get( pos++ ) );
+		if (pos < data.size()) {
+			datum.putAll(data.get(pos++));
 			return datum;
 		}
-		
+
 		return null;
 	}
 
-
 	@Override
-	public void addPreprocessor(DataProcessor proc) {
-		processors.add( proc );
+	public void addPreprocessor(Processor proc) {
+		processors.add(proc);
 	}
 
-
 	@Override
-	public void addPreprocessor(int idx, DataProcessor proc) {
-		processors.add( idx, proc );
+	public void addPreprocessor(int idx, Processor proc) {
+		processors.add(idx, proc);
 	}
 
-
 	@Override
-	public List<DataProcessor> getPreprocessors() {
+	public List<Processor> getPreprocessors() {
 		return processors;
 	}
-	
-	
-	public void close(){
+
+	public void close() {
 		data.clear();
 	}
 }

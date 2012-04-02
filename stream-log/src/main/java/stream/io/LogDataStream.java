@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import stream.data.Data;
-import stream.util.Parameter;
+import stream.runtime.annotations.Parameter;
 
 
 /**

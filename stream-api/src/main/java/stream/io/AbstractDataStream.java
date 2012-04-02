@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.DataProcessor;
-import stream.util.Parameter;
+import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris

@@ -3,7 +3,7 @@
  */
 package stream.data.mapper;
 
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 /**
  * @author chris

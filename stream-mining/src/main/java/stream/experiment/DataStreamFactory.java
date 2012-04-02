@@ -17,122 +17,116 @@ import org.w3c.dom.NodeList;
 import stream.data.DataProcessor;
 import stream.io.DataSource;
 import stream.io.DataStreamProcessor;
+import stream.runtime.VariableContext;
 import stream.util.ObjectFactory;
 import stream.util.ParameterInjection;
 
 /**
  * @author chris
- *
+ * 
  */
-public class DataStreamFactory
-	extends VariableContext
-{
-	static Logger log = LoggerFactory.getLogger( DataStreamFactory.class );
-	final static Map<String,Class<?>> PROCESSORS = new HashMap<String,Class<?>>();
+public class DataStreamFactory extends VariableContext {
+	static Logger log = LoggerFactory.getLogger(DataStreamFactory.class);
+	final static Map<String, Class<?>> PROCESSORS = new HashMap<String, Class<?>>();
 	static {
-		PROCESSORS.put( "AttributeFilter".toLowerCase(), stream.data.mapper.FeatureNameFilter.class );
+		PROCESSORS.put("AttributeFilter".toLowerCase(),
+				stream.data.mapper.FeatureNameFilter.class);
 	}
-	
-	public static DataStreamFactory newInstance(){
-		return new DataStreamFactory( new HashMap<String,String>() );
+
+	public static DataStreamFactory newInstance() {
+		return new DataStreamFactory(new HashMap<String, String>());
 	}
-	
-	
-	public static DataStreamFactory newInstance( Map<String,String> map ){
-		if( map == null )
+
+	public static DataStreamFactory newInstance(Map<String, String> map) {
+		if (map == null)
 			return newInstance();
-		return new DataStreamFactory( map );
+		return new DataStreamFactory(map);
 	}
-	
-	
-	private DataStreamFactory( Map<String,String> context ){
-		super( context );
+
+	private DataStreamFactory(Map<String, String> context) {
+		super(context);
 	}
-	
 
-	
-	
-	
-	public DataProcessor createDataProcessor( Element el ) throws Exception {
+	public DataProcessor createDataProcessor(Element el) throws Exception {
 
-		if( el != null && el.getNodeName().equalsIgnoreCase( "processor" ) ){
-			
-			Map<String,String> config = getAttributes( el );
-			if( config.get( "class" ) == null )
-				throw new Exception( "No class specified for DataProcessor element!" );
-			
-			Class<?> clazz = Class.forName( config.get( "class" ) );
+		if (el != null && el.getNodeName().equalsIgnoreCase("processor")) {
+
+			Map<String, String> config = getAttributes(el);
+			if (config.get("class") == null)
+				throw new Exception(
+						"No class specified for DataProcessor element!");
+
+			Class<?> clazz = Class.forName(config.get("class"));
 			DataProcessor processor = (DataProcessor) clazz.newInstance();
-			ParameterInjection.inject( processor, config );
-			log.info( "Created new DataProcessor {}  from config: {}", processor, config );
+			ParameterInjection.inject(processor, config, new VariableContext());
+			log.info("Created new DataProcessor {}  from config: {}",
+					processor, config);
 			return processor;
 		}
 
 		return null;
 	}
 
+	public DataStreamProcessor createDataStreamProcessor(Element el)
+			throws Exception {
 
-	
-	public DataStreamProcessor createDataStreamProcessor( Element el ) throws Exception {
-		
-		if( el != null && el.getNodeName().equalsIgnoreCase( "processing" ) ){
-			
-			Map<String,String> config = getAttributes( el );
-			if( config.get( "class" ) == null ){
-				config.put( "class", "stream.io.DataStreamProcessor" );
+		if (el != null && el.getNodeName().equalsIgnoreCase("processing")) {
+
+			Map<String, String> config = getAttributes(el);
+			if (config.get("class") == null) {
+				config.put("class", "stream.io.DataStreamProcessor");
 			}
-			
-			Class<?> clazz = Class.forName( config.get( "class" ) );
-			DataStreamProcessor stream = (DataStreamProcessor) clazz.newInstance();
-			ParameterInjection.inject( stream, config );
-			
+
+			Class<?> clazz = Class.forName(config.get("class"));
+			DataStreamProcessor stream = (DataStreamProcessor) clazz
+					.newInstance();
+			ParameterInjection.inject(stream, config, new VariableContext());
+
 			NodeList children = el.getChildNodes();
-			for( int i = 0; i < children.getLength(); i++ ){
+			for (int i = 0; i < children.getLength(); i++) {
 				Node node = children.item(i);
-				if( node.getNodeType() == Node.ELEMENT_NODE ){
-					DataProcessor processor = createDataProcessor( (Element) node );
-					if( processor != null )
-						stream.addDataProcessor( processor );
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					DataProcessor processor = createDataProcessor((Element) node);
+					if (processor != null)
+						stream.addDataProcessor(processor);
 				}
 			}
-			
+
 			return stream;
 		}
-		
+
 		return null;
 	}
 
-
-	public DataSource createDataSource( Element el ) throws Exception {
+	public DataSource createDataSource(Element el) throws Exception {
 
 		/*
-		String className = el.getAttribute( "class" );
-		if( className != null && className.equals( "stream.generator.LabeledGaussianStream" ) ){
-			LabeledGaussianStream ds = (LabeledGaussianStream) ObjectFactory.newInstance().create( el );
-			return ds;
-		}
+		 * String className = el.getAttribute( "class" ); if( className != null
+		 * && className.equals( "stream.generator.LabeledGaussianStream" ) ){
+		 * LabeledGaussianStream ds = (LabeledGaussianStream)
+		 * ObjectFactory.newInstance().create( el ); return ds; }
 		 */
-		
-		Map<String,String> ds = getAttributes( el );
-		DataSource d = new DataSource( ds.get("name"), ds.get("url"), ds.get( "class" ) );
-		if( ds.get( "descriptionUrl" ) != null )
-			d.setDescriptionRef( ds.get( "descriptionUrl" ) );
-		
-		Map<String,String> params = ObjectFactory.newInstance().getAttributes( el );
-		for( String k : params.keySet() ){
-			d.setParameter( k, params.get( k ) );
+
+		Map<String, String> ds = getAttributes(el);
+		DataSource d = new DataSource(ds.get("name"), ds.get("url"),
+				ds.get("class"));
+		if (ds.get("descriptionUrl") != null)
+			d.setDescriptionRef(ds.get("descriptionUrl"));
+
+		Map<String, String> params = ObjectFactory.newInstance().getAttributes(
+				el);
+		for (String k : params.keySet()) {
+			d.setParameter(k, params.get(k));
 		}
 		return d;
 	}
 
-
-
-	public Map<String,String> getAttributes( Node node ){
-		Map<String,String> map = new LinkedHashMap<String,String>();
+	public Map<String, String> getAttributes(Node node) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		NamedNodeMap att = node.getAttributes();
-		for( int i = 0; i < att.getLength(); i++ ){
+		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);
-			map.put( attr.getNodeName(), expand( attr.getNodeValue() ) );
+			map.put(attr.getNodeName(), expand(attr.getNodeValue()));
 		}
 		return map;
 	}

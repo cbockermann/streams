@@ -12,7 +12,7 @@ import javax.script.ScriptEngineManager;
 import org.junit.Assert;
 import org.junit.Test;
 
-import stream.util.EmbeddedContent;
+import stream.runtime.annotations.EmbeddedContent;
 
 /**
  * @author chris

@@ -18,8 +18,9 @@ for the key `x` and adds the key `y` by multiplying `x` by 2:
      import stream.data.DataProcessor;
 
      public class Multiplier
-         implements DataProcessor 
+         implements Processor 
      {
+
          /**
           * Extract the attribute x and add y as y = 2 * x
           * @param item
@@ -65,9 +66,9 @@ framework to include it in to the process:
        <experiment>
          ...
          
-         <processors>
+         <processo>
             <my.package.Multiplier />
-         </processors>
+         </process>
        </experiment>
 
 The multiplier will be created at the startup of the experiment and will be
@@ -121,9 +122,9 @@ use the following XML setup:
 
        <experiment>
          ...
-         <processors>
+         <process>
             <my.package.Multiplier key="z" factor="3.1415" />
-         </processors>
+         </process>
        </experiment>
 
 Upon startup, the getters and setters of the Multiplier class will be checked and

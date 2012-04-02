@@ -28,6 +28,7 @@ import stream.util.ObjectFactory;
 import stream.util.ParameterInjection;
 
 public class ProcessContainer {
+
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 	ObjectFactory objectFactory = ObjectFactory.newInstance();
 
@@ -285,7 +286,7 @@ public class ProcessContainer {
 
 		DataStream stream = (DataStream) constr.newInstance(url);
 
-		ParameterInjection.inject(stream, params);
+		ParameterInjection.inject(stream, params, new VariableContext());
 		return stream;
 	}
 
@@ -346,6 +347,8 @@ public class ProcessContainer {
 			spu.start();
 			log.debug("Stream-process started.");
 		}
+
+		Thread.sleep(1000);
 
 		log.debug("waiting for processes to finish...");
 		while (!processes.isEmpty()) {

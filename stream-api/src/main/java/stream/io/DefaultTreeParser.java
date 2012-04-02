@@ -2,18 +2,23 @@ package stream.io;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.data.TreeNode;
+import stream.util.parser.ParseException;
+import stream.util.parser.Parser;
 
 public class DefaultTreeParser extends AbstractDataProcessor implements
 		Parser<TreeNode> {
 	int pos = 0;
 	String data = "";
 	String sourceKey = "sql";
+	Map<String, String> defaults = new HashMap<String, String>();
 
 	public DefaultTreeParser() {
 		this("sql");
@@ -27,10 +32,14 @@ public class DefaultTreeParser extends AbstractDataProcessor implements
 	 * @see stream.io.Parser#parse(java.lang.String)
 	 */
 	@Override
-	public TreeNode parse(String input) throws Exception {
+	public TreeNode parse(String input) throws ParseException {
 		data = input;
 		pos = 0;
-		return readTreeNode();
+		try {
+			return readTreeNode();
+		} catch (Exception e) {
+			throw new ParseException(e.getMessage());
+		}
 	}
 
 	protected TreeNode readTreeNode() throws Exception {
@@ -199,5 +208,21 @@ public class DefaultTreeParser extends AbstractDataProcessor implements
 		TreeNode tree = parser.parse(treeString);
 
 		System.out.println("the tree is: " + tree);
+	}
+
+	/**
+	 * @see stream.util.parser.Parser#getDefaults()
+	 */
+	@Override
+	public Map<String, String> getDefaults() {
+		return defaults;
+	}
+
+	/**
+	 * @see stream.util.parser.Parser#setDefaults(java.util.Map)
+	 */
+	@Override
+	public void setDefaults(Map<String, String> defaults) {
+		this.defaults = defaults;
 	}
 }

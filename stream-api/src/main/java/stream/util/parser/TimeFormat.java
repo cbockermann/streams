@@ -1,4 +1,4 @@
-package stream.util;
+package stream.util.parser;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

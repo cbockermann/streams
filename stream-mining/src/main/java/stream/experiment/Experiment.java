@@ -49,6 +49,7 @@ import stream.io.DataStream;
 import stream.io.DataStreamListener;
 import stream.io.DataStreamProcessor;
 import stream.learner.Learner;
+import stream.runtime.VariableContext;
 import stream.util.ParameterInjection;
 
 /**
@@ -113,7 +114,7 @@ public class Experiment {
 		this.params = new LinkedHashMap<String, String>(
 				ExperimentFactory.globalSettings);
 
-		ParameterInjection.inject(this, settings);
+		ParameterInjection.inject(this, settings, new VariableContext());
 
 		evaluation = ExperimentFactory.findEvaluation(doc);
 		log.info("Found evaluation: {}", evaluation);
@@ -438,7 +439,7 @@ public class Experiment {
 				memConfig.put(str.substring("memory.".length()),
 						params.get(str));
 		}
-		ParameterInjection.inject(mem, memConfig);
+		ParameterInjection.inject(mem, memConfig, new VariableContext());
 		log.info("Checking VM memory every {} milliseconds",
 				mem.getTestInterval());
 

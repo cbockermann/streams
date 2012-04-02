@@ -17,14 +17,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.runtime.VariableContext;
 import stream.util.ParameterInjection;
 
 /**
  * @author chris
- *
+ * 
  */
 public class DataSource {
-	static Logger log = LoggerFactory.getLogger( DataSource.class );
+	static Logger log = LoggerFactory.getLogger(DataSource.class);
 
 	String name;
 
@@ -34,19 +35,16 @@ public class DataSource {
 
 	String className;
 
-	Map<String,String> parameter = new LinkedHashMap<String,String>();
+	Map<String, String> parameter = new LinkedHashMap<String, String>();
 
-	public DataSource(){
+	public DataSource() {
 	}
 
-
-	public DataSource( String name, String url, String className ){
+	public DataSource(String name, String url, String className) {
 		this.name = name;
 		this.url = url;
 		this.className = className;
 	}
-
-
 
 	/**
 	 * @return the name
@@ -55,14 +53,13 @@ public class DataSource {
 		return name;
 	}
 
-
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	/**
 	 * @return the url
@@ -71,14 +68,13 @@ public class DataSource {
 		return url;
 	}
 
-
 	/**
-	 * @param url the url to set
+	 * @param url
+	 *            the url to set
 	 */
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
 
 	/**
 	 * @return the className
@@ -87,34 +83,30 @@ public class DataSource {
 		return className;
 	}
 
-
 	/**
-	 * @param className the className to set
+	 * @param className
+	 *            the className to set
 	 */
 	public void setClassName(String className) {
 		this.className = className;
 	}
 
-
-	public String toString(){
+	public String toString() {
 		return "data.source=" + url + "\ndata.source.className=" + className;
 	}
 
-
-	public void setParameter( String key, String value ){
-		if( this.parameter == null )
-			parameter = new LinkedHashMap<String,String>();
-		this.parameter.put( key, value );
+	public void setParameter(String key, String value) {
+		if (this.parameter == null)
+			parameter = new LinkedHashMap<String, String>();
+		this.parameter.put(key, value);
 	}
 
-
-	public String getParameter( String key ){
-		if( parameter == null )
+	public String getParameter(String key) {
+		if (parameter == null)
 			return null;
 
-		return parameter.get( key );
+		return parameter.get(key);
 	}
-
 
 	/**
 	 * @return the descriptionRef
@@ -123,34 +115,33 @@ public class DataSource {
 		return descriptionRef;
 	}
 
-
 	/**
-	 * @param descriptionRef the descriptionRef to set
+	 * @param descriptionRef
+	 *            the descriptionRef to set
 	 */
 	public void setDescriptionRef(String descriptionRef) {
 		this.descriptionRef = descriptionRef;
 	}
 
-
 	public String retrieveDescription() {
-		return retrieveDescription( ".txt" );
+		return retrieveDescription(".txt");
 	}
 
-
-	public String retrieveDescription( String ext ) {
+	public String retrieveDescription(String ext) {
 		try {
-			URL url = resolveUrl( getUrl() + ext );
-			if( url == null )
+			URL url = resolveUrl(getUrl() + ext);
+			if (url == null)
 				return "";
-			log.info( "  Retrieving data-source information from {}", url );
+			log.info("  Retrieving data-source information from {}", url);
 			URLConnection con = url.openConnection();
-			log.info( "  Content-Type is {}", con.getContentType() );
+			log.info("  Content-Type is {}", con.getContentType());
 			StringBuffer s = new StringBuffer();
 
-			BufferedReader r = new BufferedReader( new InputStreamReader( con.getInputStream() ) );
+			BufferedReader r = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
 			String line = r.readLine();
-			while( line != null ){
-				s.append( line + "\n" );
+			while (line != null) {
+				s.append(line + "\n");
 				line = r.readLine();
 			}
 			r.close();
@@ -161,50 +152,55 @@ public class DataSource {
 		}
 	}
 
-	public URL resolveUrl( String url ) throws Exception {
-		if( url.toLowerCase().startsWith( "classpath:") ){
-			log.info( "Found classpath-url: {}", url );
-			String resource = url.substring( "classpath:".length() );
-			log.info( "   looking for resource '{}'", resource );
-			return DataSource.class.getResource( resource );
+	public URL resolveUrl(String url) throws Exception {
+		if (url.toLowerCase().startsWith("classpath:")) {
+			log.info("Found classpath-url: {}", url);
+			String resource = url.substring("classpath:".length());
+			log.info("   looking for resource '{}'", resource);
+			return DataSource.class.getResource(resource);
 		} else
-			return new URL( getUrl() );
+			return new URL(getUrl());
 	}
 
-
 	public DataStream createDataStream() throws Exception {
-		Class<?> clazz = Class.forName( className );
+		Class<?> clazz = Class.forName(className);
 
 		DataStream stream;
 
-		if( url != null && ! url.isEmpty() ){
+		if (url != null && !url.isEmpty()) {
 
-			if( "stdin".equals( url ) && clazz.getConstructor( InputStream.class ) != null ){
-				Constructor<?> con = clazz.getConstructor( InputStream.class );
-				stream = (DataStream) con.newInstance( System.in );
+			if ("stdin".equals(url)
+					&& clazz.getConstructor(InputStream.class) != null) {
+				Constructor<?> con = clazz.getConstructor(InputStream.class);
+				stream = (DataStream) con.newInstance(System.in);
 			} else {
 
-				Constructor<?> con = clazz.getConstructor( URL.class );
-				URL streamURL = resolveUrl( url );
+				Constructor<?> con = clazz.getConstructor(URL.class);
+				URL streamURL = resolveUrl(url);
 
-				if( getParameter( "username" ) != null && getParameter( "password" ) != null ){
-					Authenticator.setDefault( new Authenticator(){
+				if (getParameter("username") != null
+						&& getParameter("password") != null) {
+					Authenticator.setDefault(new Authenticator() {
 						@Override
 						protected PasswordAuthentication getPasswordAuthentication() {
-							return new PasswordAuthentication( getParameter("username"), getParameter("password").toCharArray() );
+							return new PasswordAuthentication(
+									getParameter("username"), getParameter(
+											"password").toCharArray());
 						}
 					});
 				}
 
-				stream = (DataStream) con.newInstance( streamURL );
+				stream = (DataStream) con.newInstance(streamURL);
 			}
 		} else {
 			stream = (DataStream) clazz.newInstance();
 		}
 
-		if( this.parameter != null && ! this.parameter.isEmpty() ){
-			log.info( "Injection parameters '{}' into datastream object {}", stream );
-			ParameterInjection.inject( stream, this.parameter );
+		if (this.parameter != null && !this.parameter.isEmpty()) {
+			log.info("Injection parameters '{}' into datastream object {}",
+					stream);
+			ParameterInjection.inject(stream, this.parameter,
+					new VariableContext());
 		}
 
 		return stream;

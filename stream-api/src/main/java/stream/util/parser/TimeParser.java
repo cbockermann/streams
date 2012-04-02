@@ -1,4 +1,4 @@
-package stream.util;
+package stream.util.parser;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.stats.History;
 
-public class SimpleTimeParser {
-	static Logger log = LoggerFactory.getLogger(SimpleTimeParser.class);
+public class TimeParser {
+	static Logger log = LoggerFactory.getLogger(TimeParser.class);
 	static Map<String, Long> UNITS = new LinkedHashMap<String, Long>();
 
 	static {

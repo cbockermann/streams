@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 @Description(text = "", group = "Data Stream.Processing.Transformations.Data")
 public class MapValues extends AbstractDataProcessor {

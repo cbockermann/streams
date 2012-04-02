@@ -2,8 +2,8 @@ package stream.data.mapper;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.util.Description;
-import stream.util.Parameter;
+import stream.runtime.annotations.Description;
+import stream.runtime.annotations.Parameter;
 
 /**
  * 

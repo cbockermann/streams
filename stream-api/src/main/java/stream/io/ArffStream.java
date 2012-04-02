@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 /**
  * <p>

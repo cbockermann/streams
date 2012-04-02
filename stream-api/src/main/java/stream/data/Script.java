@@ -16,8 +16,8 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.util.EmbeddedContent;
-import stream.util.Parameter;
+import stream.runtime.annotations.EmbeddedContent;
+import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.data.vector.InputVector;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 /**
  * This class implements a simple reader to read data in the SVM light data

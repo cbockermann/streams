@@ -1,11 +1,11 @@
 /**
  * 
  */
-package stream.logic;
+package stream.flow;
 
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
 
 /**
  * <p>

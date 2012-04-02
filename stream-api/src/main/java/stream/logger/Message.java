@@ -6,9 +6,9 @@ package stream.logger;
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.data.filter.Expression;
-import stream.util.Description;
+import stream.runtime.annotations.Description;
+import stream.runtime.annotations.Parameter;
 import stream.util.MacroExpander;
-import stream.util.Parameter;
 
 /**
  * @author chris

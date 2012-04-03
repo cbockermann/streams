@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContainerContext extends DefaultLookupService implements Context {
 
+	final static String CONTEXT_NAME = "container";
 	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
 	final Map<String, String> properties = new LinkedHashMap<String, String>();
 
@@ -29,5 +30,31 @@ public class ContainerContext extends DefaultLookupService implements Context {
 
 	public Map<String, String> getProperties() {
 		return properties;
+	}
+
+	public void setProperty(String key, String value) {
+		if (value == null)
+			properties.remove(key);
+		else
+			properties.put(key, value);
+	}
+
+	/**
+	 * @see stream.runtime.Context#resolve(java.lang.String)
+	 */
+	@Override
+	public Object resolve(String variable) {
+
+		if (variable == null)
+			return null;
+
+		String var = variable.trim();
+		if (var.startsWith("%{container.") && var.endsWith("}")) {
+			String key = var.substring(CONTEXT_NAME.length() + 3,
+					var.length() - 1);
+			return properties.get(key);
+		}
+
+		return null;
 	}
 }

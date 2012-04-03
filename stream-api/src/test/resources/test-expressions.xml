@@ -5,7 +5,7 @@
 			
 	<process input="test">
 		<If condition="src_bytes @lt 200">
-			<If condition="%{data.src_bytes} = 159">
+			<If condition="src_bytes = 159">
 				<PrintData />
 				<Assert condition="src_bytes = 159"/>
 			</If>

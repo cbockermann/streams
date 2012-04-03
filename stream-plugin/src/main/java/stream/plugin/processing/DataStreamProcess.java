@@ -10,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.data.filter.Expression;
-import stream.data.filter.ExpressionCompiler;
 import stream.io.ListDataStream;
 import stream.plugin.DataObject;
 import stream.plugin.DataSourceObject;
 import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
+import stream.runtime.LocalContext;
+import stream.runtime.expressions.Expression;
+import stream.runtime.expressions.ExpressionCompiler;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
@@ -97,10 +98,12 @@ public class DataStreamProcess extends
 		log.debug("input is a data-stream-source...");
 		int i = 0;
 
+		LocalContext ctx = new LocalContext();
+
 		Data item = dataSource.readNext();
 		while (item != null) {
 
-			if (condition == null || condition.matches(item)) {
+			if (condition == null || condition.matches(ctx, item)) {
 
 				log.info("Processing example {}", i);
 				DataObject datum = dataSource.wrap(item);

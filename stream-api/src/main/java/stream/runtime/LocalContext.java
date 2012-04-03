@@ -60,4 +60,12 @@ public class LocalContext implements ProcessContext {
 		context.put(key, o);
 	}
 
+	/**
+	 * @see stream.runtime.Context#resolve(java.lang.String)
+	 */
+	@Override
+	public Object resolve(String variable) {
+		return get(variable);
+	}
+
 }

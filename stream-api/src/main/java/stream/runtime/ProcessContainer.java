@@ -271,49 +271,6 @@ public class ProcessContainer {
 		return null;
 	}
 
-	/*
-	 * private List<Processor> getDataProcessors(Element child) throws Exception
-	 * { List<Processor> processors = new ArrayList<Processor>(); NodeList proc
-	 * = child.getChildNodes(); for (int j = 0; j < proc.getLength(); j++) {
-	 * Node n = proc.item(j); if (n instanceof Element) {
-	 * 
-	 * DataProcessor p = null; try { Element el = (Element) n;
-	 * 
-	 * log.debug("Trying to generate object from {}", el); p = (DataProcessor)
-	 * objectFactory.create((Element) el);
-	 * 
-	 * if (el.hasChildNodes() && p instanceof DataProcessorList) {
-	 * 
-	 * NodeList ch = el.getChildNodes(); for (int i = 0; i < ch.getLength();
-	 * i++) { Node nestedNode = ch.item(i); try { if (ch.item(i).getNodeType()
-	 * == Node.ELEMENT_NODE) {
-	 * 
-	 * List<Processor> nested = getDataProcessors((Element) nestedNode); if
-	 * (nested.isEmpty()) {
-	 * 
-	 * Object o = objectFactory .create((Element) nestedNode); if (o instanceof
-	 * DataProcessor) { ((DataProcessorList) p)
-	 * .addDataProcessor((DataProcessor) o); }
-	 * 
-	 * } else { for (Processor nestedProcessor : nested) { ((DataProcessorList)
-	 * p) .addDataProcessor(nestedProcessor); }
-	 * 
-	 * } } } catch (Exception e) { e.printStackTrace(); } }
-	 * 
-	 * }
-	 * 
-	 * log.debug("Created generic data-processor {}", p); } catch (Exception e)
-	 * { e.printStackTrace(); }
-	 * 
-	 * if (p != null) { log.debug("Adding data processor...");
-	 * processors.add(p); }
-	 * 
-	 * String id = ((Element) n).getAttribute("id"); if (id != null &&
-	 * !"".equals(id.trim())) {
-	 * log.debug("Registering processor with attribute '{}'", id);
-	 * context.register(id, p); } } } return processors; }
-	 */
-
 	public static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));

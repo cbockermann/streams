@@ -17,39 +17,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
-
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package stream.runtime.expressions;
 
 
 /**
  * <p>
- * Instances of this class match all values for the given variable against
- * the specified regular expression.
+ * This condition checks for equality.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public class ConditionRX
-	extends BinaryOperator
-{
-    /** The unique class ID */
-    private static final long serialVersionUID = 6247657062073419253L;
+public class ConditionContains extends BinaryOperator {
 
-    public ConditionRX() {
-        super( "@rx" );
-    }
+	/** The unique class ID */
+	private static final long serialVersionUID = 7254577500140365820L;
 
+	public ConditionContains() {
+		super("@contains");
+	}
 
-    /**
-     * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String, java.lang.String)
-     */
-    public boolean eval( Serializable input, String p ){
-    	Pattern pattern = Pattern.compile( p );
-        Matcher m = pattern.matcher( input + "" );
-        return m.matches();
-    }
+	/**
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean eval(Object input, String pattern) {
+		return pattern != null && input != null
+				&& input.toString().indexOf(pattern) >= 0;
+	}
 }

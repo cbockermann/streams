@@ -109,7 +109,7 @@ public class ObjectFactory extends VariableContext {
 			//
 			// TODO: move the macro-expansion into the ParameterInjection!
 			//
-			if (parameter.get(key).indexOf("%{") >= 0) {
+			if (parameter.get(key).indexOf("%{container") >= 0) {
 				String orig = parameter.get(key);
 				String expanded = expand(orig);
 				p.put(key, expanded);
@@ -130,7 +130,7 @@ public class ObjectFactory extends VariableContext {
 		NamedNodeMap att = node.getAttributes();
 		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);
-			map.put(attr.getNodeName(), expand(attr.getNodeValue()));
+			map.put(attr.getNodeName(), attr.getNodeValue());
 		}
 
 		//

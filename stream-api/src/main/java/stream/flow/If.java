@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataProcessorList;
-import stream.data.filter.Expression;
-import stream.data.filter.ExpressionCompiler;
 import stream.runtime.annotations.Parameter;
+import stream.runtime.expressions.Expression;
+import stream.runtime.expressions.ExpressionCompiler;
 
 /**
  * @author chris
@@ -50,7 +50,7 @@ public class If extends DataProcessorList {
 	}
 
 	public boolean matches(Data item) {
-		return (condition == null || condition.matches(item));
+		return (condition == null || condition.matches(context, item));
 	}
 
 	/**

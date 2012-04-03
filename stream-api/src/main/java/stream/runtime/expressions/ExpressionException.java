@@ -17,30 +17,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
-import java.io.Serializable;
 
-public class ConditionLE extends BinaryOperator {
-	/** The unique class ID */
-	private static final long serialVersionUID = -6196215282881485160L;
-
-	public ConditionLE() {
-		super("@le", "<=", "=<");
-	}
-
-	/**
-	 * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public boolean eval(Serializable input, String pattern) {
-		if (isNumeric(pattern)) {
-			try {
-				return (new Double(input + "").compareTo(new Double(pattern))) <= 0;
-			} catch (Exception e) {
-			}
-		}
-
-		return ("" + input).compareTo(pattern) <= 0;
-	}
+public class ExpressionException
+    extends Exception
+{
+    /** The unique class ID */
+    private static final long serialVersionUID = -8863841755957428654L;
+    
+    
+    public ExpressionException( String msg ){
+        super( msg );
+    }
 }

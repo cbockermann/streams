@@ -17,34 +17,31 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * This condition checks for equality.
+ * Instances of this class check all values for the given variable if they start
+ * with a pre-defined substring.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public class ConditionContains
-    extends BinaryOperator
-{
+public class ConditionBeginsWith extends BinaryOperator {
+	/** The unique class ID */
+	private static final long serialVersionUID = 6247657062073419253L;
+	static Logger log = LoggerFactory.getLogger(ConditionBeginsWith.class);
 
-    /** The unique class ID */
-    private static final long serialVersionUID = 7254577500140365820L;
+	public ConditionBeginsWith() {
+		super("@beginsWith");
+	}
 
-    public ConditionContains() {
-        super( "@contains" );
-    }
-
-    /**
-     * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String, java.lang.String)
-     */
-	@Override
-	public boolean eval(Serializable input, String pattern ) {
-		return pattern != null && input != null && input.toString().indexOf( pattern ) >= 0;
+	public boolean eval(Object input, String value) {
+		return value != null && input != null
+				&& input.toString().startsWith(value);
 	}
 }

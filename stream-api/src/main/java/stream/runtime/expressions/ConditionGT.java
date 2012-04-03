@@ -17,33 +17,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
-
-import java.io.Serializable;
+package stream.runtime.expressions;
 
 
-public class ConditionGE
-    extends BinaryOperator
-{
-    /** The unique class ID */
-    private static final long serialVersionUID = -1193536538940117643L;
-    
-    public ConditionGE() {
-        super("@ge", ">=", "=>" );
-    }
-    
+public class ConditionGT extends BinaryOperator {
+	/** The unique class ID */
+	private static final long serialVersionUID = -5807565784925165795L;
 
-    /**
-     * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String, java.lang.String)
-     */
-    public boolean eval( Serializable input, String pattern ){
-    	if( isNumeric( input ) ){
-    		try {
-    			return (new Double( input + "" ).compareTo( new Double( pattern ) ) ) >= 0;
-    		} catch (Exception e) {
-    		}
-    	}
-    	
-    	return ( "" + input).compareTo( pattern ) >= 0;
-    }
+	public ConditionGT() {
+		super("@gt", ">");
+	}
+
+	/**
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
+	 */
+	public boolean eval(Object input, String pattern) {
+		if (isNumeric(input)) {
+			try {
+				Double v = new Double(input + "");
+				Double w = new Double(pattern);
+				int rc = v.compareTo(w);
+				return rc > 0;
+			} catch (Exception e) {
+			}
+		}
+
+		return ("" + input).compareTo(pattern) > 0;
+	}
 }

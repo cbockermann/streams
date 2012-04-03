@@ -17,36 +17,31 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package stream.data.filter;
+package stream.runtime.expressions;
 
-import java.io.Serializable;
-
-public class ConditionPM
-	extends BinaryOperator
-{
-
+/**
+ * <p>
+ * This condition checks for equality.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * 
+ */
+public class ConditionEndsWith extends BinaryOperator {
 	/** The unique class ID */
-	private static final long serialVersionUID = 125867770986401362L;
+	private static final long serialVersionUID = 1323232629583570258L;
 
-	public ConditionPM() {
-		super( "@pm" );
+	public ConditionEndsWith(String variable, String value) {
+		super("@endsWith");
 	}
-	
-	public boolean eval( Serializable input, String patterns ){
-		return matches( "" + input, patterns );
-	}
-
 
 	/**
-	 * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String, java.lang.String)
+	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+	 *      java.lang.String)
 	 */
-	public boolean matches( String pattern, String input ){
-		String[] ps = pattern.split( "\\s+" );
-
-		for( String p : ps )
-			if( input.indexOf( p ) >= 0 )
-				return true;
-		
-		return false;
+	@Override
+	public boolean eval(Object input, String pattern) {
+		return pattern != null && input != null
+				&& input.toString().endsWith(pattern);
 	}
 }

@@ -18,8 +18,8 @@ import stream.data.DataProcessor;
 import stream.io.DataSource;
 import stream.io.DataStreamProcessor;
 import stream.runtime.VariableContext;
-import stream.util.ObjectFactory;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ParameterInjection;
 
 /**
  * @author chris

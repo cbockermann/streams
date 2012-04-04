@@ -1,4 +1,4 @@
-package stream.util;
+package stream.runtime.setup;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,6 +1,5 @@
 package stream.runtime;
 
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,8 +24,8 @@ import stream.data.Processor;
 import stream.io.DataStream;
 import stream.io.DataStreamProcessor;
 import stream.io.DataStreamQueue;
-import stream.util.ObjectFactory;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.DataStreamFactory;
+import stream.runtime.setup.ObjectFactory;
 
 public class ProcessContainer {
 
@@ -119,7 +118,7 @@ public class ProcessContainer {
 							.getAttributes(element);
 					String id = attr.get("id");
 
-					DataStream stream = createStream(attr);
+					DataStream stream = DataStreamFactory.createStream(attr);
 					if (stream != null) {
 						if (id == null)
 							id = "" + stream;
@@ -312,27 +311,6 @@ public class ProcessContainer {
 		}
 
 		return null;
-	}
-
-	private static DataStream createStream(Map<String, String> params)
-			throws Exception {
-		Class<?> clazz = Class.forName(params.get("class"));
-		Constructor<?> constr = clazz.getConstructor(URL.class);
-		String urlParam = params.get("url");
-		URL url = null;
-
-		if (params.get("url").startsWith("classpath:")) {
-			String resource = urlParam.substring("classpath:".length());
-			log.debug("Looking up resource '{}'", resource);
-			url = ProcessContainer.class.getResource(resource);
-		} else {
-			url = new URL(urlParam);
-		}
-
-		DataStream stream = (DataStream) constr.newInstance(url);
-
-		ParameterInjection.inject(stream, params, new VariableContext());
-		return stream;
 	}
 
 	public void run() throws Exception {

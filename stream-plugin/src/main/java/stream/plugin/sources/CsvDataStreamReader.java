@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import stream.io.CsvStream;
-import stream.runtime.ProcessContainer;
+import stream.runtime.setup.DataStreamFactory;
 
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.parameter.ParameterType;
@@ -19,34 +19,32 @@ import com.rapidminer.parameter.ParameterTypeString;
  * 
  */
 public class CsvDataStreamReader extends DataStreamReader<CsvStream> {
-	
-	public final static String SEPARATOR_KEY = "separator"; 
-	
+
+	public final static String SEPARATOR_KEY = "separator";
+
 	/**
 	 * @param description
 	 */
-	public CsvDataStreamReader(OperatorDescription description ) {
-		super(description, stream.io.CsvStream.class );
+	public CsvDataStreamReader(OperatorDescription description) {
+		super(description, stream.io.CsvStream.class);
 	}
-	
-	
+
 	/**
 	 * @see stream.plugin.sources.DataStreamReader#getParameterTypes()
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
 		List<ParameterType> types = super.getParameterTypes();
-		types.add( new ParameterTypeString( SEPARATOR_KEY, "The split separator", ";" ) );
+		types.add(new ParameterTypeString(SEPARATOR_KEY, "The split separator",
+				";"));
 		return types;
 	}
 
-
-
-
-
-	public CsvStream createDataStream( Class<CsvStream> dataStreamClass, Map<String,String> parameters ) throws Exception {
-		parameters.put( "class", dataStreamClass.getName() );
-		CsvStream stream = (CsvStream) ProcessContainer.createStream( parameters );
+	public CsvStream createDataStream(Class<CsvStream> dataStreamClass,
+			Map<String, String> parameters) throws Exception {
+		parameters.put("class", dataStreamClass.getName());
+		CsvStream stream = (CsvStream) DataStreamFactory
+				.createStream(parameters);
 		return stream;
 	}
 }

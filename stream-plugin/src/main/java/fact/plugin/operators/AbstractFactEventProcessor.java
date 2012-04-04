@@ -15,7 +15,7 @@ import stream.plugin.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.Context;
 import stream.runtime.VariableContext;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ParameterInjection;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;

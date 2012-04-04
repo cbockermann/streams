@@ -3,7 +3,7 @@ package stream.data.mapper;
 import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
-import stream.util.MacroExpander;
+import stream.runtime.expressions.MacroExpander;
 
 @Description( group="Data Stream.Processing.Transformations.Data" )
 public class SetValue

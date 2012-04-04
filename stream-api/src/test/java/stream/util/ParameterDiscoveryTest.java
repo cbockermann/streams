@@ -13,6 +13,8 @@ import stream.data.DataImpl;
 import stream.data.DataUtils;
 import stream.data.mapper.HideFeature;
 import stream.runtime.VariableContext;
+import stream.runtime.setup.ParameterDiscovery;
+import stream.runtime.setup.ParameterInjection;
 
 public class ParameterDiscoveryTest {
 

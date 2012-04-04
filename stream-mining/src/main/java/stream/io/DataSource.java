@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.VariableContext;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ParameterInjection;
 
 /**
  * @author chris

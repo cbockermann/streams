@@ -11,7 +11,7 @@ import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.DataProcessor;
-import stream.util.ParameterUtils;
+import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris

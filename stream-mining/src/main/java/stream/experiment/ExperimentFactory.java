@@ -31,8 +31,8 @@ import stream.io.DataSource;
 import stream.io.DataStream;
 import stream.learner.Learner;
 import stream.runtime.VariableContext;
-import stream.util.ObjectFactory;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ParameterInjection;
 
 /**
  * @author chris

@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.MemoryLogger;
+import stream.runtime.setup.ParameterInjection;
 import stream.util.CommandLineArgs;
-import stream.util.ParameterInjection;
 
 public class MapReduce {
 

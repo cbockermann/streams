@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.util;
+package stream.runtime.setup;
 
 /**
  * @author chris

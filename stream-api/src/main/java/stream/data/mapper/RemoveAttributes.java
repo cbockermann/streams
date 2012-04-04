@@ -3,7 +3,7 @@ package stream.data.mapper;
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
-import stream.util.ParameterUtils;
+import stream.runtime.setup.ParameterUtils;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each

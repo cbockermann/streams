@@ -6,7 +6,8 @@ package stream.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.util.ResourceFinder.Condition;
+import stream.runtime.setup.ResourceFinder;
+import stream.runtime.setup.ResourceFinder.Condition;
 
 /**
  * @author chris

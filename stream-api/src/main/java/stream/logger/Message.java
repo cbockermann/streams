@@ -10,7 +10,7 @@ import stream.runtime.annotations.Description;
 import stream.runtime.annotations.Parameter;
 import stream.runtime.expressions.ContextAwareMacroExpander;
 import stream.runtime.expressions.Expression;
-import stream.util.MacroExpander;
+import stream.runtime.expressions.MacroExpander;
 
 /**
  * @author chris

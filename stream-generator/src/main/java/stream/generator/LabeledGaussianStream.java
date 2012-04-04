@@ -29,8 +29,8 @@ import stream.data.DataImpl;
 import stream.data.stats.Statistics;
 import stream.io.DataStream;
 import stream.runtime.VariableContext;
-import stream.util.ObjectFactory;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ParameterInjection;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 
 /**

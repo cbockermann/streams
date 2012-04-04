@@ -14,7 +14,7 @@ import stream.data.DataImpl;
 import stream.plugin.DataItemProcessorOperator;
 import stream.plugin.DataObject;
 import stream.plugin.DataStreamPlugin;
-import stream.util.ParameterUtils;
+import stream.runtime.setup.ParameterUtils;
 
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;

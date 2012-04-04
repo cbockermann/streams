@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.util;
+package stream.runtime.setup;
 
 import java.io.File;
 import java.io.IOException;

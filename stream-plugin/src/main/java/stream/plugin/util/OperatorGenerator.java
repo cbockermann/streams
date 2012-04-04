@@ -29,7 +29,7 @@ import stream.data.DataProcessor;
 import stream.io.DataStream;
 import stream.io.DataStreamWriter;
 import stream.runtime.annotations.Description;
-import stream.util.MacroExpander;
+import stream.runtime.expressions.MacroExpander;
 
 /**
  * @author chris

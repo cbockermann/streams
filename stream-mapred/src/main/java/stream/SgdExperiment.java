@@ -19,8 +19,8 @@ import stream.mapred.MapReduce;
 import stream.optimization.SgdMapper;
 import stream.optimization.SgdReducer;
 import stream.optimization.SgdTester;
+import stream.runtime.setup.ParameterDiscovery;
 import stream.util.CommandLineArgs;
-import stream.util.ParameterDiscovery;
 
 public class SgdExperiment {
 

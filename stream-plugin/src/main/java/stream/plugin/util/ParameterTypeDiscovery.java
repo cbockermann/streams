@@ -16,8 +16,8 @@ import stream.data.mapper.HideFeature;
 import stream.runtime.VariableContext;
 import stream.runtime.annotations.EmbeddedContent;
 import stream.runtime.annotations.Parameter;
-import stream.util.ParameterDiscovery;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ParameterDiscovery;
+import stream.runtime.setup.ParameterInjection;
 
 import com.rapidminer.parameter.ParameterType;
 import com.rapidminer.parameter.ParameterTypeBoolean;

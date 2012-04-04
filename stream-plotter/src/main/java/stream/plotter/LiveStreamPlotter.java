@@ -14,7 +14,7 @@ import stream.data.Data;
 import stream.data.DataImpl;
 import stream.runtime.Context;
 import stream.runtime.annotations.Parameter;
-import stream.util.ParameterUtils;
+import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris

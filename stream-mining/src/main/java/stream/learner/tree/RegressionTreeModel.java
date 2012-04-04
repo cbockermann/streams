@@ -10,8 +10,8 @@ import stream.data.Data;
 import stream.learner.Regressor;
 import stream.model.PredictionModel;
 import stream.runtime.VariableContext;
-import stream.util.ObjectFactory;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ParameterInjection;
 
 /**
  * <p>

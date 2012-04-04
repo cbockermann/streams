@@ -50,7 +50,7 @@ import stream.io.DataStreamListener;
 import stream.io.DataStreamProcessor;
 import stream.learner.Learner;
 import stream.runtime.VariableContext;
-import stream.util.ParameterInjection;
+import stream.runtime.setup.ParameterInjection;
 
 /**
  * @author chris

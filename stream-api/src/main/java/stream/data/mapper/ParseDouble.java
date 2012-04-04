@@ -5,7 +5,7 @@ package stream.data.mapper;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.util.ParameterUtils;
+import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris

@@ -12,19 +12,12 @@
 	</Monitor>
 
 	<Process input="log">
-
  		<Enqueue ref="queue" />
- 		<Message txt="Processor[log] processing item..." />
-		
 	</Process>
 	
 	<Process input="queue">
-		
-		
-		<Delay time="%{container.slowdown}" />
  		<Message txt="Processor[queue] processing item..." />
 		<PrintData />
-	
 	</Process>
 	
 </experiment>

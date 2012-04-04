@@ -6,23 +6,30 @@ package stream.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.data.Data;
-import stream.data.DataImpl;
 import stream.data.DataProcessor;
 import stream.data.Processor;
-import stream.util.parser.TimeParser;
 
 /**
- * @author chris
+ * This class implements the basic active component, ie. a thread executing
+ * within the ProcessContainer.
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public abstract class AbstractProcess extends Thread implements Processor {
 
+	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 	protected boolean running = true;
 	protected ProcessContext context;
 	Long interval = 1000L;
 	String intervalString = "1000ms";
 	protected final List<Processor> processors = new ArrayList<Processor>();
+
+	protected Long count = 0L;
 
 	protected Data lastItem = null;
 
@@ -65,13 +72,6 @@ public abstract class AbstractProcess extends Thread implements Processor {
 			}
 		}
 
-		try {
-			interval = TimeParser.parseTime(getInterval());
-		} catch (Exception e) {
-			interval = 1000L;
-			throw new Exception("Failed to initialize Monitor: "
-					+ e.getMessage());
-		}
 	}
 
 	/**
@@ -95,34 +95,22 @@ public abstract class AbstractProcess extends Thread implements Processor {
 	 */
 	@Override
 	public void run() {
-		Data item = new DataImpl();
 
 		while (running) {
-			item = process(item);
+
+			// obtain the next item to be processed
+			//
+			Data item = getNextItem();
 			if (item == null) {
-				item = new DataImpl();
+				log.debug("No more items could be read, exiting this process.");
+				return;
 			}
-			try {
-				Thread.sleep(interval);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
+			// process the item
+			//
+			item = process(item);
+			count++;
 		}
-	}
-
-	/**
-	 * @return the interval
-	 */
-	public String getInterval() {
-		return intervalString;
-	}
-
-	/**
-	 * @param interval
-	 *            the interval to set
-	 */
-	public void setInterval(String intervalString) {
-		this.intervalString = intervalString;
 	}
 
 	/**
@@ -142,6 +130,10 @@ public abstract class AbstractProcess extends Thread implements Processor {
 
 	public List<Processor> getProcessors() {
 		return processors;
+	}
+
+	public Long getNumberOfItemsProcessed() {
+		return count;
 	}
 
 	public boolean isRunning() {

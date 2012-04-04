@@ -101,7 +101,6 @@ public class ProcessContainer {
 
 		context = new ContainerContext(name);
 		context.getProperties().putAll(getProperties(root));
-		objectFactory.addVariables(context.getProperties());
 		NodeList children = root.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -197,6 +196,13 @@ public class ProcessContainer {
 			}
 		}
 
+		connectProcesses();
+	}
+
+	/**
+	 * 
+	 */
+	protected void connectProcesses() throws Exception {
 		log.debug("Wiring process inputs to data-streams...");
 		for (AbstractProcess aprocess : processes) {
 
@@ -216,6 +222,7 @@ public class ProcessContainer {
 					DataStreamQueue q = new DataStreamQueue();
 					listeners.put(input, q);
 					streams.put(input, q);
+					context.register(input, q);
 					stream = q;
 				}
 
@@ -266,7 +273,7 @@ public class ProcessContainer {
 		return props;
 	}
 
-	public Processor createProcessor(Element child) throws Exception {
+	private Processor createProcessor(Element child) throws Exception {
 
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {

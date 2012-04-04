@@ -19,8 +19,8 @@ import stream.util.parser.TimeParser;
  */
 public abstract class DataVisualizer extends ConditionedDataProcessor {
 
-	Integer width = 1024;
-	Integer height = 400;
+	protected Integer width = 1024;
+	protected Integer height = 400;
 	Long updateInterval = 1000L;
 
 	/**

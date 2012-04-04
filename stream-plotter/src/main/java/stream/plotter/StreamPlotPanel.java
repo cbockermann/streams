@@ -68,6 +68,8 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 	String pivotKey = null;
 	Double pivotValue = -1.0d;
 
+	protected final JFreeChart chart;
+
 	public StreamPlotPanel() {
 		// super("Stream Monitor");
 
@@ -110,11 +112,10 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		XYItemRenderer render = new StandardXYItemRenderer();
 		plot = new XYPlot(series, range, new NumberAxis(""), render);
 
-		final JFreeChart chart = new JFreeChart(plot);
+		chart = new JFreeChart(plot);
 		final ChartPanel p = new ChartPanel(chart);
 		chart.setBackgroundPaint(this.getBackground());
-		chart.setTitle("Stream Statistics Monitor");
-		chart.getTitle().setPaint(Color.DARK_GRAY);
+
 		p.addChartMouseListener(new ChartMouseListener() {
 
 			@Override
@@ -192,6 +193,16 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 
 	public Integer getSteps() {
 		return this.stepSlider.getValue();
+	}
+
+	public void setYRange(Double ymin, Double ymax) {
+		if (ymin != null && ymax != null)
+			plot.getRangeAxis().setRange(ymin, ymax);
+	}
+
+	public void setTitle(String title) {
+		chart.setTitle(title);
+		chart.getTitle().setPaint(Color.DARK_GRAY);
 	}
 
 	public void addValueListener(ValueListener v) {

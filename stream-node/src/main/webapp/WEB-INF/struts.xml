@@ -1,0 +1,78 @@
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <constant name="struts.custom.i18n.resources" value="language_de_DE" />
+
+	<constant name="struts.multipart.maxSize" value="536870912" />
+	<!-- 
+	 -->
+	<constant name="struts.convention.action.disableJarScanning" value="false" />
+	<constant name="struts.convention.action.includeJars" value=".*" />
+	<constant name="struts.convention.package.locators" value="actions"/>
+	<constant name="struts.convention.package.locators.basePackage" value="stream.node.web"/>
+	<constant name="struts.convention.relative.result.types" value="dispatcher"/>
+	
+	<constant name="struts.action.extension" value=",action" />
+    <constant name="struts.convention.action.suffix" value="Action"/>
+    <constant name="struts.convention.action.mapAllMatches" value="true"/>
+	<constant name="struts.convention.default.parent.package" value="struts-default"/>
+	
+	
+	<package name="DataStreamNode" namespace="" extends="struts-default">
+
+		<interceptors>
+		    <interceptor name="exception" class="com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor"/>
+			<interceptor name="redirectMessage" class="org.jwall.data.node.servlets.RedirectMessageInterceptor" />
+		
+			<interceptor-stack name="fileUploadStack">
+			    <interceptor-ref name="exception"/>
+			    
+				<interceptor-ref name="fileUpload">
+					<param name="maximumSize">536870912</param>
+				</interceptor-ref>
+
+				<interceptor-ref name="basicStack" />
+
+				<interceptor-ref name="defaultStack">
+    				<param name="fileUpload.maximumSize">536870912</param>
+				</interceptor-ref>
+				
+			    <interceptor-ref name="redirectMessage" />
+			</interceptor-stack>
+			
+			<interceptor-stack name="defaultStack">
+			    <interceptor-ref name="exception"/>
+			    
+				<interceptor-ref name="basicStack" />
+
+				<interceptor-ref name="defaultStack">
+    				<param name="fileUpload.maximumSize">536870912</param>
+				</interceptor-ref>
+				
+			    <interceptor-ref name="redirectMessage" />
+			</interceptor-stack>
+			
+			<interceptor-stack name="serviceStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+			    <interceptor-ref name="redirectMessage" />
+			</interceptor-stack>
+			
+		</interceptors>
+
+        <global-results>
+            <result name="login">/WEB-INF/content/login.jsp</result>
+            <result name="storage-config" type="redirect">/storage-config</result>
+            <result name="storage-failure" type="redirect">/storage-config</result>
+        </global-results>
+        
+		<action name="/container/*" class="stream.node.web.ContainerAction">
+    		<result name="failure">/mainMenu.jsp</result>
+    		<result>/WEB-INF/content/index.jsp</result>
+		</action>
+	</package>
+	
+</struts>

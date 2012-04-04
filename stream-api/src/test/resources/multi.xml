@@ -7,17 +7,21 @@
 	<property name="group" value="A,B,C" />
 	<property name="slowdown" value="1500ms" />
 
+	<Monitor interval="1000ms">
+		<Message txt="Monitor: I'm alive!  slowdown is: %{container.slowdown}" />
+	</Monitor>
+
 	<Process input="log">
 
  		<Enqueue ref="queue" />
- 		<Message id="1" txt="Processor[log] processing item..." />
+ 		<Message txt="Processor[log] processing item..." />
 		
 	</Process>
 	
 	<Process input="queue">
 		
 		
-		<Delay time="%{slowdown}" />
+		<Delay time="%{container.slowdown}" />
  		<Message txt="Processor[queue] processing item..." />
 		<PrintData />
 	

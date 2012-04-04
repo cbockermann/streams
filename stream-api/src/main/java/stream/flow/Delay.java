@@ -10,6 +10,7 @@ import stream.data.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
 import stream.runtime.annotations.Description;
+import stream.runtime.annotations.Parameter;
 import stream.util.parser.TimeParser;
 
 /**
@@ -26,7 +27,7 @@ public class Delay extends ConditionedDataProcessor {
 	static Logger log = LoggerFactory.getLogger(Delay.class);
 
 	Long milliseconds = 0L;
-	String time = "";
+	String time = "1000ms";
 
 	/**
 	 * @return the time
@@ -39,6 +40,7 @@ public class Delay extends ConditionedDataProcessor {
 	 * @param time
 	 *            the time to set
 	 */
+	@Parameter(defaultValue = "1000ms")
 	public void setTime(String time) {
 		this.time = time;
 	}

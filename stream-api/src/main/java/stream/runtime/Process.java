@@ -3,32 +3,27 @@
  */
 package stream.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataProcessor;
-import stream.data.Processor;
 import stream.io.DataStream;
 
 /**
  * @author chris
  * 
  */
-public class Process extends Thread {
+public class Process extends AbstractProcess {
 
 	static Logger log = LoggerFactory.getLogger(Process.class);
 	static Integer LAST_ID = 0;
-	DataStream input;
+	DataStream dataStream;
 	DataProcessor output;
-	List<Processor> processors = new ArrayList<Processor>();
-	boolean running = false;
 	String processId;
 	Long limit = -1L;
 	ProcessContext context;
+	String input;
 
 	public Process(String processId, ProcessContext ctx, DataStream input) {
 		this.processId = processId;
@@ -38,22 +33,50 @@ public class Process extends Thread {
 				this.processId = "spu:" + LAST_ID++;
 			}
 		}
-		this.input = input;
+		this.dataStream = input;
 	}
 
 	public Process(String processId, ProcessContext ctx, DataStream input,
 			DataProcessor output) {
 		this(processId, ctx, input);
-		addDataProcessor(output);
+		addProcessor(output);
 	}
 
-	public void addDataProcessor(Processor proc) {
-		if (!processors.contains(proc))
-			processors.add(proc);
+	public Process() {
+
 	}
 
-	public void removeDataProcessor(Processor proc) {
-		processors.remove(proc);
+	/**
+	 * @return the input
+	 */
+	public String getInput() {
+		return input;
+	}
+
+	/**
+	 * @param input
+	 *            the input to set
+	 */
+	public void setInput(String input) {
+		this.input = input;
+	}
+
+	public void setDataStream(DataStream ds) {
+		dataStream = ds;
+	}
+
+	/**
+	 * @see stream.runtime.AbstractProcess#getNextItem()
+	 */
+	@Override
+	public Data getNextItem() {
+		try {
+			return dataStream.readNext();
+		} catch (Exception e) {
+			log.error("Failed to read next item from input '{}'", dataStream);
+			throw new RuntimeException("Failed to read next item from input '"
+					+ dataStream + "': " + e.getMessage());
+		}
 	}
 
 	/**
@@ -103,63 +126,12 @@ public class Process extends Thread {
 		this.processId = processId;
 	}
 
-	/**
-	 * @see java.lang.Thread#run()
-	 */
-	public void run() {
-		log.debug(" ##  StreamProcessing.run()");
-		running = true;
-
-		for (Processor proc : processors) {
-			try {
-				if (proc instanceof DataProcessor)
-					((DataProcessor) proc).init(context);
-			} catch (Exception e) {
-				log.error("Failed to initialize processor '{}': {}", proc,
-						e.getMessage());
-				throw new RuntimeException(e.getMessage());
-			}
-		}
-
-		long cnt = 0;
-		try {
-			log.debug("Starting to read from stream {}", input);
-			Data item = input.readNext();
-			log.debug("First item is: {}", item);
-
-			while (item != null && (limit < 0 || cnt < limit)) {
-				cnt++;
-				log.debug("Processing {}", item);
-
-				for (Processor proc : processors) {
-					log.trace("pushing copy of item to processor {}", proc);
-					item = proc.process(item);
-					if (item == null)
-						break;
-				}
-				item = input.readNext();
-			}
-		} catch (Exception e) {
-			log.error("Failed to process item: {}", e.getMessage());
-			e.printStackTrace();
-		}
-		log.debug("{} items processed.", cnt);
-
-		for (Processor proc : processors) {
-			try {
-				if (proc instanceof DataProcessor) {
-					((DataProcessor) proc).finish();
-				}
-			} catch (Exception e) {
-				log.error("Failed to finish processor '{}': {}", proc,
-						e.getMessage());
-			}
-		}
-
-		running = false;
-	}
-
 	public boolean isRunning() {
 		return running;
+	}
+
+	public void shutdown() {
+		running = false;
+		this.interrupt();
 	}
 }

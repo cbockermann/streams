@@ -42,7 +42,10 @@ public class Enqueue extends AbstractDataProcessor {
 
 		try {
 			Processor p = context.lookup(ref);
-			return p.process(data);
+			if (p != null) {
+				log.warn("No queue found for reference '{}'", ref);
+				return p.process(data);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

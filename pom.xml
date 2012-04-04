@@ -21,6 +21,7 @@
 	 	<module>stream-mapred</module>
 		<module>stream-plugin</module>
 		<module>stream-plotter</module>
+		<module>stream-node</module>
 	</modules>
 
 	<repositories>	

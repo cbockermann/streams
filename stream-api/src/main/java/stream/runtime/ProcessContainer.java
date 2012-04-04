@@ -20,7 +20,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.data.Data;
-import stream.data.DataProcessor;
 import stream.data.DataProcessorList;
 import stream.data.Processor;
 import stream.io.DataStream;
@@ -35,26 +34,17 @@ public class ProcessContainer {
 
 	final ObjectFactory objectFactory = ObjectFactory.newInstance();
 
-	boolean openListeners = true;
+	String name = null;
 
 	ContainerContext context = new ContainerContext();
 
 	Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
 
-	/*
-	 * This is a set of sinks, one sink may be connected to multiple streams (by
-	 * key)
-	 */
-	Map<String, List<DataProcessor>> processors = new LinkedHashMap<String, List<DataProcessor>>();
-
 	Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
 
-	public ProcessContainer(URL url) throws Exception {
-		this(url, true);
-	}
+	final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
 
-	public ProcessContainer(URL url, boolean openListeners) throws Exception {
-		this.openListeners = openListeners;
+	public ProcessContainer(URL url) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(url.openStream());
@@ -66,7 +56,30 @@ public class ProcessContainer {
 			throw new Exception("Expecting root element to be 'container'!");
 		}
 
+		if (root.hasAttribute("id")) {
+			name = root.getAttribute("id");
+		}
+
 		this.init(doc);
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Context getContext() {
+		return context;
 	}
 
 	public void init(Document doc) throws Exception {
@@ -93,14 +106,18 @@ public class ProcessContainer {
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
+
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+
+			Element element = (Element) node;
 			String elementName = node.getNodeName();
 
-			if (node instanceof Element
-					&& elementName.equalsIgnoreCase("Stream")) {
-				Element child = (Element) node;
+			if (elementName.equalsIgnoreCase("Stream")
+					|| elementName.equalsIgnoreCase("DataStream")) {
 				try {
 					Map<String, String> attr = objectFactory
-							.getAttributes(child);
+							.getAttributes(element);
 					String id = attr.get("id");
 
 					DataStream stream = createStream(attr);
@@ -110,30 +127,39 @@ public class ProcessContainer {
 						streams.put(id, stream);
 					}
 
-					NodeList proc = child.getChildNodes();
-					for (int j = 0; j < proc.getLength(); j++) {
-						Node n = proc.item(j);
-						if (n instanceof Element) {
-							try {
-								Object object = objectFactory
-										.create((Element) n);
-								if (object instanceof DataProcessor) {
-									stream.addPreprocessor((DataProcessor) object);
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
+					List<Processor> preProcessors = this
+							.createNestedProcessors(element);
+					for (Processor p : preProcessors) {
+						stream.addPreprocessor(p);
 					}
 
 				} catch (Exception e) {
 					log.error("Failed to create object: {}", e.getMessage());
 					e.printStackTrace();
 				}
+				continue;
 			}
 
-			if (node instanceof Element
-					&& (elementName.equalsIgnoreCase("Processing"))
+			if ("monitor".equalsIgnoreCase(elementName)) {
+				Map<String, String> params = objectFactory
+						.getAttributes(element);
+				String className = "stream.runtime.Monitor";
+				if (element.hasAttribute("class"))
+					className = element.getAttribute("class");
+
+				Monitor monitor = (Monitor) objectFactory.create(className,
+						params);
+				log.debug("Created Monitor object: {}", monitor);
+
+				List<Processor> procs = createNestedProcessors(element);
+				for (Processor p : procs)
+					monitor.addProcessor(p);
+
+				processes.add(monitor);
+				continue;
+			}
+
+			if ((elementName.equalsIgnoreCase("Processing"))
 					|| elementName.equalsIgnoreCase("Process")) {
 				log.debug("Found 'Processing' element!");
 				Element child = (Element) node;
@@ -158,53 +184,63 @@ public class ProcessContainer {
 				if (src == null)
 					src = attr.get("input");
 
-				if (src == null) {
-					log.error("No input defined for processor-chain {}", node);
+				Process process = (Process) objectFactory.create(
+						"stream.runtime.Process", attr);
+				log.debug("Created Process object: {}", process);
+
+				List<Processor> procs = this.createNestedProcessors(child);
+				for (Processor p : procs) {
+					proc.addDataProcessor(p);
+					process.addProcessor(p);
 				}
-
-				List<Processor> procs = new ArrayList<Processor>();
-
-				NodeList pnodes = child.getChildNodes();
-				for (int j = 0; j < pnodes.getLength(); j++) {
-
-					Node cnode = pnodes.item(j);
-					if (cnode.getNodeType() == Node.ELEMENT_NODE) {
-						Processor p = createProcessor((Element) cnode);
-						if (p != null) {
-							log.debug("Found processor...");
-							procs.add(p);
-							proc.addDataProcessor(p);
-						}
-					}
-				}
-
-				if (src != null) {
-					List<DataProcessor> ps = this.processors.get(src);
-					if (ps == null) {
-						ps = new ArrayList<DataProcessor>();
-					}
-					ps.add(proc);
-					log.debug("Adding list of processors for stream '{}': {}",
-							src, ps);
-					processors.put(src, ps);
-				}
+				processes.add(process);
 			}
 		}
 
-		if (openListeners) {
-			for (String input : processors.keySet()) {
-				if (streams.get(input) == null) {
-					log.debug("Creating listener-queue for input-key '{}'",
-							input);
+		log.debug("Wiring process inputs to data-streams...");
+		for (AbstractProcess aprocess : processes) {
 
+			if (aprocess instanceof Process) {
+				Process process = (Process) aprocess;
+				String input = process.getInput();
+				if (input == null) {
+					throw new RuntimeException("Process '" + process
+							+ "' is not connected to any input-stream!");
+				}
+
+				DataStream stream = streams.get(input);
+				if (stream == null) {
+					log.debug(
+							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
+							input, input);
 					DataStreamQueue q = new DataStreamQueue();
 					listeners.put(input, q);
 					streams.put(input, q);
-					context.register(input, q);
+					stream = q;
+				}
+
+				process.setDataStream(stream);
+			}
+		}
+	}
+
+	public List<Processor> createNestedProcessors(Element child)
+			throws Exception {
+		List<Processor> procs = new ArrayList<Processor>();
+
+		NodeList pnodes = child.getChildNodes();
+		for (int j = 0; j < pnodes.getLength(); j++) {
+
+			Node cnode = pnodes.item(j);
+			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
+				Processor p = createProcessor((Element) cnode);
+				if (p != null) {
+					log.debug("Found processor...");
+					procs.add(p);
 				}
 			}
 		}
-
+		return procs;
 	}
 
 	public Map<String, String> getProperties(Element element) {
@@ -271,7 +307,7 @@ public class ProcessContainer {
 		return null;
 	}
 
-	public static DataStream createStream(Map<String, String> params)
+	private static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
 		Constructor<?> constr = clazz.getConstructor(URL.class);
@@ -292,60 +328,22 @@ public class ProcessContainer {
 		return stream;
 	}
 
-	public DataStream getStream(String key) {
-
-		DataStream stream = streams.get(key);
-		if (stream != null)
-			return stream;
-
-		stream = listeners.get(key);
-		if (stream == null && openListeners) {
-			log.info("Creating new listener-queue for {}", key);
-			DataStreamQueue queue = new DataStreamQueue();
-			listeners.put(key, queue);
-			return queue;
-		}
-
-		return stream;
-	}
-
 	public void run() throws Exception {
 
 		if (streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");
 
-		log.info("Need to handle {} sources: {}", streams.size(),
+		log.debug("Need to handle {} sources: {}", streams.size(),
 				streams.keySet());
-
-		List<Process> processes = new ArrayList<Process>();
-
-		for (String key : streams.keySet()) {
-			DataStream input = getStream(key);
-			log.debug("Creating new StreamProcess for stream {}", key);
-			log.debug("   process {} is reading from {}", key, input);
-			Process p = new Process(null, new ProcessContextImpl(context),
-					input);
-			List<DataProcessor> proc = processors.get(key);
-			if (proc != null && !proc.isEmpty()) {
-				log.debug("Adding {} processors to stream-process {}",
-						proc.size(), p);
-				for (DataProcessor processor : proc) {
-					p.addDataProcessor(processor);
-				}
-
-				log.debug("Adding stream-process to the process-list...");
-				processes.add(p);
-			} else {
-				log.debug(
-						"No consumer found for stream {}, no process will be created!",
-						key);
-			}
-		}
 
 		log.debug("Experiment contains {} stream processes", processes.size());
 
-		for (Process spu : processes) {
-			log.debug("Starting stream-process [{}]", spu.getProcessId());
+		for (AbstractProcess spu : processes) {
+			ProcessContext ctx = new ProcessContextImpl(context);
+			log.debug("Initializing process with process-context...");
+			spu.init(ctx);
+
+			log.debug("Starting stream-process [{}]", spu);
 			spu.start();
 			log.debug("Stream-process started.");
 		}
@@ -354,13 +352,13 @@ public class ProcessContainer {
 
 		log.debug("waiting for processes to finish...");
 		while (!processes.isEmpty()) {
-			log.debug("{} processes running", processes.size());
-			Iterator<Process> it = processes.iterator();
+			log.trace("{} processes running", processes.size());
+			Iterator<AbstractProcess> it = processes.iterator();
 			while (it.hasNext()) {
-				Process p = it.next();
+				AbstractProcess p = it.next();
 				if (!p.isRunning()) {
-					log.debug("Process '{}' is finished.", p.getProcessId());
-					log.debug("Removing finished process {}", p.getProcessId());
+					log.debug("Process '{}' is finished.", p);
+					log.debug("Removing finished process {}", p);
 					it.remove();
 				}
 			}
@@ -381,6 +379,29 @@ public class ProcessContainer {
 			listeners.get(key).dataArrived(item);
 		} else {
 			log.warn("No listener defined for {}", key);
+		}
+	}
+
+	public void shutdown() {
+		synchronized (processes) {
+			for (AbstractProcess process : processes) {
+				log.debug("Sending SHUTDOWN signal to process {}", process);
+				try {
+					process.finish();
+				} catch (Exception e) {
+					log.error("Failed to properly shutdown process: {}",
+							e.getMessage());
+				}
+			}
+		}
+
+		while (!processes.isEmpty()) {
+			try {
+				log.info("Waiting for processes to finish...");
+				Thread.sleep(500);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

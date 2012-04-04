@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+
+	<global-method-security secured-annotations="enabled">
+	</global-method-security>
+	
+	<!--  Use the customer AuditConsole authentication provider  -->
+	<authentication-manager>
+		<authentication-provider ref="consoleAuthenticationProvider" />
+	</authentication-manager>
+
+	<http use-expressions="true">
+	
+		<!--  The /rpc URLs provide remote access, each servlet behind /rpc/* handles authentication by itself -->
+		<intercept-url pattern="/rpc/auditLogReceiver" filters='none' />
+		<intercept-url pattern="/receive/**" filters='none' />
+		<intercept-url pattern="/data/receive/**" filters='none' />
+		<intercept-url pattern="/data/upload/**" filters='none' />
+		<intercept-url pattern="/data/stream/**" filters='none' />
+		
+		<!--  Images, CSS and login can be viewed without any restrictions -->
+		<intercept-url pattern="/css/**" filters='none' />
+		<intercept-url pattern="/style.css" filters='none' />
+		<intercept-url pattern="/favicon.ico" access='permitAll' />
+		<intercept-url pattern="/images/**" filters='none' />
+		<intercept-url pattern="/login" filters="none" />
+		
+		
+		<intercept-url pattern="/setup/**" access="hasRole('SETUP')" />
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+
+<!--
+		<http-basic/>
+  -->
+		<form-login login-page="/login" default-target-url='/' />
+		<logout logout-url="/logout" logout-success-url='/' invalidate-session='true' />
+
+	</http>
+
+</beans:beans>

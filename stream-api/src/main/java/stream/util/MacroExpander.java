@@ -3,7 +3,6 @@
  */
 package stream.util;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -35,7 +34,7 @@ public class MacroExpander {
 		this(new HashMap<String, String>());
 	}
 
-	public MacroExpander(Map<String, ? extends Serializable> vars) {
+	public MacroExpander(Map<String, ?> vars) {
 		variables.clear();
 		for (String key : vars.keySet()) {
 			variables.put(key, vars.get(key).toString());
@@ -57,8 +56,7 @@ public class MacroExpander {
 		variables.put(key, val);
 	}
 
-	protected String substitute(String str,
-			Map<String, ? extends Serializable> evt) {
+	public String substitute(String str, Map<String, ? extends Object> evt) {
 		String content = str;
 		int start = content.indexOf(VAR_PREFIX, 0);
 		while (start >= 0) {
@@ -85,9 +83,9 @@ public class MacroExpander {
 		return content;
 	}
 
-	public String get(String variable, Map<String, ? extends Serializable> evt) {
+	public String get(String variable, Map<String, ?> evt) {
 		if (evt != null) {
-			Serializable str = evt.get(variable);
+			Object str = evt.get(variable);
 			if (str != null)
 				return str.toString();
 		}
@@ -98,8 +96,7 @@ public class MacroExpander {
 		return substitute(str, this.variables);
 	}
 
-	public static String expand(String string,
-			Map<String, ? extends Serializable> vars) {
+	public static String expand(String string, Map<String, ?> vars) {
 		MacroExpander expander = new MacroExpander(vars);
 		return expander.substitute(string, null);
 	}

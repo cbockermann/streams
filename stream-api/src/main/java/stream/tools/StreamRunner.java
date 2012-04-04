@@ -19,13 +19,4 @@ public final class StreamRunner extends ProcessContainer {
 	public StreamRunner(URL url) throws Exception {
 		super(url);
 	}
-
-	/**
-	 * @param url
-	 * @param openListeners
-	 * @throws Exception
-	 */
-	public StreamRunner(URL url, boolean openListeners) throws Exception {
-		super(url, openListeners);
-	}
 }

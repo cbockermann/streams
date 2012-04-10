@@ -1,0 +1,20 @@
+
+<Container import="stream.learner">
+
+
+	<Stream id="input" class="stream.io.CsvStream"
+		    url="classpath:/multi-golf.csv.gz" />
+
+	<Process input="input">
+	
+		<MapKeys from="bla" to="xml" id="mapper" />
+	
+		<MetaDataLearner id="metaData" />
+		
+		<!-- 
+		<stream.logic.MetaDataPrinter learner-ref="metaData" />
+		 -->
+		
+	</Process>
+	
+</Container>

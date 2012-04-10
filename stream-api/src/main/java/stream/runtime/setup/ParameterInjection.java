@@ -4,8 +4,8 @@
 package stream.runtime.setup;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import stream.runtime.VariableContext;
 import stream.runtime.annotations.EmbeddedContent;
-import stream.runtime.annotations.Parameter;
 
 /**
  * <p>
@@ -46,37 +45,11 @@ public class ParameterInjection {
 			VariableContext variableContext) throws Exception {
 		log.debug("Injecting parameters {} into object {}", params, o);
 
-		// the class of this object
-		Class<?> clazz = o.getClass();
-
 		// this set contains a list of parameters that have been successfully
 		// set using
 		// accessible fields
 		//
 		Set<String> alreadySet = new HashSet<String>();
-
-		// first we try to directly set the annotated field of the class. this
-		// may fail if
-		// the field has private or protected access
-		//
-		for (String k : params.keySet()) {
-			try {
-				Field field = clazz.getDeclaredField(k);
-				if (field != null && field.isAccessible()
-						&& field.isAnnotationPresent(Parameter.class)) {
-					log.debug("Found accessible field {} for class {}",
-							field.getName(), o.getClass());
-
-					field.set(o, params.get(k));
-					alreadySet.add(k);
-				}
-			} catch (NoSuchFieldException nsfe) {
-				if (log.isTraceEnabled())
-					nsfe.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 
 		Object embedded = params.get(EmbeddedContent.KEY);
 
@@ -151,16 +124,39 @@ public class ParameterInjection {
 								po = new Float(in);
 
 						} else {
-							try {
-								Constructor<?> c = t[0]
+
+							if (t[0].isArray()) {
+
+								log.debug("setter is an array, using split(,) and array creation...");
+								String[] args = ParameterUtils.split(params
+										.get(k).toString());
+
+								Class<?> content = t[0].getComponentType();
+								Constructor<?> c = content
 										.getConstructor(String.class);
-								po = c.newInstance(params.get(k).toString()
-										.trim());
-								log.debug("Invoking {}({})", m.getName(), po);
-							} catch (NoSuchMethodException nsm) {
-								log.error(
-										"No String-constructor found for type {} of method {}",
-										t, m.getName());
+								Object array = Array.newInstance(content,
+										args.length);
+
+								for (int i = 0; i < args.length; i++) {
+									Object value = c.newInstance(args[i]);
+									Array.set(array, i, value);
+								}
+
+								po = array;
+							} else {
+
+								try {
+									Constructor<?> c = t[0]
+											.getConstructor(String.class);
+									po = c.newInstance(params.get(k).toString()
+											.trim());
+									log.debug("Invoking {}({})", m.getName(),
+											po);
+								} catch (NoSuchMethodException nsm) {
+									log.error(
+											"No String-constructor found for type {} of method {}",
+											t, m.getName());
+								}
 							}
 						}
 
@@ -187,13 +183,24 @@ public class ParameterInjection {
 						learner.getClass());
 				Class<?> rt = m.getReturnType();
 				if (isTypeSupported(rt)) { // rt.isPrimitive() || rt.equals(
-											// String.class ) || rt.equals(
-											// Double.class ) ){
+					// String.class ) || rt.equals(
+					// Double.class ) ){
 					Object val = m.invoke(learner, new Object[0]);
 					String key = ParameterDiscovery.getParameterName(m);
-					if (key != null)
-						params.put(key, "" + val);
-					else
+					if (key != null && val != null) {
+						if (val.getClass().isArray()) {
+							int len = Array.getLength(val);
+							StringBuffer s = new StringBuffer();
+							for (int i = 0; i < len; i++) {
+								s.append(Array.get(val, i) + "");
+								if (i + 1 < len)
+									s.append(",");
+							}
+							params.put(key, s.toString());
+						} else {
+							params.put(key, "" + val);
+						}
+					} else
 						log.warn(
 								"Failed to detect parameter name from method '{}'! Skipping that method.",
 								m.getName());
@@ -219,6 +226,14 @@ public class ParameterInjection {
 	}
 
 	public static boolean isTypeSupported(Class<?> clazz) {
+
+		if (ServiceInjection.isServiceImplementation(clazz))
+			return false;
+
+		if (clazz.isArray() && isNativeType(clazz.getComponentType())) {
+			return true;
+		}
+
 		if (clazz.equals(String.class) || clazz.equals(Long.class)
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
 				|| clazz.equals(Boolean.class) || clazz.equals(File.class)
@@ -230,5 +245,11 @@ public class ParameterInjection {
 			return true;
 
 		return false;
+	}
+
+	public static boolean isNativeType(Class<?> clazz) {
+		return clazz.equals(String.class) || clazz.equals(Long.class)
+				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
+				|| clazz.equals(Boolean.class);
 	}
 }

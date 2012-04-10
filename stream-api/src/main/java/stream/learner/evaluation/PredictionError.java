@@ -91,8 +91,8 @@ public class PredictionError extends AbstractDataProcessor {
 		//
 		if (learner != null) {
 			for (String classifier : learner) {
-				Serializable pred = data.get(Data.PREDICTION_PREFIX + ":"
-						+ classifier);
+				String key = Data.PREDICTION_PREFIX + ":" + classifier;
+				Serializable pred = data.get(key);
 				if (pred != null) {
 					Double error = loss.loss(labelValue, pred);
 					errors.put(prefix + classifier, error);

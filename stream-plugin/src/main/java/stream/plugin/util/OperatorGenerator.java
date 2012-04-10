@@ -287,7 +287,8 @@ public class OperatorGenerator {
 
 			String[] pkgs = new String[] { "stream.io", "stream.data",
 					"stream.data.mapper", "stream.data.test", "stream.learner",
-					"stream.logic", "stream.monitoring", "stream.plotter" };
+					"stream.logic", "stream.monitoring", "stream.plotter",
+					"stream.flow" };
 
 			if (System.getProperty("packages") != null) {
 				pkgs = System.getProperty("packages").split(",");

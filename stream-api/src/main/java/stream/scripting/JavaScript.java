@@ -1,80 +1,43 @@
 /**
  * 
  */
-package stream.data;
+package stream.scripting;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.runtime.annotations.EmbeddedContent;
-import stream.runtime.annotations.Parameter;
+import stream.data.Data;
+import stream.runtime.annotations.Description;
+import stream.util.URLUtilities;
 
 /**
  * @author chris
  * 
  */
-public abstract class Script extends AbstractDataProcessor {
-
-	static Logger log = LoggerFactory.getLogger(Script.class);
+@Description(group = "Data Stream.Processing.Script")
+public class JavaScript extends Script {
+	static Logger log = LoggerFactory.getLogger(JavaScript.class);
 
 	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+	final static String preamble = URLUtilities
+			.readContentOrEmpty(JavaScript.class
+					.getResource("/stream/data/JavaScript.preamble"));
 
-	protected EmbeddedContent embedded = null;
-
-	protected ScriptEngine scriptEngine;
-
-	protected File file;
-	transient protected String theScript = null;
-
-	public Script(ScriptEngine engine) {
-		if (engine == null)
-			throw new RuntimeException("No ScriptEngine found!");
-		this.scriptEngine = engine;
-	}
-
-	protected Script() {
-	}
+	transient String theScript = null;
 
 	/**
-	 * @return the file
+	 * @param engine
 	 */
-	public File getFile() {
-		return file;
-	}
-
-	/**
-	 * @param file
-	 *            the file to set
-	 */
-	@Parameter(required = false)
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	/**
-	 * @return the embedded
-	 */
-	public EmbeddedContent getScript() {
-		return embedded;
-	}
-
-	/**
-	 * @param embedded
-	 *            the embedded to set
-	 */
-	@Parameter(required = false)
-	public void setScript(EmbeddedContent embedded) {
-		this.embedded = embedded;
+	public JavaScript() {
+		super(scriptEngineManager.getEngineByName("JavaScript"));
 	}
 
 	/**
@@ -85,16 +48,16 @@ public abstract class Script extends AbstractDataProcessor {
 
 		try {
 			String script = loadScript();
-			log.info("Script loaded is:\n{}", script);
+
+			if (script == null)
+				return data;
+
+			log.debug("Script loaded is:\n{}", script);
 
 			ScriptContext ctx = scriptEngine.getContext();
-
-			// log.info( "Binding data-item to 'data'" );
-			ctx.setAttribute("data", data, ScriptContext.ENGINE_SCOPE);
-
 			scriptEngine.put("data", data);
 
-			log.info("Evaluating script...");
+			log.debug("Evaluating script...");
 			scriptEngine.eval(script, ctx);
 
 		} catch (Exception e) {
@@ -106,7 +69,7 @@ public abstract class Script extends AbstractDataProcessor {
 					+ e.getMessage());
 		}
 
-		log.info("Returning data: {}", data);
+		log.debug("Returning data: {}", data);
 		return data;
 	}
 
@@ -116,7 +79,7 @@ public abstract class Script extends AbstractDataProcessor {
 
 			if (embedded != null) {
 				log.info("Using embedded content...");
-				theScript = embedded.getContent();
+				theScript = preamble + "\n" + embedded.getContent();
 				return theScript;
 			}
 
@@ -133,6 +96,8 @@ public abstract class Script extends AbstractDataProcessor {
 	protected String loadScript(InputStream in) throws Exception {
 		log.debug("Loading script from input-stream {}", in);
 		StringBuffer s = new StringBuffer();
+		s.append(preamble);
+		s.append("\n");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String line = reader.readLine();
 		while (line != null) {

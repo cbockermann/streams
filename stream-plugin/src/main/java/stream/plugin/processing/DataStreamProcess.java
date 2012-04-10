@@ -77,7 +77,7 @@ public class DataStreamProcess extends
 				String filter = getParameterAsString(FILTER_PARAMETER);
 				condition = ExpressionCompiler.parse(filter);
 			}
-			log.info("Applying filter {} to data-stream", condition);
+			log.debug("Applying filter {} to data-stream", condition);
 		} catch (Exception e) {
 			throw new UserError(this, e, "filter.syntax.error", e.getMessage());
 		}
@@ -105,9 +105,9 @@ public class DataStreamProcess extends
 
 			if (condition == null || condition.matches(ctx, item)) {
 
-				log.info("Processing example {}", i);
+				log.debug("Processing example {}", i);
 				DataObject datum = dataSource.wrap(item);
-				log.info("Wrapped data-object is: {}", datum);
+				log.debug("Wrapped data-object is: {}", datum);
 				dataStream.deliver(datum);
 				getSubprocess(0).execute();
 				inApplyLoop();

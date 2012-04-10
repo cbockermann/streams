@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.data;
+package stream.scripting;
 
 import javax.script.ScriptEngineManager;
 

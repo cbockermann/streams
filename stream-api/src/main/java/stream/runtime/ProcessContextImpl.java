@@ -23,7 +23,7 @@ public class ProcessContextImpl implements ProcessContext {
 
 	public ProcessContextImpl(ContainerContext ctx) {
 		containerContext = ctx;
-		log.info("Creating new ProcessContext...");
+		log.debug("Creating new ProcessContext, parent context is {}", ctx);
 	}
 
 	/**

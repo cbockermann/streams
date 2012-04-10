@@ -151,4 +151,12 @@ public abstract class AbstractClassifier<D extends Serializable> extends
 			}
 		};
 	}
+
+	/**
+	 * @see stream.learner.PredictionService#predict(stream.data.Data)
+	 */
+	@Override
+	public Serializable predict(Data item) {
+		return this.classify(item);
+	}
 }

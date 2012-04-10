@@ -66,7 +66,8 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 	final JSlider stepSlider = new JSlider(5, 1000, 100);
 	final JTextField stepField = new JTextField(4);
 	String pivotKey = null;
-	Double pivotValue = -1.0d;
+	Double pivotValue = 0.0d;
+	Long lastUpdate = 0L;
 
 	protected final JFreeChart chart;
 
@@ -162,12 +163,13 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		add(p, BorderLayout.CENTER);
 
 		this.setSteps(stepSlider.getValue());
+
 	}
 
 	public void reset() {
 		series.removeAllSeries();
 		seriesMap.clear();
-		pivotValue = -1.0d;
+		pivotValue = 0.0d;
 		plot.datasetChanged(new DatasetChangeEvent(this, series));
 	}
 
@@ -218,8 +220,13 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 		Statistics stats = new Statistics("");
 		for (String key : item.keySet()) {
 			try {
-				Double val = new Double("" + item.get(key));
-				stats.add(key, val);
+				Serializable val = item.get(key);
+				if (val instanceof Double) {
+					stats.add(key, (Double) val);
+				}
+
+				// Double val = new Double("" + item.get(key));
+				// stats.add(key, val);
 			} catch (Exception e) {
 			}
 		}
@@ -231,7 +238,7 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.stats.Statistics)
 	 */
 	@Override
-	public synchronized void dataArrived(Statistics item) {
+	public void dataArrived(Statistics item) {
 
 		if (pivotKey == null)
 			pivotValue += 1.0d;
@@ -269,6 +276,15 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 			series.add(pivotValue, value);
 		}
 
-		this.plot.datasetChanged(new DatasetChangeEvent(this, series));
+		// if (System.currentTimeMillis() - lastUpdate >= 1000) {
+		updateChart();
+		// }
+	}
+
+	public void updateChart() {
+		// synchronized (plot) {
+		plot.datasetChanged(new DatasetChangeEvent(this, series));
+		lastUpdate = System.currentTimeMillis();
+		// }
 	}
 }

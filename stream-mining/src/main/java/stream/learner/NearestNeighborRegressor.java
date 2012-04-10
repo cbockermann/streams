@@ -1,5 +1,6 @@
 package stream.learner;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -135,34 +136,6 @@ public class NearestNeighborRegressor extends AbstractRegressor {
 		return "kNNreg:" + labelAttribute;
 	}
 
-	/*
-	 * 
-	 * public static class Distance implements Comparator<Data> { Data pivot;
-	 * 
-	 * public Distance( Data pivot ){ this.pivot = pivot; }
-	 * 
-	 * public Double distance( Data x1, Data x2 ){
-	 * 
-	 * Set<String> keys = LearnerUtils.getNumericAttributes( x1 ); keys.addAll(
-	 * LearnerUtils.getNumericAttributes( x2 ) ); Double sum = 0.0d;
-	 * 
-	 * for( String key : keys ){
-	 * 
-	 * if( ! DataUtils.isAnnotation( key ) ){ Double d1 =
-	 * LearnerUtils.getDouble( key, x1 ); if( d1 == null ) d1 = 0.0d;
-	 * 
-	 * Double d2 = LearnerUtils.getDouble( key, x2 ); if( d2 == null ) d2 =
-	 * 0.0d;
-	 * 
-	 * sum += ((d1 - d2) * (d1 - d2)); } }
-	 * 
-	 * return Math.sqrt( sum ); }
-	 * 
-	 * @Override public int compare(Data arg0, Data arg1) { Double d1 =
-	 * distance( pivot, arg0 ); Double d2 = distance( pivot, arg1 ); return
-	 * d1.compareTo( d2 ); } }
-	 */
-
 	/**
 	 * @see stream.learner.Learner#getModel()
 	 */
@@ -188,5 +161,13 @@ public class NearestNeighborRegressor extends AbstractRegressor {
 	public Data process(Data data) {
 		learn(data);
 		return data;
+	}
+
+	/**
+	 * @see stream.learner.PredictionService#predict(stream.data.Data)
+	 */
+	@Override
+	public Serializable predict(Data item) {
+		return this.classify(item);
 	}
 }

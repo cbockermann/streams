@@ -1,6 +1,7 @@
 #
 #
 #
+VERSION=0.2-SNAPSHOT
 RAPIDMINER_HOME=/usr/local/rapidminer-5.1
 STREAMS_HOME=..
 
@@ -14,7 +15,7 @@ build-plugin:
 	mvn clean compile exec:java package
 
 install: build-plugin
-	cp target/DataStream-Plugin-0.1-SNAPSHOT.jar $(RAPIDMINER_HOME)/lib/plugins
+	cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
 all:	compile-api build-plugin
 

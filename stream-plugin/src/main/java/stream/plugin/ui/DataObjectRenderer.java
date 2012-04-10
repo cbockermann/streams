@@ -118,7 +118,9 @@ public class DataObjectRenderer extends AbstractRenderer {
 			} else {
 				s.append(val.toString());
 			}
-			s.append("</code></td></tr>\n");
+			s.append("</code>");
+			s.append("  (Class:" + val.getClass() + ")");
+			s.append("</td></tr>\n");
 		}
 		s.append("</table>");
 		s.append("</html>");

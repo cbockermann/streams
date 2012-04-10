@@ -3,6 +3,8 @@
  */
 package stream.learner;
 
+import java.io.Serializable;
+
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
 
@@ -53,5 +55,13 @@ public abstract class AbstractRegressor extends AbstractDataProcessor implements
 	 */
 	@Override
 	public void reset() {
+	}
+
+	/**
+	 * @see stream.learner.PredictionService#predict(stream.data.Data)
+	 */
+	@Override
+	public Serializable predict(Data item) {
+		return classify(item);
 	}
 }

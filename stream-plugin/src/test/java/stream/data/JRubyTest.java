@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import stream.runtime.annotations.EmbeddedContent;
+import stream.scripting.JRuby;
 
 /**
  * @author chris

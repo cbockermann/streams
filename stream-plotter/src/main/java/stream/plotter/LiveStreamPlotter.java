@@ -160,20 +160,22 @@ public class LiveStreamPlotter extends DataVisualizer {
 
 		if (keys == null) {
 			plotPanel.dataArrived(data);
-			return data;
-		}
+		} else {
 
-		Data stats = new DataImpl();
-		for (String key : keys) {
-			if (data.containsKey(key)) {
-				stats.put(key, data.get(key));
-			} else {
-				stats.put(key, 0.0d);
+			Data stats = new DataImpl();
+			for (String key : keys) {
+				if (data.containsKey(key)) {
+					stats.put(key, data.get(key));
+				} else {
+					stats.put(key, 0.0d);
+				}
 			}
-		}
 
-		if (this.updateInterval == null || updateInterval % processed == 0)
+			// if (this.updateInterval == null || updateInterval % processed ==
+			// 0)
 			plotPanel.dataArrived(stats);
+
+		}
 
 		return data;
 	}

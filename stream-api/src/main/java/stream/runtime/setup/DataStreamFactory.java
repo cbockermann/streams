@@ -33,6 +33,10 @@ public class DataStreamFactory {
 			String resource = urlParam.substring("classpath:".length());
 			log.debug("Looking up resource '{}'", resource);
 			url = ProcessContainer.class.getResource(resource);
+			if (url == null) {
+				throw new Exception("Classpath url does not exist! Resource '"
+						+ resource + "' not found!");
+			}
 		} else {
 			url = new URL(urlParam);
 		}

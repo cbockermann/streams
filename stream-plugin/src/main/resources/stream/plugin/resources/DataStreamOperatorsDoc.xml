@@ -53,47 +53,41 @@ will be collected before an example-set is emitted.&lt;/p&gt;
   <operator>
     <name>Delay</name>
     <synopsis/>
-    <help>&lt;p&gt;This simple processor puts a delay into the data processing. The
-delay can be specified in various units with the simple time format
-being specified like:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  40ms
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;for specifying a delay of 40 milliseconds. Other units for &lt;code&gt;day&lt;/code&gt;,
-&lt;code&gt;hour&lt;/code&gt;, &lt;code&gt;minute&lt;/code&gt; and so on work as well. &lt;/p&gt;
-
-&lt;p&gt;The units can also be combined as in &lt;code&gt;1 second 30ms&lt;/code&gt;.&lt;/p&gt;</help>
     <key>Delay</key>
-  </operator>
-  <operator>
-    <name>Message</name>
-    <synopsis/>
-    <key>Message</key>
   </operator>
   <operator>
     <name>Skip</name>
     <synopsis/>
-    <help>&lt;p&gt;This processor will simply skip all events matching a
-given condition. If no condition is specified, the processor
-will skip all events.&lt;/p&gt;
-
-&lt;p&gt;The condition must be a bool expression created from numerical
-operators like &lt;code&gt;@eq&lt;/code&gt;, &lt;code&gt;@gt&lt;/code&gt;, &lt;code&gt;@ge&lt;/code&gt;, &lt;code&gt;@lt&lt;/code&gt; or &lt;code&gt;@le&lt;/code&gt;. In addition
-to those numerical tests the &lt;code&gt;@rx&lt;/code&gt; operator followed by a regular
-expression can be used.&lt;/p&gt;
-
-&lt;p&gt;The general syntax is&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;   variable  operator  argument
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;For example, the following expression will check the value of
-attribute &lt;code&gt;x1&lt;/code&gt; against the 0.5 threshold:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;   x1 @gt 0.5
-&lt;/code&gt;&lt;/pre&gt;</help>
     <key>Skip</key>
+  </operator>
+  <operator>
+    <name>Prediction</name>
+    <synopsis/>
+    <help>&lt;p&gt;This processor references one or more learner elements using the &lt;code&gt;ref&lt;/code&gt; attribute. 
+All the referenced elements need to provide a prediction model, i.e. need to
+implement the ModelProvider interface.&lt;/p&gt;
+
+&lt;p&gt;The processor will add the prediction of all referenced learners to the data item.
+The prediction is prefixed with the &lt;code&gt;@prediction:&lt;/code&gt; string, followed by the name
+of the model (usually the ID of the learner element).&lt;/p&gt;</help>
+    <key>Prediction</key>
+  </operator>
+  <operator>
+    <name>PredictionError</name>
+    <synopsis/>
+    <help>&lt;p&gt;This processor checks the processed data items for the existence of
+a &lt;code&gt;@label&lt;/code&gt; and one or more &lt;code&gt;@prediction&lt;/code&gt; keys. It will compute the
+loss of each of the &lt;code&gt;@prediction&lt;/code&gt; values against the &lt;code&gt;@label&lt;/code&gt; and add
+an &lt;code&gt;@error&lt;/code&gt; value for each of these.&lt;/p&gt;
+
+&lt;p&gt;As an example, assume that the data item contains a &lt;code&gt;@label&lt;/code&gt; key and
+the predictions &lt;code&gt;@prediction:NaiveBayes&lt;/code&gt; and &lt;code&gt;@prediction:Perceptron&lt;/code&gt;.
+Then the &lt;em&gt;PredictionError&lt;/em&gt; processor will add &lt;code&gt;@error:NaiveBayes&lt;/code&gt; and
+&lt;code&gt;@error:Perceptron&lt;/code&gt;, which will contain the difference of the predicted
+values against the &lt;code&gt;@label&lt;/code&gt; value.&lt;/p&gt;
+
+&lt;p&gt;The default loss function is a "zero-one" loss.&lt;/p&gt;</help>
+    <key>PredictionError</key>
   </operator>
   <operator>
     <name>Print Data</name>
@@ -123,50 +117,6 @@ integer values:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt; &amp;lt;CreateID key="@uid" start="10" /&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;</help>
     <key>CreateID</key>
-  </operator>
-  <operator>
-    <name>DNS Lookup</name>
-    <synopsis/>
-    <help>&lt;p&gt;This processor simply checks for the hostname of a given
-IP address. The IP address can either be IPv4 or IPv6.
-Lookup is carried out using the local naming services. The
-processor integrates a simple, limited cache to speed up
-lookups.&lt;/p&gt;
-
-&lt;p&gt;The following example will lookup the IP address of the
-hostname found in attribute &lt;code&gt;REMOTE_HOST&lt;/code&gt; and store the
-resolved address in attribute &lt;code&gt;REMOTE_ADDR&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; &amp;lt;DNSLookup key="REMOTE_HOST" target="REMOTE_ADDR" /&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The cache size is set with the &lt;code&gt;cacheSize&lt;/code&gt; parameter. By
-default the size of the cache is 10000 entries.&lt;/p&gt;</help>
-    <key>DNS Lookup</key>
-  </operator>
-  <operator>
-    <name>DNS Reverse lookup</name>
-    <synopsis/>
-    <help>&lt;p&gt;This processor translates IP addresses back to their host
-names. The lookup is performed using the local naming service.&lt;/p&gt;
-
-&lt;p&gt;Two keys need to be specified: the &lt;code&gt;key&lt;/code&gt; parameter specifies
-the attribute that is used as address (IPv4 or IPv6) to be
-mapped to a hostname. The &lt;code&gt;target&lt;/code&gt; parameter specifies the
-name of the attribute into which the hostname should be stored.&lt;/p&gt;
-
-&lt;p&gt;The following example will lookup the attribute value for
-&lt;code&gt;REMOTE_ADDR&lt;/code&gt; and will write the result into the attribute
-&lt;code&gt;HOSTNAME&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  &amp;lt;DNSReverseLookup key="REMOTE_ADDR" target="HOSTNAME" /&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The processor integrates a simple, limited cache to speed up
-lookups.
-The cache size is set with the &lt;code&gt;cacheSize&lt;/code&gt; parameter. By
-default the size of the cache is 10000 entries.&lt;/p&gt;</help>
-    <key>DNS Reverse lookup</key>
   </operator>
   <operator>
     <name>Array to ExampleSet</name>
@@ -354,6 +304,15 @@ value:&lt;/p&gt;
   <operator>
     <name>CsvStream</name>
     <synopsis/>
+    <help>&lt;p&gt;This data stream source reads simple comma separated values
+from a file/url. Each line is split using a separator (regular
+expression).&lt;/p&gt;
+
+&lt;p&gt;Lines starting with a hash character (&lt;code&gt;#&lt;/code&gt;) are regarded to be
+headers which define the names of the columns.&lt;/p&gt;
+
+&lt;p&gt;The default split expression is &lt;code&gt;(;|,)&lt;/code&gt;, but this can changed
+to whatever is required using the &lt;code&gt;separator&lt;/code&gt; parameter.&lt;/p&gt;</help>
     <key>CsvStream</key>
   </operator>
   <operator>
@@ -423,6 +382,34 @@ additional attributes/keys as outlined in the following.&lt;/p&gt;
     <help>&lt;p&gt;This data stream reads JSON objects from the source (file/url) and
 returns the corresponding Data items.&lt;/p&gt;</help>
     <key>JSONStream</key>
+  </operator>
+  <operator>
+    <name>LineStream</name>
+    <synopsis/>
+    <help>&lt;p&gt;This is a very simple stream that just reads from a URL line-by-line. The
+content of the line is stored in the attribute determined by the
+&lt;code&gt;key&lt;/code&gt; parameter. By default the key &lt;code&gt;LINE&lt;/code&gt; is used.&lt;/p&gt;
+
+&lt;p&gt;It also supports the specification of a simple format string that can be used
+to create a generic parser to populate additional fields of the data item
+read from the stream.&lt;/p&gt;
+
+&lt;p&gt;The parser format is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  %{IP} [%{DATE}] "%{URL}"
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will create a parser that is able to read line in the format&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  127.0.0.1 [2012/03/14 12:03:48 +0100] "http://example.com/index.html"
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The outcoming data item will have the attribute &lt;code&gt;IP&lt;/code&gt; set to
+&lt;code&gt;127.0.0.1&lt;/code&gt; and the &lt;code&gt;DATE&lt;/code&gt; attribute set to
+&lt;code&gt;2012/03/14 12:03:48 +0100&lt;/code&gt;. The &lt;code&gt;URL&lt;/code&gt; attribute will be set to
+&lt;code&gt;http://example.com/index.html&lt;/code&gt;.
+In addition, the &lt;code&gt;LINE&lt;/code&gt; attribute will contain the complete line string.&lt;/p&gt;</help>
+    <key>LineStream</key>
   </operator>
   <operator>
     <name>LogDataStream</name>

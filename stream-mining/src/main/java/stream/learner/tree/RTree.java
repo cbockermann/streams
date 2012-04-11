@@ -3,6 +3,7 @@
  */
 package stream.learner.tree;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -261,5 +262,13 @@ public class RTree extends ModelTree<RegressionTreeStatistics, Double>
 				return classify(item);
 			}
 		};
+	}
+
+	/**
+	 * @see stream.learner.PredictionService#predict(stream.data.Data)
+	 */
+	@Override
+	public Serializable predict(Data item) {
+		return this.classify(item);
 	}
 }

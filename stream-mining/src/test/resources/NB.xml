@@ -1,41 +1,33 @@
 
-<experiment output="output" import="stream.learner">
+<Container import="stream.learner,stream.data.stats">
 
-	<title>Naive Bayes Test</title>
 
-	<description>
-	    This experiment is a simple test-case for the Naive Bayes implementation.
-	</description>
-
-	<Stream name="input" class="stream.io.CsvStream"
+	<Stream id="input" class="stream.io.CsvStream"
 		    url="classpath:/multi-golf.csv.gz" />
-
-	<settings>
-	<!-- 
-	 -->
-		<property name="labelAttributes" value="numeric1,numeric2,numeric3" />
-		<property name="plotInterval" value="5" />
-		<property name="limit" value="50000" />
-		<property name="updatePlots" value="false" />
-		<property name="windowSize" value="10" />
-		<property name="laplaceCorrection" value="0.0001" />
-	</settings>
-
-	<processing>
-<!-- 
- -->
-		<processor class="stream.data.mapper.AttributeFilter" include="numeric(1|2|3)" />
-		<processor class="stream.data.mapper.KeyMapper" old="class" new="label" />
-		<processor class="stream.data.mapper.NumericalBinning" minimum="0.0" maximum="10.0" bins="1000" />
-	</processing>
 
 
 	<Process input="input">
+
+		<MapKeys from="play" to="@label" />
 	
-		<NaiveBayes id="NaiveBayes" />
+		<Prediction ref="NaiveBayes" />
 		
-		<ApplyModel ref="NaiveBayes" />
+		<NaiveBayes id="NaiveBayes" />
+
+		
+		<stream.learner.evaluation.PredictionError learner="NaiveBayes" />
+		
+		<Sum keys="@error:NaiveBayes" />
+		
+		<stream.monitor.MemorySize ref="NaiveBayes" />
+		
+		<PrintData />
+		
+		<stream.flow.Delay time="100ms"  />
+		
+		<stream.plotter.LiveStreamPlotter keys="@error:NaiveBayes" history="100" />
+		<stream.plotter.LiveStreamPlotter keys="@memory:NaiveBayes" history="100" />
 		
 	</Process>
 	
-</experiment>
+</Container>

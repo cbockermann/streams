@@ -120,7 +120,7 @@ public class ObjectFactory extends VariableContext {
 
 		// Inject the parameters into the object...
 		//
-		log.info("Injecting parameters: {}", p);
+		log.debug("Injecting parameters: {}", p);
 		ParameterInjection.inject(object, p, this);
 		return object;
 	}
@@ -153,9 +153,18 @@ public class ObjectFactory extends VariableContext {
 				&& !"".equals(node.getAttribute("class")))
 			return node.getAttribute("class");
 
+		try {
+			Class.forName(node.getNodeName());
+			log.debug("Found direct class-match: {}", node.getNodeName());
+			return node.getNodeName();
+		} catch (Exception e) {
+		}
+
 		for (String prefix : this.searchPath) {
 
 			try {
+				String cn = prefix + node.getNodeName();
+				log.debug("Checking for class {}", cn);
 				Class<?> clazz = Class.forName(prefix + node.getNodeName());
 				log.debug("Auto-detected class {} for node {}", clazz,
 						node.getNodeName());

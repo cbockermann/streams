@@ -24,7 +24,6 @@ public abstract class AbstractModel implements Model {
 	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 }

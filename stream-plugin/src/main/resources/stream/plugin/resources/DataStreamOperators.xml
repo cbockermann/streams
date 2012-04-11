@@ -40,6 +40,10 @@
       <class>stream.io.JSONStreamOperator</class>
     </operator>
     <operator>
+      <key>LineStream</key>
+      <class>stream.io.LineStreamOperator</class>
+    </operator>
+    <operator>
       <key>LogDataStream</key>
       <class>stream.io.LogDataStreamOperator</class>
     </operator>
@@ -115,29 +119,29 @@
 <group key="Data Stream.Logic">
     <operator>
       <key>Delay</key>
-      <class>stream.logic.DelayOperator</class>
-    </operator>
-    <operator>
-      <key>Message</key>
-      <class>stream.logic.MessageOperator</class>
+      <class>stream.flow.DelayOperator</class>
     </operator>
     <operator>
       <key>Skip</key>
-      <class>stream.logic.SkipOperator</class>
+      <class>stream.flow.SkipOperator</class>
+    </operator>
+  </group>
+  <group key="Data Stream.Mining">
+    <operator>
+      <key>Prediction</key>
+      <class>stream.learner.PredictionOperator</class>
+    </operator>
+  </group>
+  <group key="Data Stream.Mining.Evaluation">
+    <operator>
+      <key>PredictionError</key>
+      <class>stream.learner.evaluation.PredictionErrorOperator</class>
     </operator>
   </group>
   <group key="Data Stream.Processing.Annotations">
     <operator>
       <key>CreateID</key>
       <class>stream.plugin.processing.transform.CreateIDOperator</class>
-    </operator>
-    <operator>
-      <key>DNS Lookup</key>
-      <class>stream.plugin.processing.transform.DNSLookupOperator</class>
-    </operator>
-    <operator>
-      <key>DNS Reverse lookup</key>
-      <class>stream.plugin.processing.transform.DNSReverseLookupOperator</class>
     </operator>
   </group>
   <group key="Data Stream.Processing.Script">

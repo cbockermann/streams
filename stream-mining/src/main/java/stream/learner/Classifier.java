@@ -18,7 +18,7 @@ import stream.model.PredictionModel;
  * 
  */
 public interface Classifier<D extends Serializable> extends
-		Learner<PredictionModel<D>> {
+		Learner<PredictionModel<D>>, PredictionService {
 
 	public void setId(String id);
 

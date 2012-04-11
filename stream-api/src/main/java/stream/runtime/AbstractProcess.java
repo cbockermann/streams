@@ -96,20 +96,27 @@ public abstract class AbstractProcess extends Thread implements Processor {
 	@Override
 	public void run() {
 
-		while (running) {
+		try {
+			while (running) {
 
-			// obtain the next item to be processed
-			//
-			Data item = getNextItem();
-			if (item == null) {
-				log.debug("No more items could be read, exiting this process.");
-				return;
+				// obtain the next item to be processed
+				//
+				Data item = getNextItem();
+				if (item == null) {
+					log.debug("No more items could be read, exiting this process.");
+					return;
+				}
+
+				// process the item
+				//
+				item = process(item);
+				count++;
 			}
-
-			// process the item
-			//
-			item = process(item);
-			count++;
+		} catch (Exception e) {
+			log.error("Aborting process due to errors: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			running = false;
 		}
 	}
 

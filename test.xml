@@ -1,0 +1,23 @@
+<experiment import="stream.logic,stream.logger">
+
+
+	<property name="group" value="A,B,C" />
+	<property name="slowdown" value="1500ms" />
+
+	<Process input="log">
+
+ 		<Enqueue ref="queue" />
+ 		<Message id="1" txt="Processor[log] processing item..." />
+		
+	</Process>
+	
+	<Process input="queue">
+		
+		
+		<Delay time="%{slowdown}" />
+ 		<Message txt="Processor[queue] processing item..." />
+		<PrintData />
+
+	</Process>
+	
+</experiment>

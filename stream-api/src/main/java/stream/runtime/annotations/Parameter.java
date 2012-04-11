@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Parameter {
 

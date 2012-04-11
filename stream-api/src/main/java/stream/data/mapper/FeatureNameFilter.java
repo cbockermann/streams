@@ -20,10 +20,8 @@ public class FeatureNameFilter extends AbstractDataProcessor {
 
 	static Logger log = LoggerFactory.getLogger(FeatureNameFilter.class);
 
-	@Parameter(name = "include")
 	String include;
 
-	@Parameter(name = "exclude")
 	String exclude;
 
 	public FeatureNameFilter() {
@@ -42,6 +40,7 @@ public class FeatureNameFilter extends AbstractDataProcessor {
 	 * @param include
 	 *            the include to set
 	 */
+	@Parameter
 	public void setInclude(String include) {
 		this.include = include;
 	}
@@ -57,6 +56,7 @@ public class FeatureNameFilter extends AbstractDataProcessor {
 	 * @param exclude
 	 *            the exclude to set
 	 */
+	@Parameter
 	public void setExclude(String exclude) {
 		this.exclude = exclude;
 	}

@@ -22,27 +22,60 @@ import stream.data.Data;
 import stream.data.DataProcessorList;
 import stream.data.Processor;
 import stream.io.DataStream;
-import stream.io.DataStreamProcessor;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ServiceReference;
+import stream.service.Service;
 
+/**
+ * A process-container is a collection of processes that run independently. Each
+ * process is a self-contained thread that is reading from a data-stream (or
+ * queue).
+ * 
+ * The process-container is responsible for instantiating the processor
+ * elements, grouping them into processes (threads) and creating the
+ * data-streams defined in the corresponding XML configuration.
+ * 
+ * Upon startup, the process-container will start all processes (threads) and
+ * wait until all of them have finished.
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * 
+ */
 public class ProcessContainer {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
-	final ObjectFactory objectFactory = ObjectFactory.newInstance();
+	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
 
-	String name = null;
+	/**
+	 * The name of this container, used in lookup URIs (e.g.
+	 * //container-name/serice-name )
+	 */
+	protected String name = null;
 
-	ContainerContext context = new ContainerContext();
+	/** The global container context */
+	protected final ContainerContext context;
 
-	Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
+	/** The set of data streams (sources) */
+	protected final Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
 
-	Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
+	/** The list of data-stream-queues, that can be fed from external instances */
+	protected final Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
 
-	final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
+	/** The list of processes running in this container */
+	protected final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
 
+	protected final List<ServiceReference> serviceRefs = new ArrayList<ServiceReference>();
+
+	/**
+	 * This constructor creates a new process-container instance by parsing an
+	 * XML document located at the specified URL.
+	 * 
+	 * @param url
+	 * @throws Exception
+	 */
 	public ProcessContainer(URL url) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -57,8 +90,11 @@ public class ProcessContainer {
 
 		if (root.hasAttribute("id")) {
 			name = root.getAttribute("id");
+		} else {
+			name = "local";
 		}
 
+		context = new ContainerContext(name);
 		this.init(doc);
 	}
 
@@ -77,11 +113,25 @@ public class ProcessContainer {
 		this.name = name;
 	}
 
-	public Context getContext() {
+	public ContainerContext getContext() {
 		return context;
 	}
 
-	public void init(Document doc) throws Exception {
+	/**
+	 * @return the processes
+	 */
+	public List<AbstractProcess> getProcesses() {
+		return processes;
+	}
+
+	/**
+	 * @return the serviceRefs
+	 */
+	public List<ServiceReference> getServiceRefs() {
+		return serviceRefs;
+	}
+
+	private void init(Document doc) throws Exception {
 		Element root = doc.getDocumentElement();
 
 		if (root.getAttribute("import") != null) {
@@ -98,7 +148,6 @@ public class ProcessContainer {
 			name = "local";
 		}
 
-		context = new ContainerContext(name);
 		context.getProperties().putAll(getProperties(root));
 		NodeList children = root.getChildNodes();
 
@@ -125,8 +174,7 @@ public class ProcessContainer {
 						streams.put(id, stream);
 					}
 
-					List<Processor> preProcessors = this
-							.createNestedProcessors(element);
+					List<Processor> preProcessors = createNestedProcessors(element);
 					for (Processor p : preProcessors) {
 						stream.addPreprocessor(p);
 					}
@@ -141,9 +189,16 @@ public class ProcessContainer {
 			if ("monitor".equalsIgnoreCase(elementName)) {
 				Map<String, String> params = objectFactory
 						.getAttributes(element);
+
+				// the default Monitor class is stream.runtime.Monitor
+				//
 				String className = "stream.runtime.Monitor";
-				if (element.hasAttribute("class"))
+				if (element.hasAttribute("class")) {
 					className = element.getAttribute("class");
+					log.info(
+							"Creating Monitor instance from custom class '{}'",
+							className);
+				}
 
 				Monitor monitor = (Monitor) objectFactory.create(className,
 						params);
@@ -162,33 +217,25 @@ public class ProcessContainer {
 				log.debug("Found 'Processing' element!");
 				Element child = (Element) node;
 
-				// Create the default data-stream process
-				//
-				DataStreamProcessor proc = new DataStreamProcessor();
-
-				if (child.hasAttribute("class")) {
-					//
-					// optionally, a custom process implementation can be
-					// provided
-					//
-					Map<String, String> parameters = objectFactory
-							.getAttributes(child);
-					proc = (DataStreamProcessor) objectFactory.create(
-							child.getAttribute("class"), parameters);
-				}
-
 				Map<String, String> attr = objectFactory.getAttributes(child);
 				String src = attr.get("source");
 				if (src == null)
 					src = attr.get("input");
 
-				Process process = (Process) objectFactory.create(
-						"stream.runtime.Process", attr);
+				// Create the default data-stream process
+				//
+				String processClass = "stream.runtime.Process";
+				if (attr.containsKey("class")) {
+					processClass = attr.get("class");
+					log.info("Using custom process class '{}'", processClass);
+				}
+
+				Process process = (Process) objectFactory.create(processClass,
+						attr);
 				log.debug("Created Process object: {}", process);
 
-				List<Processor> procs = this.createNestedProcessors(child);
+				List<Processor> procs = createNestedProcessors(child);
 				for (Processor p : procs) {
-					proc.addDataProcessor(p);
 					process.addProcessor(p);
 				}
 				processes.add(process);
@@ -230,7 +277,7 @@ public class ProcessContainer {
 		}
 	}
 
-	public List<Processor> createNestedProcessors(Element child)
+	protected List<Processor> createNestedProcessors(Element child)
 			throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
@@ -249,7 +296,7 @@ public class ProcessContainer {
 		return procs;
 	}
 
-	public Map<String, String> getProperties(Element element) {
+	protected Map<String, String> getProperties(Element element) {
 		Map<String, String> props = new LinkedHashMap<String, String>();
 		NodeList ch = element.getChildNodes();
 		for (int i = 0; i < ch.getLength(); i++) {
@@ -272,7 +319,9 @@ public class ProcessContainer {
 		return props;
 	}
 
-	private Processor createProcessor(Element child) throws Exception {
+	protected Processor createProcessor(Element child) throws Exception {
+
+		Map<String, String> params = objectFactory.getAttributes(child);
 
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {
@@ -288,7 +337,6 @@ public class ProcessContainer {
 						Element element = (Element) node;
 						Processor proc = createProcessor(element);
 						if (proc != null) {
-
 							((DataProcessorList) o).addDataProcessor(proc);
 						} else {
 							log.warn(
@@ -299,12 +347,29 @@ public class ProcessContainer {
 				}
 			}
 
-			if (child.hasAttribute("id")
-					&& !"".equals(child.getAttribute("id").trim())) {
-				log.debug(
-						"Registiering processor with id '{}' in look-up service",
-						child.getAttribute("id"));
-				context.register(child.getAttribute("id").trim(), (Processor) o);
+			if (params.containsKey("id") && !"".equals(params.get("id").trim())) {
+
+				if (o instanceof Service) {
+					String id = params.get("id").trim();
+					log.debug(
+							"Registiering processor with id '{}' in look-up service",
+							child.getAttribute("id"));
+					context.register(id, (Processor) o);
+				} else {
+					log.warn(
+							"Processor '{}' specifies an ID attribute '{}' but does not implement a Service interface. Processor will *not* be registered!",
+							o.getClass().getName(), params.get("id"));
+				}
+			}
+
+			for (String key : params.keySet()) {
+
+				if (key.endsWith("-ref")) {
+					String ref = params.get(key);
+					ServiceReference serviceRef = new ServiceReference(ref, o,
+							key);
+					serviceRefs.add(serviceRef);
+				}
 			}
 
 			return (Processor) o;

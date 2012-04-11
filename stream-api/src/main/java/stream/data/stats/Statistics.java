@@ -108,7 +108,7 @@ public class Statistics extends LinkedHashMap<String, Double> {
 			this.put(key, max(get(key), st.get(key)));
 	}
 
-	private Double max(Double d1, Double d2) {
+	protected Double max(Double d1, Double d2) {
 		if (d1 == null && d2 == null)
 			return Double.NaN;
 

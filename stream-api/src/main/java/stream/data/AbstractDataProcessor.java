@@ -4,6 +4,7 @@
 package stream.data;
 
 import stream.runtime.Context;
+import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris
@@ -11,8 +12,8 @@ import stream.runtime.Context;
  */
 public abstract class AbstractDataProcessor implements DataProcessor {
 
+	protected transient Context context;
 	protected String id;
-	protected Context context;
 
 	/**
 	 * @return the id
@@ -25,6 +26,7 @@ public abstract class AbstractDataProcessor implements DataProcessor {
 	 * @param id
 	 *            the id to set
 	 */
+	@Parameter(required = false)
 	public void setId(String id) {
 		this.id = id;
 	}

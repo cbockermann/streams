@@ -23,6 +23,8 @@ public class Prediction extends AbstractDataProcessor {
 
 	String ref;
 
+	PredictionService predictionService;
+
 	/**
 	 * @return the ref
 	 */
@@ -36,6 +38,10 @@ public class Prediction extends AbstractDataProcessor {
 	 */
 	public void setRef(String ref) {
 		this.ref = ref;
+	}
+
+	public void setLearner(PredictionService predService) {
+		this.predictionService = predService;
 	}
 
 	/**

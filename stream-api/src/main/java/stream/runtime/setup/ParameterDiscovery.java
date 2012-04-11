@@ -40,32 +40,6 @@ public class ParameterDiscovery {
 	public static Map<String, Class<?>> discoverParameters(Class<?> clazz) {
 
 		Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
-		Field[] fields = clazz.getDeclaredFields();
-
-		log.info("Found {} fields", fields.length);
-
-		for (Field field : fields) {
-			Parameter param = field.getAnnotation(Parameter.class);
-			if (param != null) {
-				log.info("Found @parameter annotated field '{}'",
-						field.getName());
-				log.info("    field.getType() = {}", field.getType());
-
-				String name = param.name();
-				if (name == null || name.isEmpty())
-					name = field.getName();
-
-				Class<?> type = param.type();
-				if (!Object.class.equals(type)) {
-					types.put(param.name(), param.type());
-				} else {
-					types.put(param.name(), field.getType());
-				}
-			} else {
-				log.info("Field '{}' is not annotated as parameter",
-						field.getName());
-			}
-		}
 
 		for (Method m : clazz.getMethods()) {
 

@@ -32,6 +32,12 @@ public class StreamPlotView extends AbstractMonitorView implements
 
 		plotPanel = new StreamPlotPanel();
 		add(plotPanel, BorderLayout.CENTER);
+
+		/*
+		 * Thread t = new Thread() { public void run() {
+		 * plotPanel.updateChart(); try { Thread.sleep(1000); } catch (Exception
+		 * e) { e.printStackTrace(); } } }; t.setDaemon(true); t.start();
+		 */
 	}
 
 	public void reset() {

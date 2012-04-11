@@ -25,6 +25,7 @@ import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.ServiceReference;
 import stream.service.Service;
 
@@ -48,6 +49,8 @@ public class ProcessContainer {
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
+	protected final ProcessorFactory processorFactory = new ProcessorFactory(
+			objectFactory);
 
 	/**
 	 * The name of this container, used in lookup URIs (e.g.
@@ -167,16 +170,12 @@ public class ProcessContainer {
 							.getAttributes(element);
 					String id = attr.get("id");
 
-					DataStream stream = DataStreamFactory.createStream(attr);
+					DataStream stream = DataStreamFactory.createStream(
+							objectFactory, processorFactory, element);
 					if (stream != null) {
 						if (id == null)
 							id = "" + stream;
 						streams.put(id, stream);
-					}
-
-					List<Processor> preProcessors = createNestedProcessors(element);
-					for (Processor p : preProcessors) {
-						stream.addPreprocessor(p);
 					}
 
 				} catch (Exception e) {

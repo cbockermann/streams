@@ -37,6 +37,7 @@ public abstract class AbstractDataStream implements DataStream {
 	BufferedReader reader;
 	Long limit = -1L;
 	Long count = 0L;
+	String prefix = null;
 
 	ArrayList<Processor> preprocessors = new ArrayList<Processor>();
 
@@ -83,6 +84,21 @@ public abstract class AbstractDataStream implements DataStream {
 
 	public Map<String, Class<?>> getAttributes() {
 		return attributes;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix
+	 *            the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	public Long getLimit() {
@@ -171,6 +187,14 @@ public abstract class AbstractDataStream implements DataStream {
 			if (datum == null) {
 				log.debug("End-of-stream reached!");
 				return null;
+			}
+
+			if (prefix != null) {
+				Data prefixed = new DataImpl();
+				for (String key : datum.keySet()) {
+					prefixed.put(prefix + ":" + key, datum.get(key));
+				}
+				datum = prefixed;
 			}
 
 			//

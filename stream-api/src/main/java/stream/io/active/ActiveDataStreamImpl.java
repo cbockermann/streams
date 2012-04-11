@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.data.Processor;
@@ -20,6 +23,7 @@ import stream.io.DataStream;
  */
 public class ActiveDataStreamImpl implements ActiveDataStream {
 
+	static Logger log = LoggerFactory.getLogger(ActiveDataStreamImpl.class);
 	protected final LinkedBlockingQueue<Data> queue;
 
 	protected DataStream stream;
@@ -42,6 +46,10 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 
 	@Override
 	public Data readNext(Data datum) throws Exception {
+
+		if (queue.isEmpty())
+			return null;
+
 		Data d = queue.poll();
 		if (d != null)
 			datum.putAll(d);
@@ -72,10 +80,10 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	@Override
 	public void activate() throws Exception {
 		this.activator = new StreamActivator();
-		new Thread(activator).start();
+		this.activator.start();
 	}
 
-	private class StreamActivator implements Runnable {
+	private class StreamActivator extends Thread {
 		private boolean run = true;
 
 		public StreamActivator() {
@@ -83,19 +91,25 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 		}
 
 		public void run() {
-			try {
-				while (run)
+			while (run) {
+				try {
 					queue.put(stream.readNext());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
+				} catch (InterruptedException e) {
+					log.error("Interrupted while reading stream: {}",
+							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				} catch (Exception e) {
+					log.error("Error while reading stream: {}", e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				}
 			}
 		}
 
 		public void setRun(boolean run) {
 			this.run = run;
+			this.interrupt();
 		}
-
 	}
 }

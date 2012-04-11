@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +36,16 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	protected Long limit = -1L;
 	protected Long count = 0L;
 
-	protected final LinkedBlockingQueue<Data> queue;
-
 	protected Map<String, DataStream> streams;
 
 	public AbstractMultiDataStream() {
 		this.attributes = new LinkedHashMap<String, Class<?>>();
 		this.preprocessors = new ArrayList<Processor>();
 		this.streams = new HashMap<String, DataStream>();
-		this.queue = new LinkedBlockingQueue<Data>();
 	}
 
-	protected abstract Data readItem(Data item) throws Exception;
+	protected abstract Data readNext(Data item, Map<String, DataStream> streams)
+			throws Exception;
 
 	/**
 	 * Returns the next datum from this stream.
@@ -72,7 +69,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 			// If the source is empty (i.e. readItem(..) returned null), we
 			// cannot continue, so we leave by returning null
 			//
-			datum = readItem(item);
+			datum = readNext(item, streams);
 			if (datum == null) {
 				log.debug("End-of-stream reached!");
 				return null;
@@ -143,4 +140,5 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	public Processor removePreprocessor(int idx) {
 		return preprocessors.remove(idx);
 	}
+
 }

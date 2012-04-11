@@ -3,6 +3,7 @@
  */
 package stream.util;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,11 @@ public class DocFinderTest {
 			}
 		}
 	};
+
+	@Test
+	public void test() {
+		// dummy test method to prevent junit initialization failure...
+	}
 
 	/**
 	 * @param args

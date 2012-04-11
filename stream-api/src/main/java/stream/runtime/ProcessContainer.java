@@ -388,6 +388,7 @@ public class ProcessContainer {
 		log.debug("Experiment contains {} stream processes", processes.size());
 
 		for (AbstractProcess spu : processes) {
+			spu.setDaemon(true);
 			ProcessContext ctx = new ProcessContextImpl(context);
 			log.debug("Initializing process with process-context...");
 			spu.init(ctx);
@@ -401,7 +402,7 @@ public class ProcessContainer {
 
 		log.debug("waiting for processes to finish...");
 		while (!processes.isEmpty()) {
-			log.trace("{} processes running", processes.size());
+			log.debug("{} processes running", processes.size());
 			Iterator<AbstractProcess> it = processes.iterator();
 			while (it.hasNext()) {
 				AbstractProcess p = it.next();
@@ -409,6 +410,8 @@ public class ProcessContainer {
 					log.debug("Process '{}' is finished.", p);
 					log.debug("Removing finished process {}", p);
 					it.remove();
+				} else {
+					log.debug("    {} is still running", p);
 				}
 			}
 			try {

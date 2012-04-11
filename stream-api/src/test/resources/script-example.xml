@@ -10,14 +10,14 @@
 
 	<Process input="log" output="logData">
  		
- 		<JavaScript>
+ 		<stream.scripting.JavaScript>
  			println( "Test" );
  			var uri = data.get( "REQUEST_URI" );
  			println( "uri=" + uri );
  			data.put( "@id", "test" );
  			data.put( "test", new Double( 1.0 ) );
  			println( data );
- 		</JavaScript>
+ 		</stream.scripting.JavaScript>
  		
  		<stream.data.test.PrintData />
  		

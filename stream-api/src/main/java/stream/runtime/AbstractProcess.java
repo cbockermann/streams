@@ -104,7 +104,8 @@ public abstract class AbstractProcess extends Thread implements Processor {
 				Data item = getNextItem();
 				if (item == null) {
 					log.debug("No more items could be read, exiting this process.");
-					return;
+					running = false;
+					break;
 				}
 
 				// process the item

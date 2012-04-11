@@ -21,7 +21,7 @@ public class Message extends ConditionedDataProcessor {
 	Expression filter;
 	String txt;
 	String condition;
-	MacroExpander macroExpander;
+	MacroExpander macroExpander = new MacroExpander();
 
 	/**
 	 * @return the txt

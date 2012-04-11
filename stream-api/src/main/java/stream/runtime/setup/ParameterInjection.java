@@ -63,7 +63,7 @@ public class ParameterInjection {
 
 			if (embedded != null && m.getName().startsWith("set")
 					&& t.length == 1 && t[0] == EmbeddedContent.class) {
-				log.info("Setting embedded content...");
+				log.debug("Setting embedded content...");
 				m.invoke(o, new EmbeddedContent(embedded.toString()));
 				continue;
 			}
@@ -88,7 +88,7 @@ public class ParameterInjection {
 					// Class<?> t = m.getParameterTypes()[0];
 
 					if (t.equals(params.get(k).getClass())) {
-						log.info("Using setter '{}' to inject parameter '{}'",
+						log.debug("Using setter '{}' to inject parameter '{}'",
 								m.getName(), k);
 						//
 						// if the setter's argument type matches the value
@@ -176,15 +176,19 @@ public class ParameterInjection {
 
 	public static Map<String, String> extract(Object learner) throws Exception {
 		Map<String, String> params = new TreeMap<String, String>();
+
+		// iterate over all getters and extract the parameter values (i.e. the
+		// return value)
+		//
 		for (Method m : learner.getClass().getMethods()) {
-			if (m.getName().startsWith("get")
-					&& m.getParameterTypes().length == 0) {
-				log.debug("Found getter '{}' for class '{}'", m.getName(),
+
+			String name = m.getName();
+
+			if (name.startsWith("get") && m.getParameterTypes().length == 0) {
+				log.debug("Found getter '{}' for class '{}'", name,
 						learner.getClass());
 				Class<?> rt = m.getReturnType();
-				if (isTypeSupported(rt)) { // rt.isPrimitive() || rt.equals(
-					// String.class ) || rt.equals(
-					// Double.class ) ){
+				if (isTypeSupported(rt)) {
 					Object val = m.invoke(learner, new Object[0]);
 					String key = ParameterDiscovery.getParameterName(m);
 					if (key != null && val != null) {
@@ -200,10 +204,7 @@ public class ParameterInjection {
 						} else {
 							params.put(key, "" + val);
 						}
-					} else
-						log.warn(
-								"Failed to detect parameter name from method '{}'! Skipping that method.",
-								m.getName());
+					}
 				}
 			}
 		}

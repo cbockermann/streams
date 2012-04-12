@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.data.TreeNode;
 import stream.data.mapper.Mapper;
+import stream.data.tree.TreeNode;
 
 /**
  * This class implements a data processor for enriching data items with a parse

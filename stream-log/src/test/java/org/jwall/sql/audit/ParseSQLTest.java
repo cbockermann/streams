@@ -2,7 +2,7 @@ package org.jwall.sql.audit;
 
 import org.junit.Test;
 
-import stream.data.TreeNode;
+import stream.data.tree.TreeNode;
 
 public class ParseSQLTest
 {

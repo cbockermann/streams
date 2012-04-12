@@ -15,6 +15,9 @@
 	
 	<modules>
 		<module>stream-api</module>
+		<module>stream-core</module>
+		<module>stream-runtime</module>
+<!-- 
 		<module>stream-generator</module>
 		<module>stream-mining</module>
 		<module>stream-log</module>
@@ -22,6 +25,7 @@
 		<module>stream-plugin</module>
 		<module>stream-plotter</module>
 		<module>stream-node</module>
+ -->		
 	</modules>
 
 	<repositories>	
@@ -58,6 +62,13 @@
 		<developer>
 			<name>Christian Bockermann</name>
 			<email>christian.bockermann@cs.uni-dortmund.de</email>
+			<organization>Informatik LS8, TU-Dortmund</organization>
+			<organizationUrl>http://www-ai.cs.uni-dortmund.de</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<name>Hendrik Blom</name>
+			<email>hendrik.blom@cs.uni-dortmund.de</email>
 			<organization>Informatik LS8, TU-Dortmund</organization>
 			<organizationUrl>http://www-ai.cs.uni-dortmund.de</organizationUrl>
 			<timezone>+1</timezone>

@@ -2,7 +2,7 @@ package org.jwall.sql.audit;
 
 import java.util.Stack;
 
-import stream.data.TreeNode;
+import stream.data.tree.TreeNode;
 
 public abstract class TreeWalker
 {

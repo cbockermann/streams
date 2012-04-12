@@ -46,7 +46,7 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
-import stream.data.TreeNode;
+import stream.data.tree.TreeNode;
 
 public class ExpressionTreeWalker
     extends TreeWalker

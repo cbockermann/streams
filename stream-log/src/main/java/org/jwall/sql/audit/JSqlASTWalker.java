@@ -38,7 +38,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.select.Union;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
-import stream.data.TreeNode;
+import stream.data.tree.TreeNode;
 
 
 /**

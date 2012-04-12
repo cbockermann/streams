@@ -1,0 +1,6 @@
+#
+# RemoveAttributes is an alias for RemoveKeys
+#
+stream.data.mapper.RemoveAttributes=stream.data.mapper.RemoveKeys
+
+stream.data.mapper.AddId = stream.data.mapper.CreateID

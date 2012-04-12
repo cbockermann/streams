@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import stream.data.TreeNode;
+import stream.data.tree.TreeNode;
 
 
 
@@ -50,7 +50,7 @@ public class ASTNode
 
 
 	/**
-	 * @see org.jwall.sql.parser.TreeNode#getLabel()
+	 * @see org.stream.data.tree.parser.TreeNode#getLabel()
 	 */
 	@Override
 	public String getLabel() {
@@ -58,7 +58,7 @@ public class ASTNode
 	}
 	
 	/**
-	 * @see org.jwall.sql.parser.TreeNode#setLabel(java.lang.String)
+	 * @see org.stream.data.tree.parser.TreeNode#setLabel(java.lang.String)
 	 */
 	@Override
 	public void setLabel(String label) {
@@ -66,7 +66,7 @@ public class ASTNode
 	}
 	
 	/**
-	 * @see org.jwall.sql.parser.TreeNode#children()
+	 * @see org.stream.data.tree.parser.TreeNode#children()
 	 */
 	@Override
 	public Collection<TreeNode> children() {
@@ -74,7 +74,7 @@ public class ASTNode
 	}
 
 	/**
-	 * @see org.jwall.sql.parser.TreeNode#isLeaf()
+	 * @see org.stream.data.tree.parser.TreeNode#isLeaf()
 	 */
 	@Override
 	public boolean isLeaf() {

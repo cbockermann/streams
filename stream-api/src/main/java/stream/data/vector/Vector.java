@@ -2,7 +2,8 @@ package stream.data.vector;
 
 import stream.data.Data;
 import stream.data.DataUtils;
-import stream.data.Measurable;
+import stream.monitor.Measurable;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

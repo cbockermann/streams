@@ -26,6 +26,7 @@ import stream.io.DataStreamQueue;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.service.Service;
 
@@ -242,6 +243,9 @@ public class ProcessContainer {
 		}
 
 		connectProcesses();
+
+		ServiceInjection.injectServices(this.getServiceRefs(),
+				this.getContext());
 	}
 
 	/**
@@ -387,6 +391,7 @@ public class ProcessContainer {
 
 		log.debug("Experiment contains {} stream processes", processes.size());
 
+		long start = System.currentTimeMillis();
 		for (AbstractProcess spu : processes) {
 			spu.setDaemon(true);
 			ProcessContext ctx = new ProcessContextImpl(context);
@@ -420,6 +425,10 @@ public class ProcessContainer {
 				e.printStackTrace();
 			}
 		}
+
+		long end = System.currentTimeMillis();
+		log.info("ProcessContainer finished all processes after about {} ms",
+				(end - start));
 	}
 
 	public Set<String> getStreamListenerNames() {

@@ -10,8 +10,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Service;
 import stream.runtime.ContainerContext;
-import stream.service.Service;
 
 /**
  * This class implements the service-injection, i.e. it will check a number of

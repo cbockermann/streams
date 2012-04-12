@@ -1,6 +1,6 @@
 package stream.data.mapper;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 import stream.runtime.expressions.MacroExpander;

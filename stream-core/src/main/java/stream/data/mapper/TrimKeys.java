@@ -1,6 +1,6 @@
 package stream.data.mapper;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.runtime.annotations.Description;

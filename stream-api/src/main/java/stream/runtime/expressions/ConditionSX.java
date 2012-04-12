@@ -48,7 +48,7 @@ public class ConditionSX extends BinaryOperator {
 	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean matches(String pattern, String input) {
+	public static boolean matches(String pattern, String input) {
 
 		String filename = input.toLowerCase();
 		String wildcardMatcher = pattern.toLowerCase();

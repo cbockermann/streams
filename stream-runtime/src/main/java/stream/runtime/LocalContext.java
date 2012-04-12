@@ -6,7 +6,7 @@ package stream.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
-import stream.data.Processor;
+import stream.Processor;
 
 /**
  * @author chris
@@ -27,7 +27,7 @@ public class LocalContext implements ProcessContext {
 
 	/**
 	 * @see stream.runtime.LookupService#register(java.lang.String,
-	 *      stream.data.Processor)
+	 *      stream.Processor)
 	 */
 	@Override
 	public void register(String ref, Processor p) throws Exception {

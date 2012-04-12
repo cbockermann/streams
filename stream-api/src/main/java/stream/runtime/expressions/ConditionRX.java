@@ -36,7 +36,7 @@ public class ConditionRX extends BinaryOperator {
 	private static final long serialVersionUID = 6247657062073419253L;
 
 	public ConditionRX() {
-		super("@rx");
+		super("@rx", "~");
 	}
 
 	/**

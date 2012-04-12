@@ -3,7 +3,7 @@
  */
 package stream.data.stats;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.learner.ModelProvider;
 
@@ -33,7 +33,7 @@ public abstract class StatisticsLearner extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

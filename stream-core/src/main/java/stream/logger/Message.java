@@ -3,7 +3,7 @@
  */
 package stream.logger;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
 import stream.runtime.ContextAwareMacroExpander;
@@ -51,7 +51,7 @@ public class Message extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init(stream.runtime.Context)
+	 * @see stream.AbstractDataProcessor#init(stream.runtime.Context)
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {
@@ -60,7 +60,7 @@ public class Message extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

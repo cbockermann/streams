@@ -10,7 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 import stream.runtime.annotations.Parameter;
@@ -20,7 +20,7 @@ import stream.runtime.annotations.Parameter;
  * 
  */
 @Description(group = "Data Stream.Processing.Transformations.Data", text = "")
-public class MapValueToID extends AbstractDataProcessor {
+public class MapValueToID implements Processor {
 
 	static Logger log = LoggerFactory.getLogger(MapValueToID.class);
 
@@ -47,7 +47,7 @@ public class MapValueToID extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

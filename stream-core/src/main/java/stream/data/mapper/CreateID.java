@@ -1,6 +1,6 @@
 package stream.data.mapper;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 import stream.runtime.annotations.Parameter;
@@ -17,7 +17,7 @@ public class CreateID extends AbstractDataProcessor {
 	String key = "@id";
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

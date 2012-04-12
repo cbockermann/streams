@@ -6,7 +6,7 @@ package stream.logic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.data.stats.Statistics;
 import stream.learner.MetaDataService;
@@ -27,7 +27,7 @@ public class MetaDataPrinter extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data input) {

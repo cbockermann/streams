@@ -12,8 +12,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.Processor;
 import stream.data.DataProcessorList;
-import stream.data.Processor;
 
 /**
  * @author chris

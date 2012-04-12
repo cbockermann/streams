@@ -7,19 +7,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.DataProcessor;
-import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris
  * 
  */
-public class SelectAttributes extends AbstractDataProcessor {
+public class SelectAttributes implements Processor {
 
-	String[] keys = new String[0];
+	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
 	private Boolean remove;
@@ -29,20 +27,20 @@ public class SelectAttributes extends AbstractDataProcessor {
 		this.remove = true;
 	}
 
-	public void setKeys(String keyString) {
-		keys = ParameterUtils.split(keyString);
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 		for (String key : keys)
 			selected.add(key);
 	}
 
-	public DataProcessor setKeys(Set<String> keys) {
+	public Processor setKeys(Set<String> keys) {
 		this.keys = keys.toArray(new String[keys.size()]);
 		selected = keys;
 		return this;
 	}
 
-	public String getKeys() {
-		return ParameterUtils.join(keys);
+	public String[] getKeys() {
+		return keys;
 	}
 
 	public void setRemove(Boolean remove) {
@@ -54,7 +52,7 @@ public class SelectAttributes extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

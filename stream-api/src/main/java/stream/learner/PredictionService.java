@@ -5,8 +5,8 @@ package stream.learner;
 
 import java.io.Serializable;
 
+import stream.Service;
 import stream.data.Data;
-import stream.service.Service;
 
 /**
  * <p>
@@ -19,6 +19,13 @@ import stream.service.Service;
  * 
  */
 public interface PredictionService extends Service {
+
+	/**
+	 * Returns the name of the prediction (i.e. the name of the label attribute)
+	 * 
+	 * @return
+	 */
+	public String getName();
 
 	/**
 	 * Performs the prediction based on the current state of the implementing

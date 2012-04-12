@@ -6,7 +6,7 @@ package stream.data.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.runtime.annotations.Description;
@@ -16,10 +16,10 @@ import stream.runtime.annotations.Description;
  * 
  */
 @Description(group = "Data Stream.Processing.Transformations.Data")
-public class RemoveZeroes extends AbstractDataProcessor {
+public class RemoveZeroes implements Processor {
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

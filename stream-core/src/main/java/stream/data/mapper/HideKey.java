@@ -1,6 +1,6 @@
 package stream.data.mapper;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.runtime.annotations.Parameter;
@@ -19,7 +19,7 @@ public class HideKey extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

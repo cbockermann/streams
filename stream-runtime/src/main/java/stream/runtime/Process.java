@@ -6,8 +6,8 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.DataProcessor;
 import stream.data.Data;
-import stream.data.DataProcessor;
 import stream.io.DataStream;
 
 /**

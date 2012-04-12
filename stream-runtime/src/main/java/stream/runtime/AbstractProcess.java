@@ -9,9 +9,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.DataProcessor;
+import stream.Processor;
 import stream.data.Data;
-import stream.data.DataProcessor;
-import stream.data.Processor;
 
 /**
  * This class implements the basic active component, ie. a thread executing
@@ -43,7 +43,7 @@ public abstract class AbstractProcess extends Thread implements Processor {
 	public abstract Data getNextItem();
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {
@@ -61,7 +61,7 @@ public abstract class AbstractProcess extends Thread implements Processor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#init(stream.runtime.Context)
+	 * @see stream.DataProcessor#init(stream.runtime.Context)
 	 */
 	public void init(ProcessContext context) throws Exception {
 		this.context = context;
@@ -75,7 +75,7 @@ public abstract class AbstractProcess extends Thread implements Processor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#finish()
+	 * @see stream.DataProcessor#finish()
 	 */
 	public void finish() throws Exception {
 

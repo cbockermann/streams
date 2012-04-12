@@ -18,9 +18,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.Processor;
+import stream.Service;
 import stream.data.Data;
 import stream.data.DataProcessorList;
-import stream.data.Processor;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.DataStreamFactory;
@@ -28,7 +29,6 @@ import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
-import stream.service.Service;
 
 /**
  * A process-container is a collection of processes that run independently. Each

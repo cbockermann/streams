@@ -3,7 +3,7 @@
  */
 package stream.data.mapper;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataUtils;
 
@@ -11,7 +11,7 @@ import stream.data.DataUtils;
  * @author chris
  * 
  */
-public class NumericalBinning extends AbstractDataProcessor {
+public class NumericalBinning implements Processor {
 
 	Double minimum = 0.0d;
 
@@ -85,7 +85,7 @@ public class NumericalBinning extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init()
+	 * @see stream.AbstractDataProcessor#init()
 	 */
 	public void init() throws Exception {
 		buckets = new double[Math.max(1, bins)];
@@ -97,7 +97,7 @@ public class NumericalBinning extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

@@ -9,7 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Processor;
+import stream.Processor;
 
 /**
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
@@ -36,7 +36,7 @@ public class ProcessContextImpl implements ProcessContext {
 
 	/**
 	 * @see stream.runtime.LookupService#register(java.lang.String,
-	 *      stream.data.Processor)
+	 *      stream.Processor)
 	 */
 	@Override
 	public void register(String ref, Processor p) throws Exception {

@@ -5,14 +5,14 @@ package stream.data.mapper;
 
 import java.util.Random;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class RandomBinaryLabel extends AbstractDataProcessor {
+public class RandomBinaryLabel implements Processor {
 
 	Long seed = System.currentTimeMillis();
 	Random random = new Random();
@@ -51,7 +51,7 @@ public class RandomBinaryLabel extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

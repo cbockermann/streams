@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.data.tree.TreeNode;

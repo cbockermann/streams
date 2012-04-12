@@ -6,19 +6,21 @@ package stream.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import stream.AbstractDataProcessor;
+import stream.DataProcessor;
+import stream.Processor;
 import stream.runtime.Context;
 
 /**
  * @author chris
  * 
  */
-public class DataProcessorList implements DataProcessor {
+public class DataProcessorList extends AbstractDataProcessor {
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
-	protected Context context;
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {
@@ -38,10 +40,11 @@ public class DataProcessorList implements DataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#init(stream.runtime.Context)
+	 * @see stream.DataProcessor#init(stream.runtime.Context)
 	 */
 	@Override
 	public void init(Context context) throws Exception {
+		super.init(context);
 		this.context = context;
 		for (Processor p : processors) {
 			if (p instanceof DataProcessor) {
@@ -51,7 +54,7 @@ public class DataProcessorList implements DataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#finish()
+	 * @see stream.DataProcessor#finish()
 	 */
 	@Override
 	public void finish() throws Exception {

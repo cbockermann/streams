@@ -11,10 +11,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
+import stream.DataProcessor;
+import stream.Processor;
 import stream.data.Data;
-import stream.data.DataProcessor;
-import stream.data.Processor;
 import stream.runtime.Context;
 
 /**
@@ -26,7 +26,7 @@ import stream.runtime.Context;
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
+ * @deprecated
  */
 public class DataStreamProcessor extends AbstractDataProcessor implements
 		DataStream {
@@ -100,7 +100,7 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {
@@ -152,7 +152,7 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init()
+	 * @see stream.AbstractDataProcessor#init()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {
@@ -165,7 +165,7 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#finish()
+	 * @see stream.AbstractDataProcessor#finish()
 	 */
 	@Override
 	public void finish() throws Exception {

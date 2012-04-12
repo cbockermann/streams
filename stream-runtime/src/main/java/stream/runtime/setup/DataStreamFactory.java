@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.data.Processor;
+import stream.Processor;
 import stream.io.DataStream;
 import stream.io.multi.MultiDataStream;
 import stream.runtime.ProcessContainer;

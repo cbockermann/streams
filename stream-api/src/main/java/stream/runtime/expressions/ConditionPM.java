@@ -19,7 +19,6 @@
  */
 package stream.runtime.expressions;
 
-
 public class ConditionPM extends BinaryOperator {
 
 	/** The unique class ID */

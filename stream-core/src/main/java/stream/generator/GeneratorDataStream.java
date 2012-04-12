@@ -3,7 +3,7 @@ package stream.generator;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.data.Processor;
+import stream.Processor;
 import stream.io.DataStream;
 
 public abstract class GeneratorDataStream implements DataStream {

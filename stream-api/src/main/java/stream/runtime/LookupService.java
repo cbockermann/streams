@@ -3,7 +3,7 @@
  */
 package stream.runtime;
 
-import stream.data.Processor;
+import stream.Processor;
 
 /**
  * @author chris

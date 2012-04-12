@@ -3,7 +3,7 @@
  */
 package stream.data.test;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 
@@ -19,7 +19,7 @@ import stream.runtime.annotations.Description;
 public class PrintData extends ConditionedDataProcessor {
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

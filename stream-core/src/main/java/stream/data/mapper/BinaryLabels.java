@@ -2,7 +2,7 @@ package stream.data.mapper;
 
 import java.io.Serializable;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 

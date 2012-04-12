@@ -8,9 +8,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataListener;
-import stream.data.Processor;
 
 /**
  * @author chris
@@ -90,7 +90,7 @@ public class DataStreamQueue extends AbstractDataStream implements
 	}
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {

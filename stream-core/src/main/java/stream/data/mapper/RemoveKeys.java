@@ -1,9 +1,8 @@
 package stream.data.mapper;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
-import stream.runtime.setup.ParameterUtils;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each
@@ -17,27 +16,31 @@ import stream.runtime.setup.ParameterUtils;
  * 
  */
 @Description(group = "Data Stream.Processing.Transformations.Attributes")
-public class RemoveKeys extends AbstractDataProcessor {
+public class RemoveKeys implements Processor {
 
 	String[] keys = new String[0];
 
 	public RemoveKeys() {
 	}
 
-	public RemoveKeys(String keyString) {
-		setKeys(keyString);
+	public RemoveKeys(String[] keys) {
+		setKeys(keys);
 	}
 
-	public void setKeys(String keyString) {
-		keys = ParameterUtils.split(keyString);
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 	}
 
-	public String getKeys() {
-		return ParameterUtils.join(keys);
+	public String[] getKeys() {
+		return keys;
 	}
 
 	@Override
 	public Data process(Data data) {
+
+		if (keys == null)
+			return data;
+
 		for (String key : keys)
 			data.remove(key);
 		return data;

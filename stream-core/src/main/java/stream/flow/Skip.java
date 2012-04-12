@@ -3,7 +3,7 @@
  */
 package stream.flow;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 
@@ -22,7 +22,7 @@ public class Skip extends ConditionedDataProcessor {
 
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {
@@ -33,7 +33,7 @@ public class Skip extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.ConditionedDataProcessor#processMatchingData(stream.data.Data)
+	 * @see stream.ConditionedDataProcessor#processMatchingData(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

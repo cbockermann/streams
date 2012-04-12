@@ -13,7 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.data.stats.Statistics;
 
@@ -52,7 +52,7 @@ public class MetaDataLearner extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {

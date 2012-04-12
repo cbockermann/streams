@@ -6,7 +6,7 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
 import stream.runtime.annotations.Description;
@@ -46,7 +46,7 @@ public class Delay extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init()
+	 * @see stream.AbstractDataProcessor#init()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {
@@ -58,7 +58,7 @@ public class Delay extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

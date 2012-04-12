@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 
 public class TreeFeatures extends AbstractDataProcessor {
@@ -12,7 +12,7 @@ public class TreeFeatures extends AbstractDataProcessor {
 	List<TreeFeature> features = new ArrayList<TreeFeature>();
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

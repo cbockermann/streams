@@ -3,12 +3,14 @@
  */
 package stream.learner;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
-import stream.data.Processor;
 import stream.runtime.Context;
 import stream.runtime.annotations.Description;
 
@@ -45,7 +47,7 @@ public class Prediction extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init(stream.runtime.Context)
+	 * @see stream.AbstractDataProcessor#init(stream.runtime.Context)
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {
@@ -61,10 +63,22 @@ public class Prediction extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {
+
+		if (predictionService != null) {
+			String key = predictionService.getName();
+			Serializable pred = predictionService.predict(data);
+
+			if (!key.startsWith(Data.PREDICTION_PREFIX)) {
+				key = Data.PREDICTION_PREFIX + ":" + key;
+			}
+
+			data.put(key, pred);
+			return data;
+		}
 
 		try {
 			Processor p = context.lookup(ref);

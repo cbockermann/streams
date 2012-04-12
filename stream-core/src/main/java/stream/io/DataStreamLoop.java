@@ -7,16 +7,21 @@ import java.util.List;
 import stream.data.Data;
 import stream.data.DataImpl;
 
+/**
+ * 
+ * @author chris
+ * @deprecated
+ */
 public class DataStreamLoop extends DataStreamProcessor {
 
 	List<Data> buffer = new ArrayList<Data>();
-	
+
 	int ptr = 0;
 	boolean inLoop = false;
 	Integer bufferSize = 10000;
 	Boolean shuffle = true;
 	Integer repeat = -1;
-	
+
 	public Integer getBufferSize() {
 		return bufferSize;
 	}
@@ -32,7 +37,7 @@ public class DataStreamLoop extends DataStreamProcessor {
 	public void setShuffle(Boolean shuffle) {
 		this.shuffle = shuffle;
 	}
-	
+
 	public Integer getRepeat() {
 		return repeat;
 	}
@@ -43,37 +48,37 @@ public class DataStreamLoop extends DataStreamProcessor {
 
 	@Override
 	public Data readNext() throws Exception {
-		return readNext( new DataImpl() );
+		return readNext(new DataImpl());
 	}
 
 	@Override
 	public Data readNext(Data data) throws Exception {
-		
-		if( inLoop ){
-			if( ptr >= buffer.size() ){
-				
-				if( repeat == 1 )
+
+		if (inLoop) {
+			if (ptr >= buffer.size()) {
+
+				if (repeat == 1)
 					return null;
-				
-				if( shuffle ){
-					Collections.shuffle( buffer );
+
+				if (shuffle) {
+					Collections.shuffle(buffer);
 				}
 				repeat--;
 				ptr = 0;
 			}
-			
-			return buffer.get( ptr++ );
+
+			return buffer.get(ptr++);
 		}
-		
-		Data item = source.readNext( data );
-		if( item == null ){
+
+		Data item = source.readNext(data);
+		if (item == null) {
 			inLoop = true;
-			if( shuffle )
-				Collections.shuffle( buffer );
-			
-			return readNext( item );
+			if (shuffle)
+				Collections.shuffle(buffer);
+
+			return readNext(item);
 		}
-		buffer.add( item );
+		buffer.add(item);
 		return item;
 	}
 }

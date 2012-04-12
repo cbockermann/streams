@@ -13,7 +13,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.Processor;
 import stream.data.Data;
 import stream.runtime.annotations.Description;
 import stream.runtime.annotations.Parameter;
@@ -23,7 +23,7 @@ import stream.runtime.annotations.Parameter;
  * 
  */
 @Description(text = "", group = "Data Stream.Processing.Transformations.Attributes")
-public class MapKeys extends AbstractDataProcessor {
+public class MapKeys implements Processor {
 
 	static Logger log = LoggerFactory.getLogger(MapKeys.class);
 	String oldKey;
@@ -103,7 +103,7 @@ public class MapKeys extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {

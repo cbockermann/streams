@@ -10,7 +10,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.AbstractDataProcessor;
+import stream.AbstractDataProcessor;
 import stream.data.Data;
 import stream.runtime.Context;
 import stream.runtime.annotations.Description;
@@ -90,7 +90,7 @@ public class Timestamp extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {
@@ -116,7 +116,7 @@ public class Timestamp extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.data.AbstractDataProcessor#init()
+	 * @see stream.AbstractDataProcessor#init()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

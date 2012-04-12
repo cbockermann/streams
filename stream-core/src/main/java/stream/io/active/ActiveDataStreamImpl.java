@@ -7,9 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.Processor;
 import stream.io.DataStream;
 
 /**

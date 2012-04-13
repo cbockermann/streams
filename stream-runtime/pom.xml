@@ -28,7 +28,16 @@
   	</dependency>
   </dependencies>
   
-  
+  	<developers>
+		<developer>
+			<name>Christian Bockermann</name>
+			<email>christian.bockermann@cs.uni-dortmund.de</email>
+			<organization>Informatik LS8, TU-Dortmund</organization>
+			<organizationUrl>http://www-ai.cs.uni-dortmund.de</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	
 	<build>
 		<plugins>
 			<plugin>

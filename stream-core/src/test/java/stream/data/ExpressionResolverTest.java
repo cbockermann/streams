@@ -1,10 +1,9 @@
 package stream.data;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import stream.data.Data;
-import stream.data.DataImpl;
 import stream.expressions.ExpressionResolver;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContext;

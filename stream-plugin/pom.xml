@@ -39,17 +39,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
-			<artifactId>stream-api</artifactId>
-			<version>[1.3.8,)</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>junit</artifactId>
-					<groupId>junit</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>pg542</groupId>
 			<artifactId>stream-mining</artifactId>
 			<version>0.2-SNAPSHOT</version>
@@ -110,6 +99,16 @@
 					<groupId>org.jfree</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-runtime</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-core</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 

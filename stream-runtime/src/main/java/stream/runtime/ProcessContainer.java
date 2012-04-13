@@ -2,6 +2,7 @@ package stream.runtime;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,6 +74,14 @@ public class ProcessContainer {
 
 	protected final List<ServiceReference> serviceRefs = new ArrayList<ServiceReference>();
 
+	protected final Map<String, ElementHandler> elementHandler = new HashMap<String, ElementHandler>();
+
+	public ProcessContainer(URL url, Map<String, ElementHandler> elementHandler)
+			throws Exception {
+		this(url);
+		this.elementHandler.putAll(elementHandler);
+	}
+
 	/**
 	 * This constructor creates a new process-container instance by parsing an
 	 * XML document located at the specified URL.
@@ -88,15 +97,13 @@ public class ProcessContainer {
 		Element root = doc.getDocumentElement();
 
 		if (!root.getNodeName().equalsIgnoreCase("experiment")
-				&& !root.getNodeName().equalsIgnoreCase("container")) {
+				&& !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
-		}
 
-		if (root.hasAttribute("id")) {
+		if (root.hasAttribute("id"))
 			name = root.getAttribute("id");
-		} else {
+		else
 			name = "local";
-		}
 
 		context = new ContainerContext(name);
 		this.init(doc);
@@ -141,16 +148,14 @@ public class ProcessContainer {
 		if (root.getAttribute("import") != null) {
 			String[] pkgs = root.getAttribute("import").split(",");
 			for (String pkg : pkgs) {
-				if (!pkg.trim().isEmpty()) {
+				if (!pkg.trim().isEmpty())
 					objectFactory.addPackage(pkg);
-				}
 			}
 		}
 
 		String name = root.getAttribute("name");
-		if (name == null) {
+		if (name == null)
 			name = "local";
-		}
 
 		context.getProperties().putAll(getProperties(root));
 		NodeList children = root.getChildNodes();
@@ -163,6 +168,16 @@ public class ProcessContainer {
 
 			Element element = (Element) node;
 			String elementName = node.getNodeName();
+
+			if (elementHandler.keySet().contains(elementName)) {
+				ElementHandler e = elementHandler.get(elementName);
+				if (e != null) {
+					log.debug("ElementHandler will handle {} element!",
+							elementName);
+					e.handleElement(this, element);
+					continue;
+				}
+			}
 
 			if (elementName.equalsIgnoreCase("Stream")
 					|| elementName.equalsIgnoreCase("DataStream")) {
@@ -240,6 +255,7 @@ public class ProcessContainer {
 				}
 				processes.add(process);
 			}
+
 		}
 
 		connectProcesses();

@@ -4,10 +4,12 @@
 package stream;
 
 import java.net.URL;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 
 /**
@@ -34,9 +36,26 @@ public class run {
 		container.run();
 	}
 
+	public static void main(URL url, Map<String, ElementHandler> elementHandler)
+			throws Exception {
+		log.info("Creating process-container from configuration at {}", url);
+		ProcessContainer container = new ProcessContainer(url, elementHandler);
+
+		log.info("Starting process-container...");
+		container.run();
+	}
+
 	public static void main(String resource) throws Exception {
 		log.info("Looking for configuration at resource {} in classpath",
 				resource);
 		main(run.class.getResource(resource));
 	}
+
+	public static void main(String resource,
+			Map<String, ElementHandler> elementHandler) throws Exception {
+		log.info("Looking for configuration at resource {} in classpath",
+				resource);
+		main(run.class.getResource(resource));
+	}
+
 }

@@ -43,19 +43,17 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.data.DataListener;
 import stream.data.stats.Statistics;
-import stream.data.stats.StatisticsListener;
 
 /**
  * @author chris
  * 
  */
-public class StreamPlotPanel extends JPanel implements DataListener,
-		StatisticsListener {
+public class PlotPanel extends JPanel implements DataListener {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -4365922853856318209L;
 
-	static Logger log = LoggerFactory.getLogger(StreamPlotPanel.class);
+	static Logger log = LoggerFactory.getLogger(PlotPanel.class);
 	final JTextField valueField = new JTextField(10);
 	final XYPlot plot;
 	XYSeriesCollection series = new XYSeriesCollection();
@@ -71,7 +69,7 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 
 	protected final JFreeChart chart;
 
-	public StreamPlotPanel() {
+	public PlotPanel() {
 		// super("Stream Monitor");
 
 		setLayout(new BorderLayout());
@@ -237,7 +235,6 @@ public class StreamPlotPanel extends JPanel implements DataListener,
 	/**
 	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.stats.Statistics)
 	 */
-	@Override
 	public void dataArrived(Statistics item) {
 
 		if (pivotKey == null)

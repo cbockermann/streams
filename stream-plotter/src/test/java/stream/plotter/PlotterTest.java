@@ -12,17 +12,17 @@ import org.slf4j.LoggerFactory;
  * @author chris
  * 
  */
-public class LiveStreamPlotterTest {
+public class PlotterTest {
 
-	static Logger log = LoggerFactory.getLogger(LiveStreamPlotterTest.class);
+	static Logger log = LoggerFactory.getLogger(PlotterTest.class);
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
 
-		URL url = LiveStreamPlotterTest.class.getResource("/plotter-test.xml");
+		URL url = PlotterTest.class.getResource("/plotter-test.xml");
 		log.info("Running experiment from {}", url);
-		stream.run.main(new String[] { url.toString() });
+		stream.run.main(url.toString());
 	}
 }

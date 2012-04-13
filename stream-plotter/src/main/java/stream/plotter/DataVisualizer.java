@@ -3,9 +3,9 @@
  */
 package stream.plotter;
 
-import stream.data.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.runtime.annotations.Parameter;
 import stream.util.parser.TimeParser;
 
 /**
@@ -17,7 +17,7 @@ import stream.util.parser.TimeParser;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public abstract class DataVisualizer extends ConditionedDataProcessor {
+public abstract class DataVisualizer extends ConditionedProcessor {
 
 	protected Integer width = 1024;
 	protected Integer height = 400;

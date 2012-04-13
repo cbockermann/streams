@@ -10,21 +10,21 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.runtime.Context;
-import stream.runtime.annotations.Parameter;
 import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris
  * 
  */
-public class LiveStreamPlotter extends DataVisualizer {
+public class Plotter extends DataVisualizer {
 
-	static Logger log = LoggerFactory.getLogger(LiveStreamPlotter.class);
+	static Logger log = LoggerFactory.getLogger(Plotter.class);
 	JFrame frame;
-	final StreamPlotPanel plotPanel = new StreamPlotPanel();
+	final PlotPanel plotPanel = new PlotPanel();
 
 	Integer history = 1000;
 	String[] keys = null;

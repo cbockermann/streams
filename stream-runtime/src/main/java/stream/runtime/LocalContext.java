@@ -6,7 +6,7 @@ package stream.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
-import stream.Processor;
+import stream.service.Service;
 
 /**
  * @author chris
@@ -14,28 +14,28 @@ import stream.Processor;
  */
 public class LocalContext implements ProcessContext {
 
-	final Map<String, Processor> lookupService = new HashMap<String, Processor>();
+	final Map<String, Service> lookupService = new HashMap<String, Service>();
 	final Map<String, Object> context = new HashMap<String, Object>();
 
 	/**
-	 * @see stream.runtime.LookupService#lookup(java.lang.String)
+	 * @see stream.service.LookupService#lookup(java.lang.String)
 	 */
 	@Override
-	public Processor lookup(String ref) throws Exception {
+	public Service lookup(String ref) throws Exception {
 		return lookupService.get(ref);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#register(java.lang.String,
+	 * @see stream.service.LookupService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
 	@Override
-	public void register(String ref, Processor p) throws Exception {
+	public void register(String ref, Service p) throws Exception {
 		lookupService.put(ref, p);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#unregister(java.lang.String)
+	 * @see stream.service.LookupService#unregister(java.lang.String)
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {
@@ -61,7 +61,7 @@ public class LocalContext implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.Context#resolve(java.lang.String)
+	 * @see stream.Context#resolve(java.lang.String)
 	 */
 	@Override
 	public Object resolve(String variable) {

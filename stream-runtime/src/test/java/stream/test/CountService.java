@@ -3,7 +3,7 @@
  */
 package stream.test;
 
-import stream.Service;
+import stream.service.Service;
 
 /**
  * @author chris

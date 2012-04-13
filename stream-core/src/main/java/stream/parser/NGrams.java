@@ -7,10 +7,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 
-public class NGrams extends AbstractDataProcessor {
+public class NGrams extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(NGrams.class);
 	String key = null;
 	Integer n = 3;

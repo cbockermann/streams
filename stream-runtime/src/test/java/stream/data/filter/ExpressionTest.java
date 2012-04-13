@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.expressions.ExpressionCompiler;
 import stream.runtime.LocalContext;
-import stream.runtime.expressions.ExpressionCompiler;
 
 /**
  * @author chris

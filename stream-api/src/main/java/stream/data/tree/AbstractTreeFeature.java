@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 
-public abstract class AbstractTreeFeature extends AbstractDataProcessor
+public abstract class AbstractTreeFeature extends AbstractProcessor
 		implements TreeFeature {
 	String id;
 	String missingValue = "null";

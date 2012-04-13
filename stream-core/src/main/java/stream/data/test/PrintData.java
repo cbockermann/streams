@@ -3,9 +3,9 @@
  */
 package stream.data.test;
 
-import stream.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
 
 /**
  * <p>
@@ -16,7 +16,7 @@ import stream.runtime.annotations.Description;
  * 
  */
 @Description(group = "Data Stream.Monitoring", name = "Print Data")
-public class PrintData extends ConditionedDataProcessor {
+public class PrintData extends ConditionedProcessor {
 
 	/**
 	 * @see stream.DataProcessor#process(stream.data.Data)

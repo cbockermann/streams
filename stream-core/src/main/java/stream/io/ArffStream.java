@@ -8,9 +8,9 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.annotations.Description;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.runtime.annotations.Description;
 
 /**
  * <p>

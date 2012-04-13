@@ -1,11 +1,11 @@
 package stream.data.mapper;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataUtils;
-import stream.runtime.annotations.Parameter;
 
-public class HideKey extends AbstractDataProcessor {
+public class HideKey extends AbstractProcessor {
 
 	String key;
 

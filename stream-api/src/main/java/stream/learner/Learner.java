@@ -2,7 +2,7 @@ package stream.learner;
 
 import java.io.Serializable;
 
-import stream.DataProcessor;
+import stream.StatefulProcessor;
 import stream.data.Data;
 
 /**
@@ -12,14 +12,8 @@ import stream.data.Data;
  * @author beckers, homburg, mueller, schulte
  * 
  */
-public interface Learner<M extends Model> extends Serializable, DataProcessor,
-		ModelProvider<M> {
-
-	/**
-	 * This method is called after the learner has been created and all
-	 * parameters have been set.
-	 */
-	public void reset();
+public interface Learner<M extends Model> extends Serializable,
+		StatefulProcessor, ModelProvider<M> {
 
 	/**
 	 * Starts or continues to train a model.

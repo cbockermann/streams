@@ -6,7 +6,7 @@ import org.jwall.sql.audit.ASTNode;
 
 import stream.data.AbstractDataProcessor;
 import stream.data.Data;
-import stream.data.tree.TreeNode;
+import stream.data.TreeNode;
 
 public class HttpRequestTree extends AbstractDataProcessor {
 

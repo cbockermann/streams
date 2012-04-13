@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import stream.runtime.annotations.Description;
  * 
  */
 @Description(name = "PredictionError", group = "Data Stream.Mining.Evaluation")
-public class PredictionError extends AbstractDataProcessor {
+public class PredictionError extends AbstractProcessor {
 
 	LossFunction<Serializable> loss = new ZeroOneLoss<Serializable>();
 	String prefix = "@error:";

@@ -1,9 +1,9 @@
 package stream.data.mapper;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
-import stream.runtime.annotations.Parameter;
 
 /**
  * 
@@ -11,7 +11,7 @@ import stream.runtime.annotations.Parameter;
  * 
  */
 @Description(text = "This processor tags all processed items with integer IDs.", group = "Data Stream.Processing.Annotations")
-public class CreateID extends AbstractDataProcessor {
+public class CreateID extends AbstractProcessor {
 	Long start = 0L;
 	Long nextId = 0L;
 	String key = "@id";

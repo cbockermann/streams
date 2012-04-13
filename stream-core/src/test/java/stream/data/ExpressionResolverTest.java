@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.expressions.ExpressionResolver;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContext;
 import stream.runtime.ProcessContextImpl;
-import stream.runtime.expressions.ExpressionResolver;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class ExpressionResolverTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.runtime.expressions.ExpressionResolver#extractName(java.lang.String)}
+	 * {@link stream.expressions.ExpressionResolver#extractName(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -49,7 +49,7 @@ public class ExpressionResolverTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.runtime.expressions.ExpressionResolver#resolve(java.lang.String, stream.runtime.Context, stream.data.Data)}
+	 * {@link stream.expressions.ExpressionResolver#resolve(java.lang.String, stream.runtime.Context, stream.data.Data)}
 	 * .
 	 */
 	@Test

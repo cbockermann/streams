@@ -6,32 +6,23 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
-import stream.Processor;
+import stream.AbstractProcessor;
 import stream.data.Data;
+import stream.io.QueueService;
 
 /**
  * @author chris
  * 
  */
-public class Enqueue extends AbstractDataProcessor {
+public class Enqueue extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 	String ref = null;
 
-	/**
-	 * @return the ref
-	 */
-	public String getRef() {
-		return ref;
-	}
+	QueueService queue;
 
-	/**
-	 * @param ref
-	 *            the ref to set
-	 */
-	public void setRef(String ref) {
-		this.ref = ref;
+	public void setQueue(QueueService queue) {
+		this.queue = queue;
 	}
 
 	/**
@@ -40,18 +31,12 @@ public class Enqueue extends AbstractDataProcessor {
 	@Override
 	public Data process(Data data) {
 
-		try {
-			Processor p = context.lookup(ref);
-			if (p == null) {
-				log.warn("No queue found for reference '{}'", ref);
-			} else {
-				return p.process(data);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (queue == null) {
+			log.error("No QueueService injected!");
+			return data;
 		}
 
+		queue.enqueue(data);
 		return data;
 	}
-
 }

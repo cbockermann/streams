@@ -6,14 +6,14 @@ package stream.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class LogData extends AbstractDataProcessor {
+public class LogData extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(LogData.class);
 

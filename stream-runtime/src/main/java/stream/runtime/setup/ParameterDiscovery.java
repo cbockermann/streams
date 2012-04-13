@@ -12,7 +12,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.runtime.annotations.Parameter;
+import stream.annotations.Parameter;
 
 /**
  * This class implements an annotation-based parameter-type discovery. This

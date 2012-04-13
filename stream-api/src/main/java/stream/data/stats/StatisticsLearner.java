@@ -3,16 +3,15 @@
  */
 package stream.data.stats;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
-import stream.learner.ModelProvider;
 
 /**
  * @author chris
  * 
  */
-public abstract class StatisticsLearner extends AbstractDataProcessor implements
-		ModelProvider<StatisticsModel> {
+public abstract class StatisticsLearner extends AbstractProcessor implements
+		StatisticsService {
 
 	String[] keys;
 	Statistics statistics = new Statistics();
@@ -42,11 +41,11 @@ public abstract class StatisticsLearner extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.learner.ModelProvider#getModel()
+	 * @see stream.data.stats.StatisticsService#getStatistics(java.lang.String)
 	 */
 	@Override
-	public StatisticsModel getModel() {
-		return new StatisticsModel(getId(), statistics);
+	public Statistics getStatistics() {
+		return new Statistics(statistics);
 	}
 
 	public abstract void updateStatistics(Data item);

@@ -6,16 +6,16 @@ package stream.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.AbstractDataProcessor;
-import stream.DataProcessor;
+import stream.AbstractProcessor;
+import stream.Context;
 import stream.Processor;
-import stream.runtime.Context;
+import stream.StatefulProcessor;
 
 /**
  * @author chris
  * 
  */
-public class DataProcessorList extends AbstractDataProcessor {
+public class DataProcessorList extends AbstractProcessor {
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
 
@@ -40,15 +40,15 @@ public class DataProcessorList extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#init(stream.runtime.Context)
+	 * @see stream.DataProcessor#init(stream.Context)
 	 */
 	@Override
 	public void init(Context context) throws Exception {
 		super.init(context);
 		this.context = context;
 		for (Processor p : processors) {
-			if (p instanceof DataProcessor) {
-				((DataProcessor) p).init(context);
+			if (p instanceof StatefulProcessor) {
+				((StatefulProcessor) p).init(context);
 			}
 		}
 	}
@@ -59,8 +59,8 @@ public class DataProcessorList extends AbstractDataProcessor {
 	@Override
 	public void finish() throws Exception {
 		for (Processor p : processors) {
-			if (p instanceof DataProcessor) {
-				((DataProcessor) p).finish();
+			if (p instanceof StatefulProcessor) {
+				((StatefulProcessor) p).finish();
 			}
 		}
 	}

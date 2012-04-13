@@ -6,7 +6,7 @@ package stream.runtime.monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 import stream.util.SizeOf;
 
@@ -14,7 +14,7 @@ import stream.util.SizeOf;
  * @author chris
  * 
  */
-public class MemorySize extends AbstractDataProcessor {
+public class MemorySize extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(MemorySize.class);
 	String ref = null;

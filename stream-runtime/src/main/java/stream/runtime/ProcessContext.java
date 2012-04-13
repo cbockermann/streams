@@ -3,6 +3,8 @@
  */
 package stream.runtime;
 
+import stream.Context;
+
 /**
  * @author chris
  * 

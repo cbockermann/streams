@@ -17,7 +17,7 @@ import stream.data.DataListener;
  * 
  */
 public class DataStreamQueue extends AbstractDataStream implements
-		DataListener, Processor {
+		DataListener, Processor, QueueService {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
 	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
@@ -96,5 +96,21 @@ public class DataStreamQueue extends AbstractDataStream implements
 	public Data process(Data input) {
 		queue.add(input);
 		return input;
+	}
+
+	/**
+	 * @see stream.io.QueueService#poll()
+	 */
+	@Override
+	public Data poll() {
+		return queue.poll();
+	}
+
+	/**
+	 * @see stream.io.QueueService#enqueue(stream.data.Data)
+	 */
+	@Override
+	public void enqueue(Data item) {
+		queue.add(item);
 	}
 }

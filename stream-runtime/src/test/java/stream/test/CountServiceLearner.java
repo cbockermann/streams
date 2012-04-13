@@ -3,14 +3,14 @@
  */
 package stream.test;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class CountServiceLearner extends AbstractDataProcessor implements
+public class CountServiceLearner extends AbstractProcessor implements
 		CountService {
 
 	Long count = 0L;

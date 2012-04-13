@@ -3,14 +3,14 @@
  */
 package stream.data.test;
 
-import stream.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class Assert extends ConditionedDataProcessor {
+public class Assert extends ConditionedProcessor {
 
 	/**
 	 * @see stream.DataProcessor#process(stream.data.Data)
@@ -21,7 +21,7 @@ public class Assert extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.ConditionedDataProcessor#process(stream.data.Data)
+	 * @see stream.ConditionedProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

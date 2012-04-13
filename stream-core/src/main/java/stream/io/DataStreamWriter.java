@@ -20,9 +20,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.Context;
 import stream.data.Data;
-import stream.runtime.Context;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ import stream.runtime.Context;
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
-public class DataStreamWriter extends AbstractDataProcessor implements
+public class DataStreamWriter extends AbstractProcessor implements
 		DataStreamListener {
 	static Logger log = LoggerFactory.getLogger(DataStreamWriter.class);
 	PrintStream p;

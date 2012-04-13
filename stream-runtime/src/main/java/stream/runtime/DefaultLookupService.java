@@ -9,7 +9,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Processor;
+import stream.service.LookupService;
+import stream.service.Service;
 
 /**
  * @author chris
@@ -18,7 +19,7 @@ import stream.Processor;
 public class DefaultLookupService implements LookupService {
 
 	static Logger log = LoggerFactory.getLogger(DefaultLookupService.class);
-	final Map<String, Processor> processors = new HashMap<String, Processor>();
+	final Map<String, Service> services = new HashMap<String, Service>();
 	final String name;
 
 	public DefaultLookupService() {
@@ -40,10 +41,10 @@ public class DefaultLookupService implements LookupService {
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#lookup(java.lang.String)
+	 * @see stream.service.LookupService#lookup(java.lang.String)
 	 */
 	@Override
-	public Processor lookup(String ref) throws Exception {
+	public Service lookup(String ref) throws Exception {
 		log.debug("Looking up processor by reference '{}'", ref);
 
 		if (!isLocal(ref)) {
@@ -52,41 +53,41 @@ public class DefaultLookupService implements LookupService {
 		}
 
 		if (!ref.startsWith("//" + name + "/"))
-			return processors.get("//" + name + "/" + ref);
-		return processors.get(ref);
+			return services.get("//" + name + "/" + ref);
+		return services.get(ref);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#register(java.lang.String,
+	 * @see stream.service.LookupService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
 	@Override
-	public void register(String ref, Processor p) throws Exception {
+	public void register(String ref, Service p) throws Exception {
 
 		if (!isLocal(ref)) {
 			throw new Exception("Cannot register remote-references!");
 		}
 
-		if (processors.containsKey(ref))
+		if (services.containsKey(ref))
 			throw new Exception("A processor is already registered for ID '"
 					+ ref + "'!");
 
 		log.debug("Registering new processor {} for key {}", p, ref);
 
 		if (ref.startsWith("//" + name + "/"))
-			processors.put(ref, p);
+			services.put(ref, p);
 		else
-			processors.put("//" + name + "/" + ref, p);
+			services.put("//" + name + "/" + ref, p);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#unregister(java.lang.String)
+	 * @see stream.service.LookupService#unregister(java.lang.String)
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {
-		if (processors.containsKey(ref)) {
+		if (services.containsKey(ref)) {
 			log.debug("Unregistering processor {}", ref);
-			processors.remove(ref);
+			services.remove(ref);
 		} else
 			log.debug("No processor registered for reference {}", ref);
 	}

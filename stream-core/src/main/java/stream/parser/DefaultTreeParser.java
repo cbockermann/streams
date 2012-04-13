@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 import stream.data.tree.TreeNode;
 import stream.util.parser.ParseException;
 import stream.util.parser.Parser;
 
-public class DefaultTreeParser extends AbstractDataProcessor implements
+public class DefaultTreeParser extends AbstractProcessor implements
 		Parser<TreeNode> {
 	int pos = 0;
 	String data = "";

@@ -3,14 +3,14 @@
  */
 package stream.parser;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class ParseDouble extends AbstractDataProcessor {
+public class ParseDouble extends AbstractProcessor {
 
 	String[] keys = new String[0];
 

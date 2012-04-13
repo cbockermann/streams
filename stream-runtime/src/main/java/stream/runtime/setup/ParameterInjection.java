@@ -15,8 +15,8 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.annotations.EmbeddedContent;
 import stream.runtime.VariableContext;
-import stream.runtime.annotations.EmbeddedContent;
 
 /**
  * <p>

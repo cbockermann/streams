@@ -1,4 +1,0 @@
-(ns 'performance)
-
-(defn hello-world []
-  (println "Hello World!"))

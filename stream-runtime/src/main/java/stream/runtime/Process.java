@@ -6,7 +6,6 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.DataProcessor;
 import stream.data.Data;
 import stream.io.DataStream;
 
@@ -19,7 +18,6 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 	static Logger log = LoggerFactory.getLogger(Process.class);
 	static Integer LAST_ID = 0;
 	DataStream dataStream;
-	DataProcessor output;
 	Long limit = -1L;
 	String input;
 

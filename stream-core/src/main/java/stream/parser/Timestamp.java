@@ -10,11 +10,11 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.Context;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.runtime.Context;
-import stream.runtime.annotations.Description;
-import stream.runtime.annotations.Parameter;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import stream.runtime.annotations.Parameter;
  * 
  */
 @Description(group = "Data Stream.Processing.Transformations.Data")
-public class Timestamp extends AbstractDataProcessor {
+public class Timestamp extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Timestamp.class);
 	SimpleDateFormat dateFormat = null;
@@ -116,7 +116,7 @@ public class Timestamp extends AbstractDataProcessor {
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#init()
+	 * @see stream.AbstractProcessor#init()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

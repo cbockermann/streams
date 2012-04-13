@@ -9,8 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.DataProcessor;
 import stream.Processor;
+import stream.StatefulProcessor;
 import stream.data.Data;
 
 /**
@@ -67,8 +67,8 @@ public abstract class AbstractProcess extends Thread implements Processor {
 		this.context = context;
 
 		for (Processor proc : processors) {
-			if (proc instanceof DataProcessor) {
-				((DataProcessor) proc).init(context);
+			if (proc instanceof StatefulProcessor) {
+				((StatefulProcessor) proc).init(context);
 			}
 		}
 
@@ -82,8 +82,8 @@ public abstract class AbstractProcess extends Thread implements Processor {
 		running = false;
 
 		for (Processor proc : processors) {
-			if (proc instanceof DataProcessor) {
-				((DataProcessor) proc).finish();
+			if (proc instanceof StatefulProcessor) {
+				((StatefulProcessor) proc).finish();
 			}
 		}
 

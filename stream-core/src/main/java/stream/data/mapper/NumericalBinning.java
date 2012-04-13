@@ -85,7 +85,7 @@ public class NumericalBinning implements Processor {
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#init()
+	 * @see stream.AbstractProcessor#init()
 	 */
 	public void init() throws Exception {
 		buckets = new double[Math.max(1, bins)];

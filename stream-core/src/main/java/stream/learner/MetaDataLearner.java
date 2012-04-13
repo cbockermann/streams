@@ -13,7 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 import stream.data.stats.Statistics;
 
@@ -21,7 +21,7 @@ import stream.data.stats.Statistics;
  * @author chris
  * 
  */
-public class MetaDataLearner extends AbstractDataProcessor implements
+public class MetaDataLearner extends AbstractProcessor implements
 		MetaDataService {
 
 	static Logger log = LoggerFactory.getLogger(MetaDataLearner.class);

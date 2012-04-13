@@ -5,8 +5,8 @@ package stream.learner;
 
 import java.io.Serializable;
 
-import stream.Service;
 import stream.data.Data;
+import stream.service.Service;
 
 /**
  * <p>

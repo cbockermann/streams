@@ -6,11 +6,11 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataProcessorList;
-import stream.runtime.annotations.Parameter;
-import stream.runtime.expressions.Expression;
-import stream.runtime.expressions.ExpressionCompiler;
+import stream.expressions.Expression;
+import stream.expressions.ExpressionCompiler;
 
 /**
  * @author chris

@@ -2,7 +2,7 @@ package stream.data.mapper;
 
 import java.io.Serializable;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
 import stream.data.Data;
 import stream.data.DataUtils;
 
@@ -12,7 +12,7 @@ import stream.data.DataUtils;
  * @author chris@jwall.org
  * 
  */
-public class BinaryLabels extends AbstractDataProcessor {
+public class BinaryLabels extends AbstractProcessor {
 
 	String labelAttribute;
 	String positive = null;

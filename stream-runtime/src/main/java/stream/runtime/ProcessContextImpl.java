@@ -9,7 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Processor;
+import stream.service.Service;
 
 /**
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
@@ -27,24 +27,24 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#lookup(java.lang.String)
+	 * @see stream.service.LookupService#lookup(java.lang.String)
 	 */
 	@Override
-	public Processor lookup(String ref) throws Exception {
+	public Service lookup(String ref) throws Exception {
 		return containerContext.lookup(ref);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#register(java.lang.String,
+	 * @see stream.service.LookupService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
 	@Override
-	public void register(String ref, Processor p) throws Exception {
+	public void register(String ref, Service p) throws Exception {
 		containerContext.register(ref, p);
 	}
 
 	/**
-	 * @see stream.runtime.LookupService#unregister(java.lang.String)
+	 * @see stream.service.LookupService#unregister(java.lang.String)
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {
@@ -69,7 +69,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.Context#resolve(java.lang.String)
+	 * @see stream.Context#resolve(java.lang.String)
 	 */
 	@Override
 	public Object resolve(String variable) {

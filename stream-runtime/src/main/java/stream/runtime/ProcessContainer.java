@@ -19,7 +19,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.Processor;
-import stream.Service;
 import stream.data.Data;
 import stream.data.DataProcessorList;
 import stream.io.DataStream;
@@ -29,6 +28,7 @@ import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
+import stream.service.Service;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -357,7 +357,7 @@ public class ProcessContainer {
 					log.debug(
 							"Registiering processor with id '{}' in look-up service",
 							child.getAttribute("id"));
-					context.register(id, (Processor) o);
+					context.register(id, (Service) o);
 				} else {
 					log.warn(
 							"Processor '{}' specifies an ID attribute '{}' but does not implement a Service interface. Processor will *not* be registered!",

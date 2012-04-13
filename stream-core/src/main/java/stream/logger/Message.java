@@ -3,21 +3,21 @@
  */
 package stream.logger;
 
-import stream.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
+import stream.Context;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.runtime.Context;
-import stream.runtime.ContextAwareMacroExpander;
-import stream.runtime.annotations.Description;
-import stream.runtime.annotations.Parameter;
-import stream.runtime.expressions.Expression;
-import stream.runtime.expressions.MacroExpander;
+import stream.expressions.ContextAwareMacroExpander;
+import stream.expressions.Expression;
+import stream.expressions.MacroExpander;
 
 /**
  * @author chris
  * 
  */
 @Description(text = "", group = "Data Stream.Monitoring")
-public class Message extends ConditionedDataProcessor {
+public class Message extends ConditionedProcessor {
 	Expression filter;
 	String txt;
 	String condition;
@@ -51,7 +51,7 @@ public class Message extends ConditionedDataProcessor {
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#init(stream.runtime.Context)
+	 * @see stream.AbstractProcessor#init(stream.Context)
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

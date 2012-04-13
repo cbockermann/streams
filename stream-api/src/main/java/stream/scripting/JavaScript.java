@@ -14,9 +14,9 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.Context;
-import stream.runtime.annotations.Description;
 import stream.util.URLUtilities;
 
 /**
@@ -43,7 +43,7 @@ public class JavaScript extends Script {
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#init(stream.runtime.Context)
+	 * @see stream.AbstractProcessor#init(stream.Context)
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

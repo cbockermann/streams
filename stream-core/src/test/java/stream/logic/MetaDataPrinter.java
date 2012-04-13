@@ -6,7 +6,7 @@ package stream.logic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
 import stream.data.Data;
 import stream.data.stats.Statistics;
 import stream.learner.MetaDataService;
@@ -15,7 +15,7 @@ import stream.learner.MetaDataService;
  * @author chris
  * 
  */
-public class MetaDataPrinter extends ConditionedDataProcessor {
+public class MetaDataPrinter extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(MetaDataPrinter.class);
 	MetaDataService metaService;

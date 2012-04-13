@@ -1,8 +1,8 @@
 package stream.data.mapper;
 
 import stream.Processor;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each

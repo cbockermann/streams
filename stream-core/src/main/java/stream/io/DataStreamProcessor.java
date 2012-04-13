@@ -11,11 +11,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
-import stream.DataProcessor;
+import stream.AbstractProcessor;
+import stream.Context;
 import stream.Processor;
+import stream.StatefulProcessor;
 import stream.data.Data;
-import stream.runtime.Context;
 
 /**
  * <p>
@@ -28,7 +28,7 @@ import stream.runtime.Context;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * @deprecated
  */
-public class DataStreamProcessor extends AbstractDataProcessor implements
+public class DataStreamProcessor extends AbstractProcessor implements
 		DataStream {
 	/* A global logger for this class */
 	static Logger log = LoggerFactory.getLogger(DataStreamProcessor.class);
@@ -152,20 +152,20 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#init()
+	 * @see stream.AbstractProcessor#init()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {
 		super.init(ctx);
 
 		for (Processor p : processors) {
-			if (p instanceof DataProcessor)
-				((DataProcessor) p).init(ctx);
+			if (p instanceof StatefulProcessor)
+				((StatefulProcessor) p).init(ctx);
 		}
 	}
 
 	/**
-	 * @see stream.AbstractDataProcessor#finish()
+	 * @see stream.AbstractProcessor#finish()
 	 */
 	@Override
 	public void finish() throws Exception {
@@ -173,8 +173,8 @@ public class DataStreamProcessor extends AbstractDataProcessor implements
 
 		for (Processor p : processors) {
 			try {
-				if (p instanceof DataProcessor)
-					((DataProcessor) p).finish();
+				if (p instanceof StatefulProcessor)
+					((StatefulProcessor) p).finish();
 			} catch (Exception e) {
 				log.error("Error while finishing processor '{}': {}", p,
 						e.getMessage());

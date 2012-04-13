@@ -6,8 +6,8 @@ package stream.learner;
 import java.io.Serializable;
 import java.util.Set;
 
-import stream.Service;
 import stream.data.stats.Statistics;
+import stream.service.Service;
 
 /**
  * @author chris

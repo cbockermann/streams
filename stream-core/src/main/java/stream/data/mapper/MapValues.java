@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import stream.Processor;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
 
 @Description(text = "", group = "Data Stream.Processing.Transformations.Data")
 public class MapValues implements Processor {

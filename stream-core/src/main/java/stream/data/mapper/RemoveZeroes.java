@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stream.Processor;
+import stream.annotations.Description;
 import stream.data.Data;
 import stream.data.DataUtils;
-import stream.runtime.annotations.Description;
 
 /**
  * @author chris

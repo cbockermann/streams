@@ -1,13 +1,13 @@
 package stream.data.mapper;
 
-import stream.ConditionedDataProcessor;
+import stream.ConditionedProcessor;
+import stream.annotations.Description;
 import stream.data.Data;
-import stream.runtime.annotations.Description;
-import stream.runtime.expressions.MacroExpander;
+import stream.expressions.MacroExpander;
 
 @Description( group="Data Stream.Processing.Transformations.Data" )
 public class SetValue
-    extends ConditionedDataProcessor
+    extends ConditionedProcessor
 {
     String key;
     String value;

@@ -5,8 +5,8 @@ package stream.runtime;
 
 import java.util.Map;
 
-import stream.runtime.Context;
-import stream.runtime.expressions.MacroExpander;
+import stream.Context;
+import stream.expressions.MacroExpander;
 
 /**
  * @author chris
@@ -21,7 +21,7 @@ public class ContextAwareMacroExpander extends MacroExpander {
 	}
 
 	/**
-	 * @see stream.runtime.expressions.MacroExpander#get(java.lang.String, java.util.Map)
+	 * @see stream.expressions.MacroExpander#get(java.lang.String, java.util.Map)
 	 */
 	@Override
 	public String get(String variable, Map<String, ?> evt) {

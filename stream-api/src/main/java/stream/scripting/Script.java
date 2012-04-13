@@ -16,16 +16,16 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractDataProcessor;
+import stream.AbstractProcessor;
+import stream.annotations.EmbeddedContent;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.runtime.annotations.EmbeddedContent;
-import stream.runtime.annotations.Parameter;
 
 /**
  * @author chris
  * 
  */
-public abstract class Script extends AbstractDataProcessor {
+public abstract class Script extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Script.class);
 

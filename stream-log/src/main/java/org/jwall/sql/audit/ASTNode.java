@@ -5,49 +5,42 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import stream.data.tree.TreeNode;
-
-
-
-
+import stream.data.TreeNode;
 
 /**
  * <p>
- * This implementation represents a tree node within the parse tree of an SQL query. 
+ * This implementation represents a tree node within the parse tree of an SQL
+ * query.
  * </p>
+ * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
 public class ASTNode
-	//extends NLPTreeNode
-	implements TreeNode, Serializable
-{
+// extends NLPTreeNode
+		implements TreeNode, Serializable {
 	/** The unique class ID */
-    private static final long serialVersionUID = 7492136318817801260L;
-    String nodeName = "";
+	private static final long serialVersionUID = 7492136318817801260L;
+	String nodeName = "";
 	String label;
 	ASTNode parent;
-	
+
 	final List<TreeNode> children = new ArrayList<TreeNode>();
-	
-	public ASTNode( String nodeName ){
+
+	public ASTNode(String nodeName) {
 		this.nodeName = nodeName;
 		this.label = nodeName;
 	}
-	
-	
-	public TreeNode getParent(){
+
+	public TreeNode getParent() {
 		return parent;
 	}
-	
 
-	public int getDepth(){
-	    if( parent == null )
-	        return 0;
-	    else
-	        return 1 + parent.getDepth();
+	public int getDepth() {
+		if (parent == null)
+			return 0;
+		else
+			return 1 + parent.getDepth();
 	}
-
-
 
 	/**
 	 * @see org.stream.data.tree.parser.TreeNode#getLabel()
@@ -56,7 +49,7 @@ public class ASTNode
 	public String getLabel() {
 		return label;
 	}
-	
+
 	/**
 	 * @see org.stream.data.tree.parser.TreeNode#setLabel(java.lang.String)
 	 */
@@ -64,7 +57,7 @@ public class ASTNode
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	/**
 	 * @see org.stream.data.tree.parser.TreeNode#children()
 	 */
@@ -81,35 +74,30 @@ public class ASTNode
 		return children().isEmpty();
 	}
 
-
-
-
 	@Override
 	public void addChild(TreeNode node) {
-		children.add( node );
+		children.add(node);
 	}
-	
-	
-	public String toString(){
-	    return toString( this );
-	}
-	
 
-    public static String toString( TreeNode node ){
-        StringBuffer s = new StringBuffer();
-        s.append( "( " );
-        if( node.getLabel() == null || "".equals( node.getLabel() ) )
-            s.append( "{}" );
-        else
-            s.append( node.getLabel() );
-        s.append( " " );
-        for( TreeNode child : node.children() ){
-            //if( i++ == 0 )
-            //    s.append( " " );
-            s.append( toString( child ) );
-            s.append( " " );
-        }
-        s.append( ")" );
-        return s.toString();
-    }
+	public String toString() {
+		return toString(this);
+	}
+
+	public static String toString(TreeNode node) {
+		StringBuffer s = new StringBuffer();
+		s.append("( ");
+		if (node.getLabel() == null || "".equals(node.getLabel()))
+			s.append("{}");
+		else
+			s.append(node.getLabel());
+		s.append(" ");
+		for (TreeNode child : node.children()) {
+			// if( i++ == 0 )
+			// s.append( " " );
+			s.append(toString(child));
+			s.append(" ");
+		}
+		s.append(")");
+		return s.toString();
+	}
 }

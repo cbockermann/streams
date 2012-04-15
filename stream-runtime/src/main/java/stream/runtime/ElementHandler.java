@@ -9,5 +9,8 @@ import org.w3c.dom.Element;
  */
 public interface ElementHandler {
 
-	public void handleElement(ProcessContainer container, Element element);
+	public String getKey();
+
+	public void handleElement(ProcessContainer container, Element element)
+			throws Exception;
 }

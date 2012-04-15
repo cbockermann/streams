@@ -76,10 +76,8 @@ public class ProcessContainer {
 
 	protected final Map<String, ElementHandler> elementHandler = new HashMap<String, ElementHandler>();
 
-	public ProcessContainer(URL url, Map<String, ElementHandler> elementHandler)
-			throws Exception {
-		this(url);
-		this.elementHandler.putAll(elementHandler);
+	public ProcessContainer(URL url) throws Exception {
+		this(url, null);
 	}
 
 	/**
@@ -89,7 +87,11 @@ public class ProcessContainer {
 	 * @param url
 	 * @throws Exception
 	 */
-	public ProcessContainer(URL url) throws Exception {
+	public ProcessContainer(URL url, Map<String, ElementHandler> elementHandler)
+			throws Exception {
+		if (elementHandler != null)
+			this.elementHandler.putAll(elementHandler);
+
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(url.openStream());

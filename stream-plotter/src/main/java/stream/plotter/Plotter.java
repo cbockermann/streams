@@ -14,7 +14,6 @@ import stream.Context;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.runtime.setup.ParameterUtils;
 
 /**
  * @author chris
@@ -63,8 +62,8 @@ public class Plotter extends DataVisualizer {
 	/**
 	 * @return the keys
 	 */
-	public String getKeys() {
-		return ParameterUtils.join(keys);
+	public String[] getKeys() {
+		return keys;
 	}
 
 	/**
@@ -72,8 +71,8 @@ public class Plotter extends DataVisualizer {
 	 *            the keys to set
 	 */
 	@Parameter(required = false, description = "The attributes/features to be plotted (non-numerical features will be ignored)")
-	public void setKeys(String keys) {
-		this.keys = ParameterUtils.split(keys);
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 	}
 
 	/**

@@ -19,7 +19,14 @@ The `streams` framework comprises several modules, of which the central one is t
 *stream-api* module. The *stream-api* defines the basic interfaces and data structures
 used in all other modules.
 
-The other modules are
+The basic modules are
+  
+  * [stream-api](stream-api/index.html) -- the basic API interfaces and classes. This
+    module is used as glue element, new modules/extensions can include this module as
+    their base dependency.
+    Among the basic interfaces, the stream-api module provides a very small number of 
+    generic processors, e.g. for executing JavaScript or JRuby (if the jruby library
+    is available in the class path).
 
   * [stream-core](stream-core/index.html) -- a library providing various preprocessing
     functions (processors) as well as several data stream sources (stream.io) for
@@ -31,6 +38,7 @@ The other modules are
 
 The modules are again maven projects, each having a separate project page and
 documentation.
+
 
 
 Source Code & Usage

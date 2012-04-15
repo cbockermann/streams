@@ -26,14 +26,19 @@
   
 	<menu ref="modules" />
 
+
+        <menu name="Related Projects">
+		<item name="stream-mining" href="http://kirmes.cs.uni-dortmund.de/stream-mining/"/>
+        </menu>
+
 	<menu ref="reports"/>
 	
   </body>
 
   <skin>
-    <groupId>edu.udo</groupId>
+    <groupId>edu.udo.cs</groupId>
     <artifactId>sfb876-skin</artifactId>
-    <version>0.1</version>
+    <version>1.0</version>
   </skin>
   
   <poweredBy></poweredBy>

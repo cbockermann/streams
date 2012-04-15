@@ -10,19 +10,17 @@ import javax.swing.border.EmptyBorder;
 import stream.data.Data;
 import stream.data.DataListener;
 import stream.data.stats.Statistics;
-import stream.data.stats.StatisticsListener;
-import stream.plotter.StreamPlotPanel;
+import stream.plotter.PlotPanel;
 
 /**
  * @author chris
  * 
  */
-public class StreamPlotView extends AbstractMonitorView implements
-		DataListener, StatisticsListener {
+public class StreamPlotView extends AbstractMonitorView implements DataListener {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -4365922853856318209L;
-	StreamPlotPanel plotPanel;
+	PlotPanel plotPanel;
 
 	public StreamPlotView() {
 		super("stream.monitor");
@@ -30,7 +28,7 @@ public class StreamPlotView extends AbstractMonitorView implements
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(4, 4, 4, 4));
 
-		plotPanel = new StreamPlotPanel();
+		plotPanel = new PlotPanel();
 		add(plotPanel, BorderLayout.CENTER);
 
 		/*
@@ -63,9 +61,7 @@ public class StreamPlotView extends AbstractMonitorView implements
 	}
 
 	/**
-	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.stats.Statistics)
 	 */
-	@Override
 	public synchronized void dataArrived(Statistics item) {
 		plotPanel.dataArrived(item);
 	}

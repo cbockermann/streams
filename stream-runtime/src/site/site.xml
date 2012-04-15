@@ -1,4 +1,4 @@
-<project name="streams">
+<project name="stream-api">
   <bannerLeft>
     <name>streams</name>
     <src>http://www-ai.cs.uni-dortmund.de/ci/Medienpool/Seitenbilder/logo_tu.png</src>
@@ -10,31 +10,28 @@
     <src>http://www-ai.cs.uni-dortmund.de/header-bg-topLeft.png</src>
     <href></href>
   </bannerRight>
-    
-  <publishDate position="right" />
-
   
   <body>
-  
-    <links>
-    </links>
-    
-	<menu name="Documentation">
-		<item name="Quickstart" href="quickstart.html"/>
-		<item name="User Guide" href="userguide.html" />
+
+    <menu ref="parent" />
+        <menu name="Documentation">
+            <item name="Overview" href="overview.html" />
+            
+            <item name="Stream Experiments" href="experiment.html" />
+        </menu>
+
+	<menu name="Development">
+	    <item name="A simple DataProcessor" href="dataprocessor.html" />
 	</menu>
   
-	<menu ref="modules" />
-
 	<menu ref="reports"/>
-	
+
   </body>
 
   <skin>
-    <groupId>edu.udo</groupId>
+    <groupId>edu.udo.cs</groupId>
     <artifactId>sfb876-skin</artifactId>
-    <version>0.1</version>
+    <version>1.0</version>
   </skin>
-  
-  <poweredBy></poweredBy>
+
 </project>

@@ -11,5 +11,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/RapidMiner_Plugin_Streaming_Unuk"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

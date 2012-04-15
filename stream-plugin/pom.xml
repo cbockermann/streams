@@ -110,6 +110,11 @@
 			<artifactId>stream-core</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.rapid-i</groupId>
+			<artifactId>rapidminer-streaming</artifactId>
+			<version>5.2.0</version>
+		</dependency>
 	</dependencies>
 
 

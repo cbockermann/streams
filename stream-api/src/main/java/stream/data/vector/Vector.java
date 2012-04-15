@@ -386,8 +386,9 @@ public class Vector implements Serializable, Measurable {
 	}
 
 	public static InputVector createSparseVector(Data datum) {
-		if (datum.containsKey(".sparse-vector")) {
-			return (InputVector) datum.get(".sparse-vector");
+		if (datum.containsKey(Data.HIDDEN_PREFIX + "sparse-vector")) {
+			return (InputVector) datum
+					.get(Data.HIDDEN_PREFIX + "sparse-vector");
 		}
 
 		for (Serializable val : datum.values()) {

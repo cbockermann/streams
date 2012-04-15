@@ -49,7 +49,7 @@
 		</snapshotRepository>
 		<site>
 			<id>kirmes</id>
-			<url>scp://bockerma@kirmes.cs.uni-dortmund.de/home/bockerma/public_html/streams/</url>
+			<url>scp://kirmes.cs.uni-dortmund.de/home/bockerma/public_html/streams/</url>
 		</site>
 	</distributionManagement>
 
@@ -57,6 +57,13 @@
 		<system>Jenkins</system>
 		<url>https://kilab.cs.uni-dortmund.de/jenkins/</url>
 	</ciManagement>
+
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License, Version 3</name>
+			<url>http://www.gnu.org/licenses/agpl-3.0-standalone.html</url>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>

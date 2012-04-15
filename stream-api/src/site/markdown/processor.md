@@ -1,7 +1,7 @@
-Data Processor
-==============
+Processor
+=========
 
-Each class implementing the `DataProcessor` interface represents a simple
+Each class implementing the `Processor` interface represents a simple
 function that acts upon a single data item of the stream. Data processors
 can be plugged into the processing chain to perform a series of operations
 on the data.
@@ -14,8 +14,8 @@ for the key `x` and adds the key `y` by multiplying `x` by 2:
 
      package my.package;
 
+     import stream.Processor;
      import stream.data.Data;
-     import stream.data.DataProcessor;
 
      public class Multiplier
          implements Processor 
@@ -78,7 +78,7 @@ called (i.e. the `process(..)` method) for each event of the data stream.
 Adding Parameters
 -----------------
 
-In most cases, we want to add a simple method for parameterizing our DataProcessor
+In most cases, we want to add a simple method for parameterizing our Processor
 implementation. This can easily be done by following the Convention&Configuration
 paradigm:
 
@@ -120,12 +120,14 @@ After compiling this class, we can directly use the new parameters `key` and `fa
 as XML attributes. For example, to multiply all attributes `z` by `3.1415`, we can
 use the following XML setup:
 
-       <experiment>
+       <container>
+         <Stream id="datastream" url="... " class="..." />
          ...
-         <process>
+         <process input="datastream">
             <my.package.Multiplier key="z" factor="3.1415" />
          </process>
-       </experiment>
+         ...
+       </container>
 
 Upon startup, the getters and setters of the Multiplier class will be checked and
 if the argument is a Double (or Integer, Float,...) it will be automatically converted

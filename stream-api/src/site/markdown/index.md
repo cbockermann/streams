@@ -11,7 +11,7 @@ object, which basically is just a Java Map with *String* keys and *Serializable*
 values. Following the *convention-over-configuration* paradigm, we define some
 simple rules on how to treat the keys of a data item.
 
-The next step then is to provide implementation of the *DataProcessor* interface
+The next step then is to provide implementation of the *Processor* interface
 that can deal with one item at a time.
 
 

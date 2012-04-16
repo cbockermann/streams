@@ -89,7 +89,7 @@ public final class DataStreamPlugin {
 				Map<String, ParameterType> types = ParameterTypeDiscovery
 						.discoverParameterTypes(clazz);
 				for (String key : types.keySet()) {
-					log.info("   {} = {}", key, types.get(key).getClass());
+					log.debug("   {} = {}", key, types.get(key).getClass());
 				}
 
 				Description desc = clazz.getAnnotation(Description.class);

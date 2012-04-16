@@ -130,6 +130,7 @@ public class DataStreamOperator extends Operator implements Measurable,
 		//
 		log.debug("Executing stream-operator's doWork()");
 
+		@SuppressWarnings("deprecation")
 		DataObject datum = input.getDataOrNull();
 		log.debug("input datum is: {}", datum);
 		if (datum == null) {

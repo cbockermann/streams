@@ -149,6 +149,7 @@
 						<reports>
 							<report>project-team</report>
 							<report>mailing-list</report>
+							<report>license</report>
 							<report>scm</report>
 							<report>cim</report>
 							<report>dependencies</report>
@@ -157,12 +158,6 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-<!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
-      </plugin>
-  -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -177,4 +172,8 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	<scm>
+		<url>https://bitbucket.org/cbockermann/streams</url>
+		<connection>scm:git:https://bitbucket.org/cbockermann/streams</connection>
+	</scm>
 </project>

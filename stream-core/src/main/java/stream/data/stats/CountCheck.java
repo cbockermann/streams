@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.test;
+package stream.data.stats;
 
 import stream.AbstractProcessor;
 import stream.data.Data;

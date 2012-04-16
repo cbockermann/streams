@@ -12,7 +12,7 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 	protected transient ProcessContext context;
 
 	/**
-	 * @see stream.Processor#reset()
+	 * @see stream.Processor#resetState()
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
@@ -20,10 +20,10 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 	}
 
 	/**
-	 * @see stream.StatefulProcessor#reset()
+	 * @see stream.StatefulProcessor#resetState()
 	 */
 	@Override
-	public void reset() throws Exception {
+	public void resetState() throws Exception {
 	}
 
 	/**

@@ -139,4 +139,11 @@ public class MetaDataLearner extends AbstractProcessor implements
 	public Set<Serializable> getTopValues(String key) {
 		return new HashSet<Serializable>();
 	}
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+	}
 }

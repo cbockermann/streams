@@ -113,4 +113,14 @@ public class DataStreamQueue extends AbstractDataStream implements
 	public void enqueue(Data item) {
 		queue.add(item);
 	}
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		log.debug("Cleared Queue.");
+		queue.clear();
+
+	}
 }

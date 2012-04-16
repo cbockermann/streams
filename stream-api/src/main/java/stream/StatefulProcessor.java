@@ -20,7 +20,7 @@ public interface StatefulProcessor extends Processor {
 	 */
 	public void init(ProcessContext context) throws Exception;
 
-	public void reset() throws Exception;
+	public void resetState() throws Exception;
 
 	public void finish() throws Exception;
 }

@@ -49,4 +49,21 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	}
 
 	public abstract void updateStatistics(Data item);
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		this.resetState();
+	}
+
+	/**
+	 * @see stream.AbstractProcessor#resetState()
+	 */
+	@Override
+	public void resetState() throws Exception {
+		this.statistics = new Statistics();
+	}
+
 }

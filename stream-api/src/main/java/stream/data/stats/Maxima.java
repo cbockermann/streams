@@ -33,4 +33,5 @@ public class Maxima extends StatisticsLearner {
 			}
 		}
 	}
+
 }

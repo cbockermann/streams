@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.test;
+package stream.data.stats;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
@@ -25,7 +25,7 @@ public class CountServiceLearner extends AbstractProcessor implements
 	}
 
 	/**
-	 * @see stream.test.CountService#getCount()
+	 * @see stream.data.stats.CountService#getCount()
 	 */
 	@Override
 	public Long getCount() {

@@ -110,7 +110,7 @@ public class Plotter extends DataVisualizer {
 	}
 
 	/**
-	 * @see stream.data.Processor#reset()
+	 * @see stream.data.Processor#resetState()
 	 */
 	@Override
 	public void init(Context ctx) throws Exception {

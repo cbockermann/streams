@@ -24,4 +24,5 @@ import java.rmi.Remote;
  */
 public interface Service extends Remote {
 
+	public void reset() throws Exception;
 }

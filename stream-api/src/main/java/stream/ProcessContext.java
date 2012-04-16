@@ -1,9 +1,8 @@
 /**
  * 
  */
-package stream.runtime;
+package stream;
 
-import stream.Context;
 
 /**
  * @author chris

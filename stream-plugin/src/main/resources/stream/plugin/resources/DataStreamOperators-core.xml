@@ -20,10 +20,12 @@
 			<key>ExampleSet DataStream</key>
 			<class>stream.plugin.sources.ExampleSetDataStream</class>
 		</operator>
+		<!--
 		<operator>
 			<key>FACT Event Stream</key>
 			<class>fact.plugin.operators.FactEventReader</class>
 		</operator>
+		  -->
 	</group>
 
 

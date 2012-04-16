@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.Context;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
@@ -119,7 +119,7 @@ public class Timestamp extends AbstractProcessor {
 	 * @see stream.AbstractProcessor#init()
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 
 		if (getFormat() != null && getFrom() != null) {

@@ -79,7 +79,6 @@
 			<groupId>com.rapid-i</groupId>
 			<artifactId>rapidminer-streaming</artifactId>
 			<version>5.2.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

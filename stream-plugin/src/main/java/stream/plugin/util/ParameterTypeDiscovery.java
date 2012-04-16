@@ -3,19 +3,15 @@ package stream.plugin.util;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
-import stream.data.DataImpl;
-import stream.data.mapper.HideFeature;
+import stream.annotations.EmbeddedContent;
+import stream.annotations.Parameter;
 import stream.runtime.VariableContext;
-import stream.runtime.annotations.EmbeddedContent;
-import stream.runtime.annotations.Parameter;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
 
@@ -292,43 +288,5 @@ public class ParameterTypeDiscovery {
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("startId", new Long(100L));
-		params.put("key", "x");
-		HideFeature proc = new HideFeature();
-
-		ParameterInjection.inject(proc, params, new VariableContext());
-
-		Data datum = new DataImpl();
-		datum.put("x", 1.0d);
-		datum.put("y", 2.10d);
-
-		log.debug("Initial datum: {}", datum);
-		datum = proc.process(datum);
-		log.debug("Processed datum: {}", datum);
-
-		Map<String, ParameterType> types = discoverParameterTypes(stream.data.mapper.MapKeys.class);
-		for (String key : types.keySet()) {
-			log.info("Found '{}' = {}", key, types.get(key));
-		}
-
-		log.info("------------------------------------------------------------------");
-
-		types = discoverParameterTypes(stream.data.mapper.CreateID.class);
-		for (String key : types.keySet()) {
-			log.info("Found '{}' = {}", key, types.get(key));
-		}
-
-		log.info("------------------------------------------------------------------");
-
-		types = discoverParameterTypes(stream.data.mapper.MapValueToID.class);
-		for (String key : types.keySet()) {
-			log.info("Found '{}' = {}", key, types.get(key));
-		}
-
 	}
 }

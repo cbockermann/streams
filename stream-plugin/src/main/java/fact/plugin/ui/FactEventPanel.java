@@ -16,7 +16,7 @@ import fact.viewer.ui.MapView;
  * 
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
- *
+ * 
  */
 public class FactEventPanel extends JPanel {
 
@@ -26,18 +26,18 @@ public class FactEventPanel extends JPanel {
 	Data event;
 	JTabbedPane tabs = new JTabbedPane();
 	MapView cameraMap;
-	
-	public FactEventPanel( Data event ){
+
+	public FactEventPanel(Data event) {
 		this.event = event;
-		
-		this.setLayout( new BorderLayout() );
-		
+
+		this.setLayout(new BorderLayout());
+
 		cameraMap = new MapView();
-		cameraMap.getMap().setEvent( event );
-		//float[] pixelData = (float[]) event.get( "Data" );
-		//cameraMap.getMap().setData( pixelData );
-		
-		tabs.addTab( "Camera", cameraMap );
-		add( tabs, BorderLayout.CENTER );
+		cameraMap.getMap().setEvent(event);
+		// float[] pixelData = (float[]) event.get( "Data" );
+		// cameraMap.getMap().setData( pixelData );
+
+		tabs.addTab("Camera", cameraMap);
+		add(tabs, BorderLayout.CENTER);
 	}
 }

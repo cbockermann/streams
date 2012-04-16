@@ -4,9 +4,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import stream.ProcessContext;
 import stream.expressions.ExpressionResolver;
 import stream.runtime.ContainerContext;
-import stream.runtime.ProcessContext;
 import stream.runtime.ProcessContextImpl;
 
 /**

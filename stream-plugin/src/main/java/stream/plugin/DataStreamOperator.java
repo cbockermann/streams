@@ -8,12 +8,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Measurable;
+import stream.ProcessContext;
+import stream.Processor;
+import stream.StatefulProcessor;
 import stream.data.Data;
-import stream.data.DataProcessor;
-import stream.data.Measurable;
 import stream.plugin.util.ParameterTypeDiscovery;
-import stream.runtime.ContainerContext;
-import stream.runtime.Context;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;
 
@@ -31,9 +31,8 @@ import com.rapidminer.parameter.ParameterType;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public abstract class DataStreamOperator extends Operator implements
-		Measurable, DataProcessor {
-	final static ContainerContext context = new ContainerContext();
+public class DataStreamOperator extends Operator implements Measurable,
+		Processor {
 	static Logger log = LoggerFactory.getLogger(DataStreamOperator.class);
 
 	final InputPort input = getInputPorts().createPort(
@@ -42,7 +41,8 @@ public abstract class DataStreamOperator extends Operator implements
 			DataStreamPlugin.DATA_ITEM_PORT_NAME);
 	List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
 
-	DataProcessor processor;
+	ProcessContext processContext = null;
+	Processor processor;
 	boolean setup = false;
 
 	/**
@@ -63,10 +63,14 @@ public abstract class DataStreamOperator extends Operator implements
 				clazz).values());
 
 		try {
-			processor = (DataProcessor) clazz.newInstance();
+			processor = (Processor) clazz.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setProcessContext(ProcessContext ctx) {
+		this.processContext = ctx;
 	}
 
 	/**
@@ -106,7 +110,8 @@ public abstract class DataStreamOperator extends Operator implements
 			setup = true;
 
 			try {
-				processor.init(context);
+				if (processor instanceof StatefulProcessor)
+					((StatefulProcessor) processor).init(processContext);
 			} catch (Exception e) {
 				throw new UserError(this, e, "Failed to initialize processor: "
 						+ e.getMessage());
@@ -159,7 +164,8 @@ public abstract class DataStreamOperator extends Operator implements
 	public void processStarts() throws OperatorException {
 		super.processStarts();
 		try {
-			processor.init(context);
+			if (processor instanceof StatefulProcessor)
+				((StatefulProcessor) processor).init(processContext);
 		} catch (Exception e) {
 			throw new UserError(this, e, "Failed to initialize operator: "
 					+ e.getMessage());
@@ -173,7 +179,8 @@ public abstract class DataStreamOperator extends Operator implements
 	public void processFinished() throws OperatorException {
 		super.processFinished();
 		try {
-			processor.finish();
+			if (processor instanceof StatefulProcessor)
+				((StatefulProcessor) processor).finish();
 		} catch (Exception e) {
 			throw new UserError(this, e, "Failed to finish operator: "
 					+ e.getMessage());
@@ -213,21 +220,5 @@ public abstract class DataStreamOperator extends Operator implements
 	@Override
 	public double getByteSize() {
 		return 0;
-	}
-
-	/**
-	 * @see stream.data.Processor#reset()
-	 */
-	@Override
-	public void init(Context ctx) throws Exception {
-		processor.init(ctx);
-	}
-
-	/**
-	 * @see stream.data.Processor#finish()
-	 */
-	@Override
-	public void finish() throws Exception {
-		processor.finish();
 	}
 }

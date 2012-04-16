@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.ProcessContext;
 import stream.Processor;
 import stream.data.Data;
 import stream.data.DataProcessorList;

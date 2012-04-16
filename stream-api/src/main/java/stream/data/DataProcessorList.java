@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stream.AbstractProcessor;
-import stream.Context;
+import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
 
@@ -43,7 +43,7 @@ public class DataProcessorList extends AbstractProcessor {
 	 * @see stream.DataProcessor#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ProcessContext context) throws Exception {
 		super.init(context);
 		this.context = context;
 		for (Processor p : processors) {

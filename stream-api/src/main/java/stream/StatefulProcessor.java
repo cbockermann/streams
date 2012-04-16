@@ -3,7 +3,6 @@
  */
 package stream;
 
-
 /**
  * This interface is implemented by processors requiring a context. The context
  * is provided by the runtime-environment.
@@ -19,7 +18,7 @@ public interface StatefulProcessor extends Processor {
 	 * @param context
 	 * @throws Exception
 	 */
-	public void init(Context context) throws Exception;
+	public void init(ProcessContext context) throws Exception;
 
 	public void reset() throws Exception;
 

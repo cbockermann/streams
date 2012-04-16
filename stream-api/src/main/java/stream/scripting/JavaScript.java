@@ -14,7 +14,7 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.data.Data;
 import stream.util.URLUtilities;
@@ -46,7 +46,7 @@ public class JavaScript extends Script {
 	 * @see stream.AbstractProcessor#init(stream.Context)
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		this.script = loadScript();
 	}

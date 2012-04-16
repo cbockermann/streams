@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 
 /**
@@ -33,6 +34,7 @@ public class Change extends If {
 		return from;
 	}
 
+	@Parameter(required = false, defaultValue = "")
 	public void setFrom(String from) {
 		this.from = from;
 	}
@@ -41,6 +43,7 @@ public class Change extends If {
 		return to;
 	}
 
+	@Parameter(required = false, defaultValue = "")
 	public void setTo(String to) {
 		this.to = to;
 	}
@@ -60,10 +63,14 @@ public class Change extends If {
 	public boolean matches(Data item) {
 		String value = String.valueOf(item.get(att));
 		boolean result = false;
-		if (oldValue.equals(from) && value.equals(to)) {
-			result = true;
-			log.info(att + " changed from " + from + " to " + to + "!");
-		}
+
+		if (from.equals(to) && "".equals(from))
+			if (!oldValue.equals(value))
+				result = true;
+			else if (oldValue.equals(from) && value.equals(to)) {
+				result = true;
+				log.info(att + " changed from " + from + " to " + to + "!");
+			}
 		oldValue = value;
 		return result;
 	}

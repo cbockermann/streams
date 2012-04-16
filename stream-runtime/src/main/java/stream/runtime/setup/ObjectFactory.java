@@ -162,15 +162,18 @@ public class ObjectFactory extends VariableContext {
 
 		for (String prefix : this.searchPath) {
 
+			String cn = prefix + node.getNodeName();
 			try {
-				String cn = prefix + node.getNodeName();
+				while (cn.startsWith("."))
+					cn = cn.substring(1);
+
 				log.debug("Checking for class {}", cn);
-				Class<?> clazz = Class.forName(prefix + node.getNodeName());
+				Class<?> clazz = Class.forName(cn);
 				log.debug("Auto-detected class {} for node {}", clazz,
 						node.getNodeName());
 				return clazz.getName();
 			} catch (Exception e) {
-				log.debug("No class '{}' found", prefix + node.getNodeName());
+				log.debug("No class '{}' found", cn);
 			}
 		}
 

@@ -2,15 +2,15 @@
     This simple container experiment checks whether the ServiceInjection is working properly.
  -->
 
-<Container import="stream.learner">
+<Container>
 
 	<Stream id="input" class="stream.test.TestStream" limit = "10" />
 
 	<Process input="input">
 	
-		<stream.test.CountServiceLearner id="metaData" />
+		<stream.data.stats.CountServiceLearner id="metaData" />
 		
-		<stream.test.CountCheck countService-ref="metaData" />
+		<stream.data.stats.CountCheck countService-ref="metaData" />
 
 		<stream.test.LogData />
 		

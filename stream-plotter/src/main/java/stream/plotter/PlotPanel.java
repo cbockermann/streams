@@ -219,8 +219,8 @@ public class PlotPanel extends JPanel implements DataListener {
 		for (String key : item.keySet()) {
 			try {
 				Serializable val = item.get(key);
-				if (val instanceof Double) {
-					stats.add(key, (Double) val);
+				if (val instanceof Number) {
+					stats.add(key, new Double(val.toString()));
 				}
 
 				// Double val = new Double("" + item.get(key));
@@ -273,9 +273,9 @@ public class PlotPanel extends JPanel implements DataListener {
 			series.add(pivotValue, value);
 		}
 
-		// if (System.currentTimeMillis() - lastUpdate >= 1000) {
-		updateChart();
-		// }
+		if (System.currentTimeMillis() - lastUpdate >= 1000) {
+			updateChart();
+		}
 	}
 
 	public void updateChart() {

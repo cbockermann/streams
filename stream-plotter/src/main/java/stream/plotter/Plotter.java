@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
+import stream.ProcessContext;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataImpl;
@@ -113,7 +113,7 @@ public class Plotter extends DataVisualizer {
 	 * @see stream.data.Processor#resetState()
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		frame = new JFrame();
 
 		if (yrange != null && !"".equals(yrange.trim())) {

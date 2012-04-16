@@ -31,4 +31,12 @@ public class CountServiceLearner extends AbstractProcessor implements
 	public Long getCount() {
 		return count;
 	}
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		count = 0L;
+	}
 }

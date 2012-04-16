@@ -3,20 +3,19 @@
  */
 package stream;
 
-
 /**
  * @author chris
  * 
  */
 public abstract class AbstractProcessor implements StatefulProcessor {
 
-	protected transient Context context;
+	protected transient ProcessContext context;
 
 	/**
 	 * @see stream.Processor#resetState()
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		context = ctx;
 	}
 

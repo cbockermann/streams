@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.Context;
+import stream.ProcessContext;
 import stream.data.Data;
 
 /**
@@ -96,7 +96,7 @@ public class DataStreamWriter extends AbstractProcessor implements
 	}
 
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		if (p == null) {
 			throw new FileNotFoundException("File " + url + " not found");
 		}

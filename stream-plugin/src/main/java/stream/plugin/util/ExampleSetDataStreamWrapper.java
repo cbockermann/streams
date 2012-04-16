@@ -9,9 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import stream.Processor;
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.data.Processor;
 import stream.io.DataStream;
 
 import com.rapidminer.example.Attribute;

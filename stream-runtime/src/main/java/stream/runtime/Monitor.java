@@ -6,6 +6,7 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ProcessContext;
 import stream.data.Data;
 import stream.data.DataImpl;
 import stream.util.parser.TimeParser;
@@ -47,7 +48,7 @@ public class Monitor extends AbstractProcess {
 	}
 
 	/**
-	 * @see stream.runtime.AbstractProcess#init(stream.runtime.ProcessContext)
+	 * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
 	 */
 	@Override
 	public void init(ProcessContext context) throws Exception {

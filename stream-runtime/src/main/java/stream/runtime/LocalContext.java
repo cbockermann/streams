@@ -6,6 +6,7 @@ package stream.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
+import stream.ProcessContext;
 import stream.service.Service;
 
 /**
@@ -43,7 +44,7 @@ public class LocalContext implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.ProcessContext#get(java.lang.String)
+	 * @see stream.ProcessContext#get(java.lang.String)
 	 */
 	@Override
 	public Object get(String key) {
@@ -52,7 +53,7 @@ public class LocalContext implements ProcessContext {
 
 	/**
 	 * 
-	 * @see stream.runtime.ProcessContext#set(java.lang.String,
+	 * @see stream.ProcessContext#set(java.lang.String,
 	 *      java.lang.Object)
 	 */
 	@Override

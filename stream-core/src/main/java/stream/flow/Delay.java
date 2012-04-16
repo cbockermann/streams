@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
-import stream.Context;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
@@ -49,7 +49,7 @@ public class Delay extends ConditionedProcessor {
 	 * @see stream.AbstractProcessor#init()
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		if (time != null && !"".equals(time.trim()))
 			milliseconds = TimeParser.parseTime(time);

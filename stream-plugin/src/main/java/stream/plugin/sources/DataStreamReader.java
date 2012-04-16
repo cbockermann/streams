@@ -29,7 +29,7 @@ import com.rapidminer.parameter.ParameterTypeInt;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public abstract class DataStreamReader<D extends DataStream> extends Operator {
+public abstract class DataStreamReader extends Operator {
 
 	public final static String INPUT_FILE = "url";
 	public final static String LIMIT = "limit";
@@ -37,7 +37,7 @@ public abstract class DataStreamReader<D extends DataStream> extends Operator {
 
 	boolean setup = false;
 	DataStream stream;
-	Class<D> dataStreamClass;
+	Class<? extends DataStream> dataStreamClass;
 
 	DataSourceObject dataSource = null;
 
@@ -45,7 +45,7 @@ public abstract class DataStreamReader<D extends DataStream> extends Operator {
 	 * @param description
 	 */
 	public DataStreamReader(OperatorDescription description,
-			Class<D> streamClass) {
+			Class<? extends DataStream> streamClass) {
 		super(description);
 		dataStreamClass = streamClass;
 		producesOutput(DataSourceObject.class);
@@ -93,17 +93,19 @@ public abstract class DataStreamReader<D extends DataStream> extends Operator {
 		return types;
 	}
 
-	@SuppressWarnings("unchecked")
-	public D createDataStream(Class<D> dataStreamClass,
+	public DataStream createDataStream(
+			Class<? extends DataStream> dataStreamClass,
 			Map<String, String> parameters) throws Exception {
 		parameters.put("class", dataStreamClass.getName());
 		try {
-			D stream = (D) DataStreamFactory.createStream(parameters);
+			DataStream stream = (DataStream) DataStreamFactory
+					.createStream(parameters);
 			return stream;
 		} catch (Exception e) {
 			String url = parameters.get("url");
 			parameters.put("url", "file:" + url);
-			D stream = (D) DataStreamFactory.createStream(parameters);
+			DataStream stream = (DataStream) DataStreamFactory
+					.createStream(parameters);
 			return stream;
 		}
 	}

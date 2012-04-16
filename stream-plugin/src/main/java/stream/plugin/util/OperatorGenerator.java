@@ -25,11 +25,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.DataProcessor;
+import stream.Processor;
+import stream.annotations.Description;
+import stream.expressions.MacroExpander;
 import stream.io.DataStream;
 import stream.io.DataStreamWriter;
-import stream.runtime.annotations.Description;
-import stream.runtime.expressions.MacroExpander;
 
 /**
  * @author chris
@@ -66,8 +66,7 @@ public class OperatorGenerator {
 
 		templates.put(stream.io.DataStream.class,
 				"/GenericStreamReader.template");
-		templates.put(stream.data.DataProcessor.class,
-				"/GenericOperator.template");
+		templates.put(stream.Processor.class, "/GenericOperator.template");
 		templates.put(stream.io.DataStreamWriter.class,
 				"/GenericStreamWriter.template");
 
@@ -339,13 +338,13 @@ public class OperatorGenerator {
 						continue;
 					}
 
-					if (!DataProcessor.class.isAssignableFrom(clazz)
+					if (!Processor.class.isAssignableFrom(clazz)
 							&& !DataStream.class.isAssignableFrom(clazz)) {
 						log.debug("Skipping code-generator for non-DataProcessor class");
 						continue;
 					}
 
-					if (DataProcessor.class.isAssignableFrom(clazz)
+					if (Processor.class.isAssignableFrom(clazz)
 							&& !clazz.isAnnotationPresent(Description.class)) {
 						log.info(
 								"Skipping DataProcessor '{}' with missing annotations...",

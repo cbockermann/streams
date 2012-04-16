@@ -4,7 +4,7 @@
 package stream.logger;
 
 import stream.ConditionedProcessor;
-import stream.Context;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
@@ -54,7 +54,7 @@ public class Message extends ConditionedProcessor {
 	 * @see stream.AbstractProcessor#init(stream.Context)
 	 */
 	@Override
-	public void init(Context ctx) throws Exception {
+	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		macroExpander = new ContextAwareMacroExpander(ctx);
 	}

@@ -9,15 +9,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ProcessContext;
 import stream.data.Data;
+import stream.expressions.Expression;
+import stream.expressions.ExpressionCompiler;
 import stream.io.ListDataStream;
 import stream.plugin.DataObject;
 import stream.plugin.DataSourceObject;
 import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
-import stream.runtime.LocalContext;
-import stream.runtime.expressions.Expression;
-import stream.runtime.expressions.ExpressionCompiler;
+import stream.runtime.ContainerContext;
+import stream.runtime.ProcessContextImpl;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
@@ -46,6 +48,10 @@ public class DataStreamProcess extends
 
 	/* The global logger for this class */
 	static Logger log = LoggerFactory.getLogger(DataStreamProcess.class);
+
+	final ContainerContext containerContext = new ContainerContext();
+	final ProcessContext processContext = new ProcessContextImpl(
+			containerContext);
 
 	public final static String BUFFER_SIZE_PARAMETER = "bufferSize";
 	public final static String FILTER_PARAMETER = "condition";
@@ -89,7 +95,10 @@ public class DataStreamProcess extends
 
 			if (op instanceof DataStreamOperator) {
 				log.debug("Resetting stream-operator {}", op);
-				((DataStreamOperator) op).reset();
+
+				DataStreamOperator dso = (DataStreamOperator) op;
+				dso.setProcessContext(this.processContext);
+				dso.reset();
 			}
 		}
 
@@ -98,12 +107,10 @@ public class DataStreamProcess extends
 		log.debug("input is a data-stream-source...");
 		int i = 0;
 
-		LocalContext ctx = new LocalContext();
-
 		Data item = dataSource.readNext();
 		while (item != null) {
 
-			if (condition == null || condition.matches(ctx, item)) {
+			if (condition == null || condition.matches(processContext, item)) {
 
 				log.debug("Processing example {}", i);
 				DataObject datum = dataSource.wrap(item);

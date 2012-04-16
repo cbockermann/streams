@@ -5,7 +5,7 @@ package fact.plugin;
 
 import java.util.List;
 
-import stream.data.DataProcessor;
+import stream.Processor;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
@@ -15,16 +15,17 @@ import com.rapidminer.parameter.ParameterType;
  * <p>
  * This generic operator can be used as super class wrapper for DataProcessor
  * classes. It will generate the list of DataProcessor parameters via reflection
- * and inject these into the implementing DataProcessor class upon initialization.
+ * and inject these into the implementing DataProcessor class upon
+ * initialization.
  * </p>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
- *
+ * 
  */
 public class GenericFactOperator extends Operator {
 
-	DataProcessor processor;
-	
+	Processor processor;
+
 	/**
 	 * @param description
 	 */
@@ -32,7 +33,6 @@ public class GenericFactOperator extends Operator {
 		super(description);
 	}
 
-	
 	/**
 	 * @see com.rapidminer.operator.Operator#getParameterTypes()
 	 */

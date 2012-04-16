@@ -8,12 +8,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Measurable;
+import stream.Processor;
 import stream.data.Data;
-import stream.data.DataProcessor;
-import stream.data.Measurable;
 import stream.plugin.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
-import stream.runtime.Context;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;
 
@@ -34,7 +33,7 @@ import fact.plugin.FactEventObject;
  * 
  */
 public abstract class AbstractFactEventProcessor extends Operator implements
-		Measurable, DataProcessor {
+		Measurable, Processor {
 	static Logger log = LoggerFactory
 			.getLogger(AbstractFactEventProcessor.class);
 
@@ -43,7 +42,7 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 	final OutputPort output = getOutputPorts().createPort("evt");
 	List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
 
-	DataProcessor processor;
+	Processor processor;
 	boolean setup = false;
 
 	/**
@@ -65,7 +64,7 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 				clazz).values());
 
 		try {
-			processor = (DataProcessor) clazz.newInstance();
+			processor = (Processor) clazz.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -171,22 +170,6 @@ public abstract class AbstractFactEventProcessor extends Operator implements
 	 */
 	public Data process(Data data) {
 		return processor.process(data);
-	}
-
-	/**
-	 * @see stream.data.Processor#reset()
-	 */
-	@Override
-	public void init(Context ctx) throws Exception {
-		processor.init(ctx);
-	}
-
-	/**
-	 * @see stream.data.Processor#finish()
-	 */
-	@Override
-	public void finish() throws Exception {
-		processor.finish();
 	}
 
 	/**

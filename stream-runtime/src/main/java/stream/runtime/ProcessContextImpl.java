@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ProcessContext;
 import stream.service.Service;
 
 /**
@@ -52,7 +53,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.ProcessContext#get(java.lang.String)
+	 * @see stream.ProcessContext#get(java.lang.String)
 	 */
 	@Override
 	public Object get(String key) {
@@ -60,7 +61,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.runtime.ProcessContext#set(java.lang.String,
+	 * @see stream.ProcessContext#set(java.lang.String,
 	 *      java.lang.Object)
 	 */
 	@Override

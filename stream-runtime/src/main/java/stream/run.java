@@ -3,6 +3,7 @@
  */
 package stream;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
@@ -24,7 +25,13 @@ public class run {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		URL url = new URL(args[0]);
+		URL url;
+		try {
+			url = new URL(args[0]);
+		} catch (Exception e) {
+			File f = new File(args[0]);
+			url = f.toURI().toURL();
+		}
 		main(url);
 	}
 

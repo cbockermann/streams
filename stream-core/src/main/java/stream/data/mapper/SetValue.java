@@ -24,7 +24,7 @@ public class SetValue extends ConditionedProcessor {
 			String val = MacroExpander.expand(value, data);
 			if (scope.contains("data"))
 				data.put(key, val);
-			if (scope.contains("context"))
+			if (scope.contains("process"))
 				context.set(key, val);
 		}
 
@@ -70,7 +70,7 @@ public class SetValue extends ConditionedProcessor {
 
 	/**
 	 * @param scope
-	 *            scope=data and scope=context
+	 *            scope=data and scope=process
 	 */
 	@Parameter(defaultValue = "data", required = false)
 	public void setScope(String[] scope) {

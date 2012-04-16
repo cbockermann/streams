@@ -13,19 +13,13 @@
 
 	<group key="Data Stream.Sources">
 		<operator>
-			<key>CSV Data Stream</key>
-			<class>stream.plugin.sources.CsvDataStreamReader</class>
-		</operator>
-		<operator>
 			<key>ExampleSet DataStream</key>
 			<class>stream.plugin.sources.ExampleSetDataStream</class>
 		</operator>
-		<!--
 		<operator>
 			<key>FACT Event Stream</key>
 			<class>fact.plugin.operators.FactEventReader</class>
 		</operator>
-		  -->
 	</group>
 
 

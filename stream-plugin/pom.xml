@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>edu.udo</groupId>
 			<artifactId>fact-tools</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>0.3</version>
 		</dependency>
 	</dependencies>
 

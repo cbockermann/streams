@@ -34,11 +34,11 @@ public class GenericOperatorDescription extends OperatorDescription {
 	 * @param iconName
 	 * @param provider
 	 */
-	public GenericOperatorDescription(String fullyQualifiedGroupKey, String key,
-			Class<?> clazz, ClassLoader classLoader, String iconName,
-			Plugin provider) {
-		super(fullyQualifiedGroupKey, key, DefaultOperator.class, classLoader,
-				iconName, provider);
+	public GenericOperatorDescription(String fullyQualifiedGroupKey,
+			String key, Class<?> clazz, ClassLoader classLoader,
+			String iconName, Plugin provider) {
+		super(fullyQualifiedGroupKey, key, GenericStreamOperator.class,
+				classLoader, iconName, provider);
 
 		Description desc = clazz.getAnnotation(Description.class);
 		if (desc != null) {

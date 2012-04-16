@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataUtils;
-import stream.plugin.DataObject;
+import stream.plugin.data.DataObject;
 
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.ExampleSet;

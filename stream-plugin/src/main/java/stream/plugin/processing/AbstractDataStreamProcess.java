@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.io.ListDataStream;
-import stream.plugin.DataObject;
-import stream.plugin.DataSourceObject;
+import stream.plugin.data.DataObject;
+import stream.plugin.data.DataSourceObject;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorChain;

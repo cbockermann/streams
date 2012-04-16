@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import stream.Measurable;
 import stream.Processor;
 import stream.data.Data;
-import stream.plugin.DataObject;
+import stream.plugin.data.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;

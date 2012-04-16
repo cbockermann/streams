@@ -5,8 +5,8 @@ package fact.plugin;
 
 import stream.data.Data;
 import stream.io.DataStream;
-import stream.plugin.DataObject;
-import stream.plugin.DataSourceObject;
+import stream.plugin.data.DataObject;
+import stream.plugin.data.DataSourceObject;
 
 /**
  * @author chris
@@ -25,7 +25,7 @@ public class FactEventStream extends DataSourceObject {
 	}
 
 	/**
-	 * @see stream.plugin.DataSourceObject#wrap(stream.data.Data)
+	 * @see stream.plugin.data.DataSourceObject#wrap(stream.data.Data)
 	 */
 	@Override
 	public DataObject wrap(Data item) {

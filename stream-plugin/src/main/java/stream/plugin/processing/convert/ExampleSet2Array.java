@@ -8,7 +8,7 @@ import java.util.List;
 
 import stream.data.Data;
 import stream.data.DataImpl;
-import stream.plugin.DataObject;
+import stream.plugin.data.DataObject;
 
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.Attributes;

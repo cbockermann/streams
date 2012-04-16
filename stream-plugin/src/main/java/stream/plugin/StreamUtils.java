@@ -22,7 +22,7 @@ public class StreamUtils {
 	 * @param example
 	 * @return
 	 */
-	public static stream.plugin.DataObject wrap( Example example ){
+	public static stream.plugin.data.DataObject wrap( Example example ){
 		
 		DataImpl item = new DataImpl();
 		
@@ -36,6 +36,6 @@ public class StreamUtils {
 			}
 		}
 		
-		return new stream.plugin.DataObject( item );
+		return new stream.plugin.data.DataObject( item );
 	}
 }

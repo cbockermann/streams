@@ -77,7 +77,6 @@ public class ProcessContextImpl implements ProcessContext {
 			return containerContext.resolve(variable);
 		}
 
-		return get(variable.substring("process.".length(),
-				variable.length() - 1));
+		return get(variable.substring("process.".length()));
 	}
 }

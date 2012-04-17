@@ -51,9 +51,8 @@ public class ContainerContext extends DefaultLookupService implements Context {
 			return null;
 
 		String var = variable.trim();
-		if (var.startsWith("%{container.") && var.endsWith("}")) {
-			String key = var.substring(CONTEXT_NAME.length() + 3,
-					var.length() - 1);
+		if (var.startsWith("container.")) {
+			String key = var.substring(CONTEXT_NAME.length() + 1);
 			if (properties.containsKey(key))
 				return properties.get(key);
 		}

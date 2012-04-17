@@ -6,9 +6,9 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ProcessorList;
 import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.data.DataProcessorList;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 
@@ -16,7 +16,7 @@ import stream.expressions.ExpressionCompiler;
  * @author chris
  * 
  */
-public class If extends DataProcessorList {
+public class If extends ProcessorList {
 
 	static Logger log = LoggerFactory.getLogger(If.class);
 	Expression condition;
@@ -54,7 +54,7 @@ public class If extends DataProcessorList {
 	}
 
 	/**
-	 * @see stream.data.DataProcessorList#process(stream.data.Data)
+	 * @see stream.ProcessorList#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data input) {

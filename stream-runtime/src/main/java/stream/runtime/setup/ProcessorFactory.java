@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.Processor;
-import stream.data.DataProcessorList;
+import stream.ProcessorList;
 
 /**
  * @author chris
@@ -53,7 +53,7 @@ public class ProcessorFactory {
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {
 
-			if (o instanceof DataProcessorList) {
+			if (o instanceof ProcessorList) {
 
 				NodeList children = child.getChildNodes();
 				for (int i = 0; i < children.getLength(); i++) {
@@ -64,7 +64,7 @@ public class ProcessorFactory {
 						Element element = (Element) node;
 						Processor proc = createProcessor(element);
 						if (proc != null) {
-							((DataProcessorList) o).addDataProcessor(proc);
+							((ProcessorList) o).addDataProcessor(proc);
 						} else {
 							log.warn(
 									"Nested element {} is not of type 'stream.data.Processor': ",

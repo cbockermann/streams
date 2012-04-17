@@ -1,21 +1,18 @@
 /**
  * 
  */
-package stream.data;
+package stream;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.AbstractProcessor;
-import stream.ProcessContext;
-import stream.Processor;
-import stream.StatefulProcessor;
+import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class DataProcessorList extends AbstractProcessor {
+public class ProcessorList extends AbstractProcessor {
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
 

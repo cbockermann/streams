@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.rapid-i</groupId>
 			<artifactId>rapidminer</artifactId>
-			<version>[5.2.0,)</version>
+			<version>5.2.003</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

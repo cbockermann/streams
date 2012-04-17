@@ -61,8 +61,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.ProcessContext#set(java.lang.String,
-	 *      java.lang.Object)
+	 * @see stream.ProcessContext#set(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void set(String key, Object o) {
@@ -74,11 +73,11 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public Object resolve(String variable) {
-		if (!variable.startsWith("%{process.")) {
+		if (!variable.startsWith("process.")) {
 			return containerContext.resolve(variable);
 		}
 
-		return get(variable.substring("%{process.".length(),
+		return get(variable.substring("process.".length(),
 				variable.length() - 1));
 	}
 }

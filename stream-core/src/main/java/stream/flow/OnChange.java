@@ -19,7 +19,7 @@ import stream.data.Data;
  * @author Hendrik Blom &lt;hendrik.blom@udo.edu&gt;
  * 
  */
-@Description(text = "", group = "Data Stream.Change")
+@Description(group = "Data Stream.Flow")
 public class OnChange extends If {
 
 	static Logger log = LoggerFactory.getLogger(OnChange.class);

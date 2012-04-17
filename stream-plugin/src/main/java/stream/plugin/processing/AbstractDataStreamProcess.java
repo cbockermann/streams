@@ -67,8 +67,7 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 		outputStream = getSubprocess(0).getInnerSinks().createPort(
 				innerPortNames);
 
-		this.acceptsInput(clazz);
-		this.producesOutput(clazz);
+		getTransformer().addPassThroughRule(input, output);
 	}
 
 	/**

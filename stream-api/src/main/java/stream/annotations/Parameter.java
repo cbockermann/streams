@@ -30,7 +30,7 @@ public @interface Parameter {
 	 * 
 	 * @return
 	 */
-	boolean required() default true;
+	boolean required() default false;
 
 	/**
 	 * The default minimum for an numerical parameters

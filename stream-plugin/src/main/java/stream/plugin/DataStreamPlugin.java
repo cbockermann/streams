@@ -80,12 +80,12 @@ public final class DataStreamPlugin {
 				}
 
 				if (REGISTERED_PROCESSORS.contains(clazz)) {
-					log.info("Operator for processor {} already registered.",
+					log.debug("Operator for processor {} already registered.",
 							clazz);
 					continue;
 				}
 
-				log.info("Need to register operator for processor {}", clazz);
+				log.info("Registering operator for processor {}", clazz);
 				Map<String, ParameterType> types = ParameterTypeDiscovery
 						.discoverParameterTypes(clazz);
 				for (String key : types.keySet()) {
@@ -97,8 +97,13 @@ public final class DataStreamPlugin {
 				if (desc.name() != null && !"".equals(desc.name().trim()))
 					key = desc.name();
 
+				String group = desc.group();
+				if (group == null) {
+					group = clazz.getPackage().getName();
+				}
+
 				GenericOperatorDescription sod = new GenericOperatorDescription(
-						desc.group(), key, clazz,
+						group, key, clazz,
 						DataStreamPlugin.class.getClassLoader(), null, null);
 
 				OperatorService.registerOperator(sod, null);

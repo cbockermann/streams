@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessorList;
+import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.Expression;
@@ -16,6 +17,7 @@ import stream.expressions.ExpressionCompiler;
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Flow")
 public class If extends ProcessorList {
 
 	static Logger log = LoggerFactory.getLogger(If.class);

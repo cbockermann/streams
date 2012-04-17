@@ -3,14 +3,15 @@
  */
 package stream.plugin.util;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Processor;
 import stream.annotations.Description;
+import stream.plugin.GenericOperatorDescription;
 
 /**
  * @author chris
@@ -38,16 +39,22 @@ public class ProcessorFinder {
 			Class<?>[] classes = ClassFinder.getClasses(pkgName);
 			for (Class<?> clazz : classes) {
 
-				if (clazz.isAnonymousClass())
+				if (clazz.isInterface()
+						|| Modifier.isAbstract(clazz.getModifiers())) {
 					continue;
+				}
 
-				if (!Processor.class.isAssignableFrom(clazz)
-						&& clazz.toString().indexOf("$") > 0)
+				if (clazz.isAnonymousClass()
+						|| clazz.toString().indexOf("$") > 0) {
+					continue;
+				}
+
+				if (!GenericOperatorDescription.canCreate(clazz))
 					continue;
 
 				Description desc = clazz.getAnnotation(Description.class);
 				if (desc == null) {
-					log.warn(
+					log.debug(
 							"Skipping processor class '{}' due to missing Description annotation...",
 							clazz);
 					continue;

@@ -6,12 +6,14 @@ package stream.data.mapper;
 import java.util.Random;
 
 import stream.Processor;
+import stream.annotations.Description;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Transformations.Data")
 public class RandomBinaryLabel implements Processor {
 
 	Long seed = System.currentTimeMillis();

@@ -23,7 +23,7 @@
 	</group>
 
 
-	<group key="Data Stream.Adapters">
+	<group key="Data Stream.Sources.Adapters">
 		<operator>
 			<key>Stream to ExampleSet</key>
 			<class>stream.plugin.sources.DataStream2ExampleSet</class>
@@ -32,6 +32,10 @@
 			<key>Extract Example Set</key>
 			<class>stream.plugin.processing.convert.Stream2ExampleSet</class>
 		</operator>
+	</group>
+	
+	
+	<group key="Data Stream.Flow">
 	</group>
 
 	<group key="Data Stream.Processing">
@@ -56,14 +60,9 @@
 
 
 	<group key="Data Stream.Processing.Transformations">
-
 	</group>
 
 	<group key="Data Stream.Monitoring">
-		<operator>
-			<key>Statistics Logger</key>
-			<class>stream.plugin.monitoring.StatisticsLoggerOperator</class>
-		</operator>
 	</group>
 
 	<group key="Data Stream.Output">

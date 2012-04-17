@@ -25,6 +25,8 @@ public abstract class Operator implements Serializable {
 		private static final long serialVersionUID = -7185932909087120854L;
 
 		public boolean eval(Object input, String pattern) {
+			if (input == null && pattern.equals("null"))
+				return true;
 			return input != null && input.toString().equals(pattern);
 		}
 	};

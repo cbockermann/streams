@@ -1,5 +1,6 @@
 package stream.data.mapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,13 +8,19 @@ import stream.ConditionedProcessor;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.expressions.MacroExpander;
+import stream.expressions.ExpressionResolver;
 
 @Description(group = "Data Stream.Processing.Transformations.Data")
 public class SetValue extends ConditionedProcessor {
-	String key;
-	String value;
-	List<String> scope;
+	protected String key;
+	protected String value;
+	protected List<String> scope;
+
+	public SetValue() {
+		super();
+		scope = new ArrayList<String>();
+		scope.add("data");
+	}
 
 	/**
      * 
@@ -21,7 +28,8 @@ public class SetValue extends ConditionedProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 		if (key != null && value != null) {
-			String val = MacroExpander.expand(value, data);
+			String val = String.valueOf(ExpressionResolver.resolve(value,
+					context, data));
 			if (scope.contains("data"))
 				data.put(key, val);
 			if (scope.contains("process"))

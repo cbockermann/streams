@@ -70,10 +70,9 @@ public class GenericOperatorDescription extends OperatorDescription {
 				return reader;
 			}
 
-			log.info(
-					"Creating generic data-stream-operator for processor-class {}",
+			log.info("Creating GenericStreamOperator for processor-class {}",
 					libClass);
-			DataStreamOperator op = new DataStreamOperator(description,
+			DataStreamOperator op = new GenericStreamOperator(description,
 					sod.libClass);
 			return op;
 		}

@@ -23,7 +23,6 @@ import com.rapidminer.tools.Ontology;
 
 /**
  * @author chris
- * 
  */
 public class ExampleSetDataStreamWrapper implements DataStream {
 

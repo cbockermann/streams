@@ -32,8 +32,8 @@ import com.rapidminer.parameter.ParameterType;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class DataStreamOperator extends Operator implements Measurable,
-		Processor {
+public abstract class DataStreamOperator extends Operator implements
+		Measurable, Processor {
 	static Logger log = LoggerFactory.getLogger(DataStreamOperator.class);
 
 	final InputPort input = getInputPorts().createPort(

@@ -1,0 +1,21 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+	<Process input="input">
+	
+		<stream.test.ProcessContextCounter />
+
+		<stream.test.Print message="Test: %{process.count} items processed" />
+		
+		<stream.flow.If condition="%{data.x[1]} @ge 0">
+			<stream.test.LogData />
+		</stream.flow.If>
+		
+	</Process>
+	
+</Container>

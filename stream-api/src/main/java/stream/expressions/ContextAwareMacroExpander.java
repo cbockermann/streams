@@ -16,11 +16,18 @@ public class ContextAwareMacroExpander extends MacroExpander {
 	Context ctx;
 
 	public ContextAwareMacroExpander(Context ctx) {
+		super();
+		this.ctx = ctx;
+	}
+
+	public ContextAwareMacroExpander(Context ctx, Map<String, ?> vars) {
+		super(vars);
 		this.ctx = ctx;
 	}
 
 	/**
-	 * @see stream.expressions.MacroExpander#get(java.lang.String, java.util.Map)
+	 * @see stream.expressions.MacroExpander#get(java.lang.String,
+	 *      java.util.Map)
 	 */
 	@Override
 	public String get(String variable, Map<String, ?> evt) {

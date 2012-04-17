@@ -40,8 +40,8 @@ public class ConditionEndsWith extends BinaryOperator {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean eval(Object input, String pattern) {
+	public boolean eval(Object input, Object pattern) {
 		return pattern != null && input != null
-				&& input.toString().endsWith(pattern);
+				&& input.toString().endsWith(pattern.toString());
 	}
 }

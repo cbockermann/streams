@@ -20,14 +20,56 @@ public abstract class Operator implements Serializable {
 	/** The unique class ID */
 	private static final long serialVersionUID = 5150175070404610787L;
 
-	public final static Operator EQ = new BinaryOperator("@eq", "=", "==", "!=") {
+	public final static Operator EQ = new BinaryOperator("@eq", "=", "==") {
 		/** The unique class ID */
 		private static final long serialVersionUID = -7185932909087120854L;
 
-		public boolean eval(Object input, String pattern) {
-			if (input == null && pattern.equals("null"))
+		public boolean eval(Object left, Object right) {
+			if (left == null && right == null)
 				return true;
-			return input != null && input.toString().equals(pattern);
+			if (left == null && right != null)
+				if (right.toString().equals("null"))
+					return true;
+				else
+					return false;
+			if (left != null && right == null)
+				if (left.toString().equals("null"))
+					return true;
+				else
+					return false;
+			if (isNumeric(left) && isNumeric(right)) {
+				try {
+					Double v = new Double(left.toString());
+					Double w = new Double(right.toString());
+					int rc = v.compareTo(w);
+					return rc == 0;
+				} catch (Exception e) {
+				}
+			}
+			return left.equals(right);
+		}
+	};
+
+	public final static Operator NEQ = new BinaryOperator("@neq", "!=", "<>") {
+		/** The unique class ID */
+		private static final long serialVersionUID = -7185932909087120854L;
+
+		public boolean eval(Object left, Object right) {
+			if (left == null && right == null)
+				return false;
+			if ((left == null && right != null)
+					|| (left != null && right == null))
+				return true;
+			if (isNumeric(left) && isNumeric(right)) {
+				try {
+					Double v = new Double(left.toString());
+					Double w = new Double(right.toString());
+					int rc = v.compareTo(w);
+					return rc != 0;
+				} catch (Exception e) {
+				}
+			}
+			return !left.equals(right);
 		}
 	};
 
@@ -40,18 +82,18 @@ public abstract class Operator implements Serializable {
 		/** The unique class ID */
 		private static final long serialVersionUID = 7290798880449531730L;
 
-		public boolean eval(Object input, String pattern) {
-			if (isNumeric(input)) {
+		public boolean eval(Object left, Object right) {
+			if (isNumeric(left) && isNumeric(right)) {
 				try {
-					Double v = new Double("" + input);
-					Double w = new Double(pattern);
+					Double v = new Double(left.toString());
+					Double w = new Double(right.toString());
 					int rc = v.compareTo(w);
 					return rc < 0;
 				} catch (Exception e) {
 				}
 			}
 
-			return ("" + input).compareTo(pattern) < 0;
+			return ("" + left).compareTo("" + right) < 0;
 		}
 	};
 
@@ -66,16 +108,16 @@ public abstract class Operator implements Serializable {
 		 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 		 *      java.lang.String)
 		 */
-		public boolean eval(Object input, String pattern) {
-			if (isNumeric(pattern)) {
+		public boolean eval(Object left, Object right) {
+			if (isNumeric(left) && isNumeric(right)) {
 				try {
-					return (new Double(input + "")
-							.compareTo(new Double(pattern))) <= 0;
+					return (new Double(left.toString()).compareTo(new Double(
+							right.toString()))) <= 0;
 				} catch (Exception e) {
 				}
 			}
 
-			return ("" + input).compareTo(pattern) <= 0;
+			return ("" + left).compareTo("" + right) <= 0;
 		}
 	};
 
@@ -87,18 +129,18 @@ public abstract class Operator implements Serializable {
 		private static final long serialVersionUID = 5904824908737265272L;
 
 		@Override
-		public boolean eval(Object input, String pattern) {
-			if (isNumeric(input)) {
+		public boolean eval(Object left, Object right) {
+			if (isNumeric(left) && isNumeric(right)) {
 				try {
-					Double v = new Double(input + "");
-					Double w = new Double(pattern);
+					Double v = new Double(left.toString());
+					Double w = new Double(right.toString());
 					int rc = v.compareTo(w);
 					return rc > 0;
 				} catch (Exception e) {
 				}
 			}
 
-			return ("" + input).compareTo(pattern) > 0;
+			return ("" + left).compareTo("" + right) > 0;
 		}
 	};
 
@@ -113,16 +155,16 @@ public abstract class Operator implements Serializable {
 		 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 		 *      java.lang.String)
 		 */
-		public boolean eval(Object input, String pattern) {
-			if (isNumeric(input)) {
+		public boolean eval(Object left, Object right) {
+			if (isNumeric(left) && isNumeric(right)) {
 				try {
-					return (new Double(input + "")
-							.compareTo(new Double(pattern))) >= 0;
+					return (new Double(left.toString()).compareTo(new Double(
+							right.toString()))) >= 0;
 				} catch (Exception e) {
 				}
 			}
 
-			return ("" + input).compareTo(pattern) >= 0;
+			return ("" + left).compareTo("" + right) >= 0;
 		}
 	};
 
@@ -139,10 +181,13 @@ public abstract class Operator implements Serializable {
 		 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 		 *      java.lang.String)
 		 */
-		public boolean eval(Object input, String p) {
-			Pattern pattern = Pattern.compile(p);
-			Matcher m = pattern.matcher(input + "");
-			return m.matches();
+		public boolean eval(Object left, Object right) {
+			if (right != null && right instanceof String) {
+				Pattern pattern = Pattern.compile(right.toString());
+				Matcher m = pattern.matcher(left + "");
+				return m.matches();
+			}
+			return false;
 		}
 	};
 
@@ -156,14 +201,15 @@ public abstract class Operator implements Serializable {
 		private static final long serialVersionUID = 7929480963946320536L;
 
 		@Override
-		public boolean eval(Object featureValue, String value) {
-			return WildcardMatch.matches("" + featureValue, value);
+		public boolean eval(Object left, Object right) {
+			return WildcardMatch.matches("" + left, "" + right);
 		}
 	};
 
 	public final static Map<String, Operator> OPERATORS = new LinkedHashMap<String, Operator>();
 
 	static {
+		registerOperator(NEQ);
 		registerOperator(EQ);
 		registerOperator(LT);
 		registerOperator(LE);

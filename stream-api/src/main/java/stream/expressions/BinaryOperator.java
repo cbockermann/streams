@@ -3,7 +3,6 @@
  */
 package stream.expressions;
 
-
 /**
  * <p>
  * This class provides an abstract binary operator that is provided with two
@@ -66,5 +65,5 @@ public abstract class BinaryOperator extends Operator {
 	 * @param value
 	 * @return
 	 */
-	public abstract boolean eval(Object featureValue, String value);
+	public abstract boolean eval(Object left, Object right);
 }

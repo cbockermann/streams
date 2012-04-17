@@ -51,6 +51,6 @@ public class ExpressionResolver {
 			return ctx.resolve(var);
 		}
 
-		return item.get(variable);
+		return null;
 	}
 }

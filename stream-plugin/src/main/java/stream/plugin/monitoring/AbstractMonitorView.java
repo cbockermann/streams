@@ -7,7 +7,6 @@ import java.awt.Component;
 
 import javax.swing.JPanel;
 
-import com.rapidminer.gui.tools.ResourceDockKey;
 import com.vlsolutions.swing.docking.DockKey;
 import com.vlsolutions.swing.docking.Dockable;
 
@@ -22,7 +21,7 @@ public class AbstractMonitorView extends JPanel implements Dockable {
 	final DockKey DOCK_KEY;
 
 	public AbstractMonitorView(String name) {
-		DOCK_KEY = new ResourceDockKey(name);
+		DOCK_KEY = new DockKey(name);
 	}
 
 	/**

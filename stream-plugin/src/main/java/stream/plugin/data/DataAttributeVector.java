@@ -3,6 +3,11 @@
  */
 package stream.plugin.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -93,8 +98,10 @@ public class DataAttributeVector extends AttributeVector {
 	@Override
 	public AttributeValue setValue(StreamingAttributeHeader header,
 			AttributeValue value) {
-		// TODO Auto-generated method stub
-		return super.setValue(header, value);
+		Serializable val = (Serializable) value.getRaw();
+		Conventions.Key key = ConventionMapping.map(header);
+		item.put(key.toString(), (Serializable) val);
+		return value;
 	}
 
 	/**
@@ -103,8 +110,8 @@ public class DataAttributeVector extends AttributeVector {
 	 */
 	@Override
 	public void removeAttribute(StreamingAttributeHeader header) {
-		// TODO Auto-generated method stub
-		super.removeAttribute(header);
+		Conventions.Key key = ConventionMapping.map(header);
+		item.remove(key.toString());
 	}
 
 	/**
@@ -120,7 +127,25 @@ public class DataAttributeVector extends AttributeVector {
 	 */
 	@Override
 	public IOObject copy() {
-		return super.copy();
+		try {
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(item);
+			oos.close();
+
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+					baos.toByteArray());
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			Data clone = (Data) ois.readObject();
+			ois.close();
+
+			return new DataAttributeVector(clone);
+		} catch (Exception e) {
+			new RuntimeException("Cloning failed: " + e.getMessage());
+		}
+
+		return null;
 	}
 
 	/**
@@ -128,7 +153,7 @@ public class DataAttributeVector extends AttributeVector {
 	 */
 	@Override
 	public String toString() {
-		return super.toString();
+		return item.toString();
 	}
 
 }

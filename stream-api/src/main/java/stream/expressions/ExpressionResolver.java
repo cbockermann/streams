@@ -48,7 +48,7 @@ public class ExpressionResolver {
 				return item.get(var.substring(5));
 			}
 
-			return ctx.resolve(variable);
+			return ctx.resolve(var);
 		}
 
 		return item.get(variable);

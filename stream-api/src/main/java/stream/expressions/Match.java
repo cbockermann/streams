@@ -35,10 +35,18 @@ public class Match implements Expression {
 
 		Object leftObject = ExpressionResolver.resolve(left, ctx, item);
 		if (leftObject == null)
-			leftObject = left;
+			if (ExpressionResolver.isMacroObject(left) || left.equals("null"))
+				leftObject = null;
+			else
+				leftObject = left;
+
 		Object rightObject = ExpressionResolver.resolve(right, ctx, item);
 		if (rightObject == null)
-			rightObject = right;
+			if (ExpressionResolver.isMacroObject(right) || right.equals("null"))
+				rightObject = null;
+			else
+				rightObject = right;
+
 		// Serializable featureValue = item.get(variable);
 		if (op instanceof BinaryOperator) {
 			BinaryOperator binOp = (BinaryOperator) op;

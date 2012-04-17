@@ -21,8 +21,8 @@ import org.w3c.dom.NodeList;
 
 import stream.ProcessContext;
 import stream.Processor;
+import stream.ProcessorList;
 import stream.data.Data;
-import stream.data.DataProcessorList;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.DataStreamFactory;
@@ -348,7 +348,7 @@ public class ProcessContainer {
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {
 
-			if (o instanceof DataProcessorList) {
+			if (o instanceof ProcessorList) {
 
 				NodeList children = child.getChildNodes();
 				for (int i = 0; i < children.getLength(); i++) {
@@ -359,7 +359,7 @@ public class ProcessContainer {
 						Element element = (Element) node;
 						Processor proc = createProcessor(element);
 						if (proc != null) {
-							((DataProcessorList) o).addDataProcessor(proc);
+							((ProcessorList) o).addDataProcessor(proc);
 						} else {
 							log.warn(
 									"Nested element {} is not of type 'stream.data.Processor': ",

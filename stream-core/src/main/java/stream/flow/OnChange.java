@@ -20,11 +20,11 @@ import stream.data.Data;
  * 
  */
 @Description(text = "", group = "Data Stream.Change")
-public class Change extends If {
+public class OnChange extends If {
 
-	static Logger log = LoggerFactory.getLogger(Change.class);
+	static Logger log = LoggerFactory.getLogger(OnChange.class);
 
-	private String att;
+	private String key;
 	private String oldValue;
 
 	private String from;
@@ -48,20 +48,21 @@ public class Change extends If {
 		this.to = to;
 	}
 
-	public Change() {
+	public OnChange() {
 		oldValue = "";
 	}
 
-	public void setAtt(String att) {
-		this.att = att;
+	@Parameter(required = true, defaultValue = "")
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public String getAtt() {
-		return att;
+	public String getKey() {
+		return key;
 	}
 
 	public boolean matches(Data item) {
-		String value = String.valueOf(item.get(att));
+		String value = String.valueOf(item.get(key));
 		boolean result = false;
 
 		if (from.equals(to) && "".equals(from))
@@ -69,7 +70,7 @@ public class Change extends If {
 				result = true;
 			else if (oldValue.equals(from) && value.equals(to)) {
 				result = true;
-				log.info(att + " changed from " + from + " to " + to + "!");
+				log.debug(key + " changed from " + from + " to " + to + "!");
 			}
 		oldValue = value;
 		return result;

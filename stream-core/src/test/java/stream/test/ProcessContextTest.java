@@ -3,8 +3,6 @@
  */
 package stream.test;
 
-import static org.junit.Assert.fail;
-
 import java.net.URL;
 
 import org.junit.Test;
@@ -24,8 +22,6 @@ public class ProcessContextTest {
 				.getResource("/process-context-test.xml");
 		ProcessContainer container = new ProcessContainer(url);
 		container.run();
-
-		fail("Not yet implemented");
 	}
 
 }

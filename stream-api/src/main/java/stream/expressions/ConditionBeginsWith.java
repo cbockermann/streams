@@ -40,8 +40,8 @@ public class ConditionBeginsWith extends BinaryOperator {
 		super("@beginsWith");
 	}
 
-	public boolean eval(Object input, String value) {
+	public boolean eval(Object input, Object value) {
 		return value != null && input != null
-				&& input.toString().startsWith(value);
+				&& input.toString().startsWith(value.toString());
 	}
 }

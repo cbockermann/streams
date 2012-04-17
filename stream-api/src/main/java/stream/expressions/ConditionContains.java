@@ -19,7 +19,6 @@
  */
 package stream.expressions;
 
-
 /**
  * <p>
  * This condition checks for equality.
@@ -42,8 +41,8 @@ public class ConditionContains extends BinaryOperator {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean eval(Object input, String pattern) {
+	public boolean eval(Object input, Object pattern) {
 		return pattern != null && input != null
-				&& input.toString().indexOf(pattern) >= 0;
+				&& input.toString().indexOf(pattern.toString()) >= 0;
 	}
 }

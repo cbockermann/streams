@@ -28,15 +28,15 @@ public class ConditionPM extends BinaryOperator {
 		super("@pm");
 	}
 
-	public boolean eval(Object input, String patterns) {
-		return matches("" + input, patterns);
+	public boolean eval(Object left, Object right) {
+		return matches("" + left, "" + right);
 	}
 
 	/**
 	 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean matches(String pattern, String input) {
+	public boolean matches(String input, String pattern) {
 		String[] ps = pattern.split("\\s+");
 
 		for (String p : ps)

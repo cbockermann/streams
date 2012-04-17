@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import stream.data.Data;
 import stream.data.DataImpl;
+import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 import stream.runtime.LocalContext;
 
@@ -41,57 +42,82 @@ public class ExpressionTest {
 	}
 
 	protected boolean eval(Data item, String expression) throws Exception {
-		return ExpressionCompiler.parse(expression).matches(new LocalContext(),
-				item);
+		Expression e = ExpressionCompiler.parse(expression);
+		return e.matches(new LocalContext(), item);
 	}
 
 	@Test
 	public void testGt() throws Exception {
-		Assert.assertTrue(eval(item, "x2.0 @gt 1.9"));
-		Assert.assertTrue(eval(item, "x2.0 > 1.9"));
-		Assert.assertFalse(eval(item, "x2.0 > 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} @gt 1.9"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} > 1.9"));
+		Assert.assertFalse(eval(item, "%{data.x2.0} > 2.0"));
+		Assert.assertFalse(eval(item, "%{data.x2.0} > %{data.x2.1}"));
+		Assert.assertTrue(eval(item, "%{data.x2.1} > %{data.x2.0}"));
 	}
 
 	@Test
 	public void testGe() throws Exception {
-		Assert.assertTrue(eval(item, "x2.0 @ge 1.9"));
-		Assert.assertTrue(eval(item, "x2.0 @ge 2.0"));
-		Assert.assertFalse(eval(item, "x2.0 @ge 2.1"));
-		Assert.assertTrue(eval(item, "x2.0 >= 2.0"));
-		Assert.assertFalse(eval(item, "x2.0 >= 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} @ge 1.9"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} @ge 2.0"));
+		Assert.assertFalse(eval(item, "%{data.x2.0} @ge 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} >= 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x2.0} >= %{data.x2.0}"));
+		Assert.assertFalse(eval(item, "%{data.x2.0} >= 2.1"));
+		Assert.assertFalse(eval(item, "%{data.x2.0} >= %{data.x2.1}"));
 	}
 
 	@Test
 	public void testLt() throws Exception {
-		Data item = new DataImpl();
 		item.put("x", 2.0d);
-		Assert.assertTrue(eval(item, "x @lt 2.1"));
-		Assert.assertTrue(eval(item, "x < 2.1"));
-		Assert.assertFalse(eval(item, "x < 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} @lt 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x} < 2.1"));
+		Assert.assertFalse(eval(item, "%{data.x} < 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} < %{data.x2.1}"));
+		Assert.assertFalse(eval(item, "%{data.x} < %{data.x2.0}"));
 	}
 
 	@Test
 	public void testLe() throws Exception {
-		Data item = new DataImpl();
 		item.put("x", 2.1d);
-		Assert.assertTrue(eval(item, "x @le 2.1"));
-		Assert.assertTrue(eval(item, "x @le 2.2"));
-		Assert.assertFalse(eval(item, "x @le 2.0"));
-		Assert.assertTrue(eval(item, "x <= 2.1"));
-		Assert.assertFalse(eval(item, "x <= 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} @le 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x} @le 2.2"));
+		Assert.assertFalse(eval(item, "%{data.x} @le 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} <= 2.1"));
+		Assert.assertFalse(eval(item, "%{data.x} <= 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} <= %{data.x2.1}"));
+		Assert.assertFalse(eval(item, "%{data.x} <= %{data.x2.0}"));
 	}
 
 	@Test
 	public void testEq() throws Exception {
-		Data item = new DataImpl();
 		item.put("x", 2.1d);
 		item.put("xa", "A");
-		Assert.assertTrue(eval(item, "x @eq 2.1"));
-		Assert.assertTrue(eval(item, "x = 2.1"));
-		Assert.assertTrue(eval(item, "x == 2.1"));
-		Assert.assertFalse(eval(item, "x == 2.0"));
-		Assert.assertFalse(eval(item, "x == A"));
+		Assert.assertTrue(eval(item, "%{data.x} @eq 2.1"));
+		Assert.assertFalse(eval(item, "x @eq 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x} = 2.1"));
+		Assert.assertTrue(eval(item, "%{data.x} == 2.1"));
+		Assert.assertFalse(eval(item, "%{data.x} == 2.0"));
+		Assert.assertTrue(eval(item, "%{data.x} == %{data.x2.1}"));
+		Assert.assertFalse(eval(item, "%{data.x} == %{data.x2.0}"));
 
-		Assert.assertTrue(eval(item, "xa == A"));
+		Assert.assertFalse(eval(item, "%{data.x} == A"));
+		Assert.assertTrue(eval(item, "%{data.xa} == A"));
 	}
+
+	@Test
+	public void testNeq() throws Exception {
+		item.put("x", 2.1d);
+		item.put("xa", "A");
+		Assert.assertFalse(eval(item, "%{data.x} @neq 2.1"));
+		Assert.assertFalse(eval(item, "%{data.x} != 2.1"));
+
+		Assert.assertTrue(eval(item, "%{data.x} != 2.0"));
+
+		Assert.assertFalse(eval(item, "%{data.x} != %{data.x2.1}"));
+		Assert.assertTrue(eval(item, "%{data.x} != %{data.x2.0}"));
+
+		Assert.assertTrue(eval(item, "%{data.x} != A"));
+		Assert.assertFalse(eval(item, "%{data.xa} != A"));
+	}
+
 }

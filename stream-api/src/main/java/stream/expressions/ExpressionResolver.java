@@ -51,6 +51,15 @@ public class ExpressionResolver {
 			return ctx.resolve(var);
 		}
 
-		return item.get(variable);
+		return null;
+	}
+
+	public static boolean isMacroObject(String variable) {
+		if (variable != null) {
+			String var = variable.trim();
+			if (var.startsWith(MACRO_START) && var.endsWith(MACRO_END))
+				return true;
+		}
+		return false;
 	}
 }

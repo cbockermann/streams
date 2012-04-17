@@ -19,25 +19,38 @@ public class Match implements Expression {
 	/** The unique class ID */
 	private static final long serialVersionUID = 7007162167342940123L;
 
-	String variable;
+	String left;
 	Operator op;
-	String value;
+	String right;
 	boolean negated = false;
 
-	public Match(String variable, Operator o, String value) {
-		this.variable = variable;
+	public Match(String left, Operator o, String right) {
+		this.left = left;
 		this.op = o;
-		this.value = value;
+		this.right = right;
 		this.negated = o.isNegated();
 	}
 
 	public boolean matches(Context ctx, Data item) {
 
-		Object featureValue = ExpressionResolver.resolve(variable, ctx, item);
+		Object leftObject = ExpressionResolver.resolve(left, ctx, item);
+		if (leftObject == null)
+			if (ExpressionResolver.isMacroObject(left) || left.equals("null"))
+				leftObject = null;
+			else
+				leftObject = left;
+
+		Object rightObject = ExpressionResolver.resolve(right, ctx, item);
+		if (rightObject == null)
+			if (ExpressionResolver.isMacroObject(right) || right.equals("null"))
+				rightObject = null;
+			else
+				rightObject = right;
+
 		// Serializable featureValue = item.get(variable);
 		if (op instanceof BinaryOperator) {
 			BinaryOperator binOp = (BinaryOperator) op;
-			boolean match = binOp.eval(featureValue, this.value);
+			boolean match = binOp.eval(leftObject, rightObject);
 
 			boolean result = match;
 			if (negated) {
@@ -51,6 +64,6 @@ public class Match implements Expression {
 	}
 
 	public String toString() {
-		return variable + " " + op.toString() + " " + value;
+		return left + " " + op.toString() + " " + right;
 	}
 }

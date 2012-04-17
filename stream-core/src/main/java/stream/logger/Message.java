@@ -6,7 +6,6 @@ package stream.logger;
 import stream.ConditionedProcessor;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.ContextAwareMacroExpander;
 import stream.expressions.Expression;
@@ -23,31 +22,15 @@ public class Message extends ConditionedProcessor {
 	String condition;
 	MacroExpander macroExpander = new MacroExpander();
 
-	/**
-	 * @return the txt
-	 */
-	public String getTxt() {
-		if (txt == null)
-			return "";
-
-		return txt;
-	}
-
-	/**
-	 * @param txt
-	 *            the txt to set
-	 */
-	@Parameter
-	public void setTxt(String txt) {
-		this.txt = txt;
-	}
-
-	public void setText(String str) {
-		setTxt(str);
-	}
-
 	public void setMessage(String msg) {
-		setTxt(msg);
+		if (msg == null)
+			this.txt = "";
+		else
+			this.txt = msg;
+	}
+
+	public String getMessage() {
+		return txt;
 	}
 
 	/**
@@ -66,7 +49,7 @@ public class Message extends ConditionedProcessor {
 	public Data processMatchingData(Data data) {
 
 		if (filter == null || filter.matches(context, data)) {
-			String msg = macroExpander.substitute(getTxt(), data);
+			String msg = macroExpander.substitute(getMessage(), data);
 			System.out.println(msg);
 		}
 

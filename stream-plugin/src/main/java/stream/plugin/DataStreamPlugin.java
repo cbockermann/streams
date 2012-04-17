@@ -32,7 +32,7 @@ public final class DataStreamPlugin {
 
 	public final static String NAME = "DataStream-Plugin";
 
-	public final static String VERSION = "v0.2";
+	public final static String VERSION = "v0.3";
 
 	public final static String DATA_ITEM_PORT_NAME = "data item";
 
@@ -44,13 +44,30 @@ public final class DataStreamPlugin {
 
 	static MainFrame mainframe;
 
+	public static boolean inStreamingMode() {
+
+		if ("true"
+				.equalsIgnoreCase(System.getProperty("rapidminer.streaming "))) {
+			return true;
+		}
+
+		if (System.getenv("RAPIDMINER_STREAMING") != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static StreamPlotView getStreamPlotView() {
 		return streamPlotView;
 	}
 
 	public static void initPlugin() {
 
+		log.info("");
 		log.info("Initializing {}, {}", NAME, VERSION);
+		log.info("Running in Rapidminer-Streaming-Mode?  {}", inStreamingMode());
+		log.info("");
 		try {
 
 			URL url = DataStreamPlugin.class.getResource("/log4j.properties");
@@ -124,10 +141,5 @@ public final class DataStreamPlugin {
 
 	public static MainFrame getMainFrame() {
 		return mainframe;
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		DataStreamPlugin.initPlugin();
 	}
 }

@@ -28,7 +28,6 @@ public class GenericOperatorDescription extends OperatorDescription {
 	static Logger log = LoggerFactory
 			.getLogger(GenericOperatorDescription.class);
 
-	static boolean rapidMinerStreamingMode = false;
 	final Class<?> libClass;
 
 	/**
@@ -92,7 +91,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 						"Creating GenericStreamingSourceOperator for class {}",
 						libClass);
 
-				if (rapidMinerStreamingMode) {
+				if (DataStreamPlugin.inStreamingMode()) {
 					op = new GenericStreamingSourceOperator(description,
 							(Class<? extends DataStream>) sod.libClass);
 				} else {
@@ -106,7 +105,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 			log.info("Creating GenericStreamOperator for processor-class {}",
 					libClass);
 
-			if (rapidMinerStreamingMode) {
+			if (DataStreamPlugin.inStreamingMode()) {
 				op = new GenericStreamingProcessorOperator(description,
 						(Class<? extends Processor>) sod.libClass);
 			} else {

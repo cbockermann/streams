@@ -1,4 +1,4 @@
-package stream.plugin;
+package stream.plugin.data;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;

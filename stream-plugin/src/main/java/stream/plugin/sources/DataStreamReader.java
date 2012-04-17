@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import stream.io.DataStream;
-import stream.plugin.DataSourceObject;
+import stream.plugin.data.DataSourceObject;
 import stream.plugin.util.OperatorUtils;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.setup.DataStreamFactory;

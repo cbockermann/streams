@@ -3,7 +3,7 @@
  */
 package stream.plugin.sources;
 
-import stream.plugin.DataSourceObject;
+import stream.plugin.data.DataSourceObject;
 import stream.plugin.util.ExampleSetDataStreamWrapper;
 
 import com.rapidminer.example.ExampleSet;

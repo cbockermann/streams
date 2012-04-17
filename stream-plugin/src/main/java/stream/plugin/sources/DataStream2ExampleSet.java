@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.plugin.DataSourceObject;
+import stream.plugin.data.DataSourceObject;
 
 import com.rapidminer.example.Attribute;
 import com.rapidminer.example.ExampleSet;

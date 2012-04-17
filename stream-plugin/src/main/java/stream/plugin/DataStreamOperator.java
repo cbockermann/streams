@@ -13,6 +13,7 @@ import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
 import stream.data.Data;
+import stream.plugin.data.DataObject;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;

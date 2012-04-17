@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.Icon;
 
 import stream.data.Data;
-import stream.plugin.DataObject;
+import stream.plugin.data.DataObject;
 
 import com.rapidminer.operator.ResultObject;
 

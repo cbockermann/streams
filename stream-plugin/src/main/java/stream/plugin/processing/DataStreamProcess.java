@@ -14,10 +14,10 @@ import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 import stream.io.ListDataStream;
-import stream.plugin.DataObject;
-import stream.plugin.DataSourceObject;
 import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
+import stream.plugin.data.DataObject;
+import stream.plugin.data.DataSourceObject;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 

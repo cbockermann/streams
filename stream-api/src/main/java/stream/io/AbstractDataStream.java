@@ -97,6 +97,7 @@ public abstract class AbstractDataStream implements DataStream {
 	 * @param prefix
 	 *            the prefix to set
 	 */
+	@Parameter(required = false, defaultValue = "")
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}

@@ -3,6 +3,8 @@ package stream.data.tree;
 import java.io.Serializable;
 import java.util.Collection;
 
+import stream.data.TreeNode;
+
 
 public class CountLeaves 
 	extends AbstractTreeFeature 

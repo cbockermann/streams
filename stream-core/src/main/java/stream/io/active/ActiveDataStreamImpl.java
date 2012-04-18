@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.io.DataStream;
 
 /**
@@ -41,7 +41,7 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	@Override
@@ -111,5 +111,13 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 			this.run = run;
 			this.interrupt();
 		}
+	}
+
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
 	}
 }

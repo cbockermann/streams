@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -106,6 +106,7 @@ public abstract class AbstractDataStream implements DataStream {
 		return limit;
 	}
 
+	@Parameter(required = false, defaultValue = "-1", max = Long.MAX_VALUE)
 	public void setLimit(Long limit) {
 		this.limit = limit;
 	}
@@ -163,6 +164,13 @@ public abstract class AbstractDataStream implements DataStream {
 	}
 
 	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+	}
+
+	/**
      * 
      */
 	public abstract void readHeader() throws Exception;
@@ -191,7 +199,7 @@ public abstract class AbstractDataStream implements DataStream {
 			}
 
 			if (prefix != null) {
-				Data prefixed = new DataImpl();
+				Data prefixed = DataFactory.create();
 				for (String key : datum.keySet()) {
 					prefixed.put(prefix + ":" + key, datum.get(key));
 				}
@@ -213,6 +221,6 @@ public abstract class AbstractDataStream implements DataStream {
 	}
 
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 }

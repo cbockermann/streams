@@ -9,7 +9,7 @@ import java.util.Set;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -69,7 +69,7 @@ public class SelectAttributes implements Processor {
 			}
 			return data;
 		} else {
-			Data result = new DataImpl();
+			Data result = DataFactory.create();
 			while (it.hasNext()) {
 				String key = it.next();
 				if (selected.contains(key)) {

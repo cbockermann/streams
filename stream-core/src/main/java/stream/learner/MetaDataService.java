@@ -6,7 +6,7 @@ package stream.learner;
 import java.io.Serializable;
 import java.util.Set;
 
-import stream.data.stats.Statistics;
+import stream.data.Statistics;
 import stream.service.Service;
 
 /**

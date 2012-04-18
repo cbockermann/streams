@@ -8,7 +8,7 @@ import java.util.Map;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 public class ListDataStream implements DataStream {
 
@@ -28,7 +28,7 @@ public class ListDataStream implements DataStream {
 
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	@Override
@@ -58,5 +58,12 @@ public class ListDataStream implements DataStream {
 
 	public void close() {
 		data.clear();
+	}
+
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
 	}
 }

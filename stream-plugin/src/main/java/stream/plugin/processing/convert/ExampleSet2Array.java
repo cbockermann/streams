@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.plugin.data.DataObject;
 
 import com.rapidminer.example.Attribute;
@@ -25,17 +25,16 @@ import com.rapidminer.parameter.ParameterTypeString;
 
 /**
  * @author chris
- *
+ * 
  */
 public class ExampleSet2Array extends Operator {
 
 	public final static String KEY_PARAMETER = "Key";
 	public final static String INCLUDE_SPECIAL = "include special attributes";
 
-	final InputPort input = getInputPorts().createPort( "example set" );
-	final OutputPort output = getOutputPorts().createPort( "data item" );
-	
-	
+	final InputPort input = getInputPorts().createPort("example set");
+	final OutputPort output = getOutputPorts().createPort("data item");
+
 	/**
 	 * @param description
 	 */
@@ -49,55 +48,53 @@ public class ExampleSet2Array extends Operator {
 	@Override
 	public void doWork() throws OperatorException {
 
-		String key = getParameterAsString( KEY_PARAMETER );
-		boolean includeSpecial = getParameterAsBoolean( INCLUDE_SPECIAL );
-		
+		String key = getParameterAsString(KEY_PARAMETER);
+		boolean includeSpecial = getParameterAsBoolean(INCLUDE_SPECIAL);
 
-		ExampleSet exampleSet = input.getData( ExampleSet.class );
+		ExampleSet exampleSet = input.getData(ExampleSet.class);
 		Attributes attributes = exampleSet.getAttributes();
-		
+
 		int columns = attributes.size();
-		if( includeSpecial )
+		if (includeSpecial)
 			columns += attributes.specialSize();
-		
-		double[] array = new double[ exampleSet.size() * columns ];
-		
+
+		double[] array = new double[exampleSet.size() * columns];
+
 		int row = 0;
-		for( Example example : exampleSet ){
-			
+		for (Example example : exampleSet) {
+
 			Iterator<Attribute> cols;
-			if( includeSpecial ){
+			if (includeSpecial) {
 				cols = attributes.allAttributes();
 			} else {
 				cols = attributes.iterator();
 			}
-			
+
 			int c = 0;
 			int offset = row * columns;
-			while( cols.hasNext() ){
-				double value = example.getValue( cols.next() );
-				array[ offset + c ] = value;
+			while (cols.hasNext()) {
+				double value = example.getValue(cols.next());
+				array[offset + c] = value;
 				c++;
 			}
-			
+
 			row++;
 		}
 
-		Data item = new DataImpl();
-		item.put( key, array );
+		Data item = DataFactory.create();
+		item.put(key, array);
 
-		output.deliver( new DataObject( item ) );
+		output.deliver(new DataObject(item));
 	}
 
-	
 	/**
 	 * @see com.rapidminer.operator.Operator#getParameterTypes()
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
 		List<ParameterType> types = super.getParameterTypes();
-		types.add( new ParameterTypeString( KEY_PARAMETER, "", false ) );
-		types.add( new ParameterTypeBoolean( INCLUDE_SPECIAL, "", false ) );
+		types.add(new ParameterTypeString(KEY_PARAMETER, "", false));
+		types.add(new ParameterTypeBoolean(INCLUDE_SPECIAL, "", false));
 		return types;
 	}
 }

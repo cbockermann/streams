@@ -6,6 +6,7 @@ import java.util.List;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
+import stream.data.TreeNode;
 
 public abstract class AbstractTreeFeature extends AbstractProcessor
 		implements TreeFeature {

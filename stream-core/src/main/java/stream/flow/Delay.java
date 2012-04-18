@@ -40,7 +40,7 @@ public class Delay extends ConditionedProcessor {
 	 * @param time
 	 *            the time to set
 	 */
-	@Parameter(defaultValue = "1000ms")
+	@Parameter(required = true, defaultValue = "1000ms")
 	public void setTime(String time) {
 		this.time = time;
 	}

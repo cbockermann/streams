@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.data.Data;
+import stream.data.TreeNode;
 
 public class TreeEdges extends TreeFeatures {
 

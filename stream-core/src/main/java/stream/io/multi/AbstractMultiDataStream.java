@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.io.DataStream;
 import stream.io.active.ActiveDataStreamImpl;
 
@@ -54,7 +54,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	 * @throws Exception
 	 */
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	public final Data readNext(Data item) throws Exception {
@@ -141,4 +141,11 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 		return preprocessors.remove(idx);
 	}
 
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
+	}
 }

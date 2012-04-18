@@ -19,7 +19,7 @@ public class LocalContext implements ProcessContext {
 	final Map<String, Object> context = new HashMap<String, Object>();
 
 	/**
-	 * @see stream.service.LookupService#lookup(java.lang.String)
+	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
 	@Override
 	public Service lookup(String ref) throws Exception {
@@ -27,7 +27,7 @@ public class LocalContext implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.LookupService#register(java.lang.String,
+	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class LocalContext implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.LookupService#unregister(java.lang.String)
+	 * @see stream.service.NamingService#unregister(java.lang.String)
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {

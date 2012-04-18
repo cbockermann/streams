@@ -28,7 +28,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.LookupService#lookup(java.lang.String)
+	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
 	@Override
 	public Service lookup(String ref) throws Exception {
@@ -36,7 +36,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.LookupService#register(java.lang.String,
+	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
 	@Override
@@ -45,7 +45,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.LookupService#unregister(java.lang.String)
+	 * @see stream.service.NamingService#unregister(java.lang.String)
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {

@@ -4,15 +4,16 @@
 package stream.data.stats;
 
 import stream.data.Data;
+import stream.data.StatisticsLearner;
 
 /**
  * @author chris
  * 
  */
-public class Maxima extends StatisticsLearner {
+public class Minima extends StatisticsLearner {
 
 	/**
-	 * @see stream.data.stats.StatisticsLearner#updateStatistics(stream.data.Data)
+	 * @see stream.data.StatisticsLearner#updateStatistics(stream.data.Data)
 	 */
 	@Override
 	public void updateStatistics(Data item) {
@@ -33,5 +34,4 @@ public class Maxima extends StatisticsLearner {
 			}
 		}
 	}
-
 }

@@ -8,7 +8,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.io.AbstractDataStream;
 
 /**
@@ -47,7 +47,7 @@ public class TestStream extends AbstractDataStream {
 	@Override
 	public Data readItem(Data instance) throws Exception {
 		if (instance == null)
-			instance = new DataImpl();
+			instance = DataFactory.create();
 
 		for (int i = 0; i < numberOfKeys; i++) {
 			String key = "x[" + i + "]";

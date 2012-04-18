@@ -26,6 +26,8 @@ public interface DataStream {
 	 */
 	public Map<String, Class<?>> getAttributes();
 
+	public void init() throws Exception;
+
 	/**
 	 * Returns the next datum from this stream.
 	 * 

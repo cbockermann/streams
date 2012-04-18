@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.data.DataUtils;
 import stream.data.mapper.HideKey;
 import stream.runtime.VariableContext;
@@ -35,7 +35,7 @@ public class ParameterDiscoveryTest {
 
 			ParameterInjection.inject(proc, params, new VariableContext());
 
-			Data datum = new DataImpl();
+			Data datum = DataFactory.create();
 			datum.put("x", 1.0d);
 			datum.put("y", 2.10d);
 

@@ -20,10 +20,19 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	/** The unique class ID */
 	private static final long serialVersionUID = -7751681008628413236L;
 
+	/**
+	 * @deprecated Creation of Data items should be done with
+	 *             {@link stream.data.DataFactory#create()}
+	 */
 	public DataImpl() {
 	}
 
-	public DataImpl(Map<String, Serializable> data) {
+	/**
+	 * @param data
+	 * @deprecated Creation of Data items should be done with
+	 *             {@link stream.data.DataFactory#create()}
+	 */
+	protected DataImpl(Map<String, Serializable> data) {
 		super(data);
 	}
 

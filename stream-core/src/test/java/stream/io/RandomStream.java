@@ -12,7 +12,7 @@ import java.util.Random;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -46,7 +46,7 @@ public class RandomStream implements DataStream {
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	/**
@@ -96,6 +96,14 @@ public class RandomStream implements DataStream {
 	@Override
 	public List<Processor> getPreprocessors() {
 		return processors;
+	}
+
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
 	}
 
 	public static void main(String[] args) throws Exception {

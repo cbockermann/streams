@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class DataStreamLoopTest {
 
 		List<Data> items = new ArrayList<Data>();
 		for (int i = 0; i < 10; i++) {
-			Data item = new DataImpl();
+			Data item = DataFactory.create();
 			item.put("@id", i + "");
 			item.put("x", Math.random());
 			items.add(item);

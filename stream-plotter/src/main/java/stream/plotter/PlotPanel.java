@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataListener;
-import stream.data.stats.Statistics;
+import stream.data.Statistics;
 
 /**
  * @author chris
@@ -233,7 +233,7 @@ public class PlotPanel extends JPanel implements DataListener {
 	}
 
 	/**
-	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.stats.Statistics)
+	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.Statistics)
 	 */
 	public void dataArrived(Statistics item) {
 

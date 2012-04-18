@@ -25,4 +25,11 @@ public abstract class GeneratorDataStream implements DataStream {
 		return processors;
 	}
 
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
+	}
 }

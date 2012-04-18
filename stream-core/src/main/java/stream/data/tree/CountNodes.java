@@ -2,6 +2,8 @@ package stream.data.tree;
 
 import java.io.Serializable;
 
+import stream.data.TreeNode;
+
 
 public class CountNodes 
 	extends AbstractTreeFeature 

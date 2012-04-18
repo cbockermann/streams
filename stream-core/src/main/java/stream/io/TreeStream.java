@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
-import stream.data.tree.TreeNode;
+import stream.data.DataFactory;
+import stream.data.TreeNode;
 import stream.parser.DefaultTreeParser;
 
 /**
@@ -64,7 +64,7 @@ public class TreeStream implements DataStream {
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	/**
@@ -115,5 +115,14 @@ public class TreeStream implements DataStream {
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }

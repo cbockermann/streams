@@ -25,6 +25,8 @@ public interface Data extends Map<String, Serializable>, Serializable {
 	/**
 	 * attributes starting with this prefix are considered as hidden and must
 	 * not be processed (neither removed nor modified) by data mappers.
+	 * 
+	 * @deprecated
 	 */
 	public final static String HIDDEN_PREFIX = "._";
 

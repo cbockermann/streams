@@ -8,8 +8,7 @@ import java.util.Map;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
-import stream.data.DataUtils;
-import stream.data.tree.TreeNode;
+import stream.data.TreeNode;
 import stream.util.parser.ParseException;
 import stream.util.parser.Parser;
 
@@ -69,8 +68,6 @@ public class DefaultTreeParser extends AbstractProcessor implements
 				if (tree != null) {
 					data.put("@tree", tree);
 				}
-
-				DataUtils.hide(sourceKey, data);
 
 			} catch (Exception e) {
 				e.printStackTrace();

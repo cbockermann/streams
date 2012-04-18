@@ -62,7 +62,15 @@ public class ProcessorList extends AbstractProcessor {
 		}
 	}
 
-	public void addDataProcessor(Processor p) {
+	public void addProcessor(Processor p) {
 		processors.add(p);
+	}
+
+	public void addProcessor(int idx, Processor p) {
+		processors.add(idx, p);
+	}
+
+	public List<Processor> getProcessors() {
+		return processors;
 	}
 }

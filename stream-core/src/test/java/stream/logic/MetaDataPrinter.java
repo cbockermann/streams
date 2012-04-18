@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
 import stream.data.Data;
-import stream.data.stats.Statistics;
+import stream.data.Statistics;
 import stream.learner.MetaDataService;
 
 /**

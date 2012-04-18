@@ -6,7 +6,7 @@ package stream.plugin.data;
 import java.io.Serializable;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 import com.rapidminer.streaming.ioobject.AttributeValue;
 import com.rapidminer.streaming.ioobject.AttributeVector;
@@ -28,7 +28,7 @@ public class AttributeVectorDataAdapter {
 	}
 
 	public static Data createDataItem(AttributeVector vector) {
-		Data item = new DataImpl();
+		Data item = DataFactory.create();
 		for (StreamingAttributeHeader header : vector.getAttributeHeaders()) {
 			item.put(ConventionMapping.map(header).toString(),
 					(Serializable) vector.getAttributeValue(header).getRaw());

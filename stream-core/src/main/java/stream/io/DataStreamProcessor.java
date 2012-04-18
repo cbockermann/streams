@@ -181,4 +181,15 @@ public class DataStreamProcessor extends AbstractProcessor implements
 			}
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

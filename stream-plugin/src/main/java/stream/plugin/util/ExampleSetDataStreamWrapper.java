@@ -11,7 +11,7 @@ import java.util.Map;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.io.DataStream;
 
 import com.rapidminer.example.Attribute;
@@ -89,7 +89,7 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	/**
@@ -152,5 +152,13 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 		}
 
 		return item;
+	}
+
+	/**
+	 * @see stream.io.DataStream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		// TODO Auto-generated method stub
 	}
 }

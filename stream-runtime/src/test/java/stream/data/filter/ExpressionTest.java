@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 import stream.runtime.LocalContext;
@@ -21,7 +21,7 @@ import stream.runtime.LocalContext;
  */
 public class ExpressionTest {
 
-	Data item = new DataImpl();
+	Data item = DataFactory.create();
 
 	@Before
 	public void init() {

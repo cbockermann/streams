@@ -1,4 +1,4 @@
-package stream.data.tree;
+package stream.data;
 
 import java.io.Serializable;
 import java.util.Collection;

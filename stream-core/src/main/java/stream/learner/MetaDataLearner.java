@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
-import stream.data.stats.Statistics;
+import stream.data.Statistics;
 
 /**
  * @author chris

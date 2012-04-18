@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * 
@@ -48,7 +48,7 @@ public class DataStreamLoop extends DataStreamProcessor {
 
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(new DataImpl());
+		return readNext(DataFactory.create());
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -144,7 +144,7 @@ public class CsvStream extends AbstractDataStream {
 	 */
 	public Data readItem(Data datum) throws Exception {
 		if (datum == null)
-			datum = new DataImpl();
+			datum = DataFactory.create();
 		else
 			datum.clear();
 

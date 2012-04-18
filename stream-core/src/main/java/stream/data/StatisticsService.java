@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.data.stats;
+package stream.data;
 
 import stream.service.Service;
 

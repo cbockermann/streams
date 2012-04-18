@@ -55,7 +55,7 @@ public class ExpressionResolverTest {
 	public void testResolveContainer() {
 		ctx.setProperty("test", "ABC");
 
-		Data item = new DataImpl();
+		Data item = DataFactory.create();
 		Object o = ExpressionResolver.resolve("%{container.test}", pc, item);
 		Assert.assertEquals("ABC", o);
 	}
@@ -64,7 +64,7 @@ public class ExpressionResolverTest {
 	public void testResolveProcess() {
 		Long val = new Long(100L);
 		pc.set("pclocal", val);
-		Data item = new DataImpl();
+		Data item = DataFactory.create();
 		Object o = ExpressionResolver.resolve("%{process.pclocal}", pc, item);
 		Assert.assertEquals(val, o);
 	}

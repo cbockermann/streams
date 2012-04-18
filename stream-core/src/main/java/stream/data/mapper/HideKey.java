@@ -5,6 +5,12 @@ import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataUtils;
 
+/**
+ * 
+ * 
+ * @author chris
+ * @deprecated
+ */
 public class HideKey extends AbstractProcessor {
 
 	String key;

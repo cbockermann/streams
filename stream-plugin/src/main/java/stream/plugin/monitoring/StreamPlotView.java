@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import stream.data.Data;
 import stream.data.DataListener;
-import stream.data.stats.Statistics;
+import stream.data.Statistics;
 import stream.plotter.PlotPanel;
 
 /**

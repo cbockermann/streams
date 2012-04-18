@@ -1,10 +1,9 @@
 /**
  * 
  */
-package stream.data.stats;
+package stream.data;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -13,8 +12,8 @@ import stream.data.Data;
 public abstract class StatisticsLearner extends AbstractProcessor implements
 		StatisticsService {
 
-	String[] keys;
-	Statistics statistics = new Statistics();
+	protected String[] keys;
+	protected Statistics statistics = new Statistics();
 
 	/**
 	 * @return the keys
@@ -41,7 +40,7 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	}
 
 	/**
-	 * @see stream.data.stats.StatisticsService#getStatistics(java.lang.String)
+	 * @see stream.data.StatisticsService#getStatistics(java.lang.String)
 	 */
 	@Override
 	public Statistics getStatistics() {

@@ -8,22 +8,29 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.stats.History;
-
 public class TimeParser {
 	static Logger log = LoggerFactory.getLogger(TimeParser.class);
 	static Map<String, Long> UNITS = new LinkedHashMap<String, Long>();
 
+	public final static Long MILLISECOND = 1L;
+	public final static Long SECOND = 60 * MILLISECOND;
+	public final static Long MINUTE = 60 * SECOND;
+	public final static Long HOUR = 60 * MINUTE;
+	public final static Long DAY = 24 * HOUR;
+	public final static Long WEEK = 7 * DAY;
+	public final static Long MONTH = 30 * DAY;
+	public final static Long YEAR = 365 * DAY;
+
 	static {
-		UNITS.put("ms", History.MILLISECOND);
-		UNITS.put("years", History.YEAR);
-		UNITS.put("months", History.MONTH);
-		UNITS.put("weeks", History.WEEK);
-		UNITS.put("days", History.DAY);
-		UNITS.put("hours", History.HOUR);
-		UNITS.put("minutes", History.MINUTE);
+		UNITS.put("ms", MILLISECOND);
+		UNITS.put("years", YEAR);
+		UNITS.put("months", MONTH);
+		UNITS.put("weeks", WEEK);
+		UNITS.put("days", DAY);
+		UNITS.put("hours", HOUR);
+		UNITS.put("minutes", MINUTE);
 		// UNITS.put( "mins", History.MINUTE );
-		UNITS.put("seconds", History.SECOND);
+		UNITS.put("seconds", SECOND);
 		// UNITS.put( "secs", History.SECOND );
 	}
 

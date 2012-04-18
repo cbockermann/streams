@@ -3,7 +3,7 @@ package stream.data.mapper;
 import stream.AbstractProcessor;
 import stream.annotations.Description;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author blom
@@ -14,7 +14,7 @@ public class TrimKeys extends AbstractProcessor {
 
 	@Override
 	public Data process(Data data) {
-		Data d = new DataImpl();
+		Data d = DataFactory.create();
 		for (String key : data.keySet()) {
 			d.put(key.trim(), data.get(key));
 		}

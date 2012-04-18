@@ -1,5 +1,7 @@
 package stream.data.tree;
 
+import stream.data.TreeNode;
+
 
 public class CountInnerNodes 
 	extends CountNodes

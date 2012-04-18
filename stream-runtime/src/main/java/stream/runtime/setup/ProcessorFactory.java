@@ -64,7 +64,7 @@ public class ProcessorFactory {
 						Element element = (Element) node;
 						Processor proc = createProcessor(element);
 						if (proc != null) {
-							((ProcessorList) o).addDataProcessor(proc);
+							((ProcessorList) o).addProcessor(proc);
 						} else {
 							log.warn(
 									"Nested element {} is not of type 'stream.data.Processor': ",

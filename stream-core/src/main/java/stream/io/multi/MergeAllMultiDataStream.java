@@ -3,7 +3,7 @@ package stream.io.multi;
 import java.util.Map;
 
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.io.DataStream;
 
 /**
@@ -25,7 +25,7 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 	protected Data readNext(Data item, Map<String, DataStream> streams)
 			throws Exception {
 		if (item == null)
-			item = new DataImpl();
+			item = DataFactory.create();
 
 		boolean stop = true;
 

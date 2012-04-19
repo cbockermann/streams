@@ -3,6 +3,7 @@
  */
 package stream.plugin;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.Logger;
@@ -84,6 +85,16 @@ public class GenericOperatorDescription extends OperatorDescription {
 		if (description instanceof GenericOperatorDescription) {
 			GenericOperatorDescription sod = (GenericOperatorDescription) description;
 
+			if (Operator.class.isAssignableFrom(libClass)) {
+				log.info("Provided class already is a fully blown operator!");
+
+				Constructor<?> constructor = libClass
+						.getConstructor(OperatorDescription.class);
+
+				op = (Operator) constructor.newInstance(sod);
+				return op;
+			}
+
 			if (DataStream.class.isAssignableFrom(libClass)) {
 				log.info("Class {} is a data-stream class!", libClass);
 
@@ -123,6 +134,13 @@ public class GenericOperatorDescription extends OperatorDescription {
 	}
 
 	public static boolean canCreate(Class<?> clazz) {
+
+		if (Operator.class.isAssignableFrom(clazz)) {
+			log.info(
+					"Yes, we support direct creation of Operators...(class {})",
+					clazz);
+			return true;
+		}
 
 		if (Processor.class.isAssignableFrom(clazz)) {
 			log.info("Yes, we can create an Operator for Processor-class {}",

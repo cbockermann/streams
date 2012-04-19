@@ -198,7 +198,7 @@ public abstract class AbstractDataStream implements DataStream {
 				return null;
 			}
 
-			if (prefix != null) {
+			if (prefix != null && !prefix.trim().isEmpty()) {
 				Data prefixed = DataFactory.create();
 				for (String key : datum.keySet()) {
 					prefixed.put(prefix + ":" + key, datum.get(key));

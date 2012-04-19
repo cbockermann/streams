@@ -1,0 +1,19 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "25">
+		
+	</Stream>
+
+	<Process input="input" multiply="4">
+
+		<stream.flow.Delay time="1second" />
+	
+		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />
+		
+	</Process>
+	
+</Container>

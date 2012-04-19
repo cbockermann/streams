@@ -20,17 +20,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.ProcessContext;
-import stream.Processor;
-import stream.ProcessorList;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
-import stream.runtime.setup.DataStreamFactory;
+import stream.runtime.setup.MonitorElementHandler;
 import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ProcessElementHandler;
 import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
-import stream.service.Service;
+import stream.runtime.setup.StreamElementHandler;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -88,10 +89,18 @@ public class ProcessContainer {
 	 * @param url
 	 * @throws Exception
 	 */
-	public ProcessContainer(URL url, Map<String, ElementHandler> elementHandler)
-			throws Exception {
-		if (elementHandler != null)
-			this.elementHandler.putAll(elementHandler);
+	public ProcessContainer(URL url,
+			Map<String, ElementHandler> customElementHandler) throws Exception {
+
+		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
+				processorFactory));
+		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
+				processorFactory));
+		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
+		elementHandler.put("Service", new ServiceElementHandler(objectFactory));
+
+		if (customElementHandler != null)
+			elementHandler.putAll(customElementHandler);
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -163,6 +172,15 @@ public class ProcessContainer {
 		context.getProperties().putAll(getProperties(root));
 		NodeList children = root.getChildNodes();
 
+		if (context.getProperties().get("container.datafactory") != null) {
+			log.info("Using {} as default DataFactory for this container...",
+					context.getProperties().get("container.datafactory"));
+			Class<?> dataFactoryClass = Class.forName(context.getProperties()
+					.get("container.datafactory"));
+			DataFactory.setDefaultDataFactory((DataFactory) dataFactoryClass
+					.newInstance());
+		}
+
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
 
@@ -170,101 +188,18 @@ public class ProcessContainer {
 				continue;
 
 			Element element = (Element) node;
-			String elementName = node.getNodeName();
-
-			if (elementHandler.keySet().contains(elementName)) {
-				ElementHandler e = elementHandler.get(elementName);
-				if (e != null) {
-					log.debug("ElementHandler will handle {} element!",
-							elementName);
-					e.handleElement(this, element);
+			for (ElementHandler handler : this.elementHandler.values()) {
+				if (handler.handlesElement(element)) {
+					handler.handleElement(this, element);
 					continue;
 				}
-			}
-
-			if (elementName.equalsIgnoreCase("Stream")
-					|| elementName.equalsIgnoreCase("DataStream")) {
-				try {
-					Map<String, String> attr = objectFactory
-							.getAttributes(element);
-					String id = attr.get("id");
-
-					DataStream stream = DataStreamFactory.createStream(
-							objectFactory, processorFactory, element);
-					if (stream != null) {
-						if (id == null)
-							id = "" + stream;
-						streams.put(id, stream);
-					}
-
-				} catch (Exception e) {
-					log.error("Failed to create object: {}", e.getMessage());
-					e.printStackTrace();
-				}
-				continue;
-			}
-
-			if ("monitor".equalsIgnoreCase(elementName)) {
-				Map<String, String> params = objectFactory
-						.getAttributes(element);
-
-				// the default Monitor class is stream.runtime.Monitor
-				//
-				String className = "stream.runtime.Monitor";
-				if (element.hasAttribute("class")) {
-					className = element.getAttribute("class");
-					log.info(
-							"Creating Monitor instance from custom class '{}'",
-							className);
-				}
-
-				Monitor monitor = (Monitor) objectFactory.create(className,
-						params);
-				log.debug("Created Monitor object: {}", monitor);
-
-				List<Processor> procs = createNestedProcessors(element);
-				for (Processor p : procs)
-					monitor.addProcessor(p);
-
-				processes.add(monitor);
-				continue;
-			}
-
-			if ((elementName.equalsIgnoreCase("Processing"))
-					|| elementName.equalsIgnoreCase("Process")) {
-				log.debug("Found 'Processing' element!");
-				Element child = (Element) node;
-
-				Map<String, String> attr = objectFactory.getAttributes(child);
-				String src = attr.get("source");
-				if (src == null)
-					src = attr.get("input");
-
-				// Create the default data-stream process
-				//
-				String processClass = "stream.runtime.Process";
-				if (attr.containsKey("class")) {
-					processClass = attr.get("class");
-					log.info("Using custom process class '{}'", processClass);
-				}
-
-				Process process = (Process) objectFactory.create(processClass,
-						attr);
-				log.debug("Created Process object: {}", process);
-
-				List<Processor> procs = createNestedProcessors(child);
-				for (Processor p : procs) {
-					process.addProcessor(p);
-				}
-				processes.add(process);
 			}
 
 		}
 
 		connectProcesses();
 
-		ServiceInjection.injectServices(this.getServiceRefs(),
-				this.getContext());
+		injectServices();
 	}
 
 	/**
@@ -289,7 +224,7 @@ public class ProcessContainer {
 							input, input);
 					DataStreamQueue q = new DataStreamQueue();
 					listeners.put(input, q);
-					streams.put(input, q);
+					setStream(input, q);
 					context.register(input, q);
 					stream = q;
 				}
@@ -299,23 +234,13 @@ public class ProcessContainer {
 		}
 	}
 
-	protected List<Processor> createNestedProcessors(Element child)
-			throws Exception {
-		List<Processor> procs = new ArrayList<Processor>();
+	protected void injectServices() throws Exception {
+		ServiceInjection.injectServices(this.getServiceRefs(),
+				this.getContext());
+	}
 
-		NodeList pnodes = child.getChildNodes();
-		for (int j = 0; j < pnodes.getLength(); j++) {
-
-			Node cnode = pnodes.item(j);
-			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
-				Processor p = createProcessor((Element) cnode);
-				if (p != null) {
-					log.debug("Found processor...");
-					procs.add(p);
-				}
-			}
-		}
-		return procs;
+	public void setStream(String id, DataStream stream) {
+		streams.put(id, stream);
 	}
 
 	protected Map<String, String> getProperties(Element element) {
@@ -341,65 +266,6 @@ public class ProcessContainer {
 		return props;
 	}
 
-	protected Processor createProcessor(Element child) throws Exception {
-
-		Map<String, String> params = objectFactory.getAttributes(child);
-
-		Object o = objectFactory.create(child);
-		if (o instanceof Processor) {
-
-			if (o instanceof ProcessorList) {
-
-				NodeList children = child.getChildNodes();
-				for (int i = 0; i < children.getLength(); i++) {
-
-					Node node = children.item(i);
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-						Element element = (Element) node;
-						Processor proc = createProcessor(element);
-						if (proc != null) {
-							((ProcessorList) o).addProcessor(proc);
-						} else {
-							log.warn(
-									"Nested element {} is not of type 'stream.data.Processor': ",
-									node.getNodeName());
-						}
-					}
-				}
-			}
-
-			if (params.containsKey("id") && !"".equals(params.get("id").trim())) {
-
-				if (o instanceof Service) {
-					String id = params.get("id").trim();
-					log.debug(
-							"Registiering processor with id '{}' in look-up service",
-							child.getAttribute("id"));
-					context.register(id, (Service) o);
-				} else {
-					log.warn(
-							"Processor '{}' specifies an ID attribute '{}' but does not implement a Service interface. Processor will *not* be registered!",
-							o.getClass().getName(), params.get("id"));
-				}
-			}
-
-			for (String key : params.keySet()) {
-
-				if (key.endsWith("-ref")) {
-					String ref = params.get(key);
-					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key);
-					serviceRefs.add(serviceRef);
-				}
-			}
-
-			return (Processor) o;
-		}
-
-		return null;
-	}
-
 	public void run() throws Exception {
 
 		if (streams.isEmpty() && listeners.isEmpty())
@@ -413,6 +279,7 @@ public class ProcessContainer {
 		long start = System.currentTimeMillis();
 		for (AbstractProcess spu : processes) {
 			spu.setDaemon(true);
+
 			ProcessContext ctx = new ProcessContextImpl(context);
 			log.debug("Initializing process with process-context...");
 			spu.init(ctx);

@@ -13,7 +13,7 @@ public class TimeParser {
 	static Map<String, Long> UNITS = new LinkedHashMap<String, Long>();
 
 	public final static Long MILLISECOND = 1L;
-	public final static Long SECOND = 60 * MILLISECOND;
+	public final static Long SECOND = 1000 * MILLISECOND;
 	public final static Long MINUTE = 60 * SECOND;
 	public final static Long HOUR = 60 * MINUTE;
 	public final static Long DAY = 24 * HOUR;

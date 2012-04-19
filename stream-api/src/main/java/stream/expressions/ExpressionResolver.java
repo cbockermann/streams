@@ -62,4 +62,8 @@ public class ExpressionResolver {
 		}
 		return false;
 	}
+	
+	public static String expand( String str, Context ctx, Data item ){
+		return str;
+	}
 }

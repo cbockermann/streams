@@ -25,6 +25,7 @@ public class DataStreamProcessTest {
 
 		DataStreamProcess dsp = new DataStreamProcess();
 		dsp.setCommand("/bin/cat /tmp/test.csv");
+		dsp.setFormat("stream.io.CsvStream");
 
 		Data item = dsp.readNext();
 		while (item != null) {

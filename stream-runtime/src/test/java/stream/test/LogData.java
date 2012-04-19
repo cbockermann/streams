@@ -57,7 +57,7 @@ public class LogData extends AbstractProcessor {
 			String text = resolver.substitute(message, input);
 			log.info("Message: '{}'", text);
 		}
-
+		log.info("Data: {}", input);
 		return input;
 	}
 }

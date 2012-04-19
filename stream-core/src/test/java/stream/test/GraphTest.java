@@ -11,11 +11,11 @@ import org.junit.Test;
  * @author chris
  * 
  */
-public class EnqueueTest {
+public class GraphTest {
 
 	@Test
 	public void test() throws Exception {
-		URL url = GraphTest.class.getResource("/test-enqueue.xml");
+		URL url = GraphTest.class.getResource("/graph-test.xml");
 		stream.run.main(url);
 	}
 }

@@ -4,14 +4,19 @@
 
 <Container>
 
-	<Stream id="input" class="stream.test.TestStream" limit = "25">
+	<Stream id="input" class="stream.io.TimeStream" limit = "100000">
 		
 	</Stream>
-
-	<Process input="input" multiply="4">
-
-		<stream.flow.Delay time="1second" />
 	
+	
+	<Service id = "graph" class="stream.data.graph.GraphService" file="/tmp/traffic-graph.csv" />
+
+
+	<Process input="input" multiply="100">
+
+	<!-- 
+		<stream.flow.Delay time="10ms" />
+	 -->
 		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />
 		
 	</Process>

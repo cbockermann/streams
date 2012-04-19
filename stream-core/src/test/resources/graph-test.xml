@@ -1,0 +1,20 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "1000">
+		
+	</Stream>
+
+	<Service id="graph" class="stream.data.graph.GraphProvider" file="/tmp/traffic-graph.csv" />
+
+
+	<Process input="input" multiply="10">
+		<stream.flow.Delay time="1000ms" />
+		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />
+		<stream.data.graph.NeighborPrinter graph-ref="graph" node="${process.id}" />
+	</Process>
+	
+</Container>

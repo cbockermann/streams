@@ -117,6 +117,7 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 			}
 		} catch (Exception e) {
 			log.error("Aborting process due to errors: {}", e.getMessage());
+			e.printStackTrace();
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 			running = false;

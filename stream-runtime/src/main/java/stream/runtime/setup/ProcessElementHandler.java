@@ -84,7 +84,7 @@ public class ProcessElementHandler implements ElementHandler {
 			Integer times = new Integer(multi);
 
 			for (int i = 0; i < times; i++) {
-				String pid = id + ":" + i;
+				String pid = "" + i;
 				objectFactory.set("process.id", pid);
 				log.info("Creating process '{}'", pid);
 				Process process = createProcess(processClass, attr, container,

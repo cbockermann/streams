@@ -19,7 +19,7 @@ public class VariableContext {
 	/* A global logger for this class */
 	static Logger log = LoggerFactory.getLogger(VariableContext.class);
 
-	public final static String VAR_PREFIX = "%{";
+	public final static String VAR_PREFIX = "${";
 	public final static String VAR_SUFFIX = "}";
 
 	/* The variables available in this context */

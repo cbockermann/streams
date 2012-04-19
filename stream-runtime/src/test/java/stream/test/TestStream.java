@@ -19,6 +19,7 @@ public class TestStream extends AbstractDataStream {
 
 	Integer numberOfKeys = 10;
 	Random rnd = new Random(2012L);
+	Long id = 0L;
 
 	/**
 	 * @see stream.io.DataStream#close()
@@ -48,6 +49,9 @@ public class TestStream extends AbstractDataStream {
 	public Data readItem(Data instance) throws Exception {
 		if (instance == null)
 			instance = DataFactory.create();
+
+		instance.put("@id", id);
+		id++;
 
 		for (int i = 0; i < numberOfKeys; i++) {
 			String key = "x[" + i + "]";

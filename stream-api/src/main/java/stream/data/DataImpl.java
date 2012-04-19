@@ -32,7 +32,7 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	 * @deprecated Creation of Data items should be done with
 	 *             {@link stream.data.DataFactory#create()}
 	 */
-	protected DataImpl(Map<String, Serializable> data) {
+	public DataImpl(Map<String, Serializable> data) {
 		super(data);
 	}
 

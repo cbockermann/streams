@@ -114,8 +114,12 @@ public class ObjectFactory extends VariableContext {
 				String expanded = expand(orig);
 				p.put(key, expanded);
 				log.debug("Expanded {} to {}", orig, expanded);
-			} else
-				p.put(key, parameter.get(key));
+			} else {
+				String orig = parameter.get(key);
+				String expanded = expand(orig);
+				log.info("Expanded {} to {}", orig, expanded);
+				p.put(key, expanded);
+			}
 		}
 
 		// Inject the parameters into the object...

@@ -21,7 +21,8 @@ import stream.data.Data;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public abstract class AbstractProcess extends Thread implements Processor {
+public abstract class AbstractProcess extends Thread implements Runnable,
+		Processor {
 
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 	protected boolean running = true;
@@ -88,7 +89,7 @@ public abstract class AbstractProcess extends Thread implements Processor {
 			}
 		}
 
-		interrupt();
+		Thread.currentThread().interrupt();
 	}
 
 	/**

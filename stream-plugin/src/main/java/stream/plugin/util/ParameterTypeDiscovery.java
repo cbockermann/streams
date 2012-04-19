@@ -120,6 +120,13 @@ public class ParameterTypeDiscovery {
 					key += m.getName().substring(4);
 
 				Parameter param = m.getAnnotation(Parameter.class);
+				if (param == null) {
+					log.info(
+							"Method '{}' is not annotated as Parameter -> skipping",
+							m.getName());
+					continue;
+				}
+
 				if (param != null && !"".equals(param.name().trim())) {
 					key = param.name();
 					log.debug("Setting parameter for method '{}' to key '{}'",

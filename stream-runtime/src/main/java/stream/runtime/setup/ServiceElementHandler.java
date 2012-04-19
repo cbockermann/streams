@@ -81,6 +81,7 @@ public class ServiceElementHandler implements ElementHandler {
 				className);
 		try {
 			Service service = (Service) objectFactory.create(className, params);
+			service.reset();
 			container.getContext().register(id, service);
 		} catch (Exception e) {
 			log.error("Failed to create and register service '{}': {}", id,

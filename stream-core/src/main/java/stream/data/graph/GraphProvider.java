@@ -48,7 +48,7 @@ public class GraphProvider implements GraphService {
 	 */
 	@Override
 	public void reset() throws Exception {
-		log.info("Reading graph from {}", file);
+		log.debug("Reading graph from {}", file);
 		CsvStream stream = new CsvStream(new FileInputStream(file));
 		Data item = stream.readNext();
 		while (item != null) {
@@ -74,6 +74,8 @@ public class GraphProvider implements GraphService {
 			neighbors.put(start, neighs);
 		}
 		neighs.add(end);
+		log.debug("Adding edge ({},{})", start, end);
+		log.debug("Neighbors of {} are: {}", start, neighs);
 	}
 
 	/**

@@ -80,12 +80,9 @@ public class ObjectFactory extends VariableContext {
 
 	public Object create(Element node) throws Exception {
 		Map<String, String> params = getAttributes(node);
+		log.debug("Creating object '{}' with attributes: {}",
+				node.getNodeName(), params);
 		Object obj = create(this.findClassForElement(node), params);
-		Map<String, String> realParams = ParameterInjection.extract(obj);
-		for (String key : realParams.keySet()) {
-			node.setAttribute(key, realParams.get(key));
-		}
-
 		return obj;
 	}
 
@@ -97,7 +94,7 @@ public class ObjectFactory extends VariableContext {
 		params.putAll(parameter);
 
 		log.debug("Parameters for new class: {}", params);
-
+		log.debug("object-factory.variables: {}", this.variables);
 		Class<?> clazz = Class.forName(className);
 
 		// create an instance of this class
@@ -117,7 +114,7 @@ public class ObjectFactory extends VariableContext {
 			} else {
 				String orig = parameter.get(key);
 				String expanded = expand(orig);
-				log.info("Expanded {} to {}", orig, expanded);
+				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);
 			}
 		}

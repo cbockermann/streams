@@ -4,15 +4,12 @@
 
 <Container>
 
-	<Stream id="input" class="stream.io.TimeStream" limit = "100000">
+	<Stream id="input" class="stream.test.TestStream" limit = "100">
 		
 	</Stream>
-	
-	
-	<Service id = "graph" class="stream.data.graph.GraphService" file="/tmp/traffic-graph.csv" />
 
 
-	<Process input="input" multiply="100">
+	<Process input="input" multiply="4">
 
 	<!-- 
 		<stream.flow.Delay time="10ms" />

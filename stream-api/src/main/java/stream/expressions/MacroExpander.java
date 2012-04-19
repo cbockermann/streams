@@ -65,7 +65,8 @@ public class MacroExpander {
 				String variable = content.substring(start + 2, end);
 				log.debug("Found variable: {}", variable);
 				log.trace("   content is: {}", content);
-				String val = get(variable, evt);
+				String val = get(variable.replace("data.", ""), evt);
+
 				if (val != null)
 					content = content.substring(0, start) + val
 							+ content.substring(end + 1);

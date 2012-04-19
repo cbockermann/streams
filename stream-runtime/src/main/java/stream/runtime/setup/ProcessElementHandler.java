@@ -78,45 +78,40 @@ public class ProcessElementHandler implements ElementHandler {
 			id = "process";
 		}
 
-		if ("true".equalsIgnoreCase(System.getProperty("process.multiply"))) {
+		String multi = attr.get("multiply");
+		if (multi != null && !"".equals(multi.trim())) {
 
-			Integer times = 1;
-			String multi = attr.get("multiply");
-			if (multi != null) {
-				times = new Integer(multi);
-			}
+			Integer times = new Integer(multi);
 
 			for (int i = 0; i < times; i++) {
 				String pid = id + ":" + i;
 				objectFactory.set("process.id", pid);
 				log.info("Creating process '{}'", pid);
-				Process process = (Process) objectFactory.create(processClass,
-						attr);
-				log.debug("Created Process object: {}", process);
-
-				List<Processor> procs = createNestedProcessors(container,
+				Process process = createProcess(processClass, attr, container,
 						element);
-				for (Processor p : procs) {
-					process.addProcessor(p);
-				}
 				container.getProcesses().add(process);
 			}
 
 		} else {
-
 			objectFactory.set("process.id", id);
-
-			Process process = (Process) objectFactory
-					.create(processClass, attr);
+			Process process = createProcess(processClass, attr, container,
+					element);
 			log.debug("Created Process object: {}", process);
-
-			List<Processor> procs = createNestedProcessors(container, element);
-			for (Processor p : procs) {
-				process.addProcessor(p);
-			}
 			container.getProcesses().add(process);
 		}
+	}
 
+	protected Process createProcess(String processClass,
+			Map<String, String> attr, ProcessContainer container,
+			Element element) throws Exception {
+		Process process = (Process) objectFactory.create(processClass, attr);
+		log.debug("Created Process object: {}", process);
+
+		List<Processor> procs = createNestedProcessors(container, element);
+		for (Processor p : procs) {
+			process.addProcessor(p);
+		}
+		return process;
 	}
 
 	protected Processor createProcessor(ProcessContainer container,

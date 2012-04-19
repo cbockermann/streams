@@ -19,7 +19,7 @@ public class Enqueue extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 	String ref = null;
 
-	QueueService queue;
+	protected QueueService queue;
 
 	public void setQueue(QueueService queue) {
 		this.queue = queue;

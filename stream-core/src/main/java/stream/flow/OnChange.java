@@ -65,13 +65,13 @@ public class OnChange extends If {
 		String value = String.valueOf(item.get(key));
 		boolean result = false;
 
-		if (from.equals(to) && "".equals(from))
+		if (from.equals(to) && "".equals(from)) {
 			if (!oldValue.equals(value))
 				result = true;
-			else if (oldValue.equals(from) && value.equals(to)) {
-				result = true;
-				log.debug(key + " changed from " + from + " to " + to + "!");
-			}
+		} else if (oldValue.equals(from) && value.equals(to)) {
+			result = true;
+			log.debug(key + " changed from " + from + " to " + to + "!");
+		}
 		oldValue = value;
 		return result;
 	}

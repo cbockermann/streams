@@ -60,7 +60,6 @@ public class ServiceElementHandler implements ElementHandler {
 			throws Exception {
 
 		log.debug("handling element {}...", element);
-		ObjectFactory objectFactory = ObjectFactory.newInstance();
 		Map<String, String> params = objectFactory.getAttributes(element);
 
 		String className = params.get("class");

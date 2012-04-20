@@ -170,6 +170,8 @@ public class ProcessContainer {
 			name = "local";
 
 		context.getProperties().putAll(getProperties(root));
+		objectFactory.addVariables(context.getProperties());
+
 		NodeList children = root.getChildNodes();
 
 		if (context.getProperties().get("container.datafactory") != null) {

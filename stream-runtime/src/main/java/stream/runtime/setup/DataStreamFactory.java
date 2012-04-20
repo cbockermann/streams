@@ -39,7 +39,10 @@ public class DataStreamFactory {
 			Constructor<?> constr = clazz.getConstructor(URL.class);
 			URL url = null;
 
-			if (params.get("url").startsWith("classpath:")) {
+			String urlString = params.get("url");
+			urlString = objectFactory.expand(urlString);
+
+			if (urlString.startsWith("classpath:")) {
 				String resource = urlParam.substring("classpath:".length());
 				log.debug("Looking up resource '{}'", resource);
 				url = ProcessContainer.class.getResource(resource);
@@ -49,7 +52,7 @@ public class DataStreamFactory {
 									+ resource + "' not found!");
 				}
 			} else {
-				url = new URL(urlParam);
+				url = new URL(urlString);
 			}
 
 			stream = (DataStream) constr.newInstance(url);

@@ -35,8 +35,8 @@ import stream.data.Data;
  */
 @Description(text = "This processor tags all processed items with integer IDs.", group = "Data Stream.Processing.Annotations")
 public class CreateID extends AbstractProcessor implements IDService {
-	Long start = 0L;
-	Long nextId = 0L;
+	Long start = 1L;
+	Long nextId = 1L;
 	String key = "@id";
 
 	/**

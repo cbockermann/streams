@@ -56,6 +56,11 @@ public class ObjectFactory extends VariableContext {
 			"stream.data.filter.", "stream.data.stats.", "stream.data.vector.",
 			"stream.data.test.", "stream.logic", "stream.flow" };
 
+	// TODO: Extend this with a custom class loader that will search other
+	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any
+	// other search path list found in the system environment/system settings
+	final ClassLoader classLoader = ObjectFactory.class.getClassLoader();
+
 	final List<String> searchPath = new ArrayList<String>();
 
 	protected ObjectFactory() {
@@ -115,7 +120,7 @@ public class ObjectFactory extends VariableContext {
 
 		log.debug("Parameters for new class: {}", params);
 		log.debug("object-factory.variables: {}", this.variables);
-		Class<?> clazz = Class.forName(className);
+		Class<?> clazz = Class.forName(className, false, classLoader);
 
 		// create an instance of this class
 		//

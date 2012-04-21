@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.StreamRuntime;
 
 /**
  * @author chris
@@ -45,6 +46,7 @@ public class run {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
+
 		URL url;
 		try {
 			url = new URL(args[0]);
@@ -56,6 +58,8 @@ public class run {
 	}
 
 	public static void main(URL url) throws Exception {
+		StreamRuntime.setupLogging();
+
 		log.info("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url);
 
@@ -65,6 +69,9 @@ public class run {
 
 	public static void main(URL url, Map<String, ElementHandler> elementHandler)
 			throws Exception {
+
+		StreamRuntime.setupLogging();
+
 		log.info("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url, elementHandler);
 

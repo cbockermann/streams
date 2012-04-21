@@ -42,6 +42,10 @@ public class ProcessContextImpl implements ProcessContext {
 	final ContainerContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
 
+	public ProcessContextImpl() {
+		containerContext = null;
+	}
+
 	public ProcessContextImpl(ContainerContext ctx) {
 		containerContext = ctx;
 		log.debug("Creating new ProcessContext, parent context is {}", ctx);
@@ -52,6 +56,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public Service lookup(String ref) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		return containerContext.lookup(ref);
 	}
 
@@ -61,6 +67,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public void register(String ref, Service p) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		containerContext.register(ref, p);
 	}
 
@@ -69,6 +77,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		containerContext.unregister(ref);
 	}
 
@@ -94,6 +104,9 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public Object resolve(String variable) {
 		if (!variable.startsWith("process.")) {
+			if (containerContext == null)
+				return null;
+
 			return containerContext.resolve(variable);
 		}
 

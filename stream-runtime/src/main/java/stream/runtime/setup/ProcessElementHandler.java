@@ -98,14 +98,21 @@ public class ProcessElementHandler implements ElementHandler {
 			id = "process";
 		}
 
-		String multi = attr.get("multiply");
-		if (multi != null && !"".equals(multi.trim())) {
+		String copies = attr.get("copies");
+		if (attr.containsKey("multiply")) {
+			copies = attr.get("multiply");
+			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
+			log.warn("Please use 'copies' instead of 'multiply'.");
+		}
 
-			Integer times = new Integer(multi);
+		if (copies != null && !"".equals(copies.trim())) {
+
+			Integer times = new Integer(copies);
 
 			for (int i = 0; i < times; i++) {
 				String pid = "" + i;
 				objectFactory.set("process.id", pid);
+				objectFactory.set("copy.id", pid);
 				log.info("Creating process '{}'", pid);
 				Process process = createProcess(processClass, attr, container,
 						element);

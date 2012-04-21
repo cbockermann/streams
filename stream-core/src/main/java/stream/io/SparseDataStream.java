@@ -42,37 +42,33 @@ import stream.data.vector.InputVector;
  * format. The data is read from a URL and parsed into a Data instance.
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-@Description( group="Data Stream.Sources" )
-public class SparseDataStream 
-	extends AbstractDataStream 
-{
-	static Logger log = LoggerFactory.getLogger( SparseDataStream.class );
+@Description(group = "Data Stream.Sources")
+public class SparseDataStream extends AbstractDataStream {
+	static Logger log = LoggerFactory.getLogger(SparseDataStream.class);
 	long lineNumber = 0;
 	boolean addSparseVector = true;
 	String sparseKey = null;
-	
-	public SparseDataStream( String url ) throws Exception {
-		this( new URL( url ), "sparse-vector" );
+
+	public SparseDataStream(String url) throws Exception {
+		this(new URL(url), "sparse-vector");
 	}
 
 	public SparseDataStream(URL url) throws Exception {
 		super(url);
 		initReader();
 	}
-	
-	public SparseDataStream( URL url, String sparseVectorKey ) throws Exception {
+
+	public SparseDataStream(URL url, String sparseVectorKey) throws Exception {
 		this(url);
-		this.setSparseKey( sparseVectorKey );
+		this.setSparseKey(sparseVectorKey);
 	}
 
-	
-	public SparseDataStream( InputStream in ) throws Exception {
-		super( in );
+	public SparseDataStream(InputStream in) throws Exception {
+		super(in);
 	}
-	
-	
+
 	/**
 	 * @return the sparseKey
 	 */
@@ -80,18 +76,16 @@ public class SparseDataStream
 		return sparseKey;
 	}
 
-
 	/**
-	 * @param sparseKey the sparseKey to set
+	 * @param sparseKey
+	 *            the sparseKey to set
 	 */
 	public void setSparseKey(String sparseKey) {
-		if( sparseKey == null )
+		if (sparseKey == null)
 			this.sparseKey = null;
 		else
-			this.sparseKey = DataUtils.hide( sparseKey );
+			this.sparseKey = sparseKey;
 	}
-
-	
 
 	/**
 	 * @see stream.io.AbstractDataStream#readHeader()
@@ -100,197 +94,198 @@ public class SparseDataStream
 	public void readHeader() throws Exception {
 	}
 
-
 	/**
 	 * @see stream.io.AbstractDataStream#readNext(stream.data.Data)
 	 */
 	@Override
 	public Data readItem(Data item) throws Exception {
 
-		if( limit > 0 && lineNumber > limit ){
+		if (limit > 0 && lineNumber > limit) {
 			return null;
 		}
-		
-		if( reader == null )
+
+		if (reader == null)
 			initReader();
-		
+
 		String line = reader.readLine();
-		if( line == null )
+		if (line == null)
 			return null;
-		
+
 		line = line.trim();
-		
+
 		lineNumber++;
-		
-		Data datum = parseLine( item, line );
-		if( sparseKey != null ){
-			log.debug( "Adding sparse vector as key '{}'", sparseKey );
-			datum.put( sparseKey, readSparseVector( line ) );
+
+		Data datum = parseLine(item, line);
+		if (sparseKey != null) {
+			log.debug("Adding sparse vector as key '{}'", sparseKey);
+			datum.put(sparseKey, readSparseVector(line));
 		} else
-			log.debug( "No sparse key defined, not creating sparse vector!" );
+			log.debug("No sparse key defined, not creating sparse vector!");
 		return datum;
 	}
 
-	
-	public Data readSparseVector( Data item ) throws Exception {
-		if( reader == null )
+	public Data readSparseVector(Data item) throws Exception {
+		if (reader == null)
 			initReader();
-		
+
 		String line = reader.readLine();
-		if( line == null )
+		if (line == null)
 			return null;
-		
-		log.debug( "line[{}]: {}", lineNumber, line );
+
+		log.debug("line[{}]: {}", lineNumber, line);
 		lineNumber++;
-		
-		InputVector sp = readSparseVector( line );
-		item.put( sparseKey, sp );
+
+		InputVector sp = readSparseVector(line);
+		item.put(sparseKey, sp);
 		return item;
 	}
-	
-	
+
 	/**
-	 * This method parses a single line into a data item. The line is expected to
-	 * match the format of the SVMlight data format.
+	 * This method parses a single line into a data item. The line is expected
+	 * to match the format of the SVMlight data format.
 	 * 
 	 * @param item
 	 * @param line
 	 * @return
 	 * @throws Exception
 	 */
-	public static Data parseLine( Data item, String line, String sparseKey ) throws Exception {
+	public static Data parseLine(Data item, String line, String sparseKey)
+			throws Exception {
 
-		int info = line.indexOf( "#" );
-		if( info > 0 )
-			line = line.substring( 0, info );
-		
-		
-		String[] token = line.split( "\\s+" );
+		int info = line.indexOf("#");
+		if (info > 0)
+			line = line.substring(0, info);
 
-		for( int i = 0; i < token.length; i++ ){
-			
-			String[] iv = token[i].split( ":" );
-			if( iv.length != 2 ){
-				log.error( "Failed to split token '{}' in line: ", token[i], line );
+		String[] token = line.split("\\s+");
+
+		for (int i = 0; i < token.length; i++) {
+
+			String[] iv = token[i].split(":");
+			if (iv.length != 2) {
+				log.error("Failed to split token '{}' in line: ", token[i],
+						line);
 				return null;
 			} else {
 				try {
-					item.put( iv[0], new Double( iv[1]) );
+					item.put(iv[0], new Double(iv[1]));
 				} catch (Exception e) {
-					item.put( iv[0], iv[1] );
+					item.put(iv[0], iv[1]);
 				}
 			}
 		}
-		
-		if( sparseKey != null ){
-			HashMap<Integer,Double> pairs = new HashMap<Integer,Double>();
 
-			for( int i = 1; i < token.length; i++ ){
-				
-				String[] iv = token[i].split( ":" );
-				if( iv.length != 2 ){
-					log.error( "Failed to split token '{}' in line: ", token[i], line );
+		if (sparseKey != null) {
+			HashMap<Integer, Double> pairs = new HashMap<Integer, Double>();
+
+			for (int i = 1; i < token.length; i++) {
+
+				String[] iv = token[i].split(":");
+				if (iv.length != 2) {
+					log.error("Failed to split token '{}' in line: ", token[i],
+							line);
 					return null;
 				} else {
 					try {
-						pairs.put(Integer.parseInt( iv[0] ), Double.parseDouble( iv[1] ));
+						pairs.put(Integer.parseInt(iv[0]),
+								Double.parseDouble(iv[1]));
 					} catch (Exception e) {
 					}
 				}
 			}
 
-			item.put( DataUtils.hide( sparseKey ), new InputVector( pairs, false, Double.parseDouble( token[0] ) ) );			
+			item.put(".sparse-vector",
+					new InputVector(pairs, false, Double.parseDouble(token[0])));
 		}
-		
+
 		return item;
 	}
-	
-	public static Data parseLine( Data item, String line ) throws Exception {
-		return parseLine( item, line, null );
+
+	public static Data parseLine(Data item, String line) throws Exception {
+		return parseLine(item, line, null);
 	}
-	
-	
-	public static InputVector readSparseVector( String line ) throws Exception {
-		int info = line.indexOf( "#" );
-		if( info > 0 )
-			line = line.substring( 0, info );
-		
-		String[] token = line.split( "\\s+" );
 
-		HashMap<Integer,Double> pairs = new HashMap<Integer,Double>();
+	public static InputVector readSparseVector(String line) throws Exception {
+		int info = line.indexOf("#");
+		if (info > 0)
+			line = line.substring(0, info);
 
-		for( int i = 1; i < token.length; i++ ){
-			
-			String[] iv = token[i].split( ":" );
-			if( iv.length != 2 ){
-				log.error( "Failed to split token '{}' in line: ", token[i], line );
+		String[] token = line.split("\\s+");
+
+		HashMap<Integer, Double> pairs = new HashMap<Integer, Double>();
+
+		for (int i = 1; i < token.length; i++) {
+
+			String[] iv = token[i].split(":");
+			if (iv.length != 2) {
+				log.error("Failed to split token '{}' in line: ", token[i],
+						line);
 				return null;
 			} else {
 				try {
-					pairs.put(Integer.parseInt( iv[0] ), Double.parseDouble( iv[1] ));
-				} catch (Exception e){
+					pairs.put(Integer.parseInt(iv[0]),
+							Double.parseDouble(iv[1]));
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 
-		return new InputVector( pairs, false, Double.parseDouble( token[0] ) );
+		return new InputVector(pairs, false, Double.parseDouble(token[0]));
 	}
-	
 
-	public static InputVector createSparseVector( Data datum ){
-		if( datum.containsKey( ".sparse-vector" ) ){
-			log.trace( "Found existing sparse-vector object!" );
-			return (InputVector) datum.get( ".sparse-vector" );
+	public static InputVector createSparseVector(Data datum) {
+		if (datum.containsKey(".sparse-vector")) {
+			log.trace("Found existing sparse-vector object!");
+			return (InputVector) datum.get(".sparse-vector");
 		}
-		
-		for( Serializable val : datum.values() ){
-			if( val instanceof InputVector ){
-				log.trace( "Found existing sparse-vector object!" );
+
+		for (Serializable val : datum.values()) {
+			if (val instanceof InputVector) {
+				log.trace("Found existing sparse-vector object!");
 				return (InputVector) val;
 			}
 		}
-		
+
 		TreeSet<String> indexes = new TreeSet<String>();
-		for( String key : datum.keySet() ){
-			Serializable val = datum.get( key );
-			if( !DataUtils.isAnnotation( key ) && key.matches( "\\d+" ) && val instanceof Double ){
-				log.debug( "Found numeric feature {}", key );
-				indexes.add( key );
+		for (String key : datum.keySet()) {
+			Serializable val = datum.get(key);
+			if (!DataUtils.isAnnotation(key) && key.matches("\\d+")
+					&& val instanceof Double) {
+				log.debug("Found numeric feature {}", key);
+				indexes.add(key);
 			} else {
-				log.debug( "Skipping non-numeric feature {} of type {}", key, val.getClass() );
+				log.debug("Skipping non-numeric feature {} of type {}", key,
+						val.getClass());
 			}
 		}
-		
+
 		double y = Double.NaN;
-		if( datum.containsKey( "@label" ) ){
+		if (datum.containsKey("@label")) {
 			try {
-				y = (Double) datum.get( "@label" );
+				y = (Double) datum.get("@label");
 			} catch (Exception e) {
 				y = Double.NaN;
 			}
 		}
-		
-		//int[] idx = new int[ indexes.size() ];
-		//double[] vals = new double[ indexes.size() ];
-		HashMap<Integer,Double> pairs = new HashMap<Integer,Double>();
-		
-		//int i = 0;
-		for( String key : indexes ){
-			//idx[i] = Integer.parseInt( key );
-			//vals[i] = (Double) datum.get( key );
-			//i++;
-			pairs.put((Integer)Integer.parseInt( key ), (Double)datum.get( key ));
+
+		// int[] idx = new int[ indexes.size() ];
+		// double[] vals = new double[ indexes.size() ];
+		HashMap<Integer, Double> pairs = new HashMap<Integer, Double>();
+
+		// int i = 0;
+		for (String key : indexes) {
+			// idx[i] = Integer.parseInt( key );
+			// vals[i] = (Double) datum.get( key );
+			// i++;
+			pairs.put((Integer) Integer.parseInt(key), (Double) datum.get(key));
 		}
-		
-		//SparseVector vec = new SparseVector( idx, vals, y, false );
-		InputVector vec = new InputVector( pairs, false, y );
-		log.trace( "SparseVector: {}", vec );
+
+		// SparseVector vec = new SparseVector( idx, vals, y, false );
+		InputVector vec = new InputVector(pairs, false, y);
+		log.trace("SparseVector: {}", vec);
 		return vec;
 	}
-	
 
-	
 	/**
 	 * @see stream.io.DataStream#close()
 	 */
@@ -299,8 +294,8 @@ public class SparseDataStream
 		try {
 			reader.close();
 		} catch (Exception e) {
-			log.error( "Failed to properly close reader: {}", e.getMessage() );
-			if( log.isDebugEnabled() )
+			log.error("Failed to properly close reader: {}", e.getMessage());
+			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
 	}

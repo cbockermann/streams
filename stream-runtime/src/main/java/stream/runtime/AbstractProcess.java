@@ -142,6 +142,12 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 				e.printStackTrace();
 			running = false;
 		}
+
+		try {
+			finish();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

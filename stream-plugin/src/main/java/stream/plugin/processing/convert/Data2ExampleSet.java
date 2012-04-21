@@ -25,7 +25,6 @@ package stream.plugin.processing.convert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +35,12 @@ import stream.data.Data;
 import stream.data.DataFactory;
 import stream.plugin.OperatorBean;
 import stream.plugin.data.DataObject;
-import stream.plugin.util.ParameterTypeDiscovery;
 
 import com.rapidminer.example.ExampleSet;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
 import com.rapidminer.operator.ports.InputPort;
 import com.rapidminer.operator.ports.OutputPort;
-import com.rapidminer.parameter.ParameterType;
 
 /**
  * @author chris
@@ -60,6 +57,7 @@ public class Data2ExampleSet extends OperatorBean {
 
 	final List<Data> buffer = new ArrayList<Data>();
 	protected Integer bufferSize = 1;
+	final ExampleSetFactory exampleSetFactory = new ExampleSetFactory();
 
 	/**
 	 * @param description
@@ -95,20 +93,12 @@ public class Data2ExampleSet extends OperatorBean {
 		buffer.add(DataFactory.create(event.getWrappedDataItem()));
 
 		if (buffer.size() >= bufferSize) {
-			ExampleSet exampleSet = Array2ExampleSet.createExampleSet(buffer);
+			ExampleSet exampleSet = exampleSetFactory.createExampleSet(buffer);
 			buffer.clear();
 			output.deliver(exampleSet);
 		} else
 			output.deliver(null);
 
 		passThroughPort.deliver(event);
-	}
-
-	public static void main(String[] args) {
-		Map<String, ParameterType> types = ParameterTypeDiscovery
-				.discoverParameterTypes(Data2ExampleSet.class);
-		for (String key : types.keySet()) {
-			log.info("Found '{}'  =>  {}", key, types.get(key));
-		}
 	}
 }

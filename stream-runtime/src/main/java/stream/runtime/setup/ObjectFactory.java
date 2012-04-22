@@ -23,6 +23,7 @@
  */
 package stream.runtime.setup;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -183,11 +184,17 @@ public class ObjectFactory extends VariableContext {
 		try {
 			Class.forName(node.getNodeName());
 			log.debug("Found direct class-match: {}", node.getNodeName());
+
+			URL doc = findDocumentation(node.getNodeName());
+			if (doc == null)
+				log.warn("No documentation provided for class '{}'!",
+						node.getNodeName());
+
 			return node.getNodeName();
 		} catch (Exception e) {
 		}
 
-		for (String prefix : this.searchPath) {
+		for (String prefix : searchPath) {
 
 			String cn = prefix + node.getNodeName();
 			try {
@@ -198,6 +205,12 @@ public class ObjectFactory extends VariableContext {
 				Class<?> clazz = Class.forName(cn);
 				log.debug("Auto-detected class {} for node {}", clazz,
 						node.getNodeName());
+
+				URL doc = findDocumentation(clazz.getName());
+				if (doc == null)
+					log.warn("No documentation provided for class '{}'!",
+							clazz.getName());
+
 				return clazz.getName();
 			} catch (Exception e) {
 				log.debug("No class '{}' found", cn);
@@ -206,5 +219,12 @@ public class ObjectFactory extends VariableContext {
 
 		throw new Exception("Failed to determine class for node '"
 				+ node.getNodeName() + "'!");
+	}
+
+	public URL findDocumentation(String className) {
+		String docResource = "/" + className.replace('.', '/') + ".md";
+		log.trace("Doc resource for '{}' is '{}'", className, docResource);
+		URL url = ObjectFactory.class.getResource(docResource);
+		return url;
 	}
 }

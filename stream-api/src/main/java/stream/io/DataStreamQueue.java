@@ -49,7 +49,7 @@ public class DataStreamQueue extends AbstractDataStream implements
 	 * @see stream.io.DataStream#close()
 	 */
 	@Override
-	public void close() {
+	public void close() throws Exception {
 		queue.clear();
 	}
 
@@ -130,8 +130,14 @@ public class DataStreamQueue extends AbstractDataStream implements
 	 * @see stream.io.QueueService#enqueue(stream.data.Data)
 	 */
 	@Override
-	public void enqueue(Data item) {
-		queue.add(item);
+	public boolean enqueue(Data item) {
+		try {
+			boolean b = queue.add(item);
+			return b;
+
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**

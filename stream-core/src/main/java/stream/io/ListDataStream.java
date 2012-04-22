@@ -65,16 +65,6 @@ public class ListDataStream implements DataStream {
 	}
 
 	@Override
-	public void addPreprocessor(Processor proc) {
-		processors.add(proc);
-	}
-
-	@Override
-	public void addPreprocessor(int idx, Processor proc) {
-		processors.add(idx, proc);
-	}
-
-	@Override
 	public List<Processor> getPreprocessors() {
 		return processors;
 	}

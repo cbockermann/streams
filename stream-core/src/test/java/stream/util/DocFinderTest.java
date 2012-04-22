@@ -69,6 +69,8 @@ public class DocFinderTest {
 	public static void main(String[] args) {
 
 		try {
+			DocFinder.main(args);
+
 			String[] resources = ResourceFinder.getResources("",
 					isMarkdownAndProcessor);
 			for (String res : resources) {
@@ -77,6 +79,7 @@ public class DocFinderTest {
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 		}
+
 	}
 
 }

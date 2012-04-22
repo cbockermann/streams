@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Data;
 import stream.io.CsvStream;
 import stream.io.DataStream;
-import stream.io.HttpDataUpload;
+import stream.io.HttpUpload;
 import stream.io.JSONStream;
 
 public class DataUpload {
@@ -76,7 +76,7 @@ public class DataUpload {
 			delay = -1;
 		}
 
-		HttpDataUpload upload = new HttpDataUpload(new URL(
+		HttpUpload upload = new HttpUpload(new URL(
 				remoteUrl));
 		int limit = 10000;
 		int i = 0;

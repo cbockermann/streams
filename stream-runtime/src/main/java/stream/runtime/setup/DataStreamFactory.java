@@ -84,7 +84,7 @@ public class DataStreamFactory {
 		List<Processor> preProcessors = processorFactory
 				.createNestedProcessors(node);
 		for (Processor p : preProcessors) {
-			stream.addPreprocessor(p);
+			stream.getPreprocessors().add(p);
 		}
 
 		ParameterInjection.inject(stream, params, new VariableContext());

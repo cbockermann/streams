@@ -27,9 +27,9 @@ import stream.data.Data;
 
 /**
  * @author chris
- *
+ * 
  */
 public interface DataStreamListener {
 
-	public void dataArrived( Data datum );
+	public void dataArrived(Data datum);
 }

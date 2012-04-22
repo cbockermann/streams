@@ -133,22 +133,6 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#addPreprocessor(stream.data.DataProcessor)
-	 */
-	@Override
-	public void addPreprocessor(Processor proc) {
-		throw new RuntimeException("Not supported!");
-	}
-
-	/**
-	 * @see stream.io.DataStream#addPreprocessor(int, stream.data.DataProcessor)
-	 */
-	@Override
-	public void addPreprocessor(int idx, Processor proc) {
-		throw new RuntimeException("Not supported!");
-	}
-
-	/**
 	 * @see stream.io.DataStream#getPreprocessors()
 	 */
 	@Override

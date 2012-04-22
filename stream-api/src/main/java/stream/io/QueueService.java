@@ -34,5 +34,5 @@ public interface QueueService extends Service {
 
 	public Data poll();
 
-	public void enqueue(Data item);
+	public boolean enqueue(Data item);
 }

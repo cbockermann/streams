@@ -109,9 +109,14 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 		return datum;
 	}
 
-	public void close() {
-		for (DataStream s : streams.values())
-			s.close();
+	public void close() throws Exception {
+		for (DataStream s : streams.values()) {
+			try {
+				s.close();
+			} catch (Exception e) {
+				log.error("Failed to close stream {}: {}", s, e.getMessage());
+			}
+		}
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.stats.History;
+import stream.statistics.History;
 
 public class TimeParser {
 	static Logger log = LoggerFactory.getLogger(TimeParser.class);

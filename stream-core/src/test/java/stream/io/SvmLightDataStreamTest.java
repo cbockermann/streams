@@ -40,7 +40,7 @@ public class SvmLightDataStreamTest {
 
 		try {
 			URL url = SvmLightDataStreamTest.class.getResource( "/test-data.svm_light" );
-			DataStream stream = new SvmLightDataStream( url );
+			DataStream stream = new SvmLightStream( url );
 
 			Data item = stream.readNext();
 			while( item != null ){

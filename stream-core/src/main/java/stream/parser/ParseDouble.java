@@ -33,6 +33,7 @@ import stream.data.Data;
 public class ParseDouble extends AbstractProcessor {
 
 	String[] keys = new String[0];
+	Double defaultValue = Double.NaN;
 
 	/**
 	 * @return the keys
@@ -50,17 +51,32 @@ public class ParseDouble extends AbstractProcessor {
 	}
 
 	/**
+	 * @return the defaultValue
+	 */
+	public Double getDefault() {
+		return defaultValue;
+	}
+
+	/**
+	 * @param defaultValue
+	 *            the defaultValue to set
+	 */
+	public void setDefault(Double defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	/**
 	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {
 
 		for (String key : keys) {
-			Double value = Double.NaN;
+			Double value = defaultValue;
 			try {
 				value = new Double(data.get(key) + "");
 			} catch (Exception e) {
-				value = Double.NaN;
+				value = defaultValue;
 			}
 			data.put(key, value);
 		}

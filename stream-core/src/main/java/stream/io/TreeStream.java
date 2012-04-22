@@ -49,7 +49,7 @@ import stream.parser.DefaultTreeParser;
  * </pre>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
+ * @deprecated
  */
 public class TreeStream implements DataStream {
 
@@ -109,16 +109,6 @@ public class TreeStream implements DataStream {
 
 		datum.put(treeAttribute, tree);
 		return datum;
-	}
-
-	@Override
-	public void addPreprocessor(Processor proc) {
-		processors.add(proc);
-	}
-
-	@Override
-	public void addPreprocessor(int idx, Processor proc) {
-		processors.add(idx, proc);
 	}
 
 	@Override

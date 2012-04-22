@@ -80,19 +80,9 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	}
 
 	@Override
-	public void close() {
+	public void close() throws Exception {
 		stream.close();
 		this.activator.setRun(false);
-	}
-
-	@Override
-	public void addPreprocessor(Processor proc) {
-		stream.addPreprocessor(proc);
-	}
-
-	@Override
-	public void addPreprocessor(int idx, Processor proc) {
-		stream.addPreprocessor(idx, proc);
 	}
 
 	@Override

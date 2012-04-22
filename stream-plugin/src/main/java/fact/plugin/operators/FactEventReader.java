@@ -82,7 +82,7 @@ public class FactEventReader extends Operator {
 
 				Boolean b = getParameterAsBoolean(KEEP_UNCALIBRATED);
 				drs.setKeepData(b);
-				stream.addPreprocessor(drs);
+				stream.getPreprocessors().add(drs);
 			}
 
 			FactEventStream feStream = new FactEventStream(stream);

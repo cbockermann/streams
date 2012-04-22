@@ -40,12 +40,21 @@ import stream.data.Data;
 public interface DataStream {
 
 	/**
-	 * This method returns a mapping of attributes to types.
+	 * This method returns a mapping of attributes to types. This method may
+	 * return <code>null</code> if a list of attributes can not be provided by
+	 * the stream implementation.
 	 * 
 	 * @return
 	 */
 	public Map<String, Class<?>> getAttributes();
 
+	/**
+	 * This method will be called by the stream runtime at initialization time.
+	 * Opening files, URLs or database connections is usually performed in this
+	 * method.
+	 * 
+	 * @throws Exception
+	 */
 	public void init() throws Exception;
 
 	/**
@@ -56,13 +65,28 @@ public interface DataStream {
 	 */
 	public Data readNext() throws Exception;
 
+	/**
+	 * 
+	 * @param datum
+	 * @return
+	 * @throws Exception
+	 */
 	public Data readNext(Data datum) throws Exception;
 
-	public void close();
-
-	public void addPreprocessor(Processor proc);
-
-	public void addPreprocessor(int idx, Processor proc);
-
+	/**
+	 * Returns a list of preprocessors that will be executed on each item
+	 * produced by the stream implementation before returning that item on
+	 * {@link #readNext()} or {@link #readNext(Data)}.
+	 * 
+	 * @return
+	 */
 	public List<Processor> getPreprocessors();
+
+	/**
+	 * This method is called by the stream runtime environment as the process
+	 * container is shut down. This can be used to close file handles, streams
+	 * or database connections.
+	 * 
+	 */
+	public void close() throws Exception;
 }

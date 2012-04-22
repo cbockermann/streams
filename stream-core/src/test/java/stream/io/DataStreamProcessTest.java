@@ -38,12 +38,12 @@ public class DataStreamProcessTest {
 	static Logger log = LoggerFactory.getLogger(DataStreamProcessTest.class);
 
 	/**
-	 * Test method for {@link stream.io.DataStreamProcess#readNext()}.
+	 * Test method for {@link stream.io.ProcessStream#readNext()}.
 	 */
 	@Test
 	public void testReadNext() throws Exception {
 
-		DataStreamProcess dsp = new DataStreamProcess();
+		ProcessStream dsp = new ProcessStream();
 		dsp.setCommand("/bin/cat /tmp/test.csv");
 		dsp.setFormat("stream.io.CsvStream");
 

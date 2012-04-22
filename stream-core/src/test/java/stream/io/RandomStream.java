@@ -95,22 +95,6 @@ public class RandomStream implements DataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#addPreprocessor(stream.data.DataProcessor)
-	 */
-	@Override
-	public void addPreprocessor(Processor proc) {
-		processors.add(proc);
-	}
-
-	/**
-	 * @see stream.io.DataStream#addPreprocessor(int, stream.data.DataProcessor)
-	 */
-	@Override
-	public void addPreprocessor(int idx, Processor proc) {
-		processors.add(idx, proc);
-	}
-
-	/**
 	 * @see stream.io.DataStream#getPreprocessors()
 	 */
 	@Override
@@ -131,8 +115,7 @@ public class RandomStream implements DataStream {
 		stream.getAttributes().put("x1", Double.class);
 		stream.getAttributes().put("x2", Double.class);
 
-		JSONStreamWriter writer = new JSONStreamWriter(new File(
-				"/Users/chris/test.json"));
+		JSONWriter writer = new JSONWriter(new File("/Users/chris/test.json"));
 
 		int id = 1;
 		int i = 100;

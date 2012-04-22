@@ -24,6 +24,7 @@
 package stream.data.test;
 
 import stream.ConditionedProcessor;
+import stream.ProcessorException;
 import stream.data.Data;
 
 /**
@@ -46,7 +47,7 @@ public class Assert extends ConditionedProcessor {
 	@Override
 	public Data process(Data data) {
 		if (!matches(data))
-			throw new RuntimeException("Assertion '" + getCondition()
+			throw new ProcessorException(this, "Assertion '" + getCondition()
 					+ "' failed for data item: " + data);
 		return processMatchingData(data);
 	}

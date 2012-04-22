@@ -26,6 +26,7 @@ package stream;
 import java.util.ArrayList;
 import java.util.List;
 
+import stream.annotations.Internal;
 import stream.data.Data;
 
 /**
@@ -43,6 +44,7 @@ import stream.data.Data;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
+@Internal
 public class ProcessorList extends AbstractProcessor {
 
 	protected final List<Processor> processors = new ArrayList<Processor>();

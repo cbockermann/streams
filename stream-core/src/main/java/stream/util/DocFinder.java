@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Processor;
+import stream.annotations.Internal;
 import stream.io.DataStream;
 
 /**
@@ -61,6 +62,11 @@ public class DocFinder {
 			if (Modifier.isAbstract(clazz.getModifiers())
 					|| Modifier.isInterface(clazz.getModifiers()))
 				continue;
+
+			if (clazz.isAnnotationPresent(Internal.class)) {
+				System.out.println("Skipping internal class " + clazz);
+				continue;
+			}
 
 			for (Class<?> apiClass : CLASSES) {
 

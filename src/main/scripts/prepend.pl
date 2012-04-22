@@ -15,7 +15,7 @@ while( <L> ){
 chomp($preamble);
 close( L );
 
-print "Preamble to add:\n$preamble";
+#print "Preamble to add:\n$preamble";
 
 $tmp = "$file.$$";
 open( OUT, ">$tmp" ) || die "Could not open temporary output file $tmp for writing!\n";
@@ -36,4 +36,4 @@ close( OUT );
 
 rename ($tmp, $file) || die "Failed to replace original file $file !\n";
 
-print "Prepended preamble to file $tmp\n";
+#print "Prepended preamble to file $tmp\n";

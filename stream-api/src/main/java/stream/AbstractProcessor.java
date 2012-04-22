@@ -1,13 +1,13 @@
 /*
- *  stream.ai
+ *  streams library
  *
  *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
- *  stream.ai is a library, API and runtime environment for processing high
+ *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The stream.ai library (and its submodules) is free software: you can 
+ *  The streams library (and its submodules) is free software: you can 
  *  redistribute it and/or modify it under the terms of the 
  *  GNU Affero General Public License as published by the Free Software 
  *  Foundation, either version 3 of the License, or (at your option) any 
@@ -24,11 +24,17 @@
 package stream;
 
 /**
- * @author chris
+ * <p>
+ * This class implements some basic methods of the {@link StatefulProcessor}
+ * interface and can serve as basis for custom processor implementations.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public abstract class AbstractProcessor implements StatefulProcessor {
 
+	/** The process context provided at initialization time. */
 	protected transient ProcessContext context;
 
 	/**

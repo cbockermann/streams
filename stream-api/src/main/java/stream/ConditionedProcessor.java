@@ -1,13 +1,13 @@
 /*
- *  stream.ai
+ *  streams library
  *
  *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
- *  stream.ai is a library, API and runtime environment for processing high
+ *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The stream.ai library (and its submodules) is free software: you can 
+ *  The streams library (and its submodules) is free software: you can 
  *  redistribute it and/or modify it under the terms of the 
  *  GNU Affero General Public License as published by the Free Software 
  *  Foundation, either version 3 of the License, or (at your option) any 
@@ -29,11 +29,18 @@ import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 
 /**
- * @author chris
+ * <p>
+ * This class is a processor that will process items only, if a given condition
+ * matches. The condition can be an expression in the streams expression
+ * language.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public abstract class ConditionedProcessor extends AbstractProcessor {
 
+	/** The expression to check before processing an event */
 	Expression condition;
 
 	/**

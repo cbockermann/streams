@@ -23,9 +23,57 @@
  */
 package stream.io;
 
-import java.io.File;
+import java.net.URL;
+import java.net.URLConnection;
 
-public interface FileHandler {
+import stream.data.Data;
 
-	public void handle(File file) throws Exception;
+/**
+ * @author chris
+ * 
+ */
+public class HttpDataUpload extends DataStreamWriter {
+
+	URL url;
+
+	public HttpDataUpload(URL url) {
+		this.url = url;
+	}
+
+	/**
+	 * @see stream.io.DataStreamWriter#writeHeader(stream.data.Data)
+	 */
+	@Override
+	public void writeHeader(Data datum) {
+	}
+
+	/**
+	 * @see stream.io.DataStreamWriter#write(stream.data.Data)
+	 */
+	@Override
+	public void write(Data datum) {
+	}
+
+	/**
+	 * @see stream.io.DataStreamWriter#dataArrived(stream.data.Data)
+	 */
+	@Override
+	public void dataArrived(Data datum) {
+
+		try {
+			URLConnection con = url.openConnection();
+			con.setDoInput(false);
+			con.setDoOutput(true);
+
+			DataStreamWriter writer = new DataStreamWriter(
+					con.getOutputStream());
+
+			writer.dataArrived(datum);
+			writer.finish();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		super.dataArrived(datum);
+	}
 }

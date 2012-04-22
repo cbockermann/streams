@@ -54,7 +54,8 @@ public class ObjectFactory extends VariableContext {
 	final static String[] DEFAULT_PACKAGES = new String[] { "", "stream.data.",
 			"stream.data.mapper.", "stream.data.tree.", "stream.filter.",
 			"stream.data.filter.", "stream.data.stats.", "stream.data.vector.",
-			"stream.data.test.", "stream.logic", "stream.flow" };
+			"stream.data.test.", "stream.logic", "stream.flow",
+			"stream.scripting" };
 
 	// TODO: Extend this with a custom class loader that will search other
 	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any

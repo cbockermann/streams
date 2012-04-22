@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.io;
+package stream.util;
 
 import java.util.ArrayList;
 import java.util.List;

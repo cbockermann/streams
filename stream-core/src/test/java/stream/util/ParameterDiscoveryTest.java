@@ -31,10 +31,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
-import stream.data.DataFactory;
-import stream.data.DataUtils;
-import stream.data.mapper.HideKey;
+import stream.data.mapper.SetValue;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
@@ -48,7 +45,8 @@ public class ParameterDiscoveryTest {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("startId", new Long(100L));
 		params.put("key", "x");
-		HideKey proc = new HideKey();
+		params.put("value", "3.0");
+		SetValue proc = new SetValue();
 
 		try {
 
@@ -58,18 +56,7 @@ public class ParameterDiscoveryTest {
 
 			ParameterInjection.inject(proc, params, new VariableContext());
 
-			Data datum = DataFactory.create();
-			datum.put("x", 1.0d);
-			datum.put("y", 2.10d);
-
-			log.info("Initial datum: {}", datum);
-			datum = proc.process(datum);
-			log.info("Processed datum: {}", datum);
-
-			for (String key : datum.keySet()) {
-				if (key.endsWith("x"))
-					Assert.assertTrue(DataUtils.isHidden(key));
-			}
+			Assert.assertTrue("3.0".equals(proc.getValue()));
 
 		} catch (Exception e) {
 			Assert.fail("Failed: " + e.getMessage());

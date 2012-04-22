@@ -38,6 +38,13 @@ import org.slf4j.LoggerFactory;
 public class SequentialFileInputStream extends InputStream {
 	static Logger log = LoggerFactory
 			.getLogger(SequentialFileInputStream.class);
+
+	public static interface FileHandler {
+
+		public void handle(File file) throws Exception;
+	}
+
+	/* The default sleep time to wait between checking for new files... */
 	Integer sleep = 1000;
 
 	/* The initial file this reader was created from */

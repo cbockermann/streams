@@ -57,7 +57,7 @@ public class CreateAndMultiEnqueue extends MultiEnqueue {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data process(Data data) {

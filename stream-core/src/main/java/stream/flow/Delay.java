@@ -78,7 +78,7 @@ public class Delay extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

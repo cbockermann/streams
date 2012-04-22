@@ -23,14 +23,37 @@
  */
 package stream;
 
-
 /**
- * @author chris
+ * <p>
+ * The process context interface defines the context provided to processors by
+ * the executing process. The access to this context is limited to the
+ * processors of the process.
+ * </p>
+ * <p>
+ * In contrast to the container context, the process context allows write
+ * access, i.e. storing of objects in the context.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public interface ProcessContext extends Context {
 
+	/**
+	 * Retrieves the given element from the process context. This method will
+	 * return <code>null</code> if no element exists for the specified key.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public Object get(String key);
 
+	/**
+	 * This method stores the given element in the context, possibly overwriting
+	 * any existing object of the same key.
+	 * 
+	 * @param key
+	 * @param o
+	 */
 	public void set(String key, Object o);
 }

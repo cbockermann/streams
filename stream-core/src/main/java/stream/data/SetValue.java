@@ -28,11 +28,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import stream.ConditionedProcessor;
+import stream.Context;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.ExpressionResolver;
 
+/**
+ * <p>
+ * This class implements a processor to set a value within a data item.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * 
+ */
 @Description(group = "Data Stream.Processing.Transformations.Data")
 public class SetValue extends ConditionedProcessor {
 	protected String key;
@@ -53,9 +61,9 @@ public class SetValue extends ConditionedProcessor {
 		if (key != null && value != null) {
 			String val = String.valueOf(ExpressionResolver.resolve(value,
 					context, data));
-			if (scope.contains("data"))
+			if (scope.contains(Context.DATA_CONTEXT_NAME))
 				data.put(key, val);
-			if (scope.contains("process"))
+			if (scope.contains(Context.PROCESS_CONTEXT_NAME))
 				context.set(key, val);
 		}
 
@@ -103,7 +111,7 @@ public class SetValue extends ConditionedProcessor {
 	 * @param scope
 	 *            scope=data and scope=process
 	 */
-	@Parameter(defaultValue = "data", required = false)
+	@Parameter(defaultValue = Context.DATA_CONTEXT_NAME, required = false)
 	public void setScope(String[] scope) {
 		this.scope = Arrays.asList(scope);
 	}

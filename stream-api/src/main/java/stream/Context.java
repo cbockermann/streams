@@ -41,10 +41,30 @@ import stream.service.NamingService;
 public interface Context extends NamingService {
 
 	/**
+	 * This constant defines the name of the data item context, i.e. when
+	 * accessing attributes in a data item using the expression language. For
+	 * example as <code>%{data.myKey}</code>.
+	 */
+	public final static String DATA_CONTEXT_NAME = "data";
+
+	/**
+	 * This constant defines the name of the process context within the
+	 * expression language, e.g. when using <code>%{process.myVariable}</code>.
+	 */
+	public final static String PROCESS_CONTEXT_NAME = "process";
+
+	/**
+	 * This constant defines the name of the container context, i.e. when
+	 * referring to elements as <code>%{container.element-name}</code>.
+	 */
+	public final static String CONTAINER_CONTEXT_NAME = "container";
+
+	/**
 	 * This method can be used to look up a variable in the context.
 	 * 
 	 * @param variable
 	 * @return
 	 */
-	public Object resolve(String variable);
+	public Object resolve(String variable); // TODO: Shouldn't we rename this
+											// method to 'get(String)' ??
 }

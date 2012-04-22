@@ -25,7 +25,6 @@ package stream.statistics;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
-import stream.data.stats.CountService;
 
 /**
  * @author chris

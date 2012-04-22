@@ -31,7 +31,16 @@ import stream.Measurable;
 import stream.util.SizeOf;
 
 /**
- * @author chris
+ * <p>
+ * This class is the default implementation of the Data item. The complete
+ * implementation is based upon Java's core LinkedHashMap implementation.
+ * </p>
+ * <p>
+ * Objects of this class should not be created directory, but rather by using a
+ * {@link stream.data.DataFactory}.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public class DataImpl extends LinkedHashMap<String, Serializable> implements

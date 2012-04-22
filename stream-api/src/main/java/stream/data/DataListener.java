@@ -25,7 +25,7 @@ package stream.data;
 
 /**
  * @author chris
- * 
+ * @deprecated
  */
 public interface DataListener {
 

@@ -26,11 +26,26 @@ package stream.data;
 import java.io.Serializable;
 
 /**
- * @author chris
+ * <p>
+ * This class implements utility functions for dealing with Key conventions. The
+ * key elements of all data items in the streams library are plain String
+ * objects, but may have special meanings, e.g. when being annotated as
+ * <code>@label</code>, <code>@message</code or similar.
+ * </p>
+ * <p>
+ * This method provides functions to create a Key object from Strings while
+ * regarding the conventions used in the streams library.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public class Conventions {
 
+	/**
+	 * This class represents a Key element, i.e. a string that *might* have a
+	 * special annotation.
+	 */
 	public final static class Key implements Serializable {
 
 		/** The unique class ID */
@@ -103,6 +118,15 @@ public class Conventions {
 		return new Key(annotation, name);
 	}
 
+	/**
+	 * This method simply checks if a given string denotes an annotated string
+	 * or not.
+	 * 
+	 * @param name
+	 *            The string to check.
+	 * @return <code>true</code> if the string represents an annotated string,
+	 *         <code>false</code> otherwise.
+	 */
 	public static boolean isAnnotated(String name) {
 		return name != null && name.startsWith(Data.ANNOTATION_PREFIX);
 	}

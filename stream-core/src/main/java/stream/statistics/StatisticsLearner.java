@@ -21,9 +21,11 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.data;
+package stream.statistics;
 
 import stream.AbstractProcessor;
+import stream.data.Data;
+import stream.data.Statistics;
 
 /**
  * @author chris
@@ -60,7 +62,7 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	}
 
 	/**
-	 * @see stream.data.StatisticsService#getStatistics(java.lang.String)
+	 * @see stream.statistics.StatisticsService#getStatistics(java.lang.String)
 	 */
 	@Override
 	public Statistics getStatistics() {

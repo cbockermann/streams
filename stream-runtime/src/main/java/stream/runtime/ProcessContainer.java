@@ -45,6 +45,7 @@ import org.w3c.dom.NodeList;
 import stream.ProcessContext;
 import stream.data.Data;
 import stream.data.DataFactory;
+import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.MonitorElementHandler;
@@ -247,7 +248,7 @@ public class ProcessContainer {
 					log.debug(
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
-					DataStreamQueue q = new DataStreamQueue();
+					DataStreamQueue q = new BlockingQueue();
 					listeners.put(input, q);
 					setStream(input, q);
 					context.register(input, q);
@@ -348,7 +349,7 @@ public class ProcessContainer {
 
 	public void dataArrived(String key, Data item) {
 		if (listeners.containsKey(key)) {
-			listeners.get(key).dataArrived(item);
+			listeners.get(key).process(item);
 		} else {
 			log.warn("No listener defined for {}", key);
 		}

@@ -31,6 +31,14 @@ public class BlockingQueue extends DataStreamQueue {
 
 	Integer size = 10;
 
+	public BlockingQueue() {
+		this(1000);
+	}
+
+	public BlockingQueue(int size) {
+		this.size = size;
+	}
+
 	/**
 	 * @return the size
 	 */

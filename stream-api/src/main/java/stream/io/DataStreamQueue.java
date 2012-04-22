@@ -30,14 +30,13 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataListener;
 
 /**
  * @author chris
  * 
  */
-public class DataStreamQueue extends AbstractDataStream implements
-		DataListener, Processor, QueueService {
+public abstract class DataStreamQueue extends AbstractDataStream implements
+		Processor, QueueService {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
 	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
@@ -99,14 +98,6 @@ public class DataStreamQueue extends AbstractDataStream implements
 			}
 		}
 		return item;
-	}
-
-	/**
-	 * @see stream.data.DataListener#dataArrived(stream.data.Data)
-	 */
-	@Override
-	public void dataArrived(Data item) {
-		queue.add(item);
 	}
 
 	/**

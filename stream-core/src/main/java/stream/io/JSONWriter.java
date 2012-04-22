@@ -40,7 +40,7 @@ import stream.data.Data;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class JSONWriter extends DataStreamWriter {
+public class JSONWriter extends CsvWriter {
 
 	public JSONWriter(File file) throws IOException {
 		super(file);
@@ -55,7 +55,7 @@ public class JSONWriter extends DataStreamWriter {
 	}
 
 	/**
-	 * @see stream.io.DataStreamWriter#writeHeader(stream.data.Data)
+	 * @see stream.io.CsvWriter#writeHeader(stream.data.Data)
 	 */
 	@Override
 	public void writeHeader(Data datum) {
@@ -66,7 +66,7 @@ public class JSONWriter extends DataStreamWriter {
 	}
 
 	/**
-	 * @see stream.io.DataStreamWriter#write(stream.data.Data)
+	 * @see stream.io.CsvWriter#write(stream.data.Data)
 	 */
 	@Override
 	public void write(Data datum) {

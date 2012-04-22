@@ -49,7 +49,7 @@ import stream.Processor;
 import stream.annotations.Description;
 import stream.expressions.MacroExpander;
 import stream.io.DataStream;
-import stream.io.DataStreamWriter;
+import stream.io.CsvWriter;
 
 /**
  * @author chris
@@ -87,7 +87,7 @@ public class OperatorGenerator {
 		templates.put(stream.io.DataStream.class,
 				"/GenericStreamReader.template");
 		templates.put(stream.Processor.class, "/GenericOperator.template");
-		templates.put(stream.io.DataStreamWriter.class,
+		templates.put(stream.io.CsvWriter.class,
 				"/GenericStreamWriter.template");
 
 		wrappers.put("stream.data.DataProcessor", "/GenericOperator.template");
@@ -352,7 +352,7 @@ public class OperatorGenerator {
 						log.debug("Found DataStream.class... {}", clazz);
 					}
 
-					if (DataStreamWriter.class.isAssignableFrom(clazz)) {
+					if (CsvWriter.class.isAssignableFrom(clazz)) {
 						log.debug("Skipping code-generation for i/o class {}",
 								clazz);
 						continue;

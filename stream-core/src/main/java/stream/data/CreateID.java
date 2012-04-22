@@ -26,15 +26,18 @@ package stream.data;
 import stream.AbstractProcessor;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
+import stream.service.Service;
 
 /**
+ * <p>
+ * This class adds a single ID attribute to all processed items.
+ * </p>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 @Description(text = "This processor tags all processed items with integer IDs.", group = "Data Stream.Processing.Annotations")
-public class CreateID extends AbstractProcessor implements IDService {
+public class CreateID extends AbstractProcessor implements Service {
 	Long start = 1L;
 	Long nextId = 1L;
 	String key = "@id";

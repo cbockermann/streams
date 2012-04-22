@@ -26,13 +26,14 @@ package stream.io;
 import java.net.URL;
 import java.net.URLConnection;
 
+import stream.AbstractProcessor;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
-public class HttpUpload extends DataStreamWriter {
+public class HttpUpload extends AbstractProcessor {
 
 	URL url;
 
@@ -41,39 +42,26 @@ public class HttpUpload extends DataStreamWriter {
 	}
 
 	/**
-	 * @see stream.io.DataStreamWriter#writeHeader(stream.data.Data)
+	 * @see stream.io.CsvWriter#dataArrived(stream.data.Data)
 	 */
 	@Override
-	public void writeHeader(Data datum) {
-	}
-
-	/**
-	 * @see stream.io.DataStreamWriter#write(stream.data.Data)
-	 */
-	@Override
-	public void write(Data datum) {
-	}
-
-	/**
-	 * @see stream.io.DataStreamWriter#dataArrived(stream.data.Data)
-	 */
-	@Override
-	public void dataArrived(Data datum) {
+	public Data process(Data datum) {
 
 		try {
 			URLConnection con = url.openConnection();
 			con.setDoInput(false);
 			con.setDoOutput(true);
 
-			DataStreamWriter writer = new DataStreamWriter(
+			CsvWriter writer = new CsvWriter(
 					con.getOutputStream());
 
-			writer.dataArrived(datum);
+			Data item = writer.process(datum);
 			writer.finish();
+			return item;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		super.dataArrived(datum);
+		return datum;
 	}
 }

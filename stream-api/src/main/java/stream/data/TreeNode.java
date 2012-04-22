@@ -26,25 +26,58 @@ package stream.data;
 import java.io.Serializable;
 import java.util.Collection;
 
-
 /**
+ * <p>
  * This interface defines a simple tree node.
+ * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- *
+ * 
  */
-public interface TreeNode
-	extends Serializable
-{
+public interface TreeNode extends Serializable {
+	/**
+	 * Returns the parent node of this node or <code>null</code> if this node is
+	 * the root element.
+	 * 
+	 * @return
+	 */
 	public TreeNode getParent();
-	
+
+	/**
+	 * Returns the label value of the node. Each node can be labeled with a
+	 * string.
+	 * 
+	 * @return
+	 */
 	public String getLabel();
-	
-	public void setLabel( String label );
-	
+
+	/**
+	 * This method sets the label value for the node.
+	 * 
+	 * @param label
+	 */
+	public void setLabel(String label);
+
+	/**
+	 * Checks whether this node is a leaf node, i.e. if it does not have any
+	 * child nodes.
+	 * 
+	 * @return
+	 */
 	public boolean isLeaf();
-	
+
+	/**
+	 * Returns the collection child nodes of this node. May return an empty
+	 * collection for leaf nodes.
+	 * 
+	 * @return
+	 */
 	public Collection<TreeNode> children();
-	
-	public void addChild( TreeNode node );
+
+	/**
+	 * Adds a child to this node.
+	 * 
+	 * @param node
+	 */
+	public void addChild(TreeNode node);
 }

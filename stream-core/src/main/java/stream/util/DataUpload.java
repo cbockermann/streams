@@ -76,8 +76,7 @@ public class DataUpload {
 			delay = -1;
 		}
 
-		HttpUpload upload = new HttpUpload(new URL(
-				remoteUrl));
+		HttpUpload upload = new HttpUpload(new URL(remoteUrl));
 		int limit = 10000;
 		int i = 0;
 		Data item = stream.readNext();
@@ -87,7 +86,7 @@ public class DataUpload {
 				log.info("{} items inserted.", i);
 			}
 
-			upload.dataArrived(item);
+			upload.process(item);
 
 			if (delay > 0) {
 				Thread.sleep(delay);

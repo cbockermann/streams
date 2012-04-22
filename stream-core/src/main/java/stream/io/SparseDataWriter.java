@@ -30,7 +30,7 @@ import java.util.Map;
 
 import stream.data.Data;
 
-public class SparseDataWriter extends DataStreamWriter {
+public class SparseDataWriter extends CsvWriter {
 
 	/* This map provides a mapping of features to indexes 
 	 * features with a numeric (integer) name will be mapped to their value directly */

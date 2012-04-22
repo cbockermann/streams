@@ -24,7 +24,6 @@
 package stream.statistics;
 
 import stream.data.Data;
-import stream.data.StatisticsLearner;
 
 /**
  * @author chris
@@ -33,7 +32,7 @@ import stream.data.StatisticsLearner;
 public class Maxima extends StatisticsLearner {
 
 	/**
-	 * @see stream.data.StatisticsLearner#updateStatistics(stream.data.Data)
+	 * @see stream.statistics.StatisticsLearner#updateStatistics(stream.data.Data)
 	 */
 	@Override
 	public void updateStatistics(Data item) {

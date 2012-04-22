@@ -25,16 +25,20 @@ package stream.data.tree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
 import stream.data.TreeNode;
 
-public abstract class AbstractTreeFeature extends AbstractProcessor
-		implements TreeFeature {
+public abstract class AbstractTreeFeature extends AbstractProcessor implements
+		TreeFeature {
 	String id;
 	String missingValue = "null";
+
+	String[] keys = null;
 
 	/**
 	 * @see stream.DataProcessor#process(stream.data.Data)
@@ -43,10 +47,19 @@ public abstract class AbstractTreeFeature extends AbstractProcessor
 	public Data process(Data data) {
 
 		List<String> treeKeys = new ArrayList<String>();
+		Iterator<String> it;
+		if (keys != null) {
+			it = Arrays.asList(keys).iterator();
+		} else {
+			it = data.keySet().iterator();
+		}
 
-		for (String key : data.keySet()) {
-			if (data.get(key) instanceof TreeNode)
+		while (it.hasNext()) {
+			String key = it.next();
+			Serializable value = data.get(key);
+			if (value != null && (value instanceof TreeNode)) {
 				treeKeys.add(key);
+			}
 		}
 
 		if (treeKeys.isEmpty())
@@ -79,6 +92,21 @@ public abstract class AbstractTreeFeature extends AbstractProcessor
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the keys
+	 */
+	public String[] getKeys() {
+		return keys;
+	}
+
+	/**
+	 * @param keys
+	 *            the keys to set
+	 */
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 	}
 
 	/**

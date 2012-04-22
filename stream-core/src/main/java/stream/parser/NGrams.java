@@ -36,6 +36,7 @@ import stream.data.Data;
 public class NGrams extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(NGrams.class);
 	String key = null;
+	String prefix = "";
 	Integer n = 3;
 
 	@Override
@@ -62,7 +63,7 @@ public class NGrams extends AbstractProcessor {
 				}
 
 				for (String key : counts.keySet()) {
-					data.put(key, counts.get(key));
+					data.put(prefix + key, counts.get(key));
 				}
 
 				log.debug("Added {} {}-grams to item", counts.size(), n);
@@ -100,5 +101,20 @@ public class NGrams extends AbstractProcessor {
 	 */
 	public void setN(Integer n) {
 		this.n = n;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix
+	 *            the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

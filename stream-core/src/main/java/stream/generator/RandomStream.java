@@ -36,13 +36,28 @@ import stream.data.DataFactory;
  */
 public class RandomStream extends GeneratorDataStream {
 
-	Random random;
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
 
+	Random[] random = new Random[] { new Random() };
+	String[] keys = new String[] { "att1" };
+
 	public RandomStream() {
-		random = new Random();
-		attributes.put("att1", Double.class);
+	}
+
+	/**
+	 * @return the keys
+	 */
+	public String[] getKeys() {
+		return keys;
+	}
+
+	/**
+	 * @param keys
+	 *            the keys to set
+	 */
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 	}
 
 	/**
@@ -50,6 +65,14 @@ public class RandomStream extends GeneratorDataStream {
 	 */
 	@Override
 	public Map<String, Class<?>> getAttributes() {
+
+		if (attributes == null) {
+			attributes = new LinkedHashMap<String, Class<?>>();
+			for (String key : keys) {
+				attributes.put(key, Double.class);
+			}
+		}
+
 		return attributes;
 	}
 
@@ -59,21 +82,25 @@ public class RandomStream extends GeneratorDataStream {
 	@Override
 	public Data readNext() throws Exception {
 		Data map = DataFactory.create();
-		map.put("att1", next(random));
-		return map;
+		return readNext(map);
 	}
 
 	public Data readNext(Data data) throws Exception {
 		if (data == null)
 			return readNext();
 
-		data.clear();
-		data.put("att1", next(random));
+		for (int i = 0; i < keys.length; i++) {
+			if (random[i] == null) {
+				random[i] = new Random(i * 1000L);
+			}
+
+			data.put(keys[i], next(random[i]));
+		}
 		return data;
 	}
 
 	public Double next(Random rnd) {
-		return 0.1 * (5.0 + rnd.nextGaussian());
+		return rnd.nextGaussian();
 	}
 
 	public Object get(String key) {

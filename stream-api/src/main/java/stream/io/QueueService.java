@@ -32,7 +32,23 @@ import stream.service.Service;
  */
 public interface QueueService extends Service {
 
+	/**
+	 * This method removes the head of the queue. It will return
+	 * <code>null</code> if the queue is empty.
+	 * 
+	 * @return First element in the queue or <code>null</code> for an empty
+	 *         queue.
+	 */
 	public Data poll();
 
+	/**
+	 * This method will insert the given element into the queue. The method does
+	 * not block and will return <code>false</code> if insertion could not be
+	 * performed successfully.
+	 * 
+	 * @param item
+	 *            The item to insert.
+	 * @return <code>true</code> if item inserted, <code>false</code> otherwise.
+	 */
 	public boolean enqueue(Data item);
 }

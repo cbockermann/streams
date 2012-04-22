@@ -32,7 +32,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,23 +52,22 @@ import stream.data.Data;
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
-public class DataStreamWriter extends AbstractProcessor implements
-		DataStreamListener {
-	static Logger log = LoggerFactory.getLogger(DataStreamWriter.class);
+public class CsvWriter extends AbstractProcessor {
+	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	PrintStream p;
-	String separator = " ";
+	String separator = ",";
 	String lastHeader = null;
 	boolean headerWritten = false;
 	String filter = ".*";
 	List<String> headers = new LinkedList<String>();
 	boolean closed = false;
-	List<String> keys = null;
+	String[] keys;
 	String url;
 
-	public DataStreamWriter() {
+	public CsvWriter() {
 	}
 
-	public DataStreamWriter(URL url) throws Exception {
+	public CsvWriter(URL url) throws Exception {
 		this(new FileOutputStream(new File(url.toURI())));
 	}
 
@@ -78,11 +77,11 @@ public class DataStreamWriter extends AbstractProcessor implements
 	 * @param file
 	 * @throws IOException
 	 */
-	public DataStreamWriter(File file) throws IOException {
+	public CsvWriter(File file) throws IOException {
 		this(new FileOutputStream(file));
 	}
 
-	public DataStreamWriter(File file, String separator) throws IOException {
+	public CsvWriter(File file, String separator) throws IOException {
 		this(file);
 		this.separator = separator;
 	}
@@ -106,11 +105,11 @@ public class DataStreamWriter extends AbstractProcessor implements
 	 * 
 	 * @param out
 	 */
-	public DataStreamWriter(OutputStream out) {
-		this(out, ";");
+	public CsvWriter(OutputStream out) {
+		this(out, ",");
 	}
 
-	public DataStreamWriter(OutputStream out, String separator) {
+	public CsvWriter(OutputStream out, String separator) {
 		p = new PrintStream(out);
 		this.separator = separator;
 	}
@@ -145,26 +144,19 @@ public class DataStreamWriter extends AbstractProcessor implements
 		this.separator = separator;
 	}
 
-	public void setKeys(String str) {
-		if (str == null)
-			keys = null;
-		else {
-			String[] ks = str.split(",");
-			keys = new ArrayList<String>();
-			for (String k : ks)
-				keys.add(k);
-		}
+	public void setKeys(String[] str) {
+		this.keys = str;
 	}
 
 	/**
 	 * @see stream.io.DataStreamListener#dataArrived(java.util.Map)
 	 */
 	@Override
-	public void dataArrived(Data datum) {
+	public Data process(Data datum) {
 
 		if (closed) {
 			log.error("DataStreamWriter is closed! Not writing any more data items!");
-			return;
+			return datum;
 		}
 
 		writeHeader(datum);
@@ -172,6 +164,8 @@ public class DataStreamWriter extends AbstractProcessor implements
 		// write the datum elements (attribute values)
 		//
 		write(datum);
+
+		return datum;
 	}
 
 	public void writeHeader(Data datum) {
@@ -193,7 +187,7 @@ public class DataStreamWriter extends AbstractProcessor implements
 			p.print("#");
 			Iterator<String> it = datum.keySet().iterator();
 			if (keys != null)
-				it = keys.iterator();
+				it = Arrays.asList(keys).iterator();
 
 			while (it.hasNext()) {
 				String name = it.next();
@@ -214,7 +208,7 @@ public class DataStreamWriter extends AbstractProcessor implements
 
 		Iterator<String> it = null;
 		if (keys != null)
-			it = keys.iterator();
+			it = Arrays.asList(keys).iterator();
 		else
 			it = datum.keySet().iterator();
 
@@ -241,7 +235,7 @@ public class DataStreamWriter extends AbstractProcessor implements
 		Iterator<String> it = item.keySet().iterator();
 
 		if (keys != null)
-			it = keys.iterator();
+			it = Arrays.asList(keys).iterator();
 
 		while (it.hasNext()) {
 			s.append(it.next());
@@ -255,11 +249,5 @@ public class DataStreamWriter extends AbstractProcessor implements
 		p.flush();
 		p.close();
 		closed = true;
-	}
-
-	@Override
-	public Data process(Data data) {
-		dataArrived(data);
-		return data;
 	}
 }

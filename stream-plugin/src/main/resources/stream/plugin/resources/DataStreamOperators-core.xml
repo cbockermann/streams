@@ -16,22 +16,22 @@
 			<key>ExampleSet DataStream</key>
 			<class>stream.plugin.sources.ExampleSetDataStream</class>
 		</operator>
+<!-- 
 		<operator>
 			<key>FACT Event Stream</key>
 			<class>fact.plugin.operators.FactEventReader</class>
 		</operator>
+ -->
 	</group>
 
 
 	<group key="Data Stream.Sources.Adapters">
+	<!-- 
 		<operator>
 			<key>Stream to ExampleSet</key>
 			<class>stream.plugin.sources.DataStream2ExampleSet</class>
 		</operator>
-		<operator>
-			<key>Extract Example Set</key>
-			<class>stream.plugin.processing.convert.Stream2ExampleSet</class>
-		</operator>
+	 -->
 	</group>
 	
 	

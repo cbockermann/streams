@@ -23,8 +23,13 @@
  */
 package stream.plugin.sources;
 
+import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stream.io.DataStream;
 import stream.plugin.data.DataSourceObject;
@@ -51,6 +56,7 @@ import com.rapidminer.parameter.ParameterTypeInt;
  */
 public abstract class DataStreamReader extends Operator {
 
+	static Logger log = LoggerFactory.getLogger(DataStreamReader.class);
 	public final static String INPUT_FILE = "url";
 	public final static String LIMIT = "limit";
 	final OutputPort output = getOutputPorts().createPort("stream");
@@ -96,8 +102,21 @@ public abstract class DataStreamReader extends Operator {
 	@Override
 	public List<ParameterType> getParameterTypes() {
 		List<ParameterType> types = super.getParameterTypes();
-		types.add(new ParameterTypeFile(INPUT_FILE, "The file to read from",
-				"", false));
+		// types.add(new ParameterTypeFile(INPUT_FILE, "The file to read from",
+		// "", false));
+		boolean fileParam = false;
+		try {
+			Constructor<?> con = dataStreamClass.getConstructor(URL.class);
+			if (con != null) {
+				fileParam = true;
+				types.add(new ParameterTypeFile(INPUT_FILE,
+						"The file to read from", "", false));
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+		}
+
 		types.add(new ParameterTypeInt(LIMIT,
 				"The maximum number of items read from the stream", -1,
 				Integer.MAX_VALUE, true));
@@ -105,7 +124,13 @@ public abstract class DataStreamReader extends Operator {
 		Map<String, ParameterType> discovered = ParameterTypeDiscovery
 				.discoverParameterTypes(dataStreamClass);
 		for (String key : discovered.keySet()) {
-			if (!"url".equalsIgnoreCase(key) && !"limit".equalsIgnoreCase(key)) {
+			if (fileParam
+					&& ("url".equalsIgnoreCase(key) || "file"
+							.equalsIgnoreCase(key))) {
+				log.debug("File/URL parameter-type already added!");
+				continue;
+			}
+			if (!"limit".equalsIgnoreCase(key)) {
 				types.add(discovered.get(key));
 			}
 		}

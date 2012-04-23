@@ -15,7 +15,8 @@ plugin:
 	@echo "Building streams-plugin..."
 	@mvn compile package 
 
-install: plugin
+install:
+	@echo "Installing plugin in $(RAPIDMINER_HOME)/lib/plugins"
 	@cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
 all:	compile-api plugin

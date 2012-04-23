@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.io.DataStream;
-import stream.plugin.streaming.GenericStreamingProcessorOperator;
-import stream.plugin.streaming.GenericStreamingSourceOperator;
 import stream.plugin.util.OperatorHelpFinder;
 
 import com.rapidminer.operator.Operator;
@@ -123,8 +121,8 @@ public class GenericOperatorDescription extends OperatorDescription {
 						libClass);
 
 				if (DataStreamPlugin.inStreamingMode()) {
-					op = new GenericStreamingSourceOperator(description,
-							(Class<? extends DataStream>) sod.libClass);
+					// op = new GenericStreamingSourceOperator(description,
+					// (Class<? extends DataStream>) sod.libClass);
 				} else {
 					op = new GenericStreamReader(description,
 							(Class<? extends DataStream>) sod.libClass);
@@ -137,8 +135,8 @@ public class GenericOperatorDescription extends OperatorDescription {
 					libClass);
 
 			if (DataStreamPlugin.inStreamingMode()) {
-				op = new GenericStreamingProcessorOperator(description,
-						(Class<? extends Processor>) sod.libClass);
+				// op = new GenericStreamingProcessorOperator(description,
+				// (Class<? extends Processor>) sod.libClass);
 			} else {
 				op = new GenericStreamOperator(description,
 						(Class<? extends Processor>) sod.libClass);

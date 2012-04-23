@@ -29,6 +29,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.io.CsvStream;
+import stream.io.SQLWriter;
+import stream.plugin.processing.DataStreamProcess;
 import stream.plugin.util.ParameterTypeDiscovery;
 
 import com.rapidminer.parameter.ParameterType;
@@ -44,11 +47,37 @@ public class ParameterDiscoveryTest {
 	@Test
 	public void test() {
 
+		log.info("");
+		log.info("");
+		log.info("Checking class {}", CsvStream.class);
+		log.info("");
 		Map<String, ParameterType> types = ParameterTypeDiscovery
 				.discoverParameterTypes(stream.io.CsvStream.class);
 		for (String key : types.keySet()) {
 			log.info("{} => {}", key, types.get(key));
 		}
+
+		log.info("");
+		log.info("");
+		log.info("Checking class {}", DataStreamProcess.class);
+		log.info("");
+		types = ParameterTypeDiscovery
+				.discoverParameterTypes(DataStreamProcess.class);
+
+		for (String key : types.keySet()) {
+			log.info("{} => {}", key, types.get(key));
+		}
+
+		log.info("");
+		log.info("");
+		log.info("Checking class {}", SQLWriter.class);
+		log.info("");
+		types = ParameterTypeDiscovery.discoverParameterTypes(SQLWriter.class);
+
+		for (String key : types.keySet()) {
+			log.info("{} => {}", key, types.get(key));
+		}
+
 		// fail("Not yet implemented");
 	}
 }

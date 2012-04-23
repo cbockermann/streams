@@ -66,8 +66,7 @@ public final class DataStreamPlugin {
 
 	public static boolean inStreamingMode() {
 
-		if ("true"
-				.equalsIgnoreCase(System.getProperty("rapidminer.streaming "))) {
+		if ("true".equalsIgnoreCase(System.getProperty("rapidminer.streaming"))) {
 			return true;
 		}
 
@@ -90,11 +89,12 @@ public final class DataStreamPlugin {
 		log.info("");
 		try {
 
-			URL url = DataStreamPlugin.class.getResource("/log4j.properties");
+			URL url = DataStreamPlugin.class
+					.getResource("/stream/plugin/log4j.properties");
 			if ("true".equalsIgnoreCase(System
 					.getProperty("DataStreamPlugin.debug"))) {
 				url = DataStreamPlugin.class
-						.getResource("/log4j-debug.properties");
+						.getResource("/stream/plugin/log4j-debug.properties");
 			}
 
 			PropertyConfigurator.configure(url);

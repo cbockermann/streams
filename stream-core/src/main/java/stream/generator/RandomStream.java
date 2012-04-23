@@ -42,7 +42,7 @@ public class RandomStream extends GeneratorDataStream {
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
 
-	Random[] random = new Random[] { new Random() };
+	Random[] random = null;
 	String[] keys = new String[] { "att1" };
 
 	public RandomStream() {
@@ -92,6 +92,12 @@ public class RandomStream extends GeneratorDataStream {
 	public Data readNext(Data data) throws Exception {
 		if (data == null)
 			return readNext();
+
+		if (keys == null)
+			keys = new String[] { "x1" };
+
+		if (random == null)
+			random = new Random[keys.length];
 
 		for (int i = 0; i < keys.length; i++) {
 			if (random[i] == null) {

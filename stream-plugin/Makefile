@@ -11,14 +11,14 @@ compile-api:
 	cd $(STREAM_API_HOME) && mvn -DskipTests=true install
 	cd ../stream-plugin
 
-build-plugin:
+plugin:
 	mvn compile package
 #	mvn clean compile exec:java package
 
-install: build-plugin
+install: plugin
 	cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
-all:	compile-api build-plugin
+all:	compile-api plugin
 
 clean:
 	mvn clean

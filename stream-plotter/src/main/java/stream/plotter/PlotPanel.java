@@ -61,14 +61,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.data.DataListener;
 import stream.data.Statistics;
 
 /**
  * @author chris
  * 
  */
-public class PlotPanel extends JPanel implements DataListener {
+public class PlotPanel extends JPanel {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -4365922853856318209L;
@@ -232,7 +231,6 @@ public class PlotPanel extends JPanel implements DataListener {
 	/**
 	 * @see stream.data.DataListener#dataArrived(stream.data.Data)
 	 */
-	@Override
 	public void dataArrived(Data item) {
 
 		Statistics stats = new Statistics("");

@@ -65,7 +65,6 @@ public class StreamPlotView extends AbstractMonitorView implements DataListener 
 	/**
 	 * @see stream.data.DataListener#dataArrived(stream.data.Data)
 	 */
-	@Override
 	public void dataArrived(Data item) {
 
 		Statistics stats = new Statistics("");

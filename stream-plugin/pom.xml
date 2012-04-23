@@ -12,6 +12,11 @@
 			<name>jwall.org Maven Repository</name>
 			<url>http://secure.jwall.org/maven/repository/all</url>
 		</repository>
+		<repository>
+			<id>jwall-snapshots</id>
+			<name>jwall.org Maven Repository</name>
+			<url>http://secure.jwall.org/maven/repository/snapshots</url>
+		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -52,7 +57,6 @@
 			<groupId>com.vlsolutions</groupId>
 			<artifactId>vldocking</artifactId>
 			<version>2.1.4</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
@@ -78,7 +82,7 @@
 		<dependency>
 			<groupId>com.rapid-i</groupId>
 			<artifactId>rapidminer-streaming</artifactId>
-			<version>5.2.002</version>
+			<version>5.2.003</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

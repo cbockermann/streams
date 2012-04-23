@@ -153,13 +153,4 @@ public final class DataStreamPlugin {
 		}
 
 	}
-
-	public static void initGui(MainFrame mf) {
-		mainframe = mf;
-		mainframe.registerDockable(streamPlotView);
-	}
-
-	public static MainFrame getMainFrame() {
-		return mainframe;
-	}
 }

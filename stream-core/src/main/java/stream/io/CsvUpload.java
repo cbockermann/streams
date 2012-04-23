@@ -33,11 +33,11 @@ import stream.data.Data;
  * @author chris
  * 
  */
-public class HttpUpload extends AbstractProcessor {
+public class CsvUpload extends AbstractProcessor {
 
 	URL url;
 
-	public HttpUpload(URL url) {
+	public CsvUpload(URL url) {
 		this.url = url;
 	}
 

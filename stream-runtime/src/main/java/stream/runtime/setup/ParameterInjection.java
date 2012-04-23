@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.EmbeddedContent;
+import stream.expressions.Condition;
 import stream.runtime.VariableContext;
 
 /**
@@ -259,7 +260,7 @@ public class ParameterInjection {
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
 				|| clazz.equals(Boolean.class) || clazz.equals(File.class)
 				|| clazz.equals(EmbeddedContent.class)
-				|| clazz.equals(Map.class))
+				|| clazz.equals(Condition.class) || clazz.equals(Map.class))
 			return true;
 
 		if (clazz.isPrimitive())

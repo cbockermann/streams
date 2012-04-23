@@ -11,7 +11,7 @@ import stream.annotations.Description;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Transformations.Data")
+@Description(group = "Data Stream.Processing.Transformations.Data")
 public class AsJSON implements Processor {
 
 	String key = "@json";

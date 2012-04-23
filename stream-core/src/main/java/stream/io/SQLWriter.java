@@ -127,6 +127,7 @@ public class SQLWriter extends AbstractProcessor {
 	 * @param keys
 	 *            the keys to set
 	 */
+	@Parameter(required = false, description = "A list of attributes to insert (columns), empty string for all attributes.")
 	public void setKeys(String[] keys) {
 		this.keys = keys;
 	}

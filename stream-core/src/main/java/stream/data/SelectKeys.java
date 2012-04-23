@@ -35,14 +35,14 @@ import stream.data.DataFactory;
  * @author chris
  * 
  */
-public class SelectAttributes implements Processor {
+public class SelectKeys implements Processor {
 
 	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
 	private Boolean remove;
 
-	public SelectAttributes() {
+	public SelectKeys() {
 		super();
 		this.remove = true;
 	}

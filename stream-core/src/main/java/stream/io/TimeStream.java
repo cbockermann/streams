@@ -24,6 +24,7 @@
 package stream.io;
 
 import stream.data.Data;
+import stream.util.parser.TimeParser;
 
 /**
  * @author chris
@@ -32,6 +33,31 @@ import stream.data.Data;
 public class TimeStream extends AbstractDataStream {
 
 	String key = "@timestamp";
+	String interval = "";
+	Long gap = -1L;
+	long last = 0L;
+
+	/**
+	 * @return the interval
+	 */
+	public String getInterval() {
+		return interval;
+	}
+
+	/**
+	 * @param interval
+	 *            the interval to set
+	 */
+	public void setInterval(String interval) {
+		this.interval = interval;
+		try {
+			gap = TimeParser.parseTime(interval);
+		} catch (Exception e) {
+			gap = -1L;
+			throw new RuntimeException("Invalid time string '" + interval
+					+ "': " + e.getMessage());
+		}
+	}
 
 	/**
 	 * @see stream.io.DataStream#close()
@@ -53,6 +79,21 @@ public class TimeStream extends AbstractDataStream {
 	@Override
 	public Data readItem(Data instance) throws Exception {
 		Long timestamp = System.currentTimeMillis();
+
+		if (gap > 0) {
+
+			long t = timestamp - (timestamp % gap);
+			long t2 = gap - (timestamp - t);
+			try {
+				if (t2 > 0)
+					Thread.sleep(t2);
+			} catch (Exception e) {
+
+			}
+			timestamp = System.currentTimeMillis();
+		}
+		last = timestamp;
+
 		instance.put(key, timestamp);
 		return instance;
 	}

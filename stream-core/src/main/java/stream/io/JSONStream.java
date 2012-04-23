@@ -33,12 +33,14 @@ import net.minidev.json.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.annotations.Description;
 import stream.data.Data;
 
 /**
- * @author chris
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
+@Description(group = "Data Stream.Sources")
 public class JSONStream extends AbstractDataStream {
 
 	static Logger log = LoggerFactory.getLogger(JSONStream.class);

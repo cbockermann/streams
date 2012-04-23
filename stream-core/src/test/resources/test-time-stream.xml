@@ -1,0 +1,12 @@
+<container>
+
+	<stream id="test"
+			class="stream.io.TimeStream" limit="10" interval="1000ms" />
+			
+	<process input="test">
+		<PrintData />
+	</process>
+	
+</container>
+
+

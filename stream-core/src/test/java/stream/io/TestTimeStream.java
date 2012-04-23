@@ -23,53 +23,22 @@
  */
 package stream.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 
-import net.minidev.json.JSONObject;
-import stream.data.Data;
+import org.junit.Test;
+
+import stream.runtime.ProcessContainer;
 
 /**
- * <p>
- * This is a simple JSON writer that will write all data items into JSON strings
- * (one line for each item).
- * </p>
- * 
- * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * @author chris
  * 
  */
-public class JSONWriter extends CsvWriter {
+public class TestTimeStream {
 
-	public JSONWriter(File file) throws IOException {
-		super(file);
-	}
-
-	public JSONWriter(URL url) throws Exception {
-		super(url);
-	}
-
-	public JSONWriter(OutputStream out) throws Exception {
-		super(out);
-	}
-
-	/**
-	 * @see stream.io.CsvWriter#writeHeader(stream.data.Data)
-	 */
-	@Override
-	public void writeHeader(Data datum) {
-		//
-		// we overwrite this method to ensure no data-header is
-		// written by the super-class
-		//
-	}
-
-	/**
-	 * @see stream.io.CsvWriter#write(stream.data.Data)
-	 */
-	@Override
-	public void write(Data datum) {
-		p.println(JSONObject.toJSONString(datum));
+	@Test
+	public void test() throws Exception {
+		URL url = TestTimeStream.class.getResource("/test-time-stream.xml");
+		ProcessContainer container = new ProcessContainer(url);
+		container.run();
 	}
 }

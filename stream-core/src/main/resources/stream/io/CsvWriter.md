@@ -19,5 +19,5 @@ parameter.
 The following example shows a *CsvWriter* writing to `/tmp/test.csv` using the `;`
 as separator. Only keys `@id` and `name` will be written:
 
-      &lt;CsvWriter url="file:/tmp/test.csv" keys="@id,name"
-                    separator=";" /&gt;
+      <CsvWriter url="file:/tmp/test.csv" keys="@id,name"
+                 separator=";" />

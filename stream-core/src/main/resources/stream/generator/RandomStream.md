@@ -11,7 +11,7 @@ that will all be Gaussian distributed as described above.
 The following example defines a random stream with three Gaussian distributed
 attributes:
 
-       &lt;Stream class="stream.io.RandomStream" keys="x1,x2,x3" /&gt;
+       <Stream class="stream.io.RandomStream" keys="x1,x2,x3" />
 
 The random numbers are provided by the `java.math.Random` class. For each key,
 a different random generator is initialized. The seed for the *i*-th key is

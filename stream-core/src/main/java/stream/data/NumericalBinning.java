@@ -24,13 +24,13 @@
 package stream.data;
 
 import stream.Processor;
-import stream.data.Data;
-import stream.data.DataUtils;
+import stream.annotations.Description;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Transformations.Data")
 public class NumericalBinning implements Processor {
 
 	Double minimum = 0.0d;

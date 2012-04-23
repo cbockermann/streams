@@ -122,9 +122,27 @@ public class DataStreamFactory {
 	public static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
-		Constructor<?> constr = clazz.getConstructor(URL.class);
+		DataStream stream = null;
 		String urlParam = params.get("url");
+		if (urlParam == null) {
+			log.debug("No 'url' parameter for data class {} found, checking for no-args constructor");
+			try {
+				stream = (DataStream) clazz.newInstance();
+				ParameterInjection
+						.inject(stream, params, new VariableContext());
+				return stream;
+			} catch (Exception e) {
+				log.error(
+						"No no-args constructor found and no 'url' parameter specified for stream {}!",
+						clazz);
+				throw new Exception(
+						"No no-args constructor found and no 'url' parameter specified for stream "
+								+ clazz + "!");
+			}
+		}
+
 		URL url = null;
+		Constructor<?> constr = clazz.getConstructor(URL.class);
 
 		if (params.get("url").startsWith("classpath:")) {
 			String resource = urlParam.substring("classpath:".length());
@@ -138,7 +156,7 @@ public class DataStreamFactory {
 			url = new URL(urlParam);
 		}
 
-		DataStream stream = (DataStream) constr.newInstance(url);
+		stream = (DataStream) constr.newInstance(url);
 		ParameterInjection.inject(stream, params, new VariableContext());
 
 		if (stream instanceof MultiDataStream) {

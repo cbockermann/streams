@@ -8,17 +8,18 @@ STREAMS_HOME=..
 STREAM_API_HOME=$(STREAMS_HOME)/stream-api
 
 compile-api:
-	cd $(STREAM_API_HOME) && mvn -DskipTests=true install
-	cd ../stream-plugin
+	@cd $(STREAM_API_HOME) && mvn -DskipTests=true install
+	@cd ../stream-plugin
 
 plugin:
-	mvn compile package
-#	mvn clean compile exec:java package
+	@echo "Building streams-plugin..."
+	@mvn compile package 
 
 install: plugin
-	cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
+	@cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
 all:	compile-api plugin
 
 clean:
-	mvn clean
+	@echo "Cleaning project directory..."
+	@mvn clean >> /dev/null

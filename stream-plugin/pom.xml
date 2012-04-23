@@ -57,6 +57,7 @@
 			<groupId>com.vlsolutions</groupId>
 			<artifactId>vldocking</artifactId>
 			<version>2.1.4</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
@@ -94,6 +95,12 @@
 			<groupId>edu.udo</groupId>
 			<artifactId>fact-tools</artifactId>
 			<version>0.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>mysql-connector-java</artifactId>
+					<groupId>mysql</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

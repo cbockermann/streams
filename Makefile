@@ -7,3 +7,7 @@ update-license:
 
 plugin:
 	@cd stream-plugin && make plugin
+
+clean:
+	@mvn clean
+	@cd stream-plugin && make clean

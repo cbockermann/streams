@@ -143,6 +143,7 @@ public abstract class DataStreamReader extends Operator {
 			Class<? extends DataStream> dataStreamClass,
 			Map<String, String> parameters) throws Exception {
 		parameters.put("class", dataStreamClass.getName());
+
 		try {
 			DataStream stream = (DataStream) DataStreamFactory
 					.createStream(parameters);

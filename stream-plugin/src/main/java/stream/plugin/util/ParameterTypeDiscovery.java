@@ -158,7 +158,10 @@ public class ParameterTypeDiscovery {
 			desc = param.description();
 		}
 
-		if (type.equals(String.class) || type.equals(Condition.class)) {
+		if (type.equals(String.class)
+				|| type.equals(Condition.class)
+				|| (type.isArray() && type.getComponentType().equals(
+						String.class))) {
 			log.debug("ParameterType is a String");
 
 			if (param != null && param.values() != null) {

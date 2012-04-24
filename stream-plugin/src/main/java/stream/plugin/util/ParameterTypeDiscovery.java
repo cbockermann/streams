@@ -24,9 +24,10 @@
 package stream.plugin.util;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.EmbeddedContent;
 import stream.annotations.Parameter;
+import stream.expressions.Condition;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
@@ -74,55 +76,6 @@ public class ParameterTypeDiscovery {
 		log.debug("------------------------------------------------------------------------");
 		log.debug("Exploring ParameterTypes for class '{}'", clazz);
 		Map<String, ParameterType> types = new LinkedHashMap<String, ParameterType>();
-		Field[] fields = clazz.getDeclaredFields();
-
-		log.debug("Found {} fields", fields.length);
-
-		for (Field field : fields) {
-			ParameterType type = null;
-			Parameter param = field.getAnnotation(Parameter.class);
-			if (param != null) {
-				log.debug("Found @parameter annotated field '{}'",
-						field.getName());
-				log.debug("    field.getType() = {}", field.getType());
-
-				type = getParameterType(param, field.getName(), field.getType());
-				/*
-				 * if( field.getType().equals( String.class ) ){ log.debug(
-				 * "Field is a String" );
-				 * 
-				 * if( param.values() != null ){ type = new ParameterTypeString(
-				 * param.name(), desc, !param.required() ); } else { type = new
-				 * ParameterTypeString( param.name(), desc, !param.required() );
-				 * } }
-				 * 
-				 * if( field.getType().equals( Integer.class ) ||
-				 * field.getType().equals( Long.class ) ){ log.debug(
-				 * "Field {} is an Integer!", field.getName() ); type = new
-				 * ParameterTypeInt( param.name(), desc, (new
-				 * Double(param.min())).intValue(), (new
-				 * Double(param.max())).intValue(), !param.required() ); }
-				 * 
-				 * if( field.getType().equals( Boolean.class ) ){ log.debug(
-				 * "Field {} is a Boolean!", field.getName() ); type = new
-				 * ParameterTypeBoolean( param.name(), desc, !param.required()
-				 * ); }
-				 */
-
-				if (type != null) {
-					log.debug("Adding new parameter-type {}", type);
-					types.put(param.name(), type);
-				} else {
-					log.error(
-							"Failed to properly determine annotated field {} in class {}",
-							field.getName(), clazz.getName());
-				}
-
-			} else {
-				log.debug("Field '{}' is not annotated as parameter",
-						field.getName());
-			}
-		}
 
 		for (Method m : clazz.getMethods()) {
 
@@ -144,7 +97,7 @@ public class ParameterTypeDiscovery {
 
 				Parameter param = m.getAnnotation(Parameter.class);
 				if (param == null) {
-					log.info(
+					log.debug(
 							"Method '{}' is not annotated as Parameter -> skipping",
 							m.getName());
 					continue;
@@ -205,7 +158,10 @@ public class ParameterTypeDiscovery {
 			desc = param.description();
 		}
 
-		if (type.equals(String.class)) {
+		if (type.equals(String.class)
+				|| type.equals(Condition.class)
+				|| (type.isArray() && type.getComponentType().equals(
+						String.class))) {
 			log.debug("ParameterType is a String");
 
 			if (param != null && param.values() != null) {
@@ -218,7 +174,7 @@ public class ParameterTypeDiscovery {
 
 			if (param != null && param.values() != null
 					&& param.values().length > 1) {
-				log.info("Found category-parameter!");
+				log.debug("Found category-parameter!");
 				ParameterTypeCategory cat = new ParameterTypeCategory(key,
 						desc, param.values(), 0);
 				return cat;
@@ -227,7 +183,7 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
-		if (type.equals(Double.class)) {
+		if (type.equals(Double.class) || type.equals(double.class)) {
 			log.debug("ParameterType {} is a Double!");
 			if (param != null) {
 				pt = new ParameterTypeDouble(key, desc, param.min(),
@@ -241,7 +197,8 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
-		if (type.equals(Integer.class) || type.equals(Long.class)) {
+		if (type.equals(Integer.class) || type.equals(Long.class)
+				|| type.equals(int.class) || type.equals(long.class)) {
 
 			log.debug("ParameterType {} is an Integer!", type);
 
@@ -280,7 +237,7 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
-		if (type.equals(Boolean.class)) {
+		if (type.equals(Boolean.class) || type.equals(boolean.class)) {
 			log.debug("ParameterType {} is a Boolean!");
 			if (param != null)
 				pt = new ParameterTypeBoolean(key, desc, !param.required());
@@ -299,7 +256,7 @@ public class ParameterTypeDiscovery {
 
 		if (Map.class.isAssignableFrom(type)) {
 
-			log.info("Found Map parameter... ");
+			log.debug("Found Map parameter... ");
 			pt = new ParameterTypeList(key, desc, new ParameterTypeString(
 					"key", ""), new ParameterTypeString("value", ""));
 			return pt;
@@ -318,5 +275,14 @@ public class ParameterTypeDiscovery {
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
+	}
+
+	public static List<ParameterType> getParameterTypes(Class<?> clazz) {
+		Map<String, ParameterType> types = discoverParameterTypes(clazz);
+		List<ParameterType> list = new ArrayList<ParameterType>();
+		for (String name : types.keySet()) {
+			list.add(types.get(name));
+		}
+		return list;
 	}
 }

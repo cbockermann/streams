@@ -12,6 +12,11 @@
 			<name>jwall.org Maven Repository</name>
 			<url>http://secure.jwall.org/maven/repository/all</url>
 		</repository>
+		<repository>
+			<id>jwall-snapshots</id>
+			<name>jwall.org Maven Repository</name>
+			<url>http://secure.jwall.org/maven/repository/snapshots</url>
+		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -78,7 +83,7 @@
 		<dependency>
 			<groupId>com.rapid-i</groupId>
 			<artifactId>rapidminer-streaming</artifactId>
-			<version>5.2.002</version>
+			<version>5.2.003</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -90,6 +95,12 @@
 			<groupId>edu.udo</groupId>
 			<artifactId>fact-tools</artifactId>
 			<version>0.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>mysql-connector-java</artifactId>
+					<groupId>mysql</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

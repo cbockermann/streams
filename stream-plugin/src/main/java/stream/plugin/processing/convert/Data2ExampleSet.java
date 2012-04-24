@@ -96,9 +96,7 @@ public class Data2ExampleSet extends OperatorBean {
 			ExampleSet exampleSet = exampleSetFactory.createExampleSet(buffer);
 			buffer.clear();
 			output.deliver(exampleSet);
-		} else
-			output.deliver(null);
-
+		}
 		passThroughPort.deliver(event);
 	}
 }

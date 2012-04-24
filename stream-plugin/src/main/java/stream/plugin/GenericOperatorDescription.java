@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.io.DataStream;
-import stream.plugin.streaming.GenericStreamingProcessorOperator;
-import stream.plugin.streaming.GenericStreamingSourceOperator;
 import stream.plugin.util.OperatorHelpFinder;
 
 import com.rapidminer.operator.Operator;
@@ -106,7 +104,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 			GenericOperatorDescription sod = (GenericOperatorDescription) description;
 
 			if (Operator.class.isAssignableFrom(libClass)) {
-				log.info("Provided class already is a fully blown operator!");
+				log.debug("Provided class already is a fully blown operator!");
 
 				Constructor<?> constructor = libClass
 						.getConstructor(OperatorDescription.class);
@@ -116,35 +114,35 @@ public class GenericOperatorDescription extends OperatorDescription {
 			}
 
 			if (DataStream.class.isAssignableFrom(libClass)) {
-				log.info("Class {} is a data-stream class!", libClass);
+				log.debug("Class {} is a data-stream class!", libClass);
 
-				log.info(
+				log.debug(
 						"Creating GenericStreamingSourceOperator for class {}",
-						libClass);
+						libClass.getName());
 
 				if (DataStreamPlugin.inStreamingMode()) {
-					op = new GenericStreamingSourceOperator(description,
-							(Class<? extends DataStream>) sod.libClass);
+					// op = new GenericStreamingSourceOperator(description,
+					// (Class<? extends DataStream>) sod.libClass);
 				} else {
 					op = new GenericStreamReader(description,
 							(Class<? extends DataStream>) sod.libClass);
 				}
-				log.info("Operator is of class {}", op.getClass());
+				log.debug("Operator is of class {}", op.getClass());
 				return op;
 			}
 
-			log.info("Creating GenericStreamOperator for processor-class {}",
+			log.debug("Creating GenericStreamOperator for processor-class {}",
 					libClass);
 
 			if (DataStreamPlugin.inStreamingMode()) {
-				op = new GenericStreamingProcessorOperator(description,
-						(Class<? extends Processor>) sod.libClass);
+				// op = new GenericStreamingProcessorOperator(description,
+				// (Class<? extends Processor>) sod.libClass);
 			} else {
 				op = new GenericStreamOperator(description,
 						(Class<? extends Processor>) sod.libClass);
 			}
 
-			log.info("Operator of class {} is {}", libClass, op.getClass());
+			log.debug("Operator of class {} is {}", libClass, op.getClass());
 			return op;
 		}
 
@@ -156,25 +154,25 @@ public class GenericOperatorDescription extends OperatorDescription {
 	public static boolean canCreate(Class<?> clazz) {
 
 		if (Operator.class.isAssignableFrom(clazz)) {
-			log.info(
+			log.debug(
 					"Yes, we support direct creation of Operators...(class {})",
 					clazz);
 			return true;
 		}
 
 		if (Processor.class.isAssignableFrom(clazz)) {
-			log.info("Yes, we can create an Operator for Processor-class {}",
+			log.debug("Yes, we can create an Operator for Processor-class {}",
 					clazz);
 			return true;
 		}
 
 		if (DataStream.class.isAssignableFrom(clazz)) {
-			log.info("Yes, we can create an Operator for DataStream-class {}",
+			log.debug("Yes, we can create an Operator for DataStream-class {}",
 					clazz);
 			return true;
 		}
 
-		log.warn("No generic operator-support for class '{}'", clazz);
+		log.debug("No generic operator-support for class '{}'", clazz);
 		return false;
 	}
 }

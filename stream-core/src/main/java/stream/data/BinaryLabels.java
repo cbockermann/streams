@@ -26,6 +26,7 @@ package stream.data;
 import java.io.Serializable;
 
 import stream.AbstractProcessor;
+import stream.annotations.Description;
 
 /**
  * This class implements a simple strategy to map labels to { -1, +1 }
@@ -33,6 +34,7 @@ import stream.AbstractProcessor;
  * @author chris@jwall.org
  * 
  */
+@Description(group = "Data Stream.Processing.Transformations.Data")
 public class BinaryLabels extends AbstractProcessor {
 
 	String labelAttribute;

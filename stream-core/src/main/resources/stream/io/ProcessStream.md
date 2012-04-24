@@ -11,9 +11,9 @@ The default format for external processes is expected to be CSV.
 In the following example, the Unix command `cat` is used as an example, producing
 lines of some CSV file:
 
-    &lt;Stream class="stream.io.ProcessStream"
+       <Stream class="stream.io.ProcessStream"
                command="/bin/cat /tmp/test.csv"
-               format="stream.io.CsvStream" /&gt;
+               format="stream.io.CsvStream" />
 
 The process is started at initialization time and the output will be read from
 standard input.

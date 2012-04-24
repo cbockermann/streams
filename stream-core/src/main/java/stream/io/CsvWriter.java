@@ -42,6 +42,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.ProcessContext;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 
 /**
@@ -52,6 +54,7 @@ import stream.data.Data;
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
+@Description(group = "Data Stream.Output")
 public class CsvWriter extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	PrintStream p;
@@ -140,10 +143,16 @@ public class CsvWriter extends AbstractProcessor {
 	 * @param separator
 	 *            the separator to set
 	 */
+	@Parameter(required = false, description = "The separator to separate columns, usually ','", defaultValue = ",")
 	public void setSeparator(String separator) {
 		this.separator = separator;
 	}
 
+	/**
+	 * 
+	 * @param str
+	 */
+	@Parameter(required = false, description = "The attributes to write out, leave blank to write out all attributes.")
 	public void setKeys(String[] str) {
 		this.keys = str;
 	}

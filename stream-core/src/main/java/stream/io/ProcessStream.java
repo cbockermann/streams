@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.ProcessorList;
+import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
@@ -40,6 +41,7 @@ import stream.data.DataFactory;
 /**
  * @author chris
  */
+@Description(name = "Stream Process (exec)", group = "Data Stream.Sources")
 public class ProcessStream implements DataStream {
 
 	static Logger log = LoggerFactory.getLogger(ProcessStream.class);

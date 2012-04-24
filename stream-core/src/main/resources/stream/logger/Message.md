@@ -12,5 +12,5 @@ The following example defines a processor that will output a messags with
 the items `@id` attribute for each item that has an `alert` value higher
 than 10:
 
-     &lt;Message message="Alert for item %{data.@id}!"
-                 condition="%{data.alert} @gt 10" /&gt;
+     <Message message="Alert for item %{data.@id}!"
+              condition="%{data.alert} @gt 10" />

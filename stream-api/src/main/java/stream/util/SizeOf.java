@@ -26,6 +26,9 @@ package stream.util;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 
 import stream.Measurable;
 
@@ -35,7 +38,35 @@ import stream.Measurable;
  */
 public class SizeOf {
 
+	public final static Map<Class<?>, Double> basicSizes = new HashMap<Class<?>, Double>();
+	static {
+		basicSizes.put(int.class, 4.0);
+		basicSizes.put(Integer.class, 4.0);
+		basicSizes.put(long.class, 8.0);
+		basicSizes.put(Long.class, 8.0);
+		basicSizes.put(double.class, 8.0);
+		basicSizes.put(Double.class, 8.0);
+		basicSizes.put(char.class, 2.0);
+		basicSizes.put(Character.class, 2.0);
+	}
+
 	public static double sizeOf(Object o) {
+
+		Class<?> clazz = o.getClass();
+
+		if (basicSizes.containsKey(clazz))
+			return basicSizes.get(clazz);
+
+		if (o.getClass().isArray()
+				&& basicSizes.containsKey(clazz.getComponentType())) {
+			return Array.getLength(o)
+					* basicSizes.get(clazz.getComponentType());
+		}
+
+		if (o instanceof String) {
+			String str = (String) o;
+			return str.getBytes().length;
+		}
 
 		if (o instanceof Measurable) {
 			return ((Measurable) o).getByteSize();

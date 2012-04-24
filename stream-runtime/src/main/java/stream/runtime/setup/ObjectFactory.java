@@ -23,7 +23,9 @@
  */
 package stream.runtime.setup;
 
+import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,6 +40,7 @@ import org.w3c.dom.Node;
 
 import stream.annotations.EmbeddedContent;
 import stream.runtime.VariableContext;
+import stream.utils.FileUtils;
 
 /**
  * This class implements a generic object factory that is able to instantiate
@@ -61,7 +64,7 @@ public class ObjectFactory extends VariableContext {
 	// TODO: Extend this with a custom class loader that will search other
 	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any
 	// other search path list found in the system environment/system settings
-	final ClassLoader classLoader = ObjectFactory.class.getClassLoader();
+	ClassLoader classLoader = ObjectFactory.class.getClassLoader();
 
 	final List<String> searchPath = new ArrayList<String>();
 
@@ -71,6 +74,30 @@ public class ObjectFactory extends VariableContext {
 		for (String pkg : DEFAULT_PACKAGES) {
 			addPackage(pkg);
 		}
+
+		UserSettings settings = new UserSettings();
+		List<File> files = new ArrayList<File>();
+
+		for (URL url : settings.getLibrarySearchPath()) {
+			if (url.getProtocol().toLowerCase().startsWith("file")) {
+				files.addAll(FileUtils.findAllFiles(new File(url.getFile())));
+			}
+		}
+
+		URL[] url = new URL[files.size()];
+		log.info("Extra class paths:");
+		int i = 0;
+		for (File f : files) {
+			try {
+				url[i] = f.toURI().toURL();
+				log.info("   {}", f);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		classLoader = URLClassLoader.newInstance(url,
+				ObjectFactory.class.getClassLoader());
 	}
 
 	public void addPackage(String pkg) {
@@ -182,7 +209,7 @@ public class ObjectFactory extends VariableContext {
 			return node.getAttribute("class");
 
 		try {
-			Class.forName(node.getNodeName());
+			classLoader.loadClass(node.getNodeName());
 			log.debug("Found direct class-match: {}", node.getNodeName());
 
 			URL doc = findDocumentation(node.getNodeName());
@@ -202,7 +229,7 @@ public class ObjectFactory extends VariableContext {
 					cn = cn.substring(1);
 
 				log.debug("Checking for class {}", cn);
-				Class<?> clazz = Class.forName(cn);
+				Class<?> clazz = classLoader.loadClass(cn);
 				log.debug("Auto-detected class {} for node {}", clazz,
 						node.getNodeName());
 
@@ -224,7 +251,7 @@ public class ObjectFactory extends VariableContext {
 	public URL findDocumentation(String className) {
 		String docResource = "/" + className.replace('.', '/') + ".md";
 		log.trace("Doc resource for '{}' is '{}'", className, docResource);
-		URL url = ObjectFactory.class.getResource(docResource);
+		URL url = classLoader.getResource(docResource);
 		return url;
 	}
 }

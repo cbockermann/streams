@@ -30,24 +30,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessContext;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.expressions.Expression;
-import stream.expressions.ExpressionCompiler;
+import stream.expressions.Condition;
 import stream.io.ListDataStream;
 import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
+import stream.plugin.util.ParameterSetup;
+import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
-import com.rapidminer.operator.UserError;
 import com.rapidminer.parameter.ParameterType;
-import com.rapidminer.parameter.ParameterTypeInt;
-import com.rapidminer.parameter.ParameterTypeString;
 
 /**
  * <p>
@@ -73,11 +72,14 @@ public class DataStreamProcess extends
 	final ProcessContext processContext = new ProcessContextImpl(
 			containerContext);
 
+	public final static String LIMIT_PARAMETER = "limit";
 	public final static String BUFFER_SIZE_PARAMETER = "bufferSize";
 	public final static String FILTER_PARAMETER = "condition";
-	int bufferSize = 0;
 	List<DataObject> resultBuffer = new ArrayList<DataObject>();
-	Expression condition = null;
+
+	Long limit;
+	Long bufferSize;
+	Condition condition;
 
 	/**
 	 * @param description
@@ -89,6 +91,54 @@ public class DataStreamProcess extends
 	}
 
 	/**
+	 * @return the limit
+	 */
+	public Long getLimit() {
+		return limit;
+	}
+
+	/**
+	 * @param limit
+	 *            the limit to set
+	 */
+	@Parameter(description = "Specifies the maximum number of items read from the stream.", defaultValue = "-1", min = -1.0, max = Long.MAX_VALUE, required = false)
+	public void setLimit(Long limit) {
+		this.limit = limit;
+	}
+
+	/**
+	 * @return the bufferSize
+	 */
+	public Long getBufferSize() {
+		return bufferSize;
+	}
+
+	/**
+	 * @param bufferSize
+	 *            the bufferSize to set
+	 */
+	@Parameter(description = "Specifies the maximum number of items stored for further processing.", defaultValue = "0", min = 0.0, max = Integer.MAX_VALUE, required = false)
+	public void setBufferSize(Long bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
+	/**
+	 * @return the condition
+	 */
+	public Condition getCondition() {
+		return condition;
+	}
+
+	/**
+	 * @param condition
+	 *            the condition to set
+	 */
+	@Parameter(description = "Specifies a condition that has to match. Items not matching that condition will be skipped.", required = false)
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	/**
 	 * @see com.rapidminer.operator.OperatorChain#doWork()
 	 */
 	@Override
@@ -96,17 +146,7 @@ public class DataStreamProcess extends
 
 		resultBuffer.clear();
 
-		bufferSize = getParameterAsInt(BUFFER_SIZE_PARAMETER);
-
-		try {
-			if (this.isParameterSet(FILTER_PARAMETER)) {
-				String filter = getParameterAsString(FILTER_PARAMETER);
-				condition = ExpressionCompiler.parse(filter);
-			}
-			log.debug("Applying filter {} to data-stream", condition);
-		} catch (Exception e) {
-			throw new UserError(this, e, "filter.syntax.error", e.getMessage());
-		}
+		ParameterSetup.setParameters(this);
 
 		List<Operator> nested = this.getImmediateChildren();
 		log.debug("This StreamProcess has {} nested operators", nested.size());
@@ -126,9 +166,11 @@ public class DataStreamProcess extends
 		DataSourceObject dataSource = input.getData(DataSourceObject.class);
 		log.debug("input is a data-stream-source...");
 		int i = 0;
+		if (limit == null)
+			limit = -1L;
 
 		Data item = dataSource.readNext();
-		while (item != null) {
+		while (item != null && (limit < 0 || i < limit)) {
 
 			if (condition == null || condition.matches(processContext, item)) {
 
@@ -190,18 +232,6 @@ public class DataStreamProcess extends
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
-		List<ParameterType> types = new ArrayList<ParameterType>(); // super.getParameterTypes();
-
-		types.add(new ParameterTypeString(FILTER_PARAMETER,
-				"A filter condition for the processing", true));
-
-		types.add(new ParameterTypeInt(BUFFER_SIZE_PARAMETER,
-				"The number of data items to collect", 0, Integer.MAX_VALUE, 0));
-
-		for (ParameterType type : types) {
-			log.debug("Found parameter '{}' with description '{}'",
-					type.getKey(), type.getDescription());
-		}
-		return types;
+		return ParameterTypeDiscovery.getParameterTypes(getClass());
 	}
 }

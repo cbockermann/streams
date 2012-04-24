@@ -91,6 +91,8 @@ public abstract class DataStreamOperator extends Operator implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		getTransformer().addPassThroughRule(input, output);
 	}
 
 	public void setProcessContext(ProcessContext ctx) {

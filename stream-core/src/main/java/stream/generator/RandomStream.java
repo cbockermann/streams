@@ -27,19 +27,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
 
 /**
- * @author chris
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
+@Description(group = "Data Stream.Sources.Synthetic")
 public class RandomStream extends GeneratorDataStream {
 
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
 
-	Random[] random = new Random[] { new Random() };
+	Random[] random = null;
 	String[] keys = new String[] { "att1" };
 
 	public RandomStream() {
@@ -56,6 +59,7 @@ public class RandomStream extends GeneratorDataStream {
 	 * @param keys
 	 *            the keys to set
 	 */
+	@Parameter(required = false, description = "The attribute names to create (comma separated)")
 	public void setKeys(String[] keys) {
 		this.keys = keys;
 	}
@@ -88,6 +92,12 @@ public class RandomStream extends GeneratorDataStream {
 	public Data readNext(Data data) throws Exception {
 		if (data == null)
 			return readNext();
+
+		if (keys == null)
+			keys = new String[] { "x1" };
+
+		if (random == null)
+			random = new Random[keys.length];
 
 		for (int i = 0; i < keys.length; i++) {
 			if (random[i] == null) {

@@ -58,6 +58,7 @@ public class UserSettings {
 		List<URL> paths = new ArrayList<URL>();
 
 		try {
+			paths.add(getStreamsDirectory().toURI().toURL());
 			File streamsLib = getUserLocalFile("lib");
 			paths.add(streamsLib.toURI().toURL());
 		} catch (Exception e) {

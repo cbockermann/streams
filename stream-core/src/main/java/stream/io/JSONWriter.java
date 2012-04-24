@@ -37,7 +37,7 @@ import stream.data.Data;
  * (one line for each item).
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public class JSONWriter extends CsvWriter {

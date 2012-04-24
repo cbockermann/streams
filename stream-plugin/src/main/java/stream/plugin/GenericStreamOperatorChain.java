@@ -21,12 +21,21 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.plugin.util;
+package stream.plugin;
+
+import com.rapidminer.operator.OperatorDescription;
 
 /**
  * @author chris
- *
+ * 
  */
-public class DataSourceGenerator extends OperatorGenerator {
+public class GenericStreamOperatorChain extends DataStreamOperator {
 
+	/**
+	 * @param description
+	 * @param clazz
+	 */
+	public GenericStreamOperatorChain(OperatorDescription description, Class<?> clazz) {
+		super(description, clazz);
+	}
 }

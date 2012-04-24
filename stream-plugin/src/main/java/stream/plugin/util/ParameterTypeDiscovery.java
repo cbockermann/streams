@@ -97,7 +97,7 @@ public class ParameterTypeDiscovery {
 
 				Parameter param = m.getAnnotation(Parameter.class);
 				if (param == null) {
-					log.info(
+					log.debug(
 							"Method '{}' is not annotated as Parameter -> skipping",
 							m.getName());
 					continue;
@@ -174,7 +174,7 @@ public class ParameterTypeDiscovery {
 
 			if (param != null && param.values() != null
 					&& param.values().length > 1) {
-				log.info("Found category-parameter!");
+				log.debug("Found category-parameter!");
 				ParameterTypeCategory cat = new ParameterTypeCategory(key,
 						desc, param.values(), 0);
 				return cat;
@@ -256,7 +256,7 @@ public class ParameterTypeDiscovery {
 
 		if (Map.class.isAssignableFrom(type)) {
 
-			log.info("Found Map parameter... ");
+			log.debug("Found Map parameter... ");
 			pt = new ParameterTypeList(key, desc, new ParameterTypeString(
 					"key", ""), new ParameterTypeString("value", ""));
 			return pt;

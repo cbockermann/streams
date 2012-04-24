@@ -41,22 +41,24 @@ public class ProcessorFinder {
 
 	static Logger log = LoggerFactory.getLogger(ProcessorFinder.class);
 
-	public static List<Class<?>> findProcessors(String[] packageNames) {
+	public static List<Class<?>> findProcessors(String[] packageNames,
+			ClassLoader classLoader) {
 
 		List<Class<?>> result = new ArrayList<Class<?>>();
 
 		for (String pkgName : packageNames) {
-			result.addAll(findProcessors(pkgName));
+			result.addAll(findProcessors(pkgName, classLoader));
 		}
 
 		return result;
 	}
 
-	public static List<Class<?>> findProcessors(String pkgName) {
+	public static List<Class<?>> findProcessors(String pkgName,
+			ClassLoader classLoader) {
 		List<Class<?>> list = new ArrayList<Class<?>>();
 
 		try {
-			Class<?>[] classes = ClassFinder.getClasses(pkgName);
+			Class<?>[] classes = ClassFinder.getClasses(pkgName, classLoader);
 			for (Class<?> clazz : classes) {
 
 				if (clazz.isInterface()

@@ -29,7 +29,7 @@ public class SizeOfTest {
 
 	@Test
 	public void testSizeOfString() {
-		Assert.assertTrue(8.0 == SizeOf.sizeOf("ABCD"));
+		Assert.assertTrue(4.0 == SizeOf.sizeOf("ABCD"));
 	}
 
 }

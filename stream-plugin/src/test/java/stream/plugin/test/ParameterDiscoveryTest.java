@@ -23,6 +23,8 @@
  */
 package stream.plugin.test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -31,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.io.CsvStream;
 import stream.io.SQLWriter;
+import stream.parser.ParseJSON;
 import stream.plugin.processing.DataStreamProcess;
 import stream.plugin.util.ParameterTypeDiscovery;
 
@@ -47,35 +50,22 @@ public class ParameterDiscoveryTest {
 	@Test
 	public void test() {
 
-		log.info("");
-		log.info("");
-		log.info("Checking class {}", CsvStream.class);
-		log.info("");
-		Map<String, ParameterType> types = ParameterTypeDiscovery
-				.discoverParameterTypes(stream.io.CsvStream.class);
-		for (String key : types.keySet()) {
-			log.info("{} => {}", key, types.get(key));
-		}
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(CsvStream.class);
+		classes.add(DataStreamProcess.class);
+		classes.add(SQLWriter.class);
+		classes.add(ParseJSON.class);
 
-		log.info("");
-		log.info("");
-		log.info("Checking class {}", DataStreamProcess.class);
-		log.info("");
-		types = ParameterTypeDiscovery
-				.discoverParameterTypes(DataStreamProcess.class);
-
-		for (String key : types.keySet()) {
-			log.info("{} => {}", key, types.get(key));
-		}
-
-		log.info("");
-		log.info("");
-		log.info("Checking class {}", SQLWriter.class);
-		log.info("");
-		types = ParameterTypeDiscovery.discoverParameterTypes(SQLWriter.class);
-
-		for (String key : types.keySet()) {
-			log.info("{} => {}", key, types.get(key));
+		for (Class<?> clazz : classes) {
+			log.info("");
+			log.info("");
+			log.info("Checking class {}", CsvStream.class);
+			log.info("");
+			Map<String, ParameterType> types = ParameterTypeDiscovery
+					.discoverParameterTypes(clazz);
+			for (String key : types.keySet()) {
+				log.info("{} => {}", key, types.get(key));
+			}
 		}
 
 		// fail("Not yet implemented");

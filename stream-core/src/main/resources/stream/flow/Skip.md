@@ -17,6 +17,6 @@ The general syntax is
 For example, the following expression will check the value of
 attribute `x1` against the 0.5 threshold:
 
-       x1 @gt 0.5
+       %{data.x1} @gt 0.5
 
  

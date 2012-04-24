@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import stream.ProcessorException;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.io.sql.DatabaseDialect;
 import stream.io.sql.HsqlDialect;
 import stream.io.sql.MysqlDialect;
@@ -45,7 +45,7 @@ public class SQLWriter extends AbstractProcessor {
 	String[] keys;
 
 	final LinkedHashSet<String> keysToStore = new LinkedHashSet<String>();
-	final Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
+	Map<String, Class<?>> tableSchema = null;
 	transient boolean tableExists = false;
 	transient long count = 0L;
 	transient Connection connection = null;
@@ -195,14 +195,15 @@ public class SQLWriter extends AbstractProcessor {
 				if (keys == null) {
 					log.debug("No keys defined, adding all columns...");
 					for (String col : schema.keySet()) {
-						types.put(dialect.unmapColumnName(col), types.get(col));
+						tableSchema.put(dialect.unmapColumnName(col),
+								tableSchema.get(col));
 					}
 				} else {
 					for (String key : keys) {
 						String col = dialect.mapColumnName(key);
 						if (schema.containsKey(col)) {
 							log.debug("Adding key {} (column {})", key, col);
-							types.put(key, schema.get(col));
+							tableSchema.put(key, schema.get(col));
 						} else {
 							log.debug(
 									"key '{}' (column {}) is not within specified keys and will not be stored.",
@@ -211,7 +212,7 @@ public class SQLWriter extends AbstractProcessor {
 					}
 				}
 
-				log.debug("Types:\n{}", types);
+				log.debug("Types:\n{}", tableSchema);
 			} else {
 				throw new Exception("Cannot determine table-schema!");
 			}
@@ -274,14 +275,32 @@ public class SQLWriter extends AbstractProcessor {
 			}
 		}
 
-		if (types.isEmpty()) {
+		if (tableSchema == null) {
+			log.debug("No table-schema found, does table exist? {}",
+					this.hasTable(getTable()));
 
-			Map<String, Class<?>> schema = dialect.getColumnTypes(input);
-			if (createTable(getTable(), schema)) {
-				this.types.putAll(schema);
-			} else {
-				throw new ProcessorException(this, "Failed to create table "
-						+ getTable() + " for item: " + input);
+			tableSchema = dialect.getTableSchema(connection, getTable());
+			log.debug("Tried to read schema from database: {}", tableSchema);
+
+			if (tableSchema == null) {
+				log.debug("Creating new table {} from first item {}",
+						getTable(), input);
+				Data sample = DataFactory.create();
+				if (keys != null) {
+					for (String key : keys)
+						sample.put(key, input.get(key));
+				} else {
+					sample.putAll(input);
+				}
+
+				Map<String, Class<?>> schema = dialect.getColumnTypes(sample);
+				if (createTable(getTable(), schema)) {
+					tableSchema = schema;
+				} else {
+					throw new ProcessorException(this,
+							"Failed to create table " + getTable()
+									+ " for item: " + input);
+				}
 			}
 		}
 
@@ -298,15 +317,15 @@ public class SQLWriter extends AbstractProcessor {
 										+ "' for table creation! First item does not provide a value for '"
 										+ key + "'!");
 
-					types.put(key, value.getClass());
+					tableSchema.put(key, value.getClass());
 				}
 			} else {
 				for (String key : input.keySet()) {
-					types.put(key, input.get(key).getClass());
+					tableSchema.put(key, input.get(key).getClass());
 				}
 			}
 
-			if (!this.createTable(getTable(), types)) {
+			if (!this.createTable(getTable(), tableSchema)) {
 				throw new ProcessorException(this, "Failed to create table '"
 						+ getTable() + "'!");
 			} else {
@@ -323,7 +342,7 @@ public class SQLWriter extends AbstractProcessor {
 
 			List<Serializable> valueObject = new ArrayList<Serializable>();
 
-			Iterator<String> it = types.keySet().iterator();
+			Iterator<String> it = tableSchema.keySet().iterator();
 			while (it.hasNext()) {
 				String key = it.next();
 				Serializable value = input.get(key);
@@ -371,6 +390,7 @@ public class SQLWriter extends AbstractProcessor {
 		log.debug("Closing SQL writer, {} items written.", count);
 		log.debug("Closing SQL connection...");
 		connection.close();
+		this.tableSchema = null;
 	}
 
 }

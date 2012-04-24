@@ -79,10 +79,7 @@ public class ParameterTypeDiscovery {
 
 		for (Method m : clazz.getMethods()) {
 
-			log.trace("Checking method {}", m);
-
 			if (ParameterDiscovery.isSetter(m)) {
-				log.debug("Found setter '{}'", m.getName());
 				String key = m.getName().substring(3, 4).toLowerCase();
 
 				if (types.containsKey(key)) {

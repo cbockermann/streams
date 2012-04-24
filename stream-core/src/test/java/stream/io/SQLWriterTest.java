@@ -15,12 +15,12 @@ import stream.runtime.ProcessContainer;
  * @author chris
  * 
  */
-public class SQLStreamWriterTest {
+public class SQLWriterTest {
 
 	@Test
 	public void test() {
 		try {
-			URL url = SQLStreamWriterTest.class
+			URL url = SQLWriterTest.class
 					.getResource("/test-sql-writer.xml");
 			ProcessContainer pc = new ProcessContainer(url);
 			pc.run();

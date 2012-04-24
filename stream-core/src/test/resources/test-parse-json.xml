@@ -1,0 +1,15 @@
+
+	<container name="default">
+
+		<stream id="test" url="classpath:/test.json"
+			format="%(DATA)" class="stream.io.LineStream"
+			limit="1" />
+
+		<process input="test">
+			<stream.parser.ParseJSON key="DATA" prefix="json:" />
+			<PrintData />
+			<Assert condition="%{data.json:x1} = 0.06611575301711747 AND %{data.json:@id} = 1" /> 
+		</process>
+
+	</container>
+

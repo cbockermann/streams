@@ -302,6 +302,14 @@ public class ProcessContainer {
 
 		log.debug("Experiment contains {} stream processes", processes.size());
 
+		log.debug("Initializing all DataStreams...");
+		for (String name : streams.keySet()) {
+			DataStream stream = streams.get(name);
+			log.debug("Initializing stream '{}'", name);
+			stream.init();
+		}
+
+		log.debug("Creating {} active processes...", processes.size());
 		long start = System.currentTimeMillis();
 		for (AbstractProcess spu : processes) {
 			spu.setDaemon(true);

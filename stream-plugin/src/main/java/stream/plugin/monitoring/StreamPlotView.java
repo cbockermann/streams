@@ -28,7 +28,6 @@ import java.awt.BorderLayout;
 import javax.swing.border.EmptyBorder;
 
 import stream.data.Data;
-import stream.data.DataListener;
 import stream.data.Statistics;
 import stream.plotter.PlotPanel;
 
@@ -36,7 +35,7 @@ import stream.plotter.PlotPanel;
  * @author chris
  * 
  */
-public class StreamPlotView extends AbstractMonitorView implements DataListener {
+public class StreamPlotView extends AbstractMonitorView {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -4365922853856318209L;
@@ -50,12 +49,6 @@ public class StreamPlotView extends AbstractMonitorView implements DataListener 
 
 		plotPanel = new PlotPanel();
 		add(plotPanel, BorderLayout.CENTER);
-
-		/*
-		 * Thread t = new Thread() { public void run() {
-		 * plotPanel.updateChart(); try { Thread.sleep(1000); } catch (Exception
-		 * e) { e.printStackTrace(); } } }; t.setDaemon(true); t.start();
-		 */
 	}
 
 	public void reset() {

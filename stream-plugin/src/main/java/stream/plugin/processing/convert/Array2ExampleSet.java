@@ -50,7 +50,7 @@ import com.rapidminer.operator.ports.OutputPort;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Processing.Transformation.Data")
+@Description(group = "Data Stream.Processing.Transformations.Data")
 public class Array2ExampleSet extends OperatorBean {
 
 	static Logger log = LoggerFactory.getLogger(Array2ExampleSet.class);
@@ -154,7 +154,7 @@ public class Array2ExampleSet extends OperatorBean {
 					"Number of rows does not properly divide array-length!", -1);
 		}
 
-		List<Data> rows = expand(event, this.rows, key, false);
+		List<Data> rows = expand(event, this.rows, key, transpose);
 
 		ExampleSet exampleSet = exampleSetFactory.createExampleSet(rows);
 		output.deliver(exampleSet);

@@ -62,7 +62,7 @@ public class Array2ExampleSet extends OperatorBean {
 	final OutputPort output = getOutputPorts().createPort("example set");
 	final OutputPort passThroughPort = getOutputPorts().createPort("data item");
 
-	final ExampleSetFactory exampleSetFactory = new ExampleSetFactory();
+	ExampleSetFactory exampleSetFactory = ExampleSetFactory.newInstance();
 
 	String key;
 	Integer rows;
@@ -128,13 +128,18 @@ public class Array2ExampleSet extends OperatorBean {
 	}
 
 	/**
+	 * @see com.rapidminer.beans.OperatorBean#onProcessStart()
+	 */
+	@Override
+	public void onProcessStart() throws OperatorException {
+		exampleSetFactory = ExampleSetFactory.newInstance();
+	}
+
+	/**
 	 * @see com.rapidminer.operator.Operator#doWork()
 	 */
 	@Override
 	public void doWork() throws OperatorException {
-
-		// this init-call will inject all parameters...
-		init();
 
 		DataObject event = input.getData(DataObject.class);
 
@@ -145,7 +150,8 @@ public class Array2ExampleSet extends OperatorBean {
 		}
 
 		if (!data.getClass().isArray()) {
-			throw new UserError(this, new Exception(""), -1);
+			throw new UserError(this, "Attribute '" + key
+					+ "' does not contain an array!", -1);
 		}
 
 		int arrayLength = Array.getLength(data);
@@ -154,10 +160,15 @@ public class Array2ExampleSet extends OperatorBean {
 					"Number of rows does not properly divide array-length!", -1);
 		}
 
+		// expand the array to a list of rows
+		//
 		List<Data> rows = expand(event, this.rows, key, transpose);
 
+		// create an example set from the list of rows.
+		//
 		ExampleSet exampleSet = exampleSetFactory.createExampleSet(rows);
 		output.deliver(exampleSet);
+
 		passThroughPort.deliver(event);
 	}
 

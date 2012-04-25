@@ -40,7 +40,7 @@ public class Array2ExampleSetTest {
 
 		List<Data> rows = Array2ExampleSet.expand(item, 3, "array", true);
 
-		ExampleSetFactory factory = new ExampleSetFactory();
+		ExampleSetFactory factory = ExampleSetFactory.newInstance();
 		ExampleSet exampleSet = factory.createExampleSet(rows);
 
 		StringBuffer s = new StringBuffer("|");

@@ -57,7 +57,7 @@ public class Data2ExampleSet extends OperatorBean {
 
 	final List<Data> buffer = new ArrayList<Data>();
 	protected Integer bufferSize = 1;
-	final ExampleSetFactory exampleSetFactory = new ExampleSetFactory();
+	ExampleSetFactory exampleSetFactory = ExampleSetFactory.newInstance();
 
 	/**
 	 * @param description
@@ -81,6 +81,15 @@ public class Data2ExampleSet extends OperatorBean {
 	@Parameter(required = true, defaultValue = "1")
 	public void setBufferSize(Integer bufferSize) {
 		this.bufferSize = bufferSize;
+	}
+
+	/**
+	 * @see stream.plugin.OperatorBean#processStarts()
+	 */
+	@Override
+	public void processStarts() throws OperatorException {
+		super.processStarts();
+		exampleSetFactory = ExampleSetFactory.newInstance();
 	}
 
 	/**

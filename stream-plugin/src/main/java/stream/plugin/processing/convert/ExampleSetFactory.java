@@ -41,6 +41,13 @@ public class ExampleSetFactory {
 	final static DataRowFactory drf = new DataRowFactory(
 			DataRowFactory.TYPE_DOUBLE_ARRAY, '.');
 
+	public static ExampleSetFactory newInstance() {
+		return new ExampleSetFactory();
+	}
+
+	private ExampleSetFactory() {
+	}
+
 	private Attribute[] getAttributes(Data item) {
 
 		if (attributeArray != null)

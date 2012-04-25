@@ -175,7 +175,7 @@ public class ProcessElementHandler implements ElementHandler {
 				if (o instanceof Service) {
 					String id = params.get("id").trim();
 					log.debug(
-							"Registiering processor with id '{}' in look-up service",
+							"Registering processor with id '{}' in look-up service",
 							child.getAttribute("id"));
 					container.getContext().register(id, (Service) o);
 

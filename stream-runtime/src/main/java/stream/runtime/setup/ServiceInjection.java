@@ -137,6 +137,9 @@ public class ServiceInjection {
 	 */
 	public static boolean isServiceImplementation(Class<?> clazz) {
 
+		if (clazz == Service.class)
+			return true;
+
 		for (Class<?> intf : clazz.getInterfaces()) {
 			log.trace("Checking if {} = {}", intf, Service.class);
 			if (intf.equals(Service.class) || intf == Service.class) {

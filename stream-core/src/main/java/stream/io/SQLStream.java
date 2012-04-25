@@ -85,7 +85,6 @@ public class SQLStream extends AbstractDataStream {
 	/**
 	 * @return the select
 	 */
-	@Parameter(required = true, description = "The select statement to select items from the database.")
 	public String getSelect() {
 		return select;
 	}
@@ -94,6 +93,7 @@ public class SQLStream extends AbstractDataStream {
 	 * @param select
 	 *            the select to set
 	 */
+	@Parameter(required = true, description = "The select statement to select items from the database.")
 	public void setSelect(String select) {
 		this.select = select;
 	}
@@ -122,6 +122,7 @@ public class SQLStream extends AbstractDataStream {
 			result = stmt.executeQuery();
 
 		} catch (Exception e) {
+			log.error("Failed to connect to database: {}", e.getMessage());
 			e.printStackTrace();
 		}
 	}

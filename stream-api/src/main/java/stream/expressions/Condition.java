@@ -34,7 +34,10 @@ public final class Condition implements Expression {
 	 * @throws Exception
 	 */
 	public Condition(String cond) throws Exception {
-		expression = ExpressionCompiler.parse(cond);
+		if (cond == null || cond.trim().isEmpty())
+			expression = null;
+		else
+			expression = ExpressionCompiler.parse(cond);
 	}
 
 	/**
@@ -44,7 +47,7 @@ public final class Condition implements Expression {
 	@Override
 	public boolean matches(Context ctx, Data item) {
 		if (expression == null)
-			return false;
+			return true;
 		return expression.matches(ctx, item);
 	}
 }

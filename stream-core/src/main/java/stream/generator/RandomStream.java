@@ -31,13 +31,14 @@ import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
+import stream.io.AbstractDataStream;
 
 /**
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 @Description(group = "Data Stream.Sources.Synthetic")
-public class RandomStream extends GeneratorDataStream {
+public class RandomStream extends AbstractDataStream {
 
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
@@ -89,9 +90,9 @@ public class RandomStream extends GeneratorDataStream {
 		return readNext(map);
 	}
 
-	public Data readNext(Data data) throws Exception {
+	public Data readItem(Data data) throws Exception {
 		if (data == null)
-			return readNext();
+			data = DataFactory.create();
 
 		if (keys == null)
 			keys = new String[] { "x1" };
@@ -131,5 +132,12 @@ public class RandomStream extends GeneratorDataStream {
 	}
 
 	public void close() {
+	}
+
+	/**
+	 * @see stream.io.AbstractDataStream#readHeader()
+	 */
+	@Override
+	public void readHeader() throws Exception {
 	}
 }

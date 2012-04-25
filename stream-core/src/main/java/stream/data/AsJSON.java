@@ -6,6 +6,7 @@ package stream.data;
 import net.minidev.json.JSONObject;
 import stream.Processor;
 import stream.annotations.Description;
+import stream.annotations.Parameter;
 
 /**
  * @author chris
@@ -27,6 +28,7 @@ public class AsJSON implements Processor {
 	 * @param key
 	 *            the key to set
 	 */
+	@Parameter(required = false, description = "The attribute into which the JSON string of this item should be stored. Default is '@json'.")
 	public void setKey(String key) {
 		this.key = key;
 	}

@@ -72,13 +72,10 @@ public class DataStreamProcess extends
 	final ProcessContext processContext = new ProcessContextImpl(
 			containerContext);
 
-	public final static String LIMIT_PARAMETER = "limit";
-	public final static String BUFFER_SIZE_PARAMETER = "bufferSize";
-	public final static String FILTER_PARAMETER = "condition";
 	List<DataObject> resultBuffer = new ArrayList<DataObject>();
 
-	Long limit;
-	Long bufferSize;
+	Long limit = -1L;
+	Long bufferSize = 0L;
 	Condition condition;
 
 	/**
@@ -147,11 +144,16 @@ public class DataStreamProcess extends
 		resultBuffer.clear();
 
 		ParameterSetup.setParameters(this);
+		log.info("Initialized parameters for {} to:", this);
+		for (ParameterType type : this.getParameterTypes()) {
+			log.info("   {} = {}", type.getKey(),
+					this.getParameter(type.getKey()));
+		}
 
 		List<Operator> nested = this.getImmediateChildren();
 		log.debug("This StreamProcess has {} nested operators", nested.size());
 		for (Operator op : nested) {
-			log.debug("  op: {}", op);
+			log.debug("  op: {}  (class is {})", op, op.getClass());
 
 			if (op instanceof DataStreamOperator) {
 				log.debug("Resetting stream-operator {}", op);
@@ -183,6 +185,7 @@ public class DataStreamProcess extends
 				i++;
 
 				try {
+
 					DataObject processed = outputStream
 							.getData(DataObject.class);
 					if (bufferSize > 0 && processed != null
@@ -192,8 +195,11 @@ public class DataStreamProcess extends
 						resultBuffer.add(processed);
 					}
 				} catch (Exception e) {
-					log.error("Failed to retrieve processed data-item: {}",
-							e.getMessage());
+					log.error(
+							"Failed to retrieve processed data-item from port '{}': {}",
+							outputStream, e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
 				}
 
 				if (bufferSize > 0 && resultBuffer.size() >= bufferSize) {

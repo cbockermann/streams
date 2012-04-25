@@ -274,6 +274,6 @@ public class ParameterInjection {
 	public static boolean isNativeType(Class<?> clazz) {
 		return clazz.equals(String.class) || clazz.equals(Long.class)
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
-				|| clazz.equals(Boolean.class);
+				|| clazz.equals(Boolean.class) || clazz.equals(boolean.class);
 	}
 }

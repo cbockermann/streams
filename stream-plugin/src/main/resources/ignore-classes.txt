@@ -4,3 +4,5 @@ stream.io.DefaultTreeParser
 stream.io.LogStreamParser
 stream.io.DataStreamProcessor
 stream.io.DataStreamLoop
+stream.learner.Prediction
+stream.learner.evaluation.PredictionError

@@ -130,9 +130,7 @@ public abstract class DataStreamReader extends Operator {
 				log.debug("File/URL parameter-type already added!");
 				continue;
 			}
-			if (!"limit".equalsIgnoreCase(key)) {
-				types.add(discovered.get(key));
-			}
+			types.add(discovered.get(key));
 		}
 
 		return types;
@@ -149,6 +147,7 @@ public abstract class DataStreamReader extends Operator {
 					.createStream(parameters);
 			return stream;
 		} catch (Exception e) {
+			log.error("Failed to create stream: {}", e.getMessage());
 			String url = parameters.get("url");
 			parameters.put("url", "file:" + url);
 			DataStream stream = (DataStream) DataStreamFactory

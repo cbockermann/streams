@@ -9,6 +9,6 @@ In the following example, the *Message* processor is only executed if
 the context variable `status` changes from `green` to `yellow`:
 
       ...
-      &lt;OnChange from=`green` to=`yellow`&gt;
-         &lt;Message message="Status change detected!" /&gt;
-      &lt;/OnChange&gt;
+      <OnChange from=`green` to=`yellow`>
+         <Message message="Status change detected!" />
+      </OnChange>

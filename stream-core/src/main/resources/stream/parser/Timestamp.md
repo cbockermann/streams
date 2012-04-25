@@ -14,5 +14,5 @@ using the format `yyyy-MM-dd-hh:mm:ss`. The resulting timestamp is stored
 under key `@time`:
 
 
-      &lt;Timestamp key="@time" format="yyyy-MM-dd-hh:mm:ss"
-                    from="DATE" /&gt;
+      <Timestamp key="@time" format="yyyy-MM-dd-hh:mm:ss"
+                 from="DATE" />

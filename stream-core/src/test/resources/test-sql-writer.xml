@@ -4,9 +4,9 @@
 
 <Container>
 
-	<property name="database.url" value="jdbc:hsqldb:file:/tmp/test" />
+	<property name="database.url" value="jdbc:hsqldb:mem:res:/test.db" />
 
-	<Stream id="input" class="stream.test.TestStream" limit="100" keys="attr1,attr2,attr2" /> 
+	<Stream id="input" class="stream.test.TestStream" limit="10" keys="attr1,attr2,attr2" /> 
 
 
 	<Process input="input">
@@ -15,7 +15,7 @@
 	
 		<stream.data.AsJSON key="json" />
 		
-		<stream.io.SQLWriter url="${database.url}" username="SA" password="" table="TESTTABLE" keys="@id,json" dropTable="true"/>
+		<stream.io.SQLWriter url="${database.url}" username="root" password="" table="RANDOM" keys="@id,json" dropTable="true"/>
 	
 	</Process>
 	

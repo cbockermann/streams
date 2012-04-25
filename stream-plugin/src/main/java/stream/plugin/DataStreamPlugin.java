@@ -23,7 +23,9 @@
  */
 package stream.plugin;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public final class DataStreamPlugin {
 	final static StreamPlotView streamPlotView = new StreamPlotView();
 
 	final static Set<Class<?>> REGISTERED_PROCESSORS = new HashSet<Class<?>>();
+	final static Set<String> IGNORE_LIST = new HashSet<String>();
 
 	static MainFrame mainframe;
 
@@ -95,12 +98,33 @@ public final class DataStreamPlugin {
 			URL url = DataStreamPlugin.class
 					.getResource("/stream/plugin/log4j.properties");
 			if ("true".equalsIgnoreCase(System
-					.getProperty("DataStreamPlugin.debug"))) {
+					.getProperty("DataStreamPlugin.debug"))
+					|| "1".equalsIgnoreCase(System
+							.getenv("DATASTREAM_PLUGIN_DEBUG"))) {
 				url = DataStreamPlugin.class
 						.getResource("/stream/plugin/log4j-debug.properties");
 			}
 
 			PropertyConfigurator.configure(url);
+
+			url = DataStreamPlugin.class.getResource("/ignore-classes.txt");
+			if (url != null) {
+				try {
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(url.openStream()));
+					String line = reader.readLine();
+					while (line != null) {
+						IGNORE_LIST.add(line.trim());
+						line = reader.readLine();
+					}
+					reader.close();
+				} catch (Exception e) {
+					log.error("Failed to read ignore-list from {}: {}", url,
+							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				}
+			}
 
 			url = DataStreamPlugin.class
 					.getResource("/stream/plugin/resources/DataStreamOperators-core.xml");
@@ -165,6 +189,17 @@ public final class DataStreamPlugin {
 					log.debug("Operator for processor {} already registered.",
 							clazz);
 					continue;
+				}
+
+				if (IGNORE_LIST.contains(clazz.getName())) {
+					log.info(
+							"Ignoring class {} as it has been marked as 'ignore'",
+							clazz.getName());
+					continue;
+				} else {
+					log.debug(
+							"Class {} is not marked as 'ignore', adding it to the list.",
+							clazz.getName());
 				}
 
 				log.info("Registering operator for processor {}", clazz);

@@ -11,10 +11,11 @@ The processor will replace the value of the processed items with the
 current average. In the following example only the `error` key is averaged
 and the current average is stored in the processed item:
 
-     &lt;Average keys="error" /&gt;
+     <Average keys="error" />
 
 
-### Anytime StatisticsService
+Anytime StatisticsService
+-------------------------
 
 By providing an additional `id` attribute, this processor will be registered
 as anytime *StatisticsService* and can then be queried for statistics (averages)

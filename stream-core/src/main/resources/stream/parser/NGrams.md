@@ -11,4 +11,4 @@ user-defined string using the `prefix` parameter.
 The following example shows an *NGram* processor that will create 5-grams of the string
 found in key `text` and add their frequency to the items with a prefix of `5gram`:
 
-      &lt;NGrams n="5" key="text" prefix="5gram" /&gt;
+      <NGrams n="5" key="text" prefix="5gram" />

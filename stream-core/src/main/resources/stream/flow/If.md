@@ -8,6 +8,6 @@ if that condition is fulfilled.
 As an example, the following will only print data items if the
 attribute `x` is larger than `3.1415`:
 
-      &lt;If condition="x @gt 3.1415"&gt;
-         &lt;PrintData /&gt;
-      &lt;/If&gt;
+      <If condition="%{data.x} @gt 3.1415">
+         <PrintData />
+      </If>

@@ -14,13 +14,22 @@ compile-api:
 plugin:
 	@echo "Building streams-plugin..."
 	@mvn compile package 
+	@echo ""
+	@echo "The plugin can be found in \n"
+	@echo -n "\t"
+	@echo "$(PWD)/target/DataStream-Plugin-$(VERSION).jar"
+	@echo ""
 
 install:
 	@echo "Installing plugin in $(RAPIDMINER_HOME)/lib/plugins"
 	@cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
-all:	compile-api plugin
+all:	plugin
 
 clean:
 	@echo "Cleaning project directory..."
 	@mvn clean >> /dev/null
+
+clean-cache:
+	@echo "Removing streams artifacts from local Maven cache..."
+	@rm -rf $(HOME)/.m2/repository/org/jwall/stream*

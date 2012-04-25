@@ -15,9 +15,9 @@ following the syntax of the [stream-api filter language](http://sfb876.cs.tu-dor
 A simple example is given below, which will result in processing only
 the events, whose attribute `x1` is larger than 5:
 
-       x1 @gt 5
+       %{data.x1} @gt 5
 
-The same filter can also be specified at `x1 > 5`.
+The same filter can also be specified at `%{data.x1} > 5`.
 
 
 Result Buffering

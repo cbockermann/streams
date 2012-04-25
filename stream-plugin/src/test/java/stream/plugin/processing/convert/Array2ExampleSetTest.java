@@ -1,3 +1,6 @@
+package stream.plugin.processing.convert;
+
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -6,7 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.data.DataFactory;
-import stream.plugin.processing.convert.Array2ExampleSet;
+
+import com.rapidminer.example.Attribute;
+import com.rapidminer.example.Example;
+import com.rapidminer.example.ExampleSet;
 
 /**
  * 
@@ -34,6 +40,28 @@ public class Array2ExampleSetTest {
 
 		List<Data> rows = Array2ExampleSet.expand(item, 3, "array", true);
 
+		ExampleSetFactory factory = new ExampleSetFactory();
+		ExampleSet exampleSet = factory.createExampleSet(rows);
+
+		StringBuffer s = new StringBuffer("|");
+		Iterator<Attribute> it = exampleSet.getAttributes().allAttributes();
+		while (it.hasNext()) {
+			Attribute a = it.next();
+			s.append(" " + a.getName() + " |");
+		}
+		log.info(s.toString());
+		log.info("|-------------------------|");
+
+		for (Example example : exampleSet) {
+			s = new StringBuffer("|");
+			it = exampleSet.getAttributes().allAttributes();
+			while (it.hasNext()) {
+				Attribute a = it.next();
+				s.append(" " + example.getValue(a) + " |");
+			}
+			log.info(s.toString());
+		}
+
 		for (int i = 0; i < rows.size(); i++) {
 			Data row = rows.get(i);
 			log.info("row[{}]: {}", i, row);
@@ -41,5 +69,4 @@ public class Array2ExampleSetTest {
 
 		// fail("Not yet implemented");
 	}
-
 }

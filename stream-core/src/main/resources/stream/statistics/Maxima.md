@@ -9,7 +9,8 @@ For each processed item, the maximum value of the observed keys are computed
 and the attribute in the item is replaced by the current maximum value for
 each selected keys (or all of parameter `keys` is not set).
 
-### Anytime StatisticsService
+Anytime StatisticsService
+-------------------------
 
 By providing an additional `id` attribute, this processor will be registered
 as anytime *StatisticsService* and can then be queried for statistics (maxima)

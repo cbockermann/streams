@@ -196,7 +196,10 @@ public abstract class DatabaseDialect {
 			return types;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to retrieve schema of table {}: {}", table,
+					e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 			return null;
 		} finally {
 			try {

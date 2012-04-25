@@ -14,13 +14,14 @@ For example the following setup will first update the sum for `error`
 and `memorySize` and will then replace the values for these keys with
 the overall sums:
 
-     &lt;Sum keys="error,memorySize" /&gt;
+     <Sum keys="error,memorySize" />
 
 After the processor, the item contains as `error` the sum of all
 `error` values seen so far (the same holds for `memorySize`).
 
 
-### Anytime Statistics Service
+Anytime Statistics Service
+--------------------------
 
 The processor can be registered as service and then provides an
 anytime serice of type `StatisticsService`. This service implementation

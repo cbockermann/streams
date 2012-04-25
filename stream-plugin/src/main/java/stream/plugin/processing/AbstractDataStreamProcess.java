@@ -86,8 +86,6 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 				innerPortNames);
 		outputStream = getSubprocess(0).getInnerSinks().createPort(
 				innerPortNames);
-
-		getTransformer().addPassThroughRule(input, output);
 	}
 
 	/**
@@ -143,7 +141,6 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 
 		log.debug("Collected {} data items as result.");
 		output.deliver(new DataSourceObject(new ListDataStream(resultBuffer)));
-		// super.doWork();
 		log.debug("doWork() is finished.");
 	}
 

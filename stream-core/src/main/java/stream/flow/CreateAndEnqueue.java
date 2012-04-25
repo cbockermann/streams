@@ -41,11 +41,13 @@ public class CreateAndEnqueue extends Enqueue {
 	static Logger log = LoggerFactory.getLogger(CreateAndEnqueue.class);
 	String ref = null;
 
-	protected String[] keys = null;
+	protected String[] keys;
+	protected Boolean stringOnly;
 
 	public CreateAndEnqueue() {
 		super();
-
+		keys = null;
+		stringOnly = false;
 	}
 
 	public void setKeys(String[] keys) {
@@ -54,6 +56,14 @@ public class CreateAndEnqueue extends Enqueue {
 
 	public String[] getKeys() {
 		return keys;
+	}
+
+	public Boolean isStringOnly() {
+		return stringOnly;
+	}
+
+	public void setStringOnly(Boolean stringOnly) {
+		this.stringOnly = stringOnly;
 	}
 
 	/**
@@ -80,7 +90,7 @@ public class CreateAndEnqueue extends Enqueue {
 	}
 
 	private Serializable create(Object object) {
-		if (isNumeric(object))
+		if (!stringOnly && isNumeric(object))
 			return new Double(object.toString());
 		return object.toString();
 	}

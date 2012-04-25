@@ -79,7 +79,7 @@ public class ParameterDiscovery {
 
 				if (!types.containsKey(key)) {
 					log.info("  => parameter '{}'", key);
-					types.put(key, m.getReturnType());
+					types.put(key, m.getParameterTypes()[0]);
 				} else
 					log.info(
 							"Parameter {} already defined by field-annotation",
@@ -101,21 +101,26 @@ public class ParameterDiscovery {
 	 */
 	public static Parameter getParameterAnnotation(Class<?> clazz, String key) {
 
-		Field[] fields = clazz.getDeclaredFields();
+		for (Method m : clazz.getMethods()) {
+			if (ParameterDiscovery.isSetter(m)
+					&& m.getName().toLowerCase()
+							.equals("set" + key.toLowerCase())) {
+				Parameter p = m.getAnnotation(Parameter.class);
+				log.debug("Found parameter annotation for class {}, key {}: "
+						+ p, clazz, key);
+				return p;
+			}
+		}
+		return null;
+	}
 
-		log.info("Found {} fields", fields.length);
+	public static Class<?> getParameterType(Class<?> clazz, String name) {
 
-		for (Field field : fields) {
-			Parameter param = field.getAnnotation(Parameter.class);
-			if (param != null && (param.name().equals(key))
-					|| field.getName().equals(key)) {
-				log.info("Found @parameter annotated field '{}'",
-						field.getName());
-				log.info("    field.getType() = {}", field.getType());
-				return param;
-			} else {
-				log.info("Field '{}' is not annotated as parameter",
-						field.getName());
+		for (Method m : clazz.getMethods()) {
+			if (ParameterDiscovery.isSetter(m)
+					&& m.getName().toLowerCase()
+							.equals("set" + name.toLowerCase())) {
+				return m.getParameterTypes()[0];
 			}
 		}
 
@@ -128,16 +133,15 @@ public class ParameterDiscovery {
 
 		log.info("Found {} fields", fields.length);
 
-		for (Field field : fields) {
-			Parameter param = field.getAnnotation(Parameter.class);
+		for (Method m : clazz.getMethods()) {
+			Parameter param = m.getAnnotation(Parameter.class);
 			if (param != null) {
-				log.info("Found @parameter annotated field '{}'",
-						field.getName());
-				log.info("    field.getType() = {}", field.getType());
+				log.info("Found @parameter annotated field '{}'", m.getName());
+				log.info("    field.getType() = {}", m.getParameterTypes());
 				parameters.add(param);
 			} else {
 				log.info("Field '{}' is not annotated as parameter",
-						field.getName());
+						m.getName());
 			}
 		}
 		return parameters;

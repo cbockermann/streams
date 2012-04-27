@@ -75,7 +75,7 @@ public class Message extends ConditionedProcessor {
 	public Data processMatchingData(Data data) {
 
 		if (filter == null || filter.matches(context, data)) {
-			Object o = ExpressionResolver.resolve(getMessage(), context, data);
+			Object o = ExpressionResolver.expand(getMessage(), context, data);
 			if (o != null)
 				log.info(o.toString());
 		}

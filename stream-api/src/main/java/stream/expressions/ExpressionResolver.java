@@ -74,44 +74,8 @@ public class ExpressionResolver {
 			}
 			if (ctx != null)
 				return ctx.resolve(varString);
-			else
-				return null;
 		}
-
-		int i = 0;
-		boolean started = false;
-		boolean prestart = false;
-		StringBuilder sb = new StringBuilder();
-		StringBuilder macro = null;
-
-		while (i < variable.length()) {
-			if (variable.charAt(i) == '%')
-				prestart = true;
-
-			else if (variable.charAt(i) == '{' && prestart) {
-				macro = new StringBuilder();
-				started = true;
-				prestart = false;
-			} else if (started) {
-				if (variable.charAt(i) == '}') {
-					started = false;
-					Object o = null;
-					String s = macro.toString();
-					if (s.startsWith("data.")) {
-						o = item.get(s.substring(5));
-					} else if (ctx != null)
-						o = ctx.resolve(s);
-					if (o != null)
-						sb.append(o.toString());
-				} else
-					macro.append(variable.charAt(i));
-			} else
-				sb.append(variable.charAt(i));
-			i++;
-		}
-
-		return sb.toString();
-
+		return null;
 	}
 
 	public static boolean isMacroObject(String variable) {
@@ -124,6 +88,39 @@ public class ExpressionResolver {
 	}
 
 	public static String expand(String str, Context ctx, Data item) {
-		return str;
+		int i = 0;
+		boolean started = false;
+		boolean prestart = false;
+		StringBuilder sb = new StringBuilder();
+		StringBuilder macro = null;
+
+		while (i < str.length()) {
+			if (str.charAt(i) == '%')
+				prestart = true;
+
+			else if (str.charAt(i) == '{' && prestart) {
+				macro = new StringBuilder();
+				started = true;
+				prestart = false;
+			} else if (started) {
+				if (str.charAt(i) == '}') {
+					started = false;
+					Object o = null;
+					String s = macro.toString();
+					if (s.startsWith("data.")) {
+						o = item.get(s.substring(5));
+					} else if (ctx != null)
+						o = ctx.resolve(s);
+					if (o != null)
+						sb.append(o.toString());
+				} else
+					macro.append(str.charAt(i));
+			} else
+				sb.append(str.charAt(i));
+			i++;
+		}
+
+		return sb.toString();
+
 	}
 }

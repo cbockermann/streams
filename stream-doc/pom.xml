@@ -38,5 +38,10 @@
   		<artifactId>slf4j-log4j12</artifactId>
   		<version>1.6.4</version>
   	</dependency>
+  	<dependency>
+  		<groupId>udo.edu.cs.ls8</groupId>
+  		<artifactId>stream-sandbox</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

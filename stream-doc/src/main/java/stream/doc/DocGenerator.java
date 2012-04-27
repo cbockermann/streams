@@ -6,7 +6,9 @@ package stream.doc;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 
@@ -33,6 +35,16 @@ public class DocGenerator {
 			line = reader.readLine();
 		}
 		reader.close();
+	}
+
+	public static void copy(InputStream in, OutputStream out)
+			throws IOException {
+		byte[] buf = new byte[8192];
+		int read = in.read(buf);
+		while (read > 0) {
+			out.write(buf, 0, read);
+			read = in.read(buf);
+		}
 	}
 
 	/**

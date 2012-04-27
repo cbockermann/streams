@@ -6,7 +6,6 @@ package stream.doc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -24,16 +23,6 @@ public class MarkdownToTexConverter implements DocConverter {
 
 	int level = 0;
 
-	public static void copy(InputStream in, OutputStream out)
-			throws IOException {
-		byte[] buf = new byte[8192];
-		int read = in.read(buf);
-		while (read > 0) {
-			out.write(buf, 0, read);
-			read = in.read(buf);
-		}
-	}
-
 	/**
 	 * @see stream.doc.DocConverter#convert(java.io.InputStream,
 	 *      java.io.OutputStream)
@@ -45,7 +34,7 @@ public class MarkdownToTexConverter implements DocConverter {
 			File tmp = File.createTempFile("markdown_input", ".md");
 
 			FileOutputStream fos = new FileOutputStream(tmp);
-			copy(in, fos);
+			DocGenerator.copy(in, fos);
 			fos.close();
 
 			File tmp2 = File.createTempFile("pandoc_output", ".tex");

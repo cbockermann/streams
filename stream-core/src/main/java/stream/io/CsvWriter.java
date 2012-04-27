@@ -92,6 +92,8 @@ public class CsvWriter extends AbstractProcessor {
 	public void setUrl(String url) {
 		this.url = url;
 		File file = new File(url);
+		if (url.startsWith("file:"))
+			file = new File(url.substring(5));
 		try {
 			p = new PrintStream(new FileOutputStream(file));
 		} catch (Exception e) {
@@ -241,10 +243,13 @@ public class CsvWriter extends AbstractProcessor {
 	protected String createHeader(Data item) {
 		StringWriter s = new StringWriter();
 		s.append("#");
-		Iterator<String> it = item.keySet().iterator();
+
+		Iterator<String> it = null;
 
 		if (keys != null)
 			it = Arrays.asList(keys).iterator();
+		else
+			it = item.keySet().iterator();
 
 		while (it.hasNext()) {
 			s.append(it.next());

@@ -6,20 +6,19 @@ package stream.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 import stream.AbstractProcessor;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.expressions.ExpressionResolver;
 
 /**
- * @author chris
+ * A simple output processor that writes out data items to a file according to
+ * some format string.
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 @Description(group = "Data Streams.Output")
@@ -27,8 +26,8 @@ public class LineWriter extends AbstractProcessor {
 
 	File file;
 	boolean append = false;
-	String[] keys = null;
 	PrintStream out;
+	String format = null;
 
 	/**
 	 * @return the file
@@ -47,18 +46,19 @@ public class LineWriter extends AbstractProcessor {
 	}
 
 	/**
-	 * @return the keys
+	 * @return the format
 	 */
-	public String[] getKeys() {
-		return keys;
+	public String getFormat() {
+		return format;
 	}
 
 	/**
-	 * @param keys
-	 *            the keys to set
+	 * @param format
+	 *            the format to set
 	 */
-	public void setKeys(String[] keys) {
-		this.keys = keys;
+	@Parameter(required = true, description = "The format string, containing macros that are expanded for each item")
+	public void setFormat(String format) {
+		this.format = format;
 	}
 
 	/**
@@ -92,35 +92,15 @@ public class LineWriter extends AbstractProcessor {
 	@Override
 	public Data process(Data input) {
 
-		if (input == null)
+		if (input == null || format == null)
 			return input;
 
-		StringBuffer s = new StringBuffer();
-
-		List<String> ks = null;
-
-		if (keys == null)
-			ks = new ArrayList<String>(input.keySet());
-		else
-			ks = Arrays.asList(keys);
-
-		Iterator<String> it = ks.iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			Serializable value = input.get(key);
-			if (value == null) {
-				s.append("?");
-			} else {
-				String val = value.toString();
-				while (val.indexOf("\n") >= 0) {
-					val = val.replace("\n", "\\n");
-				}
-				s.append(val);
-			}
-			if (it.hasNext())
-				s.append(" ");
+		String line = ExpressionResolver.expand(format, context, input);
+		while (line.indexOf("\n") >= 0) {
+			line = line.replace("\n", "\\n");
 		}
-		out.println(s.toString());
+
+		out.println(line);
 		return input;
 	}
 

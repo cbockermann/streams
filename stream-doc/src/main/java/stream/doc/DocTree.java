@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -137,7 +140,21 @@ public class DocTree implements Comparable<DocTree> {
 				out.println();
 			}
 			indexTex.getParentFile().mkdirs();
-			DocGenerator.converter.createTableOfContents(children, out);
+
+			List<DocTree> list = new ArrayList<DocTree>(children);
+			Iterator<DocTree> it = list.iterator();
+			while (it.hasNext()) {
+				DocTree ch = it.next();
+				URL docUrl = DocTree.class.getResource(ch.getPath() + "/"
+						+ ch.name);
+				if (docUrl == null) {
+					log.info("Not linking non-existing document url for {}",
+							ch.getPath() + "/" + ch.name);
+					it.remove();
+				}
+			}
+
+			DocGenerator.converter.createTableOfContents(list, out);
 			/*
 			 * for (DocTree ch : children) { if (ch.isLeaf()) {
 			 * out.println("\\input{" + ch.getPath().substring(1) + "/" +
@@ -160,15 +177,30 @@ public class DocTree implements Comparable<DocTree> {
 
 	private File generateTex(File md) {
 
+		File tex = new File(md.getAbsolutePath().replace(".md", ".tex"));
 		String className = getPath().substring(1).replace('/', '.') + "."
 				+ name.replace(".md", "");
+
+		URL texUrl = DocFinder.class.getResource(getPath() + "/"
+				+ name.replace(".md", ".tex"));
+		if (texUrl != null) {
+			log.info("Found existing .tex documentation!");
+			try {
+				FileOutputStream fos = new FileOutputStream(tex);
+				DocGenerator.copy(texUrl.openStream(), fos);
+				fos.close();
+				return tex;
+			} catch (Exception e) {
+				log.error("Error: {}", e.getMessage());
+			}
+		}
 		URL url = DocFinder.class.getResource(getPath() + "/" + name);
 		if (url == null) {
 			System.err
 					.println("No documentation found for '" + className + "'");
 			return null;
 		}
-		File tex = new File(md.getAbsolutePath().replace(".md", ".tex"));
+
 		try {
 			System.out.println("Converting " + url + " to "
 					+ tex.getAbsolutePath());

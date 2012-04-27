@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 
 import stream.Processor;
 import stream.ProcessorList;
+import stream.expressions.MacroExpander;
 import stream.runtime.ElementHandler;
 import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
@@ -174,9 +175,13 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (o instanceof Service) {
 					String id = params.get("id").trim();
+					id = MacroExpander.expand(id, container.getContext()
+							.getProperties());
+
 					log.debug(
 							"Registering processor with id '{}' in look-up service",
-							child.getAttribute("id"));
+							id);
+
 					container.getContext().register(id, (Service) o);
 
 				} else {

@@ -57,7 +57,7 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	 * @param condition
 	 *            the condition to set
 	 */
-	@Parameter(name = "condition", required = false)
+	@Parameter(name = "condition", required = false, description = "The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression.")
 	public void setCondition(String condition) {
 		try {
 			if (condition == null || "".equals(condition.trim())) {

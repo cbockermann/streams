@@ -5,9 +5,7 @@ package stream.io;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,14 +16,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
 import stream.ProcessContext;
 import stream.ProcessorException;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
-import stream.io.sql.DatabaseDialect;
 import stream.io.sql.HsqlDialect;
 import stream.io.sql.MysqlDialect;
 
@@ -34,13 +30,10 @@ import stream.io.sql.MysqlDialect;
  * 
  */
 @Description(group = "Data Stream.Output")
-public class SQLWriter extends AbstractProcessor {
+public class SQLWriter extends AbstractSQLProcessor {
 
 	static Logger log = LoggerFactory.getLogger(SQLWriter.class);
 	boolean dropTable = false;
-	String url;
-	String username;
-	String password;
 	String table;
 	String[] keys;
 
@@ -50,55 +43,6 @@ public class SQLWriter extends AbstractProcessor {
 	transient long count = 0L;
 	transient Connection connection = null;
 	transient List<String> columns = new ArrayList<String>();
-	DatabaseDialect dialect = new MysqlDialect();
-
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return url;
-	}
-
-	/**
-	 * @param url
-	 *            the url to set
-	 */
-	@Parameter(required = true, description = "The JDBC database url to connect to.")
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * @param username
-	 *            the username to set
-	 */
-	@Parameter(required = false, description = "The username used to connect to the database.")
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password
-	 *            the password to set
-	 */
-	@Parameter(required = false, description = "The password used to connect to the database.")
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	/**
 	 * @return the table
@@ -163,9 +107,10 @@ public class SQLWriter extends AbstractProcessor {
 	}
 
 	private void init() throws Exception {
-		connection = DriverManager.getConnection(getUrl(), getUsername(),
-				getPassword());
-		log.debug("Opened connection to {}", getUrl());
+
+		connection = openConnection();
+		log.debug("Opened connection to {} = {}", getUrl(), connection);
+		log.debug("Dialect = {} ", dialect);
 
 		if (url.toLowerCase().startsWith("jdbc:mysql")) {
 			dialect = new MysqlDialect();
@@ -217,45 +162,14 @@ public class SQLWriter extends AbstractProcessor {
 				throw new Exception("Cannot determine table-schema!");
 			}
 		}
-	}
 
-	public boolean createTable(String name, Map<String, Class<?>> types) {
-
-		String create = dialect.getCreateTableCommand(name, types);
-		log.debug("Trying to create table '{}':\n{}", name, create);
-
-		try {
-			Statement stmt = connection.createStatement();
-			log.debug("Running create: {}", create);
-			int rc = stmt.executeUpdate(create);
-			log.debug("create returned: {}", rc);
-			stmt.close();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	public boolean hasTable(String name) {
-		Statement stmt = null;
 		if (tableExists)
 			return true;
-		try {
-			stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + name);
-			if (rs.next()) {
-				tableExists = true;
-			}
-			rs.close();
-		} catch (Exception e) {
-			log.error("Error: {}", e.getMessage());
-		} finally {
-			try {
-				stmt.close();
-			} catch (Exception e) {
-			}
-		}
+
+		tableExists = super.hasTable(name);
 		return tableExists;
 	}
 

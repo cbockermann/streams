@@ -23,13 +23,17 @@
  */
 package stream.logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.ConditionedProcessor;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.data.Data;
-import stream.expressions.ContextAwareMacroExpander;
 import stream.expressions.Expression;
+import stream.expressions.ExpressionResolver;
 import stream.expressions.MacroExpander;
+import stream.io.CsvWriter;
 
 /**
  * @author chris
@@ -37,10 +41,13 @@ import stream.expressions.MacroExpander;
  */
 @Description(text = "", group = "Data Stream.Monitoring")
 public class Message extends ConditionedProcessor {
-	Expression filter;
-	String txt;
-	String condition;
-	MacroExpander macroExpander = new MacroExpander();
+
+	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
+
+	protected Expression filter;
+	protected String txt;
+	protected String condition;
+	protected MacroExpander macroExpander;
 
 	public void setMessage(String msg) {
 		if (msg == null)
@@ -59,7 +66,6 @@ public class Message extends ConditionedProcessor {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
-		macroExpander = new ContextAwareMacroExpander(ctx);
 	}
 
 	/**
@@ -69,8 +75,9 @@ public class Message extends ConditionedProcessor {
 	public Data processMatchingData(Data data) {
 
 		if (filter == null || filter.matches(context, data)) {
-			String msg = macroExpander.substitute(getMessage(), data);
-			System.out.println(msg);
+			Object o = ExpressionResolver.resolve(getMessage(), context, data);
+			if (o != null)
+				log.info(o.toString());
 		}
 
 		return data;

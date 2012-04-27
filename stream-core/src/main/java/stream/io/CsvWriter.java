@@ -31,6 +31,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,10 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.expressions.ExpressionResolver;
 
 /**
  * <p>
@@ -57,15 +59,17 @@ import stream.data.Data;
 @Description(group = "Data Stream.Output")
 public class CsvWriter extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
-	PrintStream p;
-	String separator = ",";
-	String lastHeader = null;
-	boolean headerWritten = false;
-	String filter = ".*";
-	List<String> headers = new LinkedList<String>();
-	boolean closed = false;
-	String[] keys;
-	String url;
+	protected PrintStream p;
+	protected String separator = ",";
+	protected String lastHeader = null;
+	protected boolean headerWritten = false;
+	protected String filter = ".*";
+	protected List<String> headers = new LinkedList<String>();
+	protected boolean closed = false;
+	protected String[] keys;
+	protected String urlString;
+	protected URL url;
+	protected File file;
 
 	public CsvWriter() {
 	}
@@ -102,7 +106,7 @@ public class CsvWriter extends AbstractProcessor {
 	}
 
 	public String getUrl() {
-		return this.url;
+		return this.urlString;
 	}
 
 	/**
@@ -117,13 +121,6 @@ public class CsvWriter extends AbstractProcessor {
 	public CsvWriter(OutputStream out, String separator) {
 		p = new PrintStream(out);
 		this.separator = separator;
-	}
-
-	@Override
-	public void init(ProcessContext ctx) throws Exception {
-		if (p == null) {
-			throw new FileNotFoundException("File " + url + " not found");
-		}
 	}
 
 	public void setAttributeFilter(String filter) {
@@ -148,6 +145,7 @@ public class CsvWriter extends AbstractProcessor {
 	@Parameter(required = false, description = "The separator to separate columns, usually ','", defaultValue = ",")
 	public void setSeparator(String separator) {
 		this.separator = separator;
+
 	}
 
 	/**
@@ -164,6 +162,29 @@ public class CsvWriter extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data datum) {
+		String expandedUrlString = (String) ExpressionResolver.resolve(
+				urlString, context, datum);
+		if (expandedUrlString == null) {
+			log.error("can't find the file! {}", urlString);
+			return datum;
+		}
+		if (url == null || !expandedUrlString.equals(url.toString())) {
+			if (p != null) {
+				p.flush();
+				p.close();
+			}
+			try {
+				this.url = new URL(expandedUrlString);
+				file = new File(url.toURI());
+				p = new PrintStream(new FileOutputStream(file));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 
 		if (closed) {
 			log.error("DataStreamWriter is closed! Not writing any more data items!");
@@ -260,8 +281,10 @@ public class CsvWriter extends AbstractProcessor {
 	}
 
 	public void finish() throws Exception {
-		p.flush();
-		p.close();
+		if (p != null) {
+			p.flush();
+			p.close();
+		}
 		closed = true;
 	}
 }

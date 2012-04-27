@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.ConditionedProcessor;
 import stream.Context;
 import stream.annotations.Description;
@@ -43,6 +46,9 @@ import stream.expressions.ExpressionResolver;
  */
 @Description(group = "Data Stream.Processing.Transformations.Data")
 public class SetValue extends ConditionedProcessor {
+
+	static Logger log = LoggerFactory.getLogger(SetValue.class);
+
 	protected String key;
 	protected String value;
 	protected List<String> scope;
@@ -64,6 +70,7 @@ public class SetValue extends ConditionedProcessor {
 				data.put(key, val);
 			if (scope.contains(Context.PROCESS_CONTEXT_NAME))
 				context.set(key, val);
+
 		}
 
 		return data;

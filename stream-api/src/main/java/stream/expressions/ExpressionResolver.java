@@ -31,13 +31,15 @@ import stream.data.Data;
  * This class
  * </p>
  * 
- * @author chris
+ * @author chris, Hendrik Blom
  * 
  */
 public class ExpressionResolver {
 
 	public final static String MACRO_START = "%{";
 	public final static String MACRO_END = "}";
+
+	// static Logger log = LoggerFactory.getLogger(ExpressionResolver.class);
 
 	public static String[] extractName(String variable) {
 
@@ -60,18 +62,56 @@ public class ExpressionResolver {
 
 		if (variable == null)
 			return null;
+		if (!variable.contains(MACRO_START))
+			return variable;
 
-		String var = variable.trim();
-		if (var.startsWith(MACRO_START) && var.endsWith(MACRO_END)) {
-			var = var.substring(MACRO_START.length(), var.length() - 1);
-			if (var.startsWith("data.")) {
-				return item.get(var.substring(5));
+		String varString = variable.trim();
+		if (varString.startsWith(MACRO_START) && varString.endsWith(MACRO_END)) {
+			varString = varString.substring(MACRO_START.length(),
+					varString.length() - 1);
+			if (varString.startsWith("data.")) {
+				return item.get(varString.substring(5));
 			}
-
-			return ctx.resolve(var);
+			if (ctx != null)
+				return ctx.resolve(varString);
+			else
+				return null;
 		}
 
-		return null;
+		int i = 0;
+		boolean started = false;
+		boolean prestart = false;
+		StringBuilder sb = new StringBuilder();
+		StringBuilder macro = null;
+
+		while (i < variable.length()) {
+			if (variable.charAt(i) == '%')
+				prestart = true;
+
+			else if (variable.charAt(i) == '{' && prestart) {
+				macro = new StringBuilder();
+				started = true;
+				prestart = false;
+			} else if (started) {
+				if (variable.charAt(i) == '}') {
+					started = false;
+					Object o = null;
+					String s = macro.toString();
+					if (s.startsWith("data.")) {
+						o = item.get(s.substring(5));
+					} else if (ctx != null)
+						o = ctx.resolve(s);
+					if (o != null)
+						sb.append(o.toString());
+				} else
+					macro.append(variable.charAt(i));
+			} else
+				sb.append(variable.charAt(i));
+			i++;
+		}
+
+		return sb.toString();
+
 	}
 
 	public static boolean isMacroObject(String variable) {
@@ -82,8 +122,8 @@ public class ExpressionResolver {
 		}
 		return false;
 	}
-	
-	public static String expand( String str, Context ctx, Data item ){
+
+	public static String expand(String str, Context ctx, Data item) {
 		return str;
 	}
 }

@@ -25,7 +25,7 @@ package stream.test;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
-import stream.expressions.ContextAwareMacroExpander;
+import stream.expressions.ExpressionResolver;
 
 /**
  * @author chris
@@ -57,9 +57,7 @@ public class Print extends AbstractProcessor {
 	public Data process(Data input) {
 
 		if (message != null) {
-			ContextAwareMacroExpander expander = new ContextAwareMacroExpander(
-					context);
-			String txt = expander.expand(message);
+			String txt = ExpressionResolver.expand(message, context, input);
 			System.out.println(txt);
 		}
 

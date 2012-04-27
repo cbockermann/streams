@@ -36,7 +36,8 @@ import org.w3c.dom.NodeList;
 
 import stream.Processor;
 import stream.ProcessorList;
-import stream.expressions.MacroExpander;
+import stream.data.DataFactory;
+import stream.expressions.ExpressionResolver;
 import stream.runtime.ElementHandler;
 import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
@@ -187,7 +188,8 @@ public class ProcessElementHandler implements ElementHandler {
 							container.getContext().getProperties());
 					vars.putAll(extraVariables);
 
-					id = MacroExpander.expand(id, extraVariables);
+					id = ExpressionResolver.expand(id, container.getContext(),
+							DataFactory.create());
 
 					log.debug(
 							"Registering processor with id '{}' in look-up service",

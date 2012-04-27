@@ -136,7 +136,6 @@ public abstract class DataStreamReader extends Operator {
 		return types;
 	}
 
-	@SuppressWarnings("deprecation")
 	public DataStream createDataStream(
 			Class<? extends DataStream> dataStreamClass,
 			Map<String, String> parameters) throws Exception {

@@ -21,41 +21,24 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.expressions;
+package stream.io;
 
-import java.util.Map;
+import java.net.URL;
 
-import stream.Context;
+import org.junit.Test;
+
+import stream.runtime.ProcessContainer;
 
 /**
  * @author chris
  * 
  */
-public class ContextAwareMacroExpander extends MacroExpander {
+public class MultiProcessTest {
 
-	Context ctx;
-
-	public ContextAwareMacroExpander(Context ctx) {
-		super();
-		this.ctx = ctx;
-	}
-
-	public ContextAwareMacroExpander(Context ctx, Map<String, ?> vars) {
-		super(vars);
-		this.ctx = ctx;
-	}
-
-	/**
-	 * @see stream.expressions.MacroExpander#get(java.lang.String,
-	 *      java.util.Map)
-	 */
-	@Override
-	public String get(String variable, Map<String, ?> evt) {
-
-		Object object = ctx.resolve(variable);
-		if (object != null)
-			return object.toString();
-
-		return super.get(variable, evt);
+	@Test
+	public void test() throws Exception {
+		URL url = MultiProcessTest.class.getResource("/test-multi-process.xml");
+		ProcessContainer container = new ProcessContainer(url);
+		container.run();
 	}
 }

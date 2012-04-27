@@ -30,8 +30,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.expressions.MacroExpander;
 import stream.runtime.ContainerContext;
+import stream.runtime.VariableContext;
 import stream.service.Service;
 
 /**
@@ -68,8 +68,8 @@ public class ServiceInjection {
 			ServiceReference ref = it.next();
 			log.debug("Checking service-reference {}", ref);
 
-			String serviceRef = MacroExpander.expand(ref.getRef(),
-					ctx.getProperties());
+			VariableContext c = new VariableContext(ctx.getProperties());
+			String serviceRef = c.expand(ref.getRef());
 			Object consumer = ref.getReceiver();
 
 			Service service = (Service) ctx.lookup(serviceRef);

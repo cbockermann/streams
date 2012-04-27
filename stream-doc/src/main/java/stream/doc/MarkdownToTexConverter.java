@@ -44,11 +44,11 @@ public class MarkdownToTexConverter implements DocConverter {
 					+ tmp2.getAbsolutePath()
 					+ " "
 					+ tmp.getAbsolutePath();
-			System.out.println("Executing: " + exec);
+			// System.out.println("Executing: " + exec);
 			Process pandoc = Runtime.getRuntime().exec(exec);
 
-			int ret = pandoc.waitFor();
-			System.out.println("External pandoc command returned: " + ret);
+			pandoc.waitFor();
+			// System.out.println("External pandoc command returned: " + ret);
 
 			DocGenerator.copy(new FileInputStream(tmp2), out);
 			out.flush();

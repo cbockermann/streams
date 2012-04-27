@@ -94,15 +94,7 @@ public class CsvWriter extends AbstractProcessor {
 	}
 
 	public void setUrl(String url) {
-		this.url = url;
-		File file = new File(url);
-		if (url.startsWith("file:"))
-			file = new File(url.substring(5));
-		try {
-			p = new PrintStream(new FileOutputStream(file));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.urlString = url;
 	}
 
 	public String getUrl() {
@@ -162,7 +154,7 @@ public class CsvWriter extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data datum) {
-		String expandedUrlString = (String) ExpressionResolver.resolve(
+		String expandedUrlString = (String) ExpressionResolver.expand(
 				urlString, context, datum);
 		if (expandedUrlString == null) {
 			log.error("can't find the file! {}", urlString);

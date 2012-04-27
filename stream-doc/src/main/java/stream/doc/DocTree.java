@@ -147,7 +147,10 @@ public class DocTree implements Comparable<DocTree> {
 				DocTree ch = it.next();
 				URL docUrl = DocTree.class.getResource(ch.getPath() + "/"
 						+ ch.name);
-				if (docUrl == null) {
+
+				URL texUrl = DocTree.class.getResource(ch.getPath() + "/"
+						+ ch.name.replace(".md", ".tex"));
+				if (docUrl == null && texUrl == null) {
 					log.info("Not linking non-existing document url for {}",
 							ch.getPath() + "/" + ch.name);
 					it.remove();
@@ -175,14 +178,19 @@ public class DocTree implements Comparable<DocTree> {
 		}
 	}
 
+	public String getResourceName(String ext) {
+
+	}
+
 	private File generateTex(File md) {
 
 		File tex = new File(md.getAbsolutePath().replace(".md", ".tex"));
 		String className = getPath().substring(1).replace('/', '.') + "."
 				+ name.replace(".md", "");
 
-		URL texUrl = DocFinder.class.getResource(getPath() + "/"
-				+ name.replace(".md", ".tex"));
+		String texResource = getPath() + "/" + name.replace(".md", ".tex");
+		URL texUrl = DocFinder.class.getResource(texResource);
+		log.info("checking for .tex file at {} => {}", texResource, texUrl);
 		if (texUrl != null) {
 			log.info("Found existing .tex documentation!");
 			try {
@@ -193,6 +201,8 @@ public class DocTree implements Comparable<DocTree> {
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 			}
+		} else {
+			log.info("No .tex resource for {}", className);
 		}
 		URL url = DocFinder.class.getResource(getPath() + "/" + name);
 		if (url == null) {

@@ -208,7 +208,7 @@ public class CsvWriter extends AbstractProcessor {
 
 		if (!headerWritten
 				|| (keys == null && datum.keySet().size() > headers.size())) {
-			p.print("#");
+			p.print("# ");
 			Iterator<String> it = datum.keySet().iterator();
 			if (keys != null)
 				it = Arrays.asList(keys).iterator();
@@ -255,7 +255,7 @@ public class CsvWriter extends AbstractProcessor {
 
 	protected String createHeader(Data item) {
 		StringWriter s = new StringWriter();
-		s.append("#");
+		s.append("# ");
 
 		Iterator<String> it = null;
 

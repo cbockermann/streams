@@ -1,3 +1,6 @@
+.classpath
+stream-core/.classpath
+stream-plugin/.classpath
 .swp
 .settings
 target

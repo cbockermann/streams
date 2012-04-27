@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
+ * @deprecated
  */
 public class MacroExpander {
 

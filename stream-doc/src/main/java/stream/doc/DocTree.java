@@ -179,7 +179,7 @@ public class DocTree implements Comparable<DocTree> {
 	}
 
 	public String getResourceName(String ext) {
-
+		return "/" + getPath() + "/" + name.replace(".md", ext);
 	}
 
 	private File generateTex(File md) {

@@ -32,7 +32,6 @@ import stream.annotations.Description;
 import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionResolver;
-import stream.expressions.MacroExpander;
 import stream.io.CsvWriter;
 
 /**
@@ -47,7 +46,6 @@ public class Message extends ConditionedProcessor {
 	protected Expression filter;
 	protected String txt;
 	protected String condition;
-	protected MacroExpander macroExpander;
 
 	public void setMessage(String msg) {
 		if (msg == null)

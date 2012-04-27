@@ -29,8 +29,7 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.ProcessContext;
 import stream.data.Data;
-import stream.expressions.ContextAwareMacroExpander;
-import stream.expressions.MacroExpander;
+import stream.expressions.ExpressionResolver;
 
 /**
  * @author chris
@@ -41,7 +40,6 @@ public class LogData extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(LogData.class);
 
 	String message;
-	MacroExpander resolver;
 
 	/**
 	 * @return the message
@@ -64,7 +62,6 @@ public class LogData extends AbstractProcessor {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
-		resolver = new ContextAwareMacroExpander(ctx);
 	}
 
 	/**
@@ -74,7 +71,7 @@ public class LogData extends AbstractProcessor {
 	public Data process(Data input) {
 
 		if (message != null) {
-			String text = resolver.substitute(message, input);
+			String text = ExpressionResolver.expand(message, context, input);
 			log.info("Message: '{}'", text);
 		}
 		log.info("Data: {}", input);

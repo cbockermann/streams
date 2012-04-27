@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import stream.ProcessContext;
 import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -181,7 +181,7 @@ public class Plotter extends DataVisualizer {
 			plotPanel.dataArrived(data);
 		} else {
 
-			Data stats = new DataImpl();
+			Data stats = DataFactory.create();
 			for (String key : keys) {
 				if (data.containsKey(key)) {
 					stats.put(key, data.get(key));

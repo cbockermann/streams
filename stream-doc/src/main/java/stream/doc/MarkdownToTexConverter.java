@@ -50,7 +50,7 @@ public class MarkdownToTexConverter implements DocConverter {
 			int ret = pandoc.waitFor();
 			System.out.println("External pandoc command returned: " + ret);
 
-			copy(new FileInputStream(tmp2), out);
+			DocGenerator.copy(new FileInputStream(tmp2), out);
 			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

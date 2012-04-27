@@ -24,6 +24,7 @@
 package stream.runtime.setup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,16 +115,19 @@ public class ProcessElementHandler implements ElementHandler {
 				String pid = "" + i;
 				objectFactory.set("process.id", pid);
 				objectFactory.set("copy.id", pid);
+				Map<String, String> extra = new HashMap<String, String>();
+				extra.put("process.id", pid);
+				extra.put("copy.id", pid);
 				log.info("Creating process '{}'", pid);
 				Process process = createProcess(processClass, attr, container,
-						element);
+						element, extra);
 				container.getProcesses().add(process);
 			}
 
 		} else {
 			objectFactory.set("process.id", id);
 			Process process = createProcess(processClass, attr, container,
-					element);
+					element, new HashMap<String, String>());
 			log.debug("Created Process object: {}", process);
 			container.getProcesses().add(process);
 		}
@@ -131,11 +135,13 @@ public class ProcessElementHandler implements ElementHandler {
 
 	protected Process createProcess(String processClass,
 			Map<String, String> attr, ProcessContainer container,
-			Element element) throws Exception {
+			Element element, Map<String, String> extraVariables)
+			throws Exception {
 		Process process = (Process) objectFactory.create(processClass, attr);
 		log.debug("Created Process object: {}", process);
 
-		List<Processor> procs = createNestedProcessors(container, element);
+		List<Processor> procs = createNestedProcessors(container, element,
+				extraVariables);
 		for (Processor p : procs) {
 			process.addProcessor(p);
 		}
@@ -143,7 +149,7 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected Processor createProcessor(ProcessContainer container,
-			Element child) throws Exception {
+			Element child, Map<String, String> extraVariables) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
 
@@ -159,7 +165,8 @@ public class ProcessElementHandler implements ElementHandler {
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 
 						Element element = (Element) node;
-						Processor proc = createProcessor(container, element);
+						Processor proc = createProcessor(container, element,
+								extraVariables);
 						if (proc != null) {
 							((ProcessorList) o).addProcessor(proc);
 						} else {
@@ -175,8 +182,12 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (o instanceof Service) {
 					String id = params.get("id").trim();
-					id = MacroExpander.expand(id, container.getContext()
-							.getProperties());
+
+					Map<String, String> vars = new HashMap<String, String>(
+							container.getContext().getProperties());
+					vars.putAll(extraVariables);
+
+					id = MacroExpander.expand(id, extraVariables);
 
 					log.debug(
 							"Registering processor with id '{}' in look-up service",
@@ -208,7 +219,8 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected List<Processor> createNestedProcessors(
-			ProcessContainer container, Element child) throws Exception {
+			ProcessContainer container, Element child,
+			Map<String, String> extraVariables) throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -216,7 +228,8 @@ public class ProcessElementHandler implements ElementHandler {
 
 			Node cnode = pnodes.item(j);
 			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
-				Processor p = createProcessor(container, (Element) cnode);
+				Processor p = createProcessor(container, (Element) cnode,
+						extraVariables);
 				if (p != null) {
 					log.debug("Found processor...");
 					procs.add(p);

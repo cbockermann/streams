@@ -23,6 +23,7 @@
  */
 package stream.runtime.setup;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,7 +90,8 @@ public class MonitorElementHandler extends ProcessElementHandler {
 		Monitor monitor = (Monitor) objectFactory.create(className, params);
 		log.debug("Created Monitor object: {}", monitor);
 
-		List<Processor> procs = createNestedProcessors(container, element);
+		List<Processor> procs = createNestedProcessors(container, element,
+				new HashMap<String, String>());
 		for (Processor p : procs)
 			monitor.addProcessor(p);
 

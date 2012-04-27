@@ -34,6 +34,44 @@ public class OperatorBean extends Operator {
 	}
 
 	/**
+	 * @see com.rapidminer.operator.Operator#processStarts()
+	 */
+	@Override
+	public final void processStarts() throws OperatorException {
+		super.processStarts();
+		this.init();
+		this.onProcessStart();
+	}
+
+	/**
+	 * This method is called at startup of the process, after the parameters
+	 * have been set up and before the start of {@link #doWork()}.
+	 * 
+	 * @throws OperatorException
+	 */
+	public void onProcessStart() throws OperatorException {
+
+	}
+
+	/**
+	 * This method is called at the end of the process.
+	 * 
+	 * @throws OperatorException
+	 */
+	public void onProcessEnd() throws OperatorException {
+
+	}
+
+	/**
+	 * @see com.rapidminer.operator.Operator#processFinished()
+	 */
+	@Override
+	public final void processFinished() throws OperatorException {
+		super.processFinished();
+		this.onProcessEnd();
+	}
+
+	/**
 	 * @see com.rapidminer.operator.Operator#getParameterTypes()
 	 */
 	@Override

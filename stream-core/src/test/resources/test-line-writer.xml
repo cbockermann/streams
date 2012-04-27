@@ -1,0 +1,17 @@
+
+	<container name="default">
+
+		<stream id="test" url="classpath:/lines.txt"
+			format="%(IP) [%(DATE)] &quot;%(URL)&quot; %(COUNT)" class="stream.io.LineStream"
+			limit="10" />
+
+		<process input="test">
+			<Assert condition="COUNT @gt 0" />
+			<RemoveKeys keys="LINE" />
+			<PrintData />
+			
+			<stream.io.LineWriter file="/tmp/test-lines.out" keys="LINE,IP,DATE,DATA" append="true" />
+		</process>
+
+	</container>
+

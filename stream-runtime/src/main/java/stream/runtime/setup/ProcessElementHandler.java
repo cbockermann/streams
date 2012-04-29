@@ -1,9 +1,30 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime.setup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +39,7 @@ import stream.ProcessorList;
 import stream.runtime.ElementHandler;
 import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
+import stream.runtime.VariableContext;
 import stream.service.Service;
 
 /**
@@ -78,24 +100,34 @@ public class ProcessElementHandler implements ElementHandler {
 			id = "process";
 		}
 
-		String multi = attr.get("multiply");
-		if (multi != null && !"".equals(multi.trim())) {
+		String copies = attr.get("copies");
+		if (attr.containsKey("multiply")) {
+			copies = attr.get("multiply");
+			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
+			log.warn("Please use 'copies' instead of 'multiply'.");
+		}
 
-			Integer times = new Integer(multi);
+		if (copies != null && !"".equals(copies.trim())) {
+
+			Integer times = new Integer(copies);
 
 			for (int i = 0; i < times; i++) {
 				String pid = "" + i;
 				objectFactory.set("process.id", pid);
+				objectFactory.set("copy.id", pid);
+				Map<String, String> extra = new HashMap<String, String>();
+				extra.put("process.id", pid);
+				extra.put("copy.id", pid);
 				log.info("Creating process '{}'", pid);
 				Process process = createProcess(processClass, attr, container,
-						element);
+						element, extra);
 				container.getProcesses().add(process);
 			}
 
 		} else {
 			objectFactory.set("process.id", id);
 			Process process = createProcess(processClass, attr, container,
-					element);
+					element, new HashMap<String, String>());
 			log.debug("Created Process object: {}", process);
 			container.getProcesses().add(process);
 		}
@@ -103,11 +135,13 @@ public class ProcessElementHandler implements ElementHandler {
 
 	protected Process createProcess(String processClass,
 			Map<String, String> attr, ProcessContainer container,
-			Element element) throws Exception {
+			Element element, Map<String, String> extraVariables)
+			throws Exception {
 		Process process = (Process) objectFactory.create(processClass, attr);
 		log.debug("Created Process object: {}", process);
 
-		List<Processor> procs = createNestedProcessors(container, element);
+		List<Processor> procs = createNestedProcessors(container, element,
+				extraVariables);
 		for (Processor p : procs) {
 			process.addProcessor(p);
 		}
@@ -115,13 +149,18 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected Processor createProcessor(ProcessContainer container,
-			Element child) throws Exception {
+			Element child, Map<String, String> extraVariables) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
 
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {
 
+			Map<String, String> vars = new HashMap<String, String>(container
+					.getContext().getProperties());
+			vars.putAll(extraVariables);
+
+			VariableContext vctx = new VariableContext(vars);
 			if (o instanceof ProcessorList) {
 
 				NodeList children = child.getChildNodes();
@@ -131,7 +170,8 @@ public class ProcessElementHandler implements ElementHandler {
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 
 						Element element = (Element) node;
-						Processor proc = createProcessor(container, element);
+						Processor proc = createProcessor(container, element,
+								extraVariables);
 						if (proc != null) {
 							((ProcessorList) o).addProcessor(proc);
 						} else {
@@ -147,9 +187,13 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (o instanceof Service) {
 					String id = params.get("id").trim();
+
+					id = vctx.expand(id);
+
 					log.debug(
-							"Registiering processor with id '{}' in look-up service",
-							child.getAttribute("id"));
+							"Registering processor with id '{}' in look-up service",
+							id);
+
 					container.getContext().register(id, (Service) o);
 
 				} else {
@@ -163,6 +207,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (key.endsWith("-ref")) {
 					String ref = params.get(key);
+					ref = vctx.expand(ref);
 					ServiceReference serviceRef = new ServiceReference(ref, o,
 							key);
 					container.getServiceRefs().add(serviceRef);
@@ -176,7 +221,8 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected List<Processor> createNestedProcessors(
-			ProcessContainer container, Element child) throws Exception {
+			ProcessContainer container, Element child,
+			Map<String, String> extraVariables) throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -184,7 +230,8 @@ public class ProcessElementHandler implements ElementHandler {
 
 			Node cnode = pnodes.item(j);
 			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
-				Processor p = createProcessor(container, (Element) cnode);
+				Processor p = createProcessor(container, (Element) cnode,
+						extraVariables);
 				if (p != null) {
 					log.debug("Found processor...");
 					procs.add(p);

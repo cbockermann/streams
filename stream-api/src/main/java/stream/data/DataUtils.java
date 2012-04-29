@@ -1,13 +1,31 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.data;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import stream.data.vector.Vector;
 
 /**
  * <p>
@@ -133,18 +151,5 @@ public class DataUtils {
 
 	public final static boolean isHiddenOrSpecial(String key) {
 		return isHidden(key) || isSpecial(key);
-	}
-
-	public static Data put(Data data, Vector out) {
-		if (out.getType() == Vector.Type.DENSE) {
-			for (int i = 0; i < out.length(); i++) {
-				data.put("" + i, out.get(i));
-			}
-		} else {
-			for (Integer key : out.getPairs().keySet()) {
-				data.put(key.toString(), out.getPairs().get(key));
-			}
-		}
-		return data;
 	}
 }

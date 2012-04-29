@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.parser;
 
 import java.io.Serializable;
@@ -13,6 +36,7 @@ import stream.data.Data;
 public class NGrams extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(NGrams.class);
 	String key = null;
+	String prefix = "";
 	Integer n = 3;
 
 	@Override
@@ -39,7 +63,7 @@ public class NGrams extends AbstractProcessor {
 				}
 
 				for (String key : counts.keySet()) {
-					data.put(key, counts.get(key));
+					data.put(prefix + key, counts.get(key));
 				}
 
 				log.debug("Added {} {}-grams to item", counts.size(), n);
@@ -77,5 +101,20 @@ public class NGrams extends AbstractProcessor {
 	 */
 	public void setN(Integer n) {
 		this.n = n;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix
+	 *            the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

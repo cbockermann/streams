@@ -1,5 +1,25 @@
-/**
+/*
+ *  stream.ai
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  stream.ai is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The stream.ai library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.plugin.processing;
 
@@ -10,24 +30,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessContext;
+import stream.annotations.Parameter;
 import stream.data.Data;
-import stream.expressions.Expression;
-import stream.expressions.ExpressionCompiler;
+import stream.expressions.Condition;
 import stream.io.ListDataStream;
 import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
+import stream.plugin.util.ParameterSetup;
+import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
-import com.rapidminer.operator.UserError;
 import com.rapidminer.parameter.ParameterType;
-import com.rapidminer.parameter.ParameterTypeInt;
-import com.rapidminer.parameter.ParameterTypeString;
 
 /**
  * <p>
@@ -53,11 +72,11 @@ public class DataStreamProcess extends
 	final ProcessContext processContext = new ProcessContextImpl(
 			containerContext);
 
-	public final static String BUFFER_SIZE_PARAMETER = "bufferSize";
-	public final static String FILTER_PARAMETER = "condition";
-	int bufferSize = 0;
 	List<DataObject> resultBuffer = new ArrayList<DataObject>();
-	Expression condition = null;
+
+	Long limit = -1L;
+	Long bufferSize = 0L;
+	Condition condition;
 
 	/**
 	 * @param description
@@ -69,6 +88,54 @@ public class DataStreamProcess extends
 	}
 
 	/**
+	 * @return the limit
+	 */
+	public Long getLimit() {
+		return limit;
+	}
+
+	/**
+	 * @param limit
+	 *            the limit to set
+	 */
+	@Parameter(description = "Specifies the maximum number of items read from the stream.", defaultValue = "-1", min = -1.0, max = Long.MAX_VALUE, required = false)
+	public void setLimit(Long limit) {
+		this.limit = limit;
+	}
+
+	/**
+	 * @return the bufferSize
+	 */
+	public Long getBufferSize() {
+		return bufferSize;
+	}
+
+	/**
+	 * @param bufferSize
+	 *            the bufferSize to set
+	 */
+	@Parameter(description = "Specifies the maximum number of items stored for further processing.", defaultValue = "0", min = 0.0, max = Integer.MAX_VALUE, required = false)
+	public void setBufferSize(Long bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
+	/**
+	 * @return the condition
+	 */
+	public Condition getCondition() {
+		return condition;
+	}
+
+	/**
+	 * @param condition
+	 *            the condition to set
+	 */
+	@Parameter(description = "Specifies a condition that has to match. Items not matching that condition will be skipped.", required = false)
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	/**
 	 * @see com.rapidminer.operator.OperatorChain#doWork()
 	 */
 	@Override
@@ -76,22 +143,17 @@ public class DataStreamProcess extends
 
 		resultBuffer.clear();
 
-		bufferSize = getParameterAsInt(BUFFER_SIZE_PARAMETER);
-
-		try {
-			if (this.isParameterSet(FILTER_PARAMETER)) {
-				String filter = getParameterAsString(FILTER_PARAMETER);
-				condition = ExpressionCompiler.parse(filter);
-			}
-			log.debug("Applying filter {} to data-stream", condition);
-		} catch (Exception e) {
-			throw new UserError(this, e, "filter.syntax.error", e.getMessage());
+		ParameterSetup.setParameters(this);
+		log.info("Initialized parameters for {} to:", this);
+		for (ParameterType type : this.getParameterTypes()) {
+			log.info("   {} = {}", type.getKey(),
+					this.getParameter(type.getKey()));
 		}
 
 		List<Operator> nested = this.getImmediateChildren();
 		log.debug("This StreamProcess has {} nested operators", nested.size());
 		for (Operator op : nested) {
-			log.debug("  op: {}", op);
+			log.debug("  op: {}  (class is {})", op, op.getClass());
 
 			if (op instanceof DataStreamOperator) {
 				log.debug("Resetting stream-operator {}", op);
@@ -106,9 +168,11 @@ public class DataStreamProcess extends
 		DataSourceObject dataSource = input.getData(DataSourceObject.class);
 		log.debug("input is a data-stream-source...");
 		int i = 0;
+		if (limit == null)
+			limit = -1L;
 
 		Data item = dataSource.readNext();
-		while (item != null) {
+		while (item != null && (limit < 0 || i < limit)) {
 
 			if (condition == null || condition.matches(processContext, item)) {
 
@@ -121,6 +185,7 @@ public class DataStreamProcess extends
 				i++;
 
 				try {
+
 					DataObject processed = outputStream
 							.getData(DataObject.class);
 					if (bufferSize > 0 && processed != null
@@ -130,8 +195,11 @@ public class DataStreamProcess extends
 						resultBuffer.add(processed);
 					}
 				} catch (Exception e) {
-					log.error("Failed to retrieve processed data-item: {}",
-							e.getMessage());
+					log.error(
+							"Failed to retrieve processed data-item from port '{}': {}",
+							outputStream, e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
 				}
 
 				if (bufferSize > 0 && resultBuffer.size() >= bufferSize) {
@@ -170,18 +238,6 @@ public class DataStreamProcess extends
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
-		List<ParameterType> types = new ArrayList<ParameterType>(); // super.getParameterTypes();
-
-		types.add(new ParameterTypeString(FILTER_PARAMETER,
-				"A filter condition for the processing", true));
-
-		types.add(new ParameterTypeInt(BUFFER_SIZE_PARAMETER,
-				"The number of data items to collect", 0, Integer.MAX_VALUE, 0));
-
-		for (ParameterType type : types) {
-			log.debug("Found parameter '{}' with description '{}'",
-					type.getKey(), type.getDescription());
-		}
-		return types;
+		return ParameterTypeDiscovery.getParameterTypes(getClass());
 	}
 }

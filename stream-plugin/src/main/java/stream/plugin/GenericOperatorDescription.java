@@ -1,5 +1,25 @@
-/**
+/*
+ *  stream.ai
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  stream.ai is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The stream.ai library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.plugin;
 
@@ -12,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.io.DataStream;
-import stream.plugin.streaming.GenericStreamingProcessorOperator;
-import stream.plugin.streaming.GenericStreamingSourceOperator;
 import stream.plugin.util.OperatorHelpFinder;
 
 import com.rapidminer.operator.Operator;
@@ -86,7 +104,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 			GenericOperatorDescription sod = (GenericOperatorDescription) description;
 
 			if (Operator.class.isAssignableFrom(libClass)) {
-				log.info("Provided class already is a fully blown operator!");
+				log.debug("Provided class already is a fully blown operator!");
 
 				Constructor<?> constructor = libClass
 						.getConstructor(OperatorDescription.class);
@@ -96,35 +114,35 @@ public class GenericOperatorDescription extends OperatorDescription {
 			}
 
 			if (DataStream.class.isAssignableFrom(libClass)) {
-				log.info("Class {} is a data-stream class!", libClass);
+				log.debug("Class {} is a data-stream class!", libClass);
 
-				log.info(
+				log.debug(
 						"Creating GenericStreamingSourceOperator for class {}",
-						libClass);
+						libClass.getName());
 
 				if (DataStreamPlugin.inStreamingMode()) {
-					op = new GenericStreamingSourceOperator(description,
-							(Class<? extends DataStream>) sod.libClass);
+					// op = new GenericStreamingSourceOperator(description,
+					// (Class<? extends DataStream>) sod.libClass);
 				} else {
 					op = new GenericStreamReader(description,
 							(Class<? extends DataStream>) sod.libClass);
 				}
-				log.info("Operator is of class {}", op.getClass());
+				log.debug("Operator is of class {}", op.getClass());
 				return op;
 			}
 
-			log.info("Creating GenericStreamOperator for processor-class {}",
+			log.debug("Creating GenericStreamOperator for processor-class {}",
 					libClass);
 
 			if (DataStreamPlugin.inStreamingMode()) {
-				op = new GenericStreamingProcessorOperator(description,
-						(Class<? extends Processor>) sod.libClass);
+				// op = new GenericStreamingProcessorOperator(description,
+				// (Class<? extends Processor>) sod.libClass);
 			} else {
 				op = new GenericStreamOperator(description,
 						(Class<? extends Processor>) sod.libClass);
 			}
 
-			log.info("Operator of class {} is {}", libClass, op.getClass());
+			log.debug("Operator of class {} is {}", libClass, op.getClass());
 			return op;
 		}
 
@@ -136,25 +154,25 @@ public class GenericOperatorDescription extends OperatorDescription {
 	public static boolean canCreate(Class<?> clazz) {
 
 		if (Operator.class.isAssignableFrom(clazz)) {
-			log.info(
+			log.debug(
 					"Yes, we support direct creation of Operators...(class {})",
 					clazz);
 			return true;
 		}
 
 		if (Processor.class.isAssignableFrom(clazz)) {
-			log.info("Yes, we can create an Operator for Processor-class {}",
+			log.debug("Yes, we can create an Operator for Processor-class {}",
 					clazz);
 			return true;
 		}
 
 		if (DataStream.class.isAssignableFrom(clazz)) {
-			log.info("Yes, we can create an Operator for DataStream-class {}",
+			log.debug("Yes, we can create an Operator for DataStream-class {}",
 					clazz);
 			return true;
 		}
 
-		log.warn("No generic operator-support for class '{}'", clazz);
+		log.debug("No generic operator-support for class '{}'", clazz);
 		return false;
 	}
 }

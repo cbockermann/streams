@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime.setup;
 
@@ -11,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.ContainerContext;
+import stream.runtime.VariableContext;
 import stream.service.Service;
 
 /**
@@ -47,7 +68,8 @@ public class ServiceInjection {
 			ServiceReference ref = it.next();
 			log.debug("Checking service-reference {}", ref);
 
-			String serviceRef = ref.getRef();
+			VariableContext c = new VariableContext(ctx.getProperties());
+			String serviceRef = c.expand(ref.getRef());
 			Object consumer = ref.getReceiver();
 
 			Service service = (Service) ctx.lookup(serviceRef);
@@ -116,6 +138,9 @@ public class ServiceInjection {
 	 * @return
 	 */
 	public static boolean isServiceImplementation(Class<?> clazz) {
+
+		if (clazz == Service.class)
+			return true;
 
 		for (Class<?> intf : clazz.getInterfaces()) {
 			log.trace("Checking if {} = {}", intf, Service.class);

@@ -1,0 +1,22 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<property name="database.url" value="jdbc:hsqldb:mem:res:/test.db" />
+
+	<Stream id="input" class="stream.test.TestStream" limit="10" keys="attr1,attr2,attr2" /> 
+
+
+	<Process input="input">
+	
+		<CreateID key="@id" start="1"/>
+	
+		<stream.data.AsJSON key="json" />
+		
+		<stream.io.SQLWriter url="${database.url}" username="root" password="" table="RANDOM" keys="@id,json" dropTable="true"/>
+	
+	</Process>
+	
+</Container>

@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.io;
 
@@ -10,14 +30,13 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
-import stream.data.DataListener;
 
 /**
  * @author chris
  * 
  */
-public class DataStreamQueue extends AbstractDataStream implements
-		DataListener, Processor, QueueService {
+public abstract class DataStreamQueue extends AbstractDataStream implements
+		Processor, QueueService {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
 	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
@@ -29,7 +48,7 @@ public class DataStreamQueue extends AbstractDataStream implements
 	 * @see stream.io.DataStream#close()
 	 */
 	@Override
-	public void close() {
+	public void close() throws Exception {
 		queue.clear();
 	}
 
@@ -82,14 +101,6 @@ public class DataStreamQueue extends AbstractDataStream implements
 	}
 
 	/**
-	 * @see stream.data.DataListener#dataArrived(stream.data.Data)
-	 */
-	@Override
-	public void dataArrived(Data item) {
-		queue.add(item);
-	}
-
-	/**
 	 * @see stream.Processor#process(stream.data.Data)
 	 */
 	@Override
@@ -110,8 +121,14 @@ public class DataStreamQueue extends AbstractDataStream implements
 	 * @see stream.io.QueueService#enqueue(stream.data.Data)
 	 */
 	@Override
-	public void enqueue(Data item) {
-		queue.add(item);
+	public boolean enqueue(Data item) {
+		try {
+			boolean b = queue.add(item);
+			return b;
+
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**

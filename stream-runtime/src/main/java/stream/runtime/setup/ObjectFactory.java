@@ -1,8 +1,31 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime.setup;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,6 +40,7 @@ import org.w3c.dom.Node;
 
 import stream.annotations.EmbeddedContent;
 import stream.runtime.VariableContext;
+import stream.utils.FileUtils;
 
 /**
  * This class implements a generic object factory that is able to instantiate
@@ -34,7 +58,13 @@ public class ObjectFactory extends VariableContext {
 	final static String[] DEFAULT_PACKAGES = new String[] { "", "stream.data.",
 			"stream.data.mapper.", "stream.data.tree.", "stream.filter.",
 			"stream.data.filter.", "stream.data.stats.", "stream.data.vector.",
-			"stream.data.test.", "stream.logic", "stream.flow" };
+			"stream.data.test.", "stream.logic", "stream.flow",
+			"stream.statistics", "stream.scripting" };
+
+	// TODO: Extend this with a custom class loader that will search other
+	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any
+	// other search path list found in the system environment/system settings
+	ClassLoader classLoader = ObjectFactory.class.getClassLoader();
 
 	final List<String> searchPath = new ArrayList<String>();
 
@@ -44,6 +74,30 @@ public class ObjectFactory extends VariableContext {
 		for (String pkg : DEFAULT_PACKAGES) {
 			addPackage(pkg);
 		}
+
+		UserSettings settings = new UserSettings();
+		List<File> files = new ArrayList<File>();
+
+		for (URL url : settings.getLibrarySearchPath()) {
+			if (url.getProtocol().toLowerCase().startsWith("file")) {
+				files.addAll(FileUtils.findAllFiles(new File(url.getFile())));
+			}
+		}
+
+		URL[] url = new URL[files.size()];
+		log.info("Extra class paths:");
+		int i = 0;
+		for (File f : files) {
+			try {
+				url[i] = f.toURI().toURL();
+				log.info("   {}", f);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		classLoader = URLClassLoader.newInstance(url,
+				ObjectFactory.class.getClassLoader());
 	}
 
 	public void addPackage(String pkg) {
@@ -95,7 +149,7 @@ public class ObjectFactory extends VariableContext {
 
 		log.debug("Parameters for new class: {}", params);
 		log.debug("object-factory.variables: {}", this.variables);
-		Class<?> clazz = Class.forName(className);
+		Class<?> clazz = Class.forName(className, false, classLoader);
 
 		// create an instance of this class
 		//
@@ -155,13 +209,19 @@ public class ObjectFactory extends VariableContext {
 			return node.getAttribute("class");
 
 		try {
-			Class.forName(node.getNodeName());
+			classLoader.loadClass(node.getNodeName());
 			log.debug("Found direct class-match: {}", node.getNodeName());
+
+			URL doc = findDocumentation(node.getNodeName());
+			if (doc == null)
+				log.warn("No documentation provided for class '{}'!",
+						node.getNodeName());
+
 			return node.getNodeName();
 		} catch (Exception e) {
 		}
 
-		for (String prefix : this.searchPath) {
+		for (String prefix : searchPath) {
 
 			String cn = prefix + node.getNodeName();
 			try {
@@ -169,9 +229,15 @@ public class ObjectFactory extends VariableContext {
 					cn = cn.substring(1);
 
 				log.debug("Checking for class {}", cn);
-				Class<?> clazz = Class.forName(cn);
+				Class<?> clazz = classLoader.loadClass(cn);
 				log.debug("Auto-detected class {} for node {}", clazz,
 						node.getNodeName());
+
+				URL doc = findDocumentation(clazz.getName());
+				if (doc == null)
+					log.warn("No documentation provided for class '{}'!",
+							clazz.getName());
+
 				return clazz.getName();
 			} catch (Exception e) {
 				log.debug("No class '{}' found", cn);
@@ -180,5 +246,12 @@ public class ObjectFactory extends VariableContext {
 
 		throw new Exception("Failed to determine class for node '"
 				+ node.getNodeName() + "'!");
+	}
+
+	public URL findDocumentation(String className) {
+		String docResource = "/" + className.replace('.', '/') + ".md";
+		log.trace("Doc resource for '{}' is '{}'", className, docResource);
+		URL url = classLoader.getResource(docResource);
+		return url;
 	}
 }

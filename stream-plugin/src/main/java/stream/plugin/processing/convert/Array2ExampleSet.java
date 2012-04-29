@@ -1,5 +1,25 @@
-/**
+/*
+ *  stream.ai
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  stream.ai is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The stream.ai library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.plugin.processing.convert;
 
@@ -7,40 +27,31 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
-import stream.data.DataUtils;
 import stream.plugin.data.DataObject;
 
-import com.rapidminer.example.Attribute;
+import com.rapidminer.beans.OperatorBean;
 import com.rapidminer.example.ExampleSet;
-import com.rapidminer.example.table.AttributeFactory;
-import com.rapidminer.example.table.DataRowFactory;
-import com.rapidminer.example.table.MemoryExampleTable;
-import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
 import com.rapidminer.operator.UserError;
 import com.rapidminer.operator.ports.InputPort;
 import com.rapidminer.operator.ports.OutputPort;
-import com.rapidminer.parameter.ParameterType;
-import com.rapidminer.parameter.ParameterTypeInt;
-import com.rapidminer.parameter.ParameterTypeString;
-import com.rapidminer.tools.Ontology;
-import com.rapidminer.tools.att.AttributeSet;
 
 /**
  * @author chris
  * 
  */
-public class Array2ExampleSet extends Operator {
+@Description(group = "Data Stream.Processing.Transformations.Data")
+public class Array2ExampleSet extends OperatorBean {
 
 	static Logger log = LoggerFactory.getLogger(Array2ExampleSet.class);
 
@@ -51,6 +62,12 @@ public class Array2ExampleSet extends Operator {
 	final OutputPort output = getOutputPorts().createPort("example set");
 	final OutputPort passThroughPort = getOutputPorts().createPort("data item");
 
+	ExampleSetFactory exampleSetFactory = ExampleSetFactory.newInstance();
+
+	String key;
+	Integer rows;
+	Boolean transpose = false;
+
 	/**
 	 * @param description
 	 */
@@ -59,6 +76,63 @@ public class Array2ExampleSet extends Operator {
 		acceptsInput(DataObject.class);
 		producesOutput(ExampleSet.class);
 
+		getTransformer().addPassThroughRule(input, passThroughPort);
+	}
+
+	/**
+	 * @return the key
+	 */
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 * @param key
+	 *            the key to set
+	 */
+	@Parameter(required = true, defaultValue = "Data", description = "The attribute key (name) of the attribute containing the array to convert.")
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	/**
+	 * @return the rows
+	 */
+	public Integer getRows() {
+		return rows;
+	}
+
+	/**
+	 * @param rows
+	 *            the rows to set
+	 */
+	@Parameter(required = true, description = "The number of rows that this array contains, used to compute the columns.")
+	public void setRows(Integer rows) {
+		this.rows = rows;
+	}
+
+	/**
+	 * @return the transpose
+	 */
+	public Boolean getTranspose() {
+		return transpose;
+	}
+
+	/**
+	 * @param transpose
+	 *            the transpose to set
+	 */
+	@Parameter(required = false, defaultValue = "false", description = "Whether the table should be created transposed.")
+	public void setTranspose(Boolean transpose) {
+		this.transpose = transpose;
+	}
+
+	/**
+	 * @see com.rapidminer.beans.OperatorBean#onProcessStart()
+	 */
+	@Override
+	public void onProcessStart() throws OperatorException {
+		exampleSetFactory = ExampleSetFactory.newInstance();
 	}
 
 	/**
@@ -69,13 +143,6 @@ public class Array2ExampleSet extends Operator {
 
 		DataObject event = input.getData(DataObject.class);
 
-		Integer numberOfRows = getParameterAsInt(ROWS_PARAMETER);
-		if (numberOfRows == null) {
-			throw new UserError(this, "Missing parameter '" + ROWS_PARAMETER
-					+ "'", -1);
-		}
-
-		String key = getParameterAsString(DATA_KEY_PARAMETER);
 		Serializable data = event.get(key);
 		if (data == null) {
 			throw new UserError(this, "No data found for key '" + key + "'!",
@@ -83,110 +150,30 @@ public class Array2ExampleSet extends Operator {
 		}
 
 		if (!data.getClass().isArray()) {
-			throw new UserError(this, new Exception(""), -1);
+			throw new UserError(this, "Attribute '" + key
+					+ "' does not contain an array!", -1);
 		}
 
 		int arrayLength = Array.getLength(data);
-		if (arrayLength % numberOfRows > 0) {
+		if (arrayLength % rows > 0) {
 			throw new UserError(this,
 					"Number of rows does not properly divide array-length!", -1);
 		}
 
-		int roi = arrayLength / numberOfRows;
-		List<Data> rows = expand(event, numberOfRows, key, 0, roi);
+		// expand the array to a list of rows
+		//
+		List<Data> rows = expand(event, this.rows, key, transpose);
 
-		ExampleSet exampleSet = createExampleSet(rows);
+		// create an example set from the list of rows.
+		//
+		ExampleSet exampleSet = exampleSetFactory.createExampleSet(rows);
 		output.deliver(exampleSet);
+
 		passThroughPort.deliver(event);
 	}
 
-	public static ExampleSet createExampleSet(List<Data> items) {
-
-		Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
-
-		for (Data item : items) {
-			for (String key : item.keySet()) {
-
-				Serializable s = item.get(key);
-				if (Number.class.isAssignableFrom(s.getClass())) {
-					attributes.put(key, Double.class);
-				} else {
-					attributes.put(key, String.class);
-				}
-			}
-		}
-
-		log.debug("Incoming data stream contains {} examples", items.size());
-
-		AttributeSet columns = new AttributeSet();
-		Attribute[] attributeArray = new Attribute[attributes.size()];
-
-		MemoryExampleTable table = new MemoryExampleTable();
-		int i = 0;
-		for (String key : attributes.keySet()) {
-
-			int type = Ontology.NUMERICAL;
-
-			if (String.class.equals(attributes.get(key))) {
-				type = Ontology.NOMINAL;
-			}
-
-			Attribute attr = AttributeFactory.createAttribute(key, type);
-			columns.addAttribute(attr);
-			table.addAttribute(attr);
-			attributeArray[i++] = attr;
-		}
-
-		DataRowFactory drf = new DataRowFactory(
-				DataRowFactory.TYPE_DOUBLE_ARRAY, '.');
-
-		for (Data datum : items) {
-			String[] data = new String[attributeArray.length];
-			i = 0;
-			for (String key : attributes.keySet()) {
-
-				if (datum.get(key) == null)
-					data[i] = "?";
-				else
-					data[i] = datum.get(key).toString();
-				i++;
-			}
-
-			while (i < attributeArray.length)
-				data[i++] = "?";
-
-			table.addDataRow(drf.create(data, attributeArray));
-		}
-
-		ExampleSet exampleSet = table.createExampleSet();
-
-		// Attributes attributeSet = exampleSet.getAttributes();
-		List<Attribute> attributeSet = new ArrayList<Attribute>();
-		for (Attribute attr : exampleSet.getAttributes())
-			attributeSet.add(attr);
-
-		for (Attribute attr : attributeSet) {
-			if (attr.getName().startsWith("@id")) {
-				exampleSet.getAttributes().setId(attr);
-				continue;
-			}
-
-			if (attr.getName().startsWith("@label")) {
-				exampleSet.getAttributes().setLabel(attr);
-				continue;
-			}
-
-			if (DataUtils.isAnnotation(attr.getName())) {
-				exampleSet.getAttributes().setSpecialAttribute(attr,
-						attr.getName());
-			}
-		}
-
-		return exampleSet;
-	}
-
 	public static List<Data> expand(Data event, int numberOfPixels,
-			String dataKey, int fromSlice, int toSlice) {
+			String dataKey, boolean transpose) {
 
 		List<Data> pixels = new ArrayList<Data>(numberOfPixels);
 
@@ -200,23 +187,33 @@ public class Array2ExampleSet extends Operator {
 					+ "' is not an array!");
 		}
 
-		int roi = Array.getLength(value) / numberOfPixels;
+		int rowLength = numberOfPixels;
+		int colLength = Array.getLength(value) / rowLength;
+
+		if (transpose) {
+			int t = colLength;
+			colLength = rowLength;
+			rowLength = t;
+		}
+
 		DecimalFormat df = new DecimalFormat(dataKey + "_000");
 
-		for (int i = 0; i < numberOfPixels; i++) {
+		for (int i = 0; i < rowLength; i++) {
 			Data pixel = DataFactory.create();
-			pixel.put("@chid", "" + i);
+			pixel.put("@row", "" + i);
 
-			for (int j = 0; j < roi; j++) {
-				if (j >= fromSlice && j <= toSlice) {
-					String key = df.format(j);
-					String val = Array.get(value, i * roi + j) + "";
-					try {
-						Double d = new Double(val);
-						pixel.put(key, d);
-					} catch (Exception e) {
-						pixel.put(key, val);
-					}
+			for (int j = 0; j < colLength; j++) {
+				String key = df.format(j);
+				String val;
+				if (!transpose)
+					val = Array.get(value, i * colLength + j) + "";
+				else
+					val = Array.get(value, j * rowLength + i) + "";
+				try {
+					Double d = new Double(val);
+					pixel.put(key, d);
+				} catch (Exception e) {
+					pixel.put(key, val);
 				}
 			}
 
@@ -224,18 +221,5 @@ public class Array2ExampleSet extends Operator {
 		}
 
 		return pixels;
-	}
-
-	/**
-	 * @see com.rapidminer.operator.Operator#getParameterTypes()
-	 */
-	@Override
-	public List<ParameterType> getParameterTypes() {
-		List<ParameterType> types = super.getParameterTypes();
-		types.add(new ParameterTypeString(DATA_KEY_PARAMETER,
-				"Attribute name to convert", "Data"));
-		types.add(new ParameterTypeInt(ROWS_PARAMETER, "Number of rows ", 1,
-				Integer.MAX_VALUE, 1440));
-		return types;
 	}
 }

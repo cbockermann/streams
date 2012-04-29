@@ -1,5 +1,25 @@
-/**
+/*
+ *  stream.ai
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  stream.ai is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The stream.ai library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.plugin.util;
 
@@ -34,10 +54,11 @@ public class ClassFinder {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public static Class<?>[] getClasses(String packageName)
-			throws ClassNotFoundException, IOException {
+	public static Class<?>[] getClasses(String packageName,
+			ClassLoader classLoader) throws ClassNotFoundException, IOException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		ClassLoader classLoader = ClassFinder.class.getClassLoader(); // .getContextClassLoader();
+		// ClassLoader classLoader = ClassFinder.class.getClassLoader(); //
+		// .getContextClassLoader();
 		log.debug("Using class-loader {}", classLoader);
 		assert classLoader != null;
 		List<URL> resources = new ArrayList<URL>();
@@ -72,7 +93,8 @@ public class ClassFinder {
 				if (p.startsWith("file:"))
 					p = p.substring("file:".length());
 
-				classes.addAll(findClasses(new JarFile(p), packageName));
+				classes.addAll(findClasses(new JarFile(p), packageName,
+						classLoader));
 			} else {
 				log.trace("Checking URL {}", resource);
 				dirs.add(new File(resource.getFile()));
@@ -81,14 +103,14 @@ public class ClassFinder {
 
 		for (File directory : dirs) {
 			List<Class<?>> cl = findClasses(directory, packageName);
-			log.debug("Found {} classes in {}", cl.size(), directory);
+			log.trace("Found {} classes in {}", cl.size(), directory);
 			classes.addAll(cl);
 		}
 		return classes.toArray(new Class[classes.size()]);
 	}
 
-	public static List<Class<?>> findClasses(JarFile jar, String packageName)
-			throws ClassNotFoundException {
+	public static List<Class<?>> findClasses(JarFile jar, String packageName,
+			ClassLoader classLoader) throws ClassNotFoundException {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		log.debug("Checking jar-file {}", jar.getName());
 		Enumeration<JarEntry> en = jar.entries();
@@ -96,7 +118,7 @@ public class ClassFinder {
 
 			JarEntry entry = en.nextElement();
 			entry.getName();
-			log.debug("Checking JarEntry '{}'", entry.getName());
+			log.trace("Checking JarEntry '{}'", entry.getName());
 
 			if (entry.getName().endsWith(".class")
 					&& !entry.getName().startsWith("com.rapidminer")
@@ -106,14 +128,15 @@ public class ClassFinder {
 					String className = entry.getName()
 							.replaceAll("\\.class$", "").replaceAll("/", ".");
 					log.trace("Class-name is: '{}'", className);
-					Class<?> clazz = Class.forName(className);
+					Class<?> clazz = classLoader.loadClass(className); // Class.forName(className);
 
 					log.trace("Found class {}", clazz);
 					classes.add(clazz);
 
 				} catch (Exception e) {
-					log.error("Failed to load class for entry '{}'",
-							entry.getName());
+					log.error("Failed to load class for entry '{}': {}",
+							entry.getName(), e.getMessage());
+					e.printStackTrace();
 				}
 			}
 
@@ -139,7 +162,7 @@ public class ClassFinder {
 		if (packageName.startsWith("com.rapidminer"))
 			return new ArrayList<Class<?>>();
 
-		log.debug("Searching directory '{}' for package '{}'", directory,
+		log.trace("Searching directory '{}' for package '{}'", directory,
 				packageName);
 
 		List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -170,7 +193,7 @@ public class ClassFinder {
 					while (className.startsWith("."))
 						className = className.substring(1);
 
-					log.debug("Loading class '{}'", className);
+					log.trace("Loading class '{}'", className);
 					classes.add(Class.forName(className));
 				} catch (Exception e) {
 					log.error("Failed to add class: {}", e.getMessage());

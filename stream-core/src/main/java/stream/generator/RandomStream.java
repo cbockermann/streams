@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.generator;
 
@@ -7,22 +27,42 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
+import stream.io.AbstractDataStream;
 
 /**
- * @author chris
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class RandomStream extends GeneratorDataStream {
+@Description(group = "Data Stream.Sources.Synthetic")
+public class RandomStream extends AbstractDataStream {
 
-	Random random;
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
 
+	Random[] random = null;
+	String[] keys = new String[] { "att1" };
+
 	public RandomStream() {
-		random = new Random();
-		attributes.put("att1", Double.class);
+	}
+
+	/**
+	 * @return the keys
+	 */
+	public String[] getKeys() {
+		return keys;
+	}
+
+	/**
+	 * @param keys
+	 *            the keys to set
+	 */
+	@Parameter(required = false, description = "The attribute names to create (comma separated)")
+	public void setKeys(String[] keys) {
+		this.keys = keys;
 	}
 
 	/**
@@ -30,6 +70,14 @@ public class RandomStream extends GeneratorDataStream {
 	 */
 	@Override
 	public Map<String, Class<?>> getAttributes() {
+
+		if (attributes == null) {
+			attributes = new LinkedHashMap<String, Class<?>>();
+			for (String key : keys) {
+				attributes.put(key, Double.class);
+			}
+		}
+
 		return attributes;
 	}
 
@@ -39,21 +87,31 @@ public class RandomStream extends GeneratorDataStream {
 	@Override
 	public Data readNext() throws Exception {
 		Data map = DataFactory.create();
-		map.put("att1", next(random));
-		return map;
+		return readNext(map);
 	}
 
-	public Data readNext(Data data) throws Exception {
+	public Data readItem(Data data) throws Exception {
 		if (data == null)
-			return readNext();
+			data = DataFactory.create();
 
-		data.clear();
-		data.put("att1", next(random));
+		if (keys == null)
+			keys = new String[] { "x1" };
+
+		if (random == null)
+			random = new Random[keys.length];
+
+		for (int i = 0; i < keys.length; i++) {
+			if (random[i] == null) {
+				random[i] = new Random(i * 1000L);
+			}
+
+			data.put(keys[i], next(random[i]));
+		}
 		return data;
 	}
 
 	public Double next(Random rnd) {
-		return 0.1 * (5.0 + rnd.nextGaussian());
+		return rnd.nextGaussian();
 	}
 
 	public Object get(String key) {
@@ -74,5 +132,12 @@ public class RandomStream extends GeneratorDataStream {
 	}
 
 	public void close() {
+	}
+
+	/**
+	 * @see stream.io.AbstractDataStream#readHeader()
+	 */
+	@Override
+	public void readHeader() throws Exception {
 	}
 }

@@ -1,6 +1,28 @@
+/*
+ *  stream.ai
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ * 
+ *  stream.ai is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The stream.ai library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.plugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +36,7 @@ import stream.Processor;
 import stream.StatefulProcessor;
 import stream.data.Data;
 import stream.plugin.data.DataObject;
+import stream.plugin.util.ParameterSetup;
 import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;
@@ -36,11 +59,10 @@ public abstract class DataStreamOperator extends Operator implements
 		Measurable, Processor {
 	static Logger log = LoggerFactory.getLogger(DataStreamOperator.class);
 
-	final InputPort input = getInputPorts().createPort(
+	protected final InputPort input = getInputPorts().createPort(
 			DataStreamPlugin.DATA_ITEM_PORT_NAME);
-	final OutputPort output = getOutputPorts().createPort(
+	protected final OutputPort output = getOutputPorts().createPort(
 			DataStreamPlugin.DATA_ITEM_PORT_NAME);
-	List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
 
 	ProcessContext processContext = null;
 	Processor processor;
@@ -54,14 +76,6 @@ public abstract class DataStreamOperator extends Operator implements
 	 */
 	public DataStreamOperator(OperatorDescription description, Class<?> clazz) {
 		super(description);
-
-		log.debug("Ensuring that we accept DataObjects as input...");
-		acceptsInput(DataObject.class);
-		producesOutput(DataObject.class);
-
-		parameterTypes.addAll(super.getParameterTypes());
-		parameterTypes.addAll(ParameterTypeDiscovery.discoverParameterTypes(
-				clazz).values());
 
 		try {
 			processor = (Processor) clazz.newInstance();
@@ -129,7 +143,8 @@ public abstract class DataStreamOperator extends Operator implements
 		// processed
 		// data back to the output
 		//
-		log.debug("Executing stream-operator's doWork()");
+		log.debug("Executing stream-operator's doWork(), processor is {}",
+				this.processor);
 
 		@SuppressWarnings("deprecation")
 		DataObject datum = input.getDataOrNull();
@@ -145,15 +160,19 @@ public abstract class DataStreamOperator extends Operator implements
 		// the processed data may be NULL, i.e. in case the implementing class
 		// is a filter
 		//
-		if (processed != null)
+		if (processed != null) {
+			log.debug("Delivering item to output port {}", output);
 			output.deliver(processed);
+		} else {
+			log.debug("Not delivering item null to output port.");
+		}
 	}
 
 	/**
 	 * @see com.rapidminer.operator.Operator#getParameterTypes()
 	 */
 	public List<ParameterType> getParameterTypes() {
-		return parameterTypes;
+		return ParameterTypeDiscovery.getParameterTypes(processor.getClass());
 	}
 
 	public void reset() {
@@ -166,8 +185,19 @@ public abstract class DataStreamOperator extends Operator implements
 	public void processStarts() throws OperatorException {
 		super.processStarts();
 		try {
-			if (processor instanceof StatefulProcessor)
-				((StatefulProcessor) processor).init(processContext);
+			if (!setup) {
+				Map<String, String> params = ParameterSetup.getParameters(this);
+				ParameterInjection.inject(processor, params,
+						new VariableContext());
+
+				if (processor instanceof StatefulProcessor)
+					((StatefulProcessor) processor).init(processContext);
+
+				log.debug("Processor {} initialized", processor);
+				setup = true;
+			} else {
+				log.debug("Processor already initialized...");
+			}
 		} catch (Exception e) {
 			throw new UserError(this, e, "Failed to initialize operator: "
 					+ e.getMessage());
@@ -183,6 +213,8 @@ public abstract class DataStreamOperator extends Operator implements
 		try {
 			if (processor instanceof StatefulProcessor)
 				((StatefulProcessor) processor).finish();
+
+			setup = false;
 		} catch (Exception e) {
 			throw new UserError(this, e, "Failed to finish operator: "
 					+ e.getMessage());
@@ -199,9 +231,12 @@ public abstract class DataStreamOperator extends Operator implements
 	public final DataObject handle(DataObject data) {
 
 		Data handled = process(data.getWrappedDataItem());
-		if (handled instanceof DataObject)
+		if (handled instanceof DataObject) {
+			log.debug("Processed item is already wrapped in a DataObject...");
 			return (DataObject) handled;
+		}
 
+		log.debug("Wrapping item into DataObject...");
 		data.setWrappedDataItem(handled);
 		return data;
 	}
@@ -213,7 +248,10 @@ public abstract class DataStreamOperator extends Operator implements
 	 * @return
 	 */
 	public Data process(Data data) {
-		return processor.process(data);
+		log.debug("Calling {}'s process method on: {}", processor, data);
+		Data item = processor.process(data);
+		log.info("Processor {} returned: {}", item);
+		return item;
 	}
 
 	/**

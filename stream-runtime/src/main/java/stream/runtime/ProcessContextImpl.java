@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime;
 
@@ -22,6 +42,10 @@ public class ProcessContextImpl implements ProcessContext {
 	final ContainerContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
 
+	public ProcessContextImpl() {
+		containerContext = null;
+	}
+
 	public ProcessContextImpl(ContainerContext ctx) {
 		containerContext = ctx;
 		log.debug("Creating new ProcessContext, parent context is {}", ctx);
@@ -32,6 +56,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public Service lookup(String ref) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		return containerContext.lookup(ref);
 	}
 
@@ -41,6 +67,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public void register(String ref, Service p) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		containerContext.register(ref, p);
 	}
 
@@ -49,6 +77,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 */
 	@Override
 	public void unregister(String ref) throws Exception {
+		if (containerContext == null)
+			throw new Exception("No parent context exists!");
 		containerContext.unregister(ref);
 	}
 
@@ -74,6 +104,9 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public Object resolve(String variable) {
 		if (!variable.startsWith("process.")) {
+			if (containerContext == null)
+				return null;
+
 			return containerContext.resolve(variable);
 		}
 

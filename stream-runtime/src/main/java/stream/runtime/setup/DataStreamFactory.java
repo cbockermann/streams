@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime.setup;
 
@@ -39,7 +59,10 @@ public class DataStreamFactory {
 			Constructor<?> constr = clazz.getConstructor(URL.class);
 			URL url = null;
 
-			if (params.get("url").startsWith("classpath:")) {
+			String urlString = params.get("url");
+			urlString = objectFactory.expand(urlString);
+
+			if (urlString.startsWith("classpath:")) {
 				String resource = urlParam.substring("classpath:".length());
 				log.debug("Looking up resource '{}'", resource);
 				url = ProcessContainer.class.getResource(resource);
@@ -49,7 +72,7 @@ public class DataStreamFactory {
 									+ resource + "' not found!");
 				}
 			} else {
-				url = new URL(urlParam);
+				url = new URL(urlString);
 			}
 
 			stream = (DataStream) constr.newInstance(url);
@@ -61,7 +84,7 @@ public class DataStreamFactory {
 		List<Processor> preProcessors = processorFactory
 				.createNestedProcessors(node);
 		for (Processor p : preProcessors) {
-			stream.addPreprocessor(p);
+			stream.getPreprocessors().add(p);
 		}
 
 		ParameterInjection.inject(stream, params, new VariableContext());
@@ -91,7 +114,6 @@ public class DataStreamFactory {
 
 	/**
 	 * 
-	 * @deprecated
 	 * @param params
 	 * @return
 	 * @throws Exception
@@ -99,8 +121,44 @@ public class DataStreamFactory {
 	public static DataStream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
-		Constructor<?> constr = clazz.getConstructor(URL.class);
+		Constructor<?> urlConstructor = null;
+
+		try {
+			urlConstructor = clazz.getConstructor(URL.class);
+		} catch (Exception e) {
+			log.error("Class {} does not provide an URL constructor...", clazz);
+			urlConstructor = null;
+		}
+
+		DataStream stream = null;
 		String urlParam = params.get("url");
+		if (urlParam == null || urlConstructor == null) {
+			if (urlParam == null)
+				log.debug(
+						"No 'url' parameter for data class {} found, checking for no-args constructor",
+						clazz);
+			else {
+				log.debug(
+						"No URL-constructor found for class {}, using no-args constructor...",
+						clazz);
+			}
+
+			try {
+				stream = (DataStream) clazz.newInstance();
+				ParameterInjection
+						.inject(stream, params, new VariableContext());
+				stream.init();
+				return stream;
+			} catch (Exception e) {
+				log.error(
+						"No no-args constructor found and no 'url' parameter specified for stream {}!",
+						clazz);
+				throw new Exception(
+						"No no-args constructor found and no 'url' parameter specified for stream "
+								+ clazz + "!");
+			}
+		}
+
 		URL url = null;
 
 		if (params.get("url").startsWith("classpath:")) {
@@ -115,7 +173,8 @@ public class DataStreamFactory {
 			url = new URL(urlParam);
 		}
 
-		DataStream stream = (DataStream) constr.newInstance(url);
+		stream = (DataStream) urlConstructor.newInstance(url);
+		stream.init();
 		ParameterInjection.inject(stream, params, new VariableContext());
 
 		if (stream instanceof MultiDataStream) {

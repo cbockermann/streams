@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.runtime.setup;
 
 import java.lang.reflect.Field;
@@ -56,7 +79,7 @@ public class ParameterDiscovery {
 
 				if (!types.containsKey(key)) {
 					log.info("  => parameter '{}'", key);
-					types.put(key, m.getReturnType());
+					types.put(key, m.getParameterTypes()[0]);
 				} else
 					log.info(
 							"Parameter {} already defined by field-annotation",
@@ -78,21 +101,26 @@ public class ParameterDiscovery {
 	 */
 	public static Parameter getParameterAnnotation(Class<?> clazz, String key) {
 
-		Field[] fields = clazz.getDeclaredFields();
+		for (Method m : clazz.getMethods()) {
+			if (ParameterDiscovery.isSetter(m)
+					&& m.getName().toLowerCase()
+							.equals("set" + key.toLowerCase())) {
+				Parameter p = m.getAnnotation(Parameter.class);
+				log.debug("Found parameter annotation for class {}, key {}: "
+						+ p, clazz, key);
+				return p;
+			}
+		}
+		return null;
+	}
 
-		log.info("Found {} fields", fields.length);
+	public static Class<?> getParameterType(Class<?> clazz, String name) {
 
-		for (Field field : fields) {
-			Parameter param = field.getAnnotation(Parameter.class);
-			if (param != null && (param.name().equals(key))
-					|| field.getName().equals(key)) {
-				log.info("Found @parameter annotated field '{}'",
-						field.getName());
-				log.info("    field.getType() = {}", field.getType());
-				return param;
-			} else {
-				log.info("Field '{}' is not annotated as parameter",
-						field.getName());
+		for (Method m : clazz.getMethods()) {
+			if (ParameterDiscovery.isSetter(m)
+					&& m.getName().toLowerCase()
+							.equals("set" + name.toLowerCase())) {
+				return m.getParameterTypes()[0];
 			}
 		}
 
@@ -105,16 +133,15 @@ public class ParameterDiscovery {
 
 		log.info("Found {} fields", fields.length);
 
-		for (Field field : fields) {
-			Parameter param = field.getAnnotation(Parameter.class);
+		for (Method m : clazz.getMethods()) {
+			Parameter param = m.getAnnotation(Parameter.class);
 			if (param != null) {
-				log.info("Found @parameter annotated field '{}'",
-						field.getName());
-				log.info("    field.getType() = {}", field.getType());
+				log.info("Found @parameter annotated field '{}'", m.getName());
+				log.info("    field.getType() = {}", m.getParameterTypes());
 				parameters.add(param);
 			} else {
 				log.info("Field '{}' is not annotated as parameter",
-						field.getName());
+						m.getName());
 			}
 		}
 		return parameters;

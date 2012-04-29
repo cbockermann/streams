@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.runtime;
 
 import java.net.URL;
@@ -22,6 +45,7 @@ import org.w3c.dom.NodeList;
 import stream.ProcessContext;
 import stream.data.Data;
 import stream.data.DataFactory;
+import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.setup.MonitorElementHandler;
@@ -170,6 +194,8 @@ public class ProcessContainer {
 			name = "local";
 
 		context.getProperties().putAll(getProperties(root));
+		objectFactory.addVariables(context.getProperties());
+
 		NodeList children = root.getChildNodes();
 
 		if (context.getProperties().get("container.datafactory") != null) {
@@ -222,7 +248,7 @@ public class ProcessContainer {
 					log.debug(
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
-					DataStreamQueue q = new DataStreamQueue();
+					DataStreamQueue q = new BlockingQueue();
 					listeners.put(input, q);
 					setStream(input, q);
 					context.register(input, q);
@@ -276,6 +302,14 @@ public class ProcessContainer {
 
 		log.debug("Experiment contains {} stream processes", processes.size());
 
+		log.debug("Initializing all DataStreams...");
+		for (String name : streams.keySet()) {
+			DataStream stream = streams.get(name);
+			log.debug("Initializing stream '{}'", name);
+			stream.init();
+		}
+
+		log.debug("Creating {} active processes...", processes.size());
 		long start = System.currentTimeMillis();
 		for (AbstractProcess spu : processes) {
 			spu.setDaemon(true);
@@ -323,7 +357,7 @@ public class ProcessContainer {
 
 	public void dataArrived(String key, Data item) {
 		if (listeners.containsKey(key)) {
-			listeners.get(key).dataArrived(item);
+			listeners.get(key).process(item);
 		} else {
 			log.warn("No listener defined for {}", key);
 		}

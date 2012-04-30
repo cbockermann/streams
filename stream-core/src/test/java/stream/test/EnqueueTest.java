@@ -35,7 +35,7 @@ public class EnqueueTest {
 
 	@Test
 	public void test() throws Exception {
-		URL url = GraphTest.class.getResource("/test-enqueue.xml");
+		URL url = EnqueueTest.class.getResource("/test-enqueue.xml");
 		stream.run.main(url);
 	}
 }

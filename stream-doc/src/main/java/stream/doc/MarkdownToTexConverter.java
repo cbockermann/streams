@@ -82,7 +82,7 @@ public class MarkdownToTexConverter implements DocConverter {
 	}
 
 	/**
-	 * @see stream.doc.helper.ParameterTableCreator#writeParameterTable(java.lang
+	 * @see stream.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
 	 *      .Class, java.io.PrintStream)
 	 */
 	@Override

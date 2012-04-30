@@ -16,7 +16,7 @@ import stream.runtime.setup.ParameterDiscovery;
  * @author chris
  * 
  */
-public class TexParameterTable implements ParameterTableCreator {
+public class TexParameterTable implements ParameterTableWriter {
 
 	/* (non-Javadoc)
 	 * @see stream.doc.helper.ParameterTableCreator#writeParameterTable(java.lang.Class, java.io.PrintStream)

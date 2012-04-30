@@ -16,10 +16,10 @@ import stream.runtime.setup.ParameterDiscovery;
  * @author chris
  * 
  */
-public class MarkdownParameterTable implements ParameterTableCreator {
+public class MarkdownParameterTable implements ParameterTableWriter {
 
 	/**
-	 * @see stream.doc.helper.ParameterTableCreator#writeParameterTable(java.lang
+	 * @see stream.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
 	 *      .Class, java.io.PrintStream)
 	 */
 	@Override

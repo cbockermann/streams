@@ -7,13 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import stream.doc.helper.ParameterTableCreator;
+import stream.doc.helper.ParameterTableWriter;
 
 /**
  * @author chris
  * 
  */
-public interface DocConverter extends ParameterTableCreator {
+public interface DocConverter extends ParameterTableWriter {
 
 	public void sectionDown();
 

@@ -33,7 +33,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.annotations.EmbeddedContent;
+import stream.annotations.BodyContent;
 import stream.annotations.Parameter;
 import stream.expressions.Condition;
 import stream.runtime.VariableContext;
@@ -107,7 +107,7 @@ public class ParameterTypeDiscovery {
 				}
 
 				Class<?>[] t = m.getParameterTypes();
-				if (t[0] == EmbeddedContent.class) {
+				if (t[0] == BodyContent.class) {
 					log.debug("Found EmbeddedContent parameter, key = '{}'",
 							key);
 					ParameterType type = new ParameterTypeText(key, "",

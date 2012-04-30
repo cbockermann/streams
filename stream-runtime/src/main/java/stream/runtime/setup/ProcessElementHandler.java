@@ -173,7 +173,7 @@ public class ProcessElementHandler implements ElementHandler {
 						Processor proc = createProcessor(container, element,
 								extraVariables);
 						if (proc != null) {
-							((ProcessorList) o).addProcessor(proc);
+							((ProcessorList) o).getProcessors().add(proc);
 						} else {
 							log.warn(
 									"Nested element {} is not of type 'stream.data.Processor': ",

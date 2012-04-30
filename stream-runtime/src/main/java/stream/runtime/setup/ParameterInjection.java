@@ -35,7 +35,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.annotations.EmbeddedContent;
+import stream.annotations.BodyContent;
 import stream.expressions.Condition;
 import stream.runtime.VariableContext;
 
@@ -72,7 +72,7 @@ public class ParameterInjection {
 		//
 		Set<String> alreadySet = new HashSet<String>();
 
-		Object embedded = params.get(EmbeddedContent.KEY);
+		Object embedded = params.get(BodyContent.KEY);
 
 		// now, walk over all methods and check if one of these is a setter of a
 		// corresponding
@@ -83,9 +83,9 @@ public class ParameterInjection {
 			Class<?>[] t = m.getParameterTypes();
 
 			if (embedded != null && m.getName().startsWith("set")
-					&& t.length == 1 && t[0] == EmbeddedContent.class) {
+					&& t.length == 1 && t[0] == BodyContent.class) {
 				log.debug("Setting embedded content...");
-				m.invoke(o, new EmbeddedContent(embedded.toString()));
+				m.invoke(o, new BodyContent(embedded.toString()));
 				continue;
 			}
 
@@ -258,7 +258,7 @@ public class ParameterInjection {
 		if (clazz.equals(String.class) || clazz.equals(Long.class)
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
 				|| clazz.equals(Boolean.class) || clazz.equals(File.class)
-				|| clazz.equals(EmbeddedContent.class)
+				|| clazz.equals(BodyContent.class)
 				|| clazz.equals(boolean.class) || clazz.equals(int.class)
 				|| clazz.isPrimitive() || clazz.equals(Condition.class)
 				|| clazz.equals(Map.class))

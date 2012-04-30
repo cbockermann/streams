@@ -5,7 +5,7 @@
 		url="http://kirmes.cs.uni-dortmund.de/data/random-stream.csv.gz" />
  -->
 	<Stream id="log" class="stream.io.CsvStream" limit="2"
-		url="file:/Users/chris/t3.csv" separator="___" />
+		url="classpath:/typo3.csv" separator="___" />
 
 
 	<Process input="log" output="logData">

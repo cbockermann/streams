@@ -36,11 +36,10 @@ import org.w3c.dom.NodeList;
 
 import stream.Processor;
 import stream.ProcessorList;
-import stream.data.DataFactory;
-import stream.expressions.ExpressionResolver;
 import stream.runtime.ElementHandler;
 import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
+import stream.runtime.VariableContext;
 import stream.service.Service;
 
 /**
@@ -157,6 +156,11 @@ public class ProcessElementHandler implements ElementHandler {
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {
 
+			Map<String, String> vars = new HashMap<String, String>(container
+					.getContext().getProperties());
+			vars.putAll(extraVariables);
+
+			VariableContext vctx = new VariableContext(vars);
 			if (o instanceof ProcessorList) {
 
 				NodeList children = child.getChildNodes();
@@ -184,12 +188,7 @@ public class ProcessElementHandler implements ElementHandler {
 				if (o instanceof Service) {
 					String id = params.get("id").trim();
 
-					Map<String, String> vars = new HashMap<String, String>(
-							container.getContext().getProperties());
-					vars.putAll(extraVariables);
-
-					id = ExpressionResolver.expand(id, container.getContext(),
-							DataFactory.create());
+					id = vctx.expand(id);
 
 					log.debug(
 							"Registering processor with id '{}' in look-up service",
@@ -208,6 +207,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (key.endsWith("-ref")) {
 					String ref = params.get(key);
+					ref = vctx.expand(ref);
 					ServiceReference serviceRef = new ServiceReference(ref, o,
 							key);
 					container.getServiceRefs().add(serviceRef);

@@ -169,8 +169,7 @@ public class ParameterInjection {
 								try {
 									Constructor<?> c = t[0]
 											.getConstructor(String.class);
-									po = c.newInstance(params.get(k).toString()
-											.trim());
+									po = c.newInstance(params.get(k).toString());
 									log.debug("Invoking {}({})", m.getName(),
 											po);
 								} catch (NoSuchMethodException nsm) {

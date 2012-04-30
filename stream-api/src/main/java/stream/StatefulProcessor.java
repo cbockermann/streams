@@ -25,7 +25,17 @@ package stream;
 
 /**
  * This interface is implemented by processors requiring a context. The context
- * is provided by the runtime-environment.
+ * is provided by the runtime-environment. This interface is an extension of the
+ * {@link Processor} interface and additionally provides a 3-way lifecycle:
+ * 
+ * <ol>
+ * <li>The {@link #init(ProcessContext)} method is called at initialization
+ * time, <i>after</i> all parameters (getters/setters) have been called.</li>
+ * <li>The {@link #process(stream.data.Data)} method is called for each data
+ * item that this processor has to work on.</li>
+ * <li>After the stream is finished, the runtime ensures that the
+ * {@link #finish()} method is called before the runtime is shut down.</li>
+ * </ol>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 

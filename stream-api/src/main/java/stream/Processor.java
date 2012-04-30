@@ -26,12 +26,17 @@ package stream;
 import stream.data.Data;
 
 /**
- * A processor is a simple class that follows a 3-step lifecycle. The lifecycle
- * starts with <code>init()</code>, after which several calls to the
- * <code>process</code> method may follow.
- * 
- * At the end of the lifecycle, the <code>finish()</code> method is called to
- * release and open connections or the like.
+ * <p>
+ * A processor is a simple function that acts on a piece of data. This interface
+ * defines the most basic form, simply providing a {@link #process(Data)}
+ * method. A processor implementing this interface may keep a state over
+ * multiple calls to the {@link #process(Data)} method.
+ * </p>
+ * <p>
+ * Processor implementations that require initialization should implement the
+ * {@link StatefulProcessor} interface, which implements a 3-phase lifecycle
+ * (init, process and finish).
+ * </p>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 

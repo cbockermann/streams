@@ -36,17 +36,17 @@ import stream.service.Service;
  * @author chris
  * 
  */
-public class DefaultLookupService implements NamingService {
+public class DefaultNamingService implements NamingService {
 
-	static Logger log = LoggerFactory.getLogger(DefaultLookupService.class);
+	static Logger log = LoggerFactory.getLogger(DefaultNamingService.class);
 	final Map<String, Service> services = new HashMap<String, Service>();
 	final String name;
 
-	public DefaultLookupService() {
+	public DefaultNamingService() {
 		this.name = "local";
 	}
 
-	public DefaultLookupService(String name) {
+	public DefaultNamingService(String name) {
 		this.name = name;
 	}
 

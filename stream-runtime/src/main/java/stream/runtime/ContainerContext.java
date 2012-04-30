@@ -30,23 +30,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Context;
+import stream.service.NamingService;
+import stream.service.Service;
 
 /**
  * @author chris
  * 
  */
-public class ContainerContext extends DefaultLookupService implements Context {
+public class ContainerContext implements Context {
 
 	final static String CONTEXT_NAME = "container";
 	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
 	final Map<String, String> properties = new LinkedHashMap<String, String>();
+	final NamingService namingService;
 
 	public ContainerContext() {
-		this("local");
+		this(new DefaultNamingService());
 	}
 
-	public ContainerContext(String name) {
-		super(name);
+	public ContainerContext(NamingService ns) {
+		this("local", ns);
+	}
+
+	public ContainerContext(String name, NamingService ns) {
+		this.namingService = ns;
 		log.debug("Creating experiment-context '{}'", name);
 	}
 
@@ -78,5 +85,30 @@ public class ContainerContext extends DefaultLookupService implements Context {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
+	 */
+	@Override
+	public Service lookup(String ref) throws Exception {
+		return namingService.lookup(ref);
+	}
+
+	/**
+	 * @see stream.runtime.DefaultNamingService#register(java.lang.String,
+	 *      stream.service.Service)
+	 */
+	@Override
+	public void register(String ref, Service p) throws Exception {
+		namingService.register(ref, p);
+	}
+
+	/**
+	 * @see stream.runtime.DefaultNamingService#unregister(java.lang.String)
+	 */
+	@Override
+	public void unregister(String ref) throws Exception {
+		namingService.unregister(ref);
 	}
 }

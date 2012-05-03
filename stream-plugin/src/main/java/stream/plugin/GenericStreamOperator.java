@@ -37,5 +37,18 @@ public class GenericStreamOperator extends DataStreamOperator {
 	 */
 	public GenericStreamOperator(OperatorDescription description, Class<?> clazz) {
 		super(description, clazz);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.rapidminer.operator.Operator#notifyRenaming(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
+	public void notifyRenaming(String oldName, String newName) {
+		super.notifyRenaming(oldName, newName);
+
 	}
 }

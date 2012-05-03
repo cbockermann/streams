@@ -103,18 +103,20 @@ public class DataObjectRenderer extends AbstractRenderer {
 
 		StringBuffer s = new StringBuffer("<html>");
 		s.append("<table>");
+		s.append("<tr>");
+		s.append("<th>Key</th><th>Value</th><th>Type</th>");
+		s.append("</tr>");
+
 		for (String key : event.keySet()) {
 			s.append("<tr>");
 			s.append("<td><b>" + key + "</b></td>");
 			s.append("<td><code>");
 			Serializable val = event.get(key);
 			if (val.getClass().isArray()) {
-				Class<?> type = val.getClass().getComponentType();
 				int len = Array.getLength(val);
-				s.append(type.getName() + "[" + len + "]");
+				s.append("[");
 
 				try {
-					s.append("  (values: ");
 					for (int i = 0; i < len && i < 4; i++) {
 						Object o = Array.get(val, i);
 						if (o == null)
@@ -127,19 +129,37 @@ public class DataObjectRenderer extends AbstractRenderer {
 					}
 
 					if (len > 4)
-						s.append("...)");
+						s.append("...]");
 					else
-						s.append(")");
+						s.append("]");
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 			} else {
-				s.append(val.toString());
+
+				String str = val.toString();
+				if (str.length() > 256) {
+					s.append(str.substring(0, 256) + "...");
+				} else {
+					s.append(val.toString());
+				}
 			}
 			s.append("</code>");
-			s.append("  (Class:" + val.getClass() + ")");
+			s.append("</td>");
+
+			s.append("<td><code>");
+			if (val.getClass().isArray()) {
+				int len = Array.getLength(val);
+				s.append(val.getClass().getComponentType().getSimpleName()
+						+ "[" + len + "]");
+			} else {
+				s.append(val.getClass().getPackage().getName() + "."
+						+ val.getClass().getSimpleName());
+			}
+			s.append("</code></td>");
+
 			s.append("</td></tr>\n");
 		}
 		s.append("</table>");

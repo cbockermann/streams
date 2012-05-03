@@ -25,16 +25,18 @@ package stream.scripting;
 
 import javax.script.ScriptEngineManager;
 
+import stream.annotations.Description;
+
 /**
  * @author chris
- *
+ * 
  */
-//@Description( name = "(J)Ruby Script" )
+@Description(name = "(J)Ruby Script", group = "Data Stream.Processing.Script")
 public class JRuby extends Script {
-	
+
 	final static ScriptEngineManager engineManager = new ScriptEngineManager();
 
-	public JRuby(){
-		super( engineManager.getEngineByName( "ruby" ) );
+	public JRuby() {
+		super(engineManager.getEngineByName("jruby"));
 	}
 }

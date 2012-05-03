@@ -106,22 +106,19 @@ public class JavaScript extends Script {
 
 	protected String loadScript() throws Exception {
 
-		if (theScript == null) {
-
-			if (embedded != null) {
-				log.info("Using embedded content...");
-				theScript = preamble + "\n" + embedded.getContent();
-				return theScript;
-			}
-
-			if (file != null) {
-				log.debug("Reading script from file {}", file);
-				theScript = loadScript(new FileInputStream(file));
-				return theScript;
-			}
+		if (embedded != null) {
+			log.info("Using embedded content...");
+			theScript = preamble + "\n" + embedded.getContent();
+			return theScript;
 		}
 
-		return theScript;
+		if (file != null) {
+			log.debug("Reading script from file {}", file);
+			theScript = loadScript(new FileInputStream(file));
+			return theScript;
+		}
+
+		throw new Exception("Neither embedded script not script file provided!");
 	}
 
 	protected String loadScript(InputStream in) throws Exception {

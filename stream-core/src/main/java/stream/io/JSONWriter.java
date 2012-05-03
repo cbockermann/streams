@@ -42,6 +42,10 @@ import stream.data.Data;
  */
 public class JSONWriter extends CsvWriter {
 
+	public JSONWriter() {
+		super();
+	}
+
 	public JSONWriter(File file) throws IOException {
 		super(file);
 	}

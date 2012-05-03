@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
@@ -100,6 +101,7 @@ public class LineStream extends AbstractDataStream {
 	 * @param key
 	 *            the key to set
 	 */
+	@Parameter(required = false, defaultValue = "LINE", description = "")
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -115,6 +117,7 @@ public class LineStream extends AbstractDataStream {
 	 * @param format
 	 *            the format to set
 	 */
+	@Parameter(required = false, description = "The format how to parse each line. Elements like %(KEY) will be detected and automatically populated in the resulting items.")
 	public void setFormat(String format) {
 		this.format = format;
 		try {

@@ -80,6 +80,7 @@ public class ProcessStream implements DataStream {
 	 * @param command
 	 *            the command to set
 	 */
+	@Parameter(required = true, description = "The command to execute. This command will be spawned and is assumed to output data to standard output.")
 	public void setCommand(String command) {
 		this.command = command;
 	}
@@ -94,11 +95,13 @@ public class ProcessStream implements DataStream {
 	/**
 	 * @see stream.io.DataStream#init()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init() throws Exception {
 		Runtime runtime = Runtime.getRuntime();
 		process = runtime.exec(command);
 
+		dataStreamClass = (Class<? extends DataStream>) Class.forName(format);
 		Constructor<? extends DataStream> stream = dataStreamClass
 				.getConstructor(InputStream.class);
 		InputStream input = process.getInputStream();
@@ -109,7 +112,9 @@ public class ProcessStream implements DataStream {
 	 * @param format
 	 *            the format to set
 	 */
-	@Parameter(required = true, values = { "stream.io.CsvStream" })
+	@Parameter(required = true, values = { "stream.io.CsvStream",
+			"stream.io.SvmLight", "stream.io.JSONStream",
+			"stream.io.LineStream" }, defaultValue = "stream.io.CsvStream", description = "The format of the input (standard input), defaults to CSV")
 	public void setFormat(String format) {
 		this.format = format;
 	}

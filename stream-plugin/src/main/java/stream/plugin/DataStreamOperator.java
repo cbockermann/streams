@@ -23,7 +23,6 @@
  */
 package stream.plugin;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,49 +92,6 @@ public abstract class DataStreamOperator extends Operator implements
 	 */
 	@Override
 	public void doWork() throws OperatorException {
-
-		//
-		// check if setup is required (first time only)
-		//
-		if (!setup) {
-
-			log.debug("Setting up stream-processor for the first time (init)");
-			Map<String, String> params = new HashMap<String, String>();
-
-			List<ParameterType> types = this.getParameterTypes();
-			for (ParameterType type : types) {
-				String key = type.getKey();
-				String value = getParameter(key);
-				log.info("Preparing parameter {} = {}", key, value);
-				if (key != null && value != null) {
-					params.put(key, value);
-				}
-			}
-
-			try {
-				ParameterInjection.inject(processor, params,
-						new VariableContext());
-			} catch (Exception e) {
-				log.error(
-						"Failed to set parameters for DataStream Operator '{}': {}",
-						processor.getClass(), e.getMessage());
-				throw new UserError(this, e, -1);
-			}
-
-			setup = true;
-
-			try {
-				if (processor instanceof StatefulProcessor)
-					((StatefulProcessor) processor).init(processContext);
-			} catch (Exception e) {
-				throw new UserError(this, e, "Failed to initialize processor: "
-						+ e.getMessage());
-			}
-
-		} else {
-			log.debug("Operator already set up...");
-		}
-
 		//
 		// work is done by fetching a single item from the input port,
 		// processing
@@ -146,8 +102,7 @@ public abstract class DataStreamOperator extends Operator implements
 		log.debug("Executing stream-operator's doWork(), processor is {}",
 				this.processor);
 
-		@SuppressWarnings("deprecation")
-		DataObject datum = input.getDataOrNull();
+		DataObject datum = input.getDataOrNull(DataObject.class);
 		log.debug("input datum is: {}", datum);
 		if (datum == null) {
 			log.debug("No input received, returning from work.");
@@ -185,20 +140,21 @@ public abstract class DataStreamOperator extends Operator implements
 	public void processStarts() throws OperatorException {
 		super.processStarts();
 		try {
-			if (!setup) {
-				Map<String, String> params = ParameterSetup.getParameters(this);
-				ParameterInjection.inject(processor, params,
-						new VariableContext());
+			Map<String, String> params = ParameterSetup.getParameters(this);
+			ParameterInjection.inject(processor, params, new VariableContext());
 
-				if (processor instanceof StatefulProcessor)
-					((StatefulProcessor) processor).init(processContext);
-
-				log.debug("Processor {} initialized", processor);
-				setup = true;
-			} else {
-				log.debug("Processor already initialized...");
+			if (processor instanceof StatefulProcessor) {
+				log.debug("initializing processor {}", processor);
+				((StatefulProcessor) processor).init(processContext);
 			}
+
+			log.debug("Processor {} initialized with: {}", processor, params);
+			setup = true;
+			// } else {
+			// log.debug("Processor already initialized...");
+			// }
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new UserError(this, e, "Failed to initialize operator: "
 					+ e.getMessage());
 		}

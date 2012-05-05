@@ -21,7 +21,7 @@ import stream.expressions.ExpressionResolver;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-@Description(group = "Data Streams.Output")
+@Description(group = "Data Stream.Output")
 public class LineWriter extends AbstractProcessor {
 
 	File file;

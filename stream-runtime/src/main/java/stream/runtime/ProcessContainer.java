@@ -56,6 +56,7 @@ import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.StreamElementHandler;
+import stream.service.NamingService;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -141,7 +142,21 @@ public class ProcessContainer {
 		else
 			name = "local";
 
-		context = new ContainerContext(name);
+		NamingService namingService = new DefaultNamingService();
+		try {
+			String nsClass = root.getAttribute("namingService");
+			if (nsClass != null && !nsClass.trim().isEmpty())
+				namingService = (NamingService) objectFactory.create(nsClass,
+						new HashMap<String, String>());
+		} catch (Exception e) {
+			log.error("Faild to instantiate naming service '{}': {}",
+					root.getAttribute("namingService"), e.getMessage());
+			throw new Exception("Faild to instantiate naming service '"
+					+ root.getAttribute("namingService") + "': "
+					+ e.getMessage());
+		}
+
+		context = new ContainerContext(name, namingService);
 		this.init(doc);
 	}
 

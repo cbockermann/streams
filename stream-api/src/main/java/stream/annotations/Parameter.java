@@ -49,30 +49,32 @@ public @interface Parameter {
 
 	/**
 	 * An optional parameter for the parameter which states whether this
-	 * parameter is optional or required.
+	 * parameter is optional or required. The default is <code>true</code>.
 	 * 
-	 * @return
+	 * @return <code>true</code> if this parameter is required to be provided.
 	 */
 	boolean required() default false;
 
 	/**
 	 * The default minimum for an numerical parameters
 	 * 
-	 * @return
+	 * @return The minimum value of a numerical parameter (0.0 is the default).
 	 */
 	double min() default 0.0d;
 
 	/**
 	 * The default maximum for any numerical parameters
 	 * 
-	 * @return
+	 * @return The maximum value of a numerical parameter (Double.MAX_VALUE is
+	 *         the default).
 	 */
 	double max() default Double.MAX_VALUE;
 
 	/**
 	 * A default list of possible values for string parameters
 	 * 
-	 * @return
+	 * @return A list of possible values for this parameter, default is an empty
+	 *         list (array).
 	 */
 	String[] values() default {};
 
@@ -83,9 +85,26 @@ public @interface Parameter {
 	 */
 	String defaultValue() default "";
 
+	/**
+	 * A description of the parameter. This description is used for generating
+	 * the API reference documentation and helps understanding your processor.
+	 * 
+	 * @return A parameter description (text).
+	 */
 	String description() default "";
 
 	Class<?> type() default Object.class;
 
-	boolean expandMacros() default true;
+	/**
+	 * The setting allows to specify runtime-expansion of parameters. This will
+	 * result in the XML value for the attribute to be cached and the setter to
+	 * be called with the evaluated string for each {@link stream.data.Data}
+	 * item.
+	 * 
+	 * <b>Important: </b> This feature is not supported, yet!
+	 * 
+	 * @return <code>true</code> if the parameter should be evaluated at runtime
+	 *         (for each processed item).
+	 */
+	boolean expandMacros() default false;
 }

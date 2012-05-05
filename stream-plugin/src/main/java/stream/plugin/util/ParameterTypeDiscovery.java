@@ -33,13 +33,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.annotations.EmbeddedContent;
+import stream.annotations.BodyContent;
 import stream.annotations.Parameter;
 import stream.expressions.Condition;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
+import stream.runtime.setup.ServiceInjection;
+import stream.service.Service;
 
+import com.rapidminer.beans.utils.ParameterTypeService;
 import com.rapidminer.parameter.ParameterType;
 import com.rapidminer.parameter.ParameterTypeBoolean;
 import com.rapidminer.parameter.ParameterTypeCategory;
@@ -79,7 +82,8 @@ public class ParameterTypeDiscovery {
 
 		for (Method m : clazz.getMethods()) {
 
-			if (ParameterDiscovery.isSetter(m)) {
+			if (ParameterDiscovery.isSetter(m)
+					|| ServiceInjection.isServiceSetter(m)) {
 				String key = m.getName().substring(3, 4).toLowerCase();
 
 				if (types.containsKey(key)) {
@@ -106,16 +110,6 @@ public class ParameterTypeDiscovery {
 							m.getName(), key);
 				}
 
-				Class<?>[] t = m.getParameterTypes();
-				if (t[0] == EmbeddedContent.class) {
-					log.debug("Found EmbeddedContent parameter, key = '{}'",
-							key);
-					ParameterType type = new ParameterTypeText(key, "",
-							TextType.JAVA);
-					types.put(key, type);
-					continue;
-				}
-
 				ParameterType type = getParameterType(param, key,
 						m.getParameterTypes()[0]);
 				if (type != null) {
@@ -139,6 +133,7 @@ public class ParameterTypeDiscovery {
 		return types;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static ParameterType getParameterType(Parameter param, String name,
 			Class<?> type) {
 
@@ -155,6 +150,28 @@ public class ParameterTypeDiscovery {
 			desc = param.description();
 		}
 
+		//
+		// handle any setters that require service references...
+		//
+		if (Service.class.isAssignableFrom(type)) {
+			log.debug("Found Service setter for service type {}", type);
+			pt = new ParameterTypeService(key, desc,
+					(Class<? extends Service>) type);
+			return pt;
+		}
+
+		//
+		// handle setters of type BodyContent
+		//
+		if (type == BodyContent.class) {
+			log.debug("Found EmbeddedContent parameter, key = '{}'", key);
+			pt = new ParameterTypeText(key, "", TextType.PLAIN);
+			return pt;
+		}
+
+		//
+		// handle setters of type String
+		//
 		if (type.equals(String.class)
 				|| type.equals(Condition.class)
 				|| (type.isArray() && type.getComponentType().equals(
@@ -170,7 +187,7 @@ public class ParameterTypeDiscovery {
 				pt.setDefaultValue(param.defaultValue());
 
 			if (param != null && param.values() != null
-					&& param.values().length > 1) {
+					&& param.values().length > 0) {
 				log.debug("Found category-parameter!");
 				ParameterTypeCategory cat = new ParameterTypeCategory(key,
 						desc, param.values(), 0);
@@ -180,7 +197,11 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
-		if (type.equals(Double.class) || type.equals(double.class)) {
+		//
+		// handle setters of type Double/Float
+		//
+		if (type.equals(Double.class) || type.equals(double.class)
+				|| type.equals(Float.class) || type.equals(float.class)) {
 			log.debug("ParameterType {} is a Double!");
 			if (param != null) {
 				pt = new ParameterTypeDouble(key, desc, param.min(),
@@ -194,6 +215,9 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
+		//
+		// handle setters of type Integer/Long
+		//
 		if (type.equals(Integer.class) || type.equals(Long.class)
 				|| type.equals(int.class) || type.equals(long.class)) {
 
@@ -234,6 +258,9 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
+		//
+		// handle setters of Boolean type
+		//
 		if (type.equals(Boolean.class) || type.equals(boolean.class)) {
 			log.debug("ParameterType {} is a Boolean!");
 			if (param != null)
@@ -246,11 +273,17 @@ public class ParameterTypeDiscovery {
 			return pt;
 		}
 
+		//
+		// handle setters of File type
+		//
 		if (type.equals(File.class)) {
 			pt = new ParameterTypeFile(key, desc, null, !param.required());
 			return pt;
 		}
 
+		//
+		// handle setters for Map type
+		//
 		if (Map.class.isAssignableFrom(type)) {
 
 			log.debug("Found Map parameter... ");
@@ -281,5 +314,14 @@ public class ParameterTypeDiscovery {
 			list.add(types.get(name));
 		}
 		return list;
+	}
+
+	public static void main(String[] args) {
+		Map<String, ParameterType> types = ParameterTypeDiscovery
+				.discoverParameterTypes(stream.io.ProcessStream.class);
+		for (String name : types.keySet()) {
+			log.info("Found parameter {}", name);
+			log.info("   type of parameter is {}", types.get(name));
+		}
 	}
 }

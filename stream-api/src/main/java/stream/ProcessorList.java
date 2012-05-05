@@ -102,14 +102,37 @@ public class ProcessorList extends AbstractProcessor {
 		}
 	}
 
+	/**
+	 * Adds a new processor to the list.
+	 * 
+	 * @param p
+	 *            The processor to add.
+	 * @deprecated use {@link #getProcessors()} to obtain the processor list and
+	 *             add new processors to that list.
+	 */
 	public void addProcessor(Processor p) {
 		processors.add(p);
 	}
 
+	/**
+	 * Adds a new processor to the list at the specified index.
+	 * 
+	 * @param idx
+	 *            The index where to insert the processor.
+	 * @param p
+	 *            The processor to add.
+	 * @deprecated use {@link #getProcessors()} to obtain the processor list and
+	 *             add new processors to that list.
+	 */
 	public void addProcessor(int idx, Processor p) {
 		processors.add(idx, p);
 	}
 
+	/**
+	 * Returns the list of processors executed by this class.
+	 * 
+	 * @return The list of processors (final).
+	 */
 	public List<Processor> getProcessors() {
 		return processors;
 	}

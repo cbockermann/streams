@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -156,6 +155,7 @@ public class MapKeys implements Processor {
 	 * @param mapping
 	 *            the mapping to set
 	 */
+	@Parameter(required = true, description = "A list of key mappings.")
 	public void setMapping(Map<String, String> mapping) {
 		this.mapping = mapping;
 	}

@@ -13,11 +13,10 @@ compile-api:
 
 plugin:
 	@echo "Building streams-plugin..."
-	@mvn compile package 
+	@mvn -DskipTests=true compile package 
 	@echo ""
 	@echo "The plugin can be found in \n"
-	@echo -n "\t"
-	@echo "$(PWD)/target/DataStream-Plugin-$(VERSION).jar"
+	@echo "\t$(PWD)/target/DataStream-Plugin-$(VERSION).jar"
 	@echo ""
 
 install:

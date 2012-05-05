@@ -50,7 +50,7 @@ import com.rapidminer.operator.ports.OutputPort;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Processing.Transformations.Data")
+@Description(name = "Array to ExampleSet", group = "Data Stream.Processing.Transformations.Data")
 public class Array2ExampleSet extends OperatorBean {
 
 	static Logger log = LoggerFactory.getLogger(Array2ExampleSet.class);

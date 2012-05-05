@@ -1,0 +1,4 @@
+#REQUEST_METHOD___REQUEST_URI___REQUEST_HEADERS:User-Agent___sql:database___sql:query___sql:ok___@timestamp
+GET___/typo3/___Java/1.6.0_26___mysql___ALTER TABLE func add type VARCHAR(255)  NOT NULL___true___1319841006461
+GET___/typo3/___Java/1.6.0_26___mysql___SELECT * FROM fe_sessions,fe_users WHERE fe_sessions.ses_id = '09b785ddfa' AND fe_sessions.ses_name = 'fe_typo_user' AND fe_sessions.ses_userid = fe_users.uid AND ( fe_sessions.ses_iplock='205.247' OR fe_sessions.ses_iplock='[DISABLED]' ) AND fe_sessions.ses_hashlock=16950956 AND fe_users.disable=0 AND fe_users.deleted=0 AND (fe_users.starttime<=1233159399) AND (fe_users.endtime=0 OR fe_users.endtime>1233159399)___true___1319841006463
+GET___/typo3/___Java/1.6.0_26___mysql___DELETE FROM fe_sessions WHERE ses_id = '09b785ddfa' AND ses_name = 'fe_typo_user'___true___1319841006464

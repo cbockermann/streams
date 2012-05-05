@@ -117,7 +117,7 @@ public abstract class AbstractDataStream implements DataStream {
 	 * @param prefix
 	 *            the prefix to set
 	 */
-	@Parameter(required = false, defaultValue = "")
+	@Parameter(required = false, description = "An optional prefix string to prepend to all attribute names", defaultValue = "")
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -126,7 +126,7 @@ public abstract class AbstractDataStream implements DataStream {
 		return limit;
 	}
 
-	@Parameter(required = false, defaultValue = "-1", max = Long.MAX_VALUE)
+	@Parameter(required = false, description = "The maximum number of items that this stream should deliver", defaultValue = "-1", max = Long.MAX_VALUE)
 	public void setLimit(Long limit) {
 		this.limit = limit;
 	}
@@ -142,7 +142,7 @@ public abstract class AbstractDataStream implements DataStream {
 	 * @param username
 	 *            the username to set
 	 */
-	@Parameter(name = "username", required = false)
+	@Parameter(name = "username", description = "The username required to connect to the stream URL (e.g web-user, database user)", required = false)
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -158,7 +158,7 @@ public abstract class AbstractDataStream implements DataStream {
 	 * @param password
 	 *            the password to set
 	 */
-	@Parameter(name = "password", required = false)
+	@Parameter(name = "password", description = "The password for the stream URL (see username parameter)", required = false)
 	public void setPassword(String password) {
 		this.password = password;
 	}

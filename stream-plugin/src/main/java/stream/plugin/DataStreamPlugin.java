@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,9 @@ import com.rapidminer.tools.OperatorService;
 public final class DataStreamPlugin {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamPlugin.class);
+
+	static OperatorNamingService namingService = OperatorNamingService
+			.getInstance();
 
 	public final static String NAME = "DataStream-Plugin";
 
@@ -93,21 +95,22 @@ public final class DataStreamPlugin {
 		log.info("Initializing {}, {}", NAME, VERSION);
 		log.info("Running in Rapidminer-Streaming-Mode?  {}", inStreamingMode());
 		log.info("");
+		log.info("Using NamingService {}", OperatorNamingService.getInstance());
+		log.info("");
 		try {
 
-			URL url = DataStreamPlugin.class
-					.getResource("/stream/plugin/log4j.properties");
-			if ("true".equalsIgnoreCase(System
-					.getProperty("DataStreamPlugin.debug"))
-					|| "1".equalsIgnoreCase(System
-							.getenv("DATASTREAM_PLUGIN_DEBUG"))) {
-				url = DataStreamPlugin.class
-						.getResource("/stream/plugin/log4j-debug.properties");
-			}
+			/*
+			 * URL url = DataStreamPlugin.class
+			 * .getResource("/stream/plugin/log4j.properties"); if
+			 * ("true".equalsIgnoreCase(System
+			 * .getProperty("DataStreamPlugin.debug")) ||
+			 * "1".equalsIgnoreCase(System .getenv("DATASTREAM_PLUGIN_DEBUG")))
+			 * { url = DataStreamPlugin.class
+			 * .getResource("/stream/plugin/log4j-debug.properties"); }
+			 * PropertyConfigurator.configure(url);
+			 */
 
-			PropertyConfigurator.configure(url);
-
-			url = DataStreamPlugin.class.getResource("/ignore-classes.txt");
+			URL url = DataStreamPlugin.class.getResource("/ignore-classes.txt");
 			if (url != null) {
 				try {
 					BufferedReader reader = new BufferedReader(

@@ -55,8 +55,6 @@ public class ParameterSetup {
 
 	public static Map<String, String> getParameters(Operator op)
 			throws OperatorException {
-		Map<String, ParameterType> types = ParameterTypeDiscovery
-				.discoverParameterTypes(op.getClass());
 
 		Map<String, String> parameters = new LinkedHashMap<String, String>();
 		for (ParameterType type : op.getParameterTypes()) {
@@ -66,7 +64,7 @@ public class ParameterSetup {
 			if (value != null)
 				parameters.put(name, value);
 			else {
-				Object defaultValue = types.get(name).getDefaultValue();
+				Object defaultValue = type.getDefaultValue();
 				if (defaultValue != null) {
 					parameters.put(name, defaultValue.toString());
 				}

@@ -74,6 +74,7 @@ public abstract class DataStreamReader extends Operator {
 			Class<? extends DataStream> streamClass) {
 		super(description);
 		dataStreamClass = streamClass;
+
 		producesOutput(DataSourceObject.class);
 	}
 

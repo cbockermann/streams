@@ -160,16 +160,28 @@ public class GenericOperatorDescription extends OperatorDescription {
 			return true;
 		}
 
-		if (Processor.class.isAssignableFrom(clazz)) {
-			log.debug("Yes, we can create an Operator for Processor-class {}",
-					clazz);
-			return true;
-		}
-
 		if (DataStream.class.isAssignableFrom(clazz)) {
 			log.debug("Yes, we can create an Operator for DataStream-class {}",
 					clazz);
 			return true;
+		}
+
+		try {
+			if (Processor.class.isAssignableFrom(clazz)) {
+
+				Object o = clazz.newInstance();
+				if (o == null)
+					return false;
+
+				log.debug(
+						"Yes, we can create an Operator for Processor-class {}",
+						clazz);
+				return true;
+			}
+		} catch (Exception e) {
+			log.error("Failed to instantiate processor {}: {}",
+					clazz.getCanonicalName(), e.getMessage());
+			return false;
 		}
 
 		log.debug("No generic operator-support for class '{}'", clazz);

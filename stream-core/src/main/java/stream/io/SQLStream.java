@@ -68,21 +68,6 @@ public class SQLStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @return the driver
-	 */
-	public String getDriver() {
-		return driver;
-	}
-
-	/**
-	 * @param driver
-	 *            the driver to set
-	 */
-	public void setDriver(String driver) {
-		this.driver = driver;
-	}
-
-	/**
 	 * @return the select
 	 */
 	public String getSelect() {

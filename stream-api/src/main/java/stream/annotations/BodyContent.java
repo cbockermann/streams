@@ -24,15 +24,35 @@
 package stream.annotations;
 
 /**
- * @author chris
- *
+ * <p>
+ * This class simply represents text that is provided by the XML body content. A
+ * processor implementing a setter method with an argument of type
+ * {@link BodyContent} can be fed with the content as value.
+ * </p>
+ * <p>
+ * Example:
+ * </p>
+ * 
+ * <pre>
+ *     <my.package.MyClass>
+ *        Hello World!
+ *     </my.package.MyClass>
+ * </pre>
+ * <p>
+ * If the class <code>my.package.MyClass</code> provides a <b>single</b> setter
+ * that expects a parameter of type {@link BodyContent}, then this setter is
+ * provided with the string <code>Hello World!</code>.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * 
  */
-public class EmbeddedContent {
+public class BodyContent {
 
 	public final static String KEY = "__EMBEDDED_CONTENT__";
 	String content;
-	
-	public EmbeddedContent( String txt ){
+
+	public BodyContent(String txt) {
 		content = txt;
 	}
 
@@ -44,7 +64,8 @@ public class EmbeddedContent {
 	}
 
 	/**
-	 * @param content the content to set
+	 * @param content
+	 *            the content to set
 	 */
 	public void setContent(String content) {
 		this.content = content;

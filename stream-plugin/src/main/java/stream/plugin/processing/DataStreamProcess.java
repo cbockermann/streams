@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessContext;
+import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.Condition;
@@ -62,6 +63,7 @@ import com.rapidminer.parameter.ParameterType;
  * @author Christian Bockermann
  * 
  */
+@Description(group = "Data Stream", name = "Data Stream Process", text = "Process a data stream by processing each single item (one-pass)")
 public class DataStreamProcess extends
 		AbstractDataStreamProcess<DataSourceObject, DataObject> {
 

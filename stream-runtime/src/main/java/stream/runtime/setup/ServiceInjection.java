@@ -131,6 +131,32 @@ public class ServiceInjection {
 	}
 
 	/**
+	 * This method checks whether the provided method is a service setter, i.e.
+	 * it is a setter method to inject service references into the object.
+	 * 
+	 * This requires the method to provide the following characteristics:
+	 * <ol>
+	 * <li>Its names starts with <code>set</code> and provides additional
+	 * characters, i.e. <code>set</code> alone is not enough.</li>
+	 * <li>It takes a single parameter, which is a service implementation</li>
+	 * </ol>
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public static boolean isServiceSetter(Method m) {
+
+		if (!m.getName().startsWith("set"))
+			return false;
+
+		Class<?>[] paramTypes = m.getParameterTypes();
+		if (paramTypes.length != 1)
+			return false;
+
+		return isServiceImplementation(paramTypes[0]);
+	}
+
+	/**
 	 * This method checks whether the given class implements the Service
 	 * interface.
 	 * 

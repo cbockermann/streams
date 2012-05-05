@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import stream.annotations.EmbeddedContent;
+import stream.annotations.BodyContent;
 import stream.runtime.VariableContext;
 import stream.utils.FileUtils;
 
@@ -196,7 +196,7 @@ public class ObjectFactory extends VariableContext {
 			Element element = (Element) node;
 			String text = element.getTextContent();
 			if (text != null && !"".equals(text.trim())) {
-				map.put(EmbeddedContent.KEY, text);
+				map.put(BodyContent.KEY, text);
 			}
 		}
 

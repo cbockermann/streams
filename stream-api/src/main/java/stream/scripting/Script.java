@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.annotations.EmbeddedContent;
+import stream.annotations.BodyContent;
 import stream.annotations.Parameter;
 import stream.data.Data;
 
@@ -51,7 +51,7 @@ public abstract class Script extends AbstractProcessor {
 
 	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
-	protected EmbeddedContent embedded = null;
+	protected BodyContent embedded = null;
 
 	protected ScriptEngine scriptEngine;
 
@@ -86,7 +86,7 @@ public abstract class Script extends AbstractProcessor {
 	/**
 	 * @return the embedded
 	 */
-	public EmbeddedContent getScript() {
+	public BodyContent getScript() {
 		return embedded;
 	}
 
@@ -95,7 +95,7 @@ public abstract class Script extends AbstractProcessor {
 	 *            the embedded to set
 	 */
 	@Parameter(required = false)
-	public void setScript(EmbeddedContent embedded) {
+	public void setScript(BodyContent embedded) {
 		this.embedded = embedded;
 	}
 

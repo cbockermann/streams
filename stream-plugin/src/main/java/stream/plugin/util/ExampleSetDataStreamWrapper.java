@@ -90,7 +90,7 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 		AttributeRole role = attributes.getRole(attribute);
 
 		if (role.isSpecial() && !name.startsWith("@")) {
-			return "@" + name;
+			return "@" + role.getSpecialName() + ":" + name;
 		}
 
 		return name;

@@ -134,6 +134,7 @@ public class Plotter extends DataVisualizer {
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
 		frame = new JFrame();
 
 		if (yrange != null && !"".equals(yrange.trim())) {

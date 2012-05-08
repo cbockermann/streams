@@ -131,6 +131,6 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	 */
 	@Override
 	public void init() throws Exception {
-		// TODO Auto-generated method stub
+		stream.init();
 	}
 }

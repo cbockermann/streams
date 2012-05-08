@@ -63,4 +63,5 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 			return null;
 		return item;
 	}
+
 }

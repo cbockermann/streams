@@ -36,6 +36,7 @@ import stream.Processor;
 import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.DataStream;
+import stream.io.active.ActiveDataStream;
 import stream.io.active.ActiveDataStreamImpl;
 
 /**
@@ -171,6 +172,10 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	 */
 	@Override
 	public void init() throws Exception {
-		// TODO Auto-generated method stub
+		for (DataStream s : streams.values()) {
+			s.init();
+			((ActiveDataStream) s).activate();
+
+		}
 	}
 }

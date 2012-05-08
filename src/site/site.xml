@@ -27,9 +27,11 @@
 	<menu ref="modules" />
 
 
+<!--
         <menu name="Related Projects">
 		<item name="stream-mining" href="http://kirmes.cs.uni-dortmund.de/stream-mining/"/>
         </menu>
+  -->
 
 	<menu ref="reports"/>
 	

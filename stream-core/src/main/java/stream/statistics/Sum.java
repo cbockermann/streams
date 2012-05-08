@@ -23,12 +23,14 @@
  */
 package stream.statistics;
 
+import stream.annotations.Description;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Statistics", text = "Continuously computes the total sum of numeric attributes")
 public class Sum extends StatisticsLearner {
 
 	/**
@@ -36,6 +38,9 @@ public class Sum extends StatisticsLearner {
 	 */
 	@Override
 	public void updateStatistics(Data item) {
+
+		if (keys == null)
+			return;
 
 		for (String key : keys) {
 			Double val = null;
@@ -47,7 +52,10 @@ public class Sum extends StatisticsLearner {
 
 			if (val != null) {
 				statistics.add(key, val);
-				item.put(key, statistics.get(key));
+				if (prefix != null)
+					item.put(prefix + key, statistics.get(key));
+				else
+					item.put(key, statistics.get(key));
 			}
 		}
 	}

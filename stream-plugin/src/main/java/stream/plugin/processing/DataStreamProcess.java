@@ -35,19 +35,17 @@ import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.Condition;
 import stream.io.ListDataStream;
-import stream.plugin.DataStreamOperator;
 import stream.plugin.DataStreamPlugin;
+import stream.plugin.GenericStreamOperator;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
-import stream.plugin.util.ParameterSetup;
-import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
+import com.rapidminer.beans.utils.OperatorParameters;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
-import com.rapidminer.parameter.ParameterType;
 
 /**
  * <p>
@@ -145,22 +143,17 @@ public class DataStreamProcess extends
 
 		resultBuffer.clear();
 
-		ParameterSetup.setParameters(this);
-		log.info("Initialized parameters for {} to:", this);
-		for (ParameterType type : this.getParameterTypes()) {
-			log.info("   {} = {}", type.getKey(),
-					this.getParameter(type.getKey()));
-		}
+		OperatorParameters.setParameters(this);
 
 		List<Operator> nested = this.getImmediateChildren();
 		log.debug("This StreamProcess has {} nested operators", nested.size());
 		for (Operator op : nested) {
 			log.debug("  op: {}  (class is {})", op, op.getClass());
 
-			if (op instanceof DataStreamOperator) {
+			if (op instanceof GenericStreamOperator) {
 				log.debug("Resetting stream-operator {}", op);
 
-				DataStreamOperator dso = (DataStreamOperator) op;
+				GenericStreamOperator dso = (GenericStreamOperator) op;
 				dso.setProcessContext(this.processContext);
 				dso.reset();
 			}
@@ -182,8 +175,8 @@ public class DataStreamProcess extends
 				DataObject datum = dataSource.wrap(item);
 				log.debug("Wrapped data-object is: {}", datum);
 				dataStream.deliver(datum);
-				getSubprocess(0).execute();
 				inApplyLoop();
+				getSubprocess(0).execute();
 				i++;
 
 				try {
@@ -235,11 +228,4 @@ public class DataStreamProcess extends
 		return new DataObject(item);
 	}
 
-	/**
-	 * @see com.rapidminer.operator.Operator#getParameterTypes()
-	 */
-	@Override
-	public List<ParameterType> getParameterTypes() {
-		return ParameterTypeDiscovery.getParameterTypes(getClass());
-	}
 }

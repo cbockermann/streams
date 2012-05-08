@@ -5,9 +5,11 @@ package com.rapidminer.beans;
 
 import java.util.List;
 
-import stream.plugin.util.ParameterSetup;
-import stream.plugin.util.ParameterTypeDiscovery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.rapidminer.beans.utils.OperatorParameters;
+import com.rapidminer.beans.utils.ParameterTypeFinder;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
@@ -18,6 +20,8 @@ import com.rapidminer.parameter.ParameterType;
  * 
  */
 public class OperatorBean extends Operator {
+
+	static Logger log = LoggerFactory.getLogger(OperatorBean.class);
 
 	/**
 	 * @param description
@@ -30,7 +34,7 @@ public class OperatorBean extends Operator {
 	 * @throws OperatorException
 	 */
 	public void init() throws OperatorException {
-		ParameterSetup.setParameters(this);
+		OperatorParameters.setParameters(this);
 	}
 
 	/**
@@ -38,8 +42,15 @@ public class OperatorBean extends Operator {
 	 */
 	@Override
 	public final void processStarts() throws OperatorException {
+		log.info("processStarts()");
+
+		log.info("   Calling 'super.processStarts()'");
 		super.processStarts();
+
+		log.info("   Calling 'init()'");
 		this.init();
+
+		log.info("   Calling 'onProcessStart()'");
 		this.onProcessStart();
 	}
 
@@ -76,6 +87,6 @@ public class OperatorBean extends Operator {
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
-		return ParameterTypeDiscovery.getParameterTypes(getClass());
+		return ParameterTypeFinder.getParameterTypes(getClass());
 	}
 }

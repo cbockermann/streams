@@ -23,6 +23,11 @@
  */
 package stream.data;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import stream.Processor;
 import stream.annotations.Description;
 
@@ -41,7 +46,7 @@ public class NumericalBinning implements Processor {
 
 	String include = ".*";
 
-	double[] buckets = null;
+	Bucket[] buckets = null;
 
 	/**
 	 * @return the minimum
@@ -108,12 +113,14 @@ public class NumericalBinning implements Processor {
 	 * @see stream.AbstractProcessor#init()
 	 */
 	public void init() throws Exception {
-		buckets = new double[Math.max(1, bins)];
+		buckets = new Bucket[Math.max(1, bins)];
 		double step = (maximum - minimum) / bins.doubleValue();
-		buckets[0] = 0.0d;
-		for (int i = 1; i < buckets.length; i++) {
-			buckets[i] = buckets[i - 1] + step;
+		double last = minimum;
+		for (int i = 0; i < buckets.length - 1; i++) {
+			buckets[i] = new Bucket(last, last + step);
+			last += step;
 		}
+		buckets[buckets.length - 1] = new Bucket(last, maximum);
 	}
 
 	/**
@@ -140,14 +147,56 @@ public class NumericalBinning implements Processor {
 		return data;
 	}
 
-	protected String map(Double d) {
-		if (d < buckets[0])
-			return "bucket[first]";
+	protected Bucket map(Double d) {
+		if (d < buckets[0].upper)
+			return buckets[0];
 
 		for (int i = 0; i < buckets.length; i++)
-			if (i + 1 < buckets.length && buckets[i + 1] > d)
-				return "bucket[" + i + "]";
+			if (i + 1 < buckets.length && buckets[i + 1].lower > d)
+				return buckets[i];
 
-		return "bucket[last]";
+		return buckets[buckets.length - 1];
+	}
+
+	public class Bucket implements Serializable, Comparable<Bucket> {
+		/** The unique class ID */
+		private static final long serialVersionUID = 1874196246174345683L;
+		final Double lower;
+		final Double upper;
+		final String asString;
+
+		public Bucket(double low, double high) {
+			lower = low;
+			upper = high;
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(
+					Locale.getDefault());
+			otherSymbols.setDecimalSeparator('.');
+			DecimalFormat fmt = new DecimalFormat("0.0#####", otherSymbols);
+			asString = "Range[" + fmt.format(lower) + ";" + fmt.format(upper)
+					+ "]";
+		}
+
+		public String toString() {
+			return asString;
+		}
+
+		/**
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(Bucket arg0) {
+			if (arg0 == null)
+				return 1;
+
+			if (arg0 == this)
+				return 0;
+
+			int r = this.lower.compareTo(arg0.lower);
+			if (r == 0) {
+				r = this.upper.compareTo(arg0.upper);
+			}
+
+			return r;
+		}
 	}
 }

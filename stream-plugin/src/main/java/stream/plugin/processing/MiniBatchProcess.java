@@ -14,9 +14,9 @@ import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.plugin.data.DataSourceObject;
 import stream.plugin.processing.convert.ExampleSetFactory;
-import stream.plugin.util.ParameterSetup;
-import stream.plugin.util.ParameterTypeDiscovery;
 
+import com.rapidminer.beans.utils.OperatorParameters;
+import com.rapidminer.beans.utils.ParameterTypeFinder;
 import com.rapidminer.example.ExampleSet;
 import com.rapidminer.operator.OperatorChain;
 import com.rapidminer.operator.OperatorDescription;
@@ -88,7 +88,7 @@ public class MiniBatchProcess extends OperatorChain {
 	@Override
 	public void processStarts() throws OperatorException {
 		super.processStarts();
-		ParameterSetup.setParameters(this);
+		OperatorParameters.setParameters(this);
 		exampleSetFactory = ExampleSetFactory.newInstance();
 	}
 
@@ -146,6 +146,6 @@ public class MiniBatchProcess extends OperatorChain {
 	 */
 	@Override
 	public List<ParameterType> getParameterTypes() {
-		return ParameterTypeDiscovery.getParameterTypes(this.getClass());
+		return ParameterTypeFinder.getParameterTypes(this.getClass());
 	}
 }

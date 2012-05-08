@@ -24,6 +24,7 @@
 package stream.learner;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 import stream.data.Data;
 import stream.service.Service;
@@ -45,7 +46,7 @@ public interface PredictionService extends Service {
 	 * 
 	 * @return
 	 */
-	public String getName();
+	public String getName() throws RemoteException;
 
 	/**
 	 * Performs the prediction based on the current state of the implementing
@@ -55,5 +56,5 @@ public interface PredictionService extends Service {
 	 *            The data item (vector) that holds the unlabeled data.
 	 * @return The label value for that data (prediction).
 	 */
-	public Serializable predict(Data item);
+	public Serializable predict(Data item) throws RemoteException;
 }

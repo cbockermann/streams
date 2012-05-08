@@ -25,6 +25,7 @@ package stream.plugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,11 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.io.DataStream;
-import stream.plugin.util.OperatorHelpFinder;
 
+import com.rapidminer.beans.utils.OperatorHelpFinder;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
+import com.rapidminer.tools.OperatorInfo;
 import com.rapidminer.tools.plugin.Plugin;
 
 /**
@@ -48,6 +50,13 @@ public class GenericOperatorDescription extends OperatorDescription {
 			.getLogger(GenericOperatorDescription.class);
 
 	final Class<?> libClass;
+
+	public GenericOperatorDescription(OperatorInfo info, Class<?> libClass,
+			ClassLoader classLoader, Plugin plugin) {
+		super(info.getGroup(), info.getKey(), GenericStreamOperator.class,
+				classLoader, "", plugin, null);
+		this.libClass = libClass;
+	}
 
 	/**
 	 * @param fullyQualifiedGroupKey
@@ -153,7 +162,16 @@ public class GenericOperatorDescription extends OperatorDescription {
 
 	public static boolean canCreate(Class<?> clazz) {
 
-		if (Operator.class.isAssignableFrom(clazz)) {
+		if (Modifier.isAbstract(clazz.getModifiers()))
+			return false;
+
+		if (clazz.isAnnotation() || clazz.isInterface())
+			return false;
+
+		if (Operator.class.isAssignableFrom(clazz)
+				&& (clazz
+						.isAnnotationPresent(com.rapidminer.annotations.OperatorInfo.class) || clazz
+						.isAnnotationPresent(Description.class))) {
 			log.debug(
 					"Yes, we support direct creation of Operators...(class {})",
 					clazz);

@@ -24,6 +24,7 @@
 package stream.statistics;
 
 import stream.AbstractProcessor;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.Statistics;
 
@@ -36,6 +37,7 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 
 	protected String[] keys;
 	protected Statistics statistics = new Statistics();
+	protected String prefix = "";
 
 	/**
 	 * @return the keys
@@ -48,8 +50,25 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	 * @param keys
 	 *            the keys to set
 	 */
+	@Parameter(required = false, description = "The keys/attributes this processor should account statistics (sum,average,min/max) for")
 	public void setKeys(String[] keys) {
 		this.keys = keys;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix
+	 *            the prefix to set
+	 */
+	@Parameter(required = false, description = "An optional prefix that is prepended to the attribute names, which prevents the original attribute values from being overwritten by the respective sum/average/min/max value")
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	/**

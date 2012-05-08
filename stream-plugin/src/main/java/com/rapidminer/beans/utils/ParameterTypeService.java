@@ -96,7 +96,10 @@ public class ParameterTypeService extends ParameterTypeCategory {
 		if (defaultValue == -1) {
 			return null;
 		} else {
-			return getCategories()[defaultValue];
+			String[] vals = getCategories();
+			if (defaultValue < vals.length)
+				return vals[defaultValue];
+			return null;
 		}
 	}
 

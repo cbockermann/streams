@@ -69,7 +69,8 @@ public class GenericParser extends MParser implements
 					if (!token.getValue().equals(val))
 						throw new ParseException("Failed to read '"
 								+ token.getValue() + "', found: " + val
-								+ " at position " + start);
+								+ " at position " + start + " of string: '"
+								+ str + "'");
 					else
 						this.pos += token.getValue().length();
 				}

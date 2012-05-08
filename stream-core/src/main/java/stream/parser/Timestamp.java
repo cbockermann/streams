@@ -26,6 +26,7 @@ package stream.parser;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,7 @@ public class Timestamp extends AbstractProcessor {
 	 * @param format
 	 *            the format to set
 	 */
+	@Parameter(required = true, defaultValue = "yyyy-MM-dd HH:mm:ss", description = "The date format string used for parsing.")
 	public void setFormat(String format) {
 		this.format = format;
 	}
@@ -105,6 +107,7 @@ public class Timestamp extends AbstractProcessor {
 	 * @param from
 	 *            the from to set
 	 */
+	@Parameter(required = true, description = "The key/attribute from which the timestamp should be parsed.")
 	public void setFrom(String from) {
 		this.from = from;
 	}
@@ -143,7 +146,7 @@ public class Timestamp extends AbstractProcessor {
 		super.init(ctx);
 
 		if (getFormat() != null && getFrom() != null) {
-			dateFormat = new SimpleDateFormat(getFormat());
+			dateFormat = new SimpleDateFormat(getFormat(), Locale.ENGLISH);
 		}
 	}
 }

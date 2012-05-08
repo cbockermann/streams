@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.runtime.ContainerContext;
 import stream.runtime.VariableContext;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -73,6 +74,36 @@ public class ServiceInjection {
 			Object consumer = ref.getReceiver();
 
 			Service service = (Service) ctx.lookup(serviceRef);
+			if (service == null) {
+				throw new Exception(
+						"No service could be injected for reference '"
+								+ serviceRef
+								+ "' - no service registered for that id?!");
+			}
+			log.debug("Found service of class {} for reference '{}'",
+					service.getClass(), serviceRef);
+
+			Method m = getServiceSetter(consumer, ref.getProperty());
+			if (m != null) {
+				log.debug("Injecting service {} into consumer {}", service,
+						consumer);
+				m.invoke(consumer, service);
+			}
+		}
+	}
+
+	public static void injectServices(Collection<ServiceReference> refs,
+			NamingService ns) throws Exception {
+
+		Iterator<ServiceReference> it = refs.iterator();
+		while (it.hasNext()) {
+			ServiceReference ref = it.next();
+			log.debug("Checking service-reference {}", ref);
+
+			String serviceRef = ref.getRef();
+			Object consumer = ref.getReceiver();
+
+			Service service = (Service) ns.lookup(serviceRef);
 			if (service == null) {
 				throw new Exception(
 						"No service could be injected for reference '"

@@ -33,9 +33,9 @@ import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.DataFactory;
-import stream.plugin.OperatorBean;
 import stream.plugin.data.DataObject;
 
+import com.rapidminer.beans.OperatorBean;
 import com.rapidminer.example.ExampleSet;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
@@ -84,11 +84,10 @@ public class Data2ExampleSet extends OperatorBean {
 	}
 
 	/**
-	 * @see stream.plugin.OperatorBean#processStarts()
+	 * @see com.rapidminer.beans.OperatorBean#onProcessStart()
 	 */
 	@Override
-	public void processStarts() throws OperatorException {
-		super.processStarts();
+	public void onProcessStart() throws OperatorException {
 		exampleSetFactory = ExampleSetFactory.newInstance();
 	}
 

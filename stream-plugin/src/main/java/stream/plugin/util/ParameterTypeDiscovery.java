@@ -60,7 +60,7 @@ import com.rapidminer.parameter.TextType;
  * the RapidMiner operator object.
  * 
  * @author Christian Bockermann
- * 
+ * @deprecated
  */
 public class ParameterTypeDiscovery {
 

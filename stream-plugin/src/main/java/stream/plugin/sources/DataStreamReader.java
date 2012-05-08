@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import stream.io.DataStream;
 import stream.plugin.data.DataSourceObject;
-import stream.plugin.util.OperatorUtils;
-import stream.plugin.util.ParameterTypeDiscovery;
 import stream.runtime.setup.DataStreamFactory;
 
+import com.rapidminer.beans.utils.OperatorParameters;
+import com.rapidminer.beans.utils.ParameterTypeFinder;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
@@ -79,15 +79,39 @@ public abstract class DataStreamReader extends Operator {
 	}
 
 	/**
+	 * @see com.rapidminer.operator.Operator#processStarts()
+	 */
+	@Override
+	public void processStarts() throws OperatorException {
+		super.processStarts();
+		dataSource = null;
+	}
+
+	/**
+	 * @see com.rapidminer.operator.Operator#processFinished()
+	 */
+	@Override
+	public void processFinished() throws OperatorException {
+		super.processFinished();
+
+		try {
+			stream.close();
+		} catch (Exception e) {
+			log.error("Failed to close data stream: {}", e.getMessage());
+			throw new OperatorException(e.getMessage(), e);
+		}
+	}
+
+	/**
 	 * @see com.rapidminer.operator.Operator#doWork()
 	 */
 	@Override
 	public void doWork() throws OperatorException {
-		super.doWork();
 
 		if (dataSource == null) {
 			try {
-				Map<String, String> params = OperatorUtils.getParameters(this);
+				Map<String, String> params = OperatorParameters
+						.getParameters(this);
 				stream = createDataStream(dataStreamClass, params);
 				// dataSource = new DataSourceObject( stream );
 				output.deliver(new DataSourceObject(stream));
@@ -122,7 +146,7 @@ public abstract class DataStreamReader extends Operator {
 				"The maximum number of items read from the stream", -1,
 				Integer.MAX_VALUE, true));
 
-		Map<String, ParameterType> discovered = ParameterTypeDiscovery
+		Map<String, ParameterType> discovered = ParameterTypeFinder
 				.discoverParameterTypes(dataStreamClass);
 		for (String key : discovered.keySet()) {
 			if (fileParam

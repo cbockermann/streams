@@ -6,7 +6,9 @@ package com.rapidminer.beans.utils;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -40,13 +42,23 @@ import com.rapidminer.parameter.TextType;
 public class ParameterTypeFinder {
 	static Logger log = LoggerFactory.getLogger(ParameterTypeFinder.class);
 
+	public static List<ParameterType> getParameterTypes(Class<?> clazz) {
+		Map<String, ParameterType> types = discoverParameterTypes(clazz);
+		List<ParameterType> list = new ArrayList<ParameterType>();
+		for (String name : types.keySet()) {
+			list.add(types.get(name));
+		}
+		return list;
+	}
+
 	/**
 	 * Check the given class for any @parameter annotated fields.
 	 * 
 	 * @param clazz
 	 * @return
 	 */
-	public static Map<String, ParameterType> getParameterTypes(Class<?> clazz) {
+	public static Map<String, ParameterType> discoverParameterTypes(
+			Class<?> clazz) {
 
 		log.debug("------------------------------------------------------------------------");
 		log.debug("Exploring ParameterTypes for class '{}'", clazz);
@@ -141,7 +153,8 @@ public class ParameterTypeFinder {
 
 		String desc = "";
 		ParameterType pt = null;
-		Object defaultValue = parseDefaultValue(param.defaultValue(), type);
+		Object defaultValue = param.defaultValue(); // parseDefaultValue(param.defaultValue(),
+													// type);
 
 		String key = name;
 		if (param.name() != null) {
@@ -178,11 +191,18 @@ public class ParameterTypeFinder {
 		//
 		// Parameters for doubles
 		//
-		if (type.equals(Double.class) || type.equals(double.class)) {
+		if (type.equals(Double.class) || type.equals(double.class)
+				|| type.equals(Float.class) || type.equals(float.class)) {
 			log.debug("ParameterType {} is a Double!");
 
 			pt = new ParameterTypeDouble(key, desc, param.min(), param.max(),
 					!param.required());
+
+			try {
+				defaultValue = new Double(param.defaultValue);
+			} catch (Exception e) {
+				defaultValue = new Double(0.0d);
+			}
 		}
 
 		//
@@ -210,6 +230,9 @@ public class ParameterTypeFinder {
 			}
 
 			pt = new ParameterTypeInt(key, desc, min, max, !param.required());
+			if (param.defaultValue() != null) {
+				defaultValue = new Integer(param.defaultValue());
+			}
 		}
 
 		//
@@ -218,6 +241,12 @@ public class ParameterTypeFinder {
 		if (type.equals(Boolean.class) || type.equals(boolean.class)) {
 			log.debug("ParameterType {} is a Boolean!");
 			pt = new ParameterTypeBoolean(key, desc, !param.required());
+
+			try {
+				defaultValue = new Boolean(param.defaultValue);
+			} catch (Exception e) {
+				defaultValue = false;
+			}
 		}
 
 		if (type.equals(File.class)) {
@@ -240,7 +269,7 @@ public class ParameterTypeFinder {
 		return pt;
 	}
 
-	private static Object parseDefaultValue(String defaultValue, Class<?> type) {
+	protected static Object parseDefaultValue(String defaultValue, Class<?> type) {
 		try {
 			if (defaultValue == null)
 				return null;

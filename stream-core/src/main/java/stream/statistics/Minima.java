@@ -23,12 +23,14 @@
  */
 package stream.statistics;
 
+import stream.annotations.Description;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Statistics", text = "Continuously determines the minimum values for numeric attributes")
 public class Minima extends StatisticsLearner {
 
 	/**
@@ -36,6 +38,10 @@ public class Minima extends StatisticsLearner {
 	 */
 	@Override
 	public void updateStatistics(Data item) {
+
+		if (keys == null)
+			return;
+
 		for (String key : keys) {
 			Double val = null;
 			try {
@@ -50,6 +56,11 @@ public class Minima extends StatisticsLearner {
 					statistics.put(key, val);
 				else
 					statistics.put(key, Math.max(cur, val));
+
+				if (prefix != null)
+					item.put(prefix + key, statistics.get(key));
+				else
+					item.put(key, statistics.get(key));
 			}
 		}
 	}

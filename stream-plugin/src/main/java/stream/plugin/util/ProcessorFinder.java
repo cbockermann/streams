@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.Description;
 import stream.plugin.GenericOperatorDescription;
 
+import com.rapidminer.beans.utils.ClassFinder;
+
 /**
  * @author chris
  * 

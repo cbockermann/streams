@@ -34,12 +34,14 @@ import stream.io.ListDataStream;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
 
+import com.rapidminer.beans.utils.ParameterTypeFinder;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorChain;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
 import com.rapidminer.operator.ports.InputPort;
 import com.rapidminer.operator.ports.OutputPort;
+import com.rapidminer.parameter.ParameterType;
 
 /**
  * <p>
@@ -145,4 +147,12 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 	}
 
 	public abstract E wrap(Data item);
+
+	/**
+	 * @see com.rapidminer.operator.Operator#getParameterTypes()
+	 */
+	@Override
+	public List<ParameterType> getParameterTypes() {
+		return ParameterTypeFinder.getParameterTypes(getClass());
+	}
 }

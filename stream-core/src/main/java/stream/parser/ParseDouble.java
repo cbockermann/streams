@@ -24,12 +24,15 @@
 package stream.parser;
 
 import stream.AbstractProcessor;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Transformations.Data", text = "Parses a double value from a string and replaces the attribute string value with the double object.")
 public class ParseDouble extends AbstractProcessor {
 
 	String[] keys = new String[0];
@@ -46,6 +49,7 @@ public class ParseDouble extends AbstractProcessor {
 	 * @param keys
 	 *            the keys to set
 	 */
+	@Parameter(required = true, description = "The keys/attributes to perform parsing on")
 	public void setKeys(String[] keys) {
 		this.keys = keys;
 	}
@@ -61,6 +65,7 @@ public class ParseDouble extends AbstractProcessor {
 	 * @param defaultValue
 	 *            the defaultValue to set
 	 */
+	@Parameter(required = false, defaultValue = "0.0", description = "The default value to set if parsing fails")
 	public void setDefault(Double defaultValue) {
 		this.defaultValue = defaultValue;
 	}

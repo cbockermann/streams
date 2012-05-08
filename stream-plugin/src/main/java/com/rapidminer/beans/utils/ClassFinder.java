@@ -29,7 +29,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -43,6 +45,52 @@ import org.slf4j.LoggerFactory;
 public class ClassFinder {
 
 	static Logger log = LoggerFactory.getLogger(ClassFinder.class);
+
+	static class CustomClassLoader extends ClassLoader {
+		public CustomClassLoader(ClassLoader parent) {
+			super(parent);
+		}
+
+		public String[] getPackageNames() {
+			Package[] pkgs = getPackages();
+			String[] names = new String[pkgs.length + 1];
+			names[0] = "";
+			for (int i = 0; i < pkgs.length; i++) {
+				names[i + 1] = pkgs[i].getName();
+			}
+			return names;
+		}
+	}
+
+	public static Set<Class<?>> getClasses(ClassLoader classLoader) {
+		Set<Class<?>> found = new LinkedHashSet<Class<?>>();
+
+		CustomClassLoader ccl = new CustomClassLoader(classLoader);
+		log.debug("Packages: {}", ccl.getPackageNames());
+		found.addAll(getClasses(ccl.getPackageNames(), ccl));
+		return found;
+	}
+
+	public static Set<Class<?>> getClasses(String[] packages,
+			ClassLoader classLoader) {
+		Set<Class<?>> found = new LinkedHashSet<Class<?>>();
+		for (String pkg : packages) {
+			try {
+				Class<?>[] classes = getClasses(pkg, classLoader);
+				for (Class<?> clazz : classes) {
+					if (!found.contains(clazz))
+						found.add(clazz);
+				}
+			} catch (Exception e) {
+				log.error("Error while searching for classes: {}",
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			}
+		}
+
+		return found;
+	}
 
 	/**
 	 * Scans all classes accessible from the context class loader which belong
@@ -83,7 +131,7 @@ public class ClassFinder {
 		for (URL resource : resources) {
 			if (resource.toString().startsWith("jar:")
 					|| resource.toExternalForm().endsWith(".jar")) {
-				log.info("Scanning jar-file {}", resource.getPath());
+				log.debug("Scanning jar-file {}", resource.getPath());
 
 				String p = resource.getPath();
 				if (p.indexOf("!") > 0) {
@@ -121,13 +169,14 @@ public class ClassFinder {
 			log.trace("Checking JarEntry '{}'", entry.getName());
 
 			if (entry.getName().endsWith(".class")
-					&& !entry.getName().startsWith("com.rapidminer")
+					&& entry.getName().indexOf("$") < 0
 					&& entry.getName().replaceAll("/", ".")
 							.startsWith(packageName)) {
 				try {
 					String className = entry.getName()
 							.replaceAll("\\.class$", "").replaceAll("/", ".");
 					log.trace("Class-name is: '{}'", className);
+
 					Class<?> clazz = Class.forName(className, false,
 							classLoader);
 					log.trace("Found class {}", clazz);
@@ -161,7 +210,7 @@ public class ClassFinder {
 			String packageName, ClassLoader classLoader)
 			throws ClassNotFoundException {
 
-		log.trace("Searching directory '{}' for package '{}'", directory,
+		log.debug("Searching directory '{}' for package '{}'", directory,
 				packageName);
 
 		List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -190,6 +239,12 @@ public class ClassFinder {
 							+ file.getName().substring(0,
 									file.getName().length() - 6);
 
+					log.debug("Checking element {}", className);
+
+					if (className.indexOf("$") >= 0) {
+						continue;
+					}
+
 					while (className.startsWith("."))
 						className = className.substring(1);
 
@@ -203,5 +258,18 @@ public class ClassFinder {
 			}
 		}
 		return classes;
+	}
+
+	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
+		Set<Class<?>> classes = ClassFinder.getClasses(ClassFinder.class
+				.getClassLoader());
+		long time = System.currentTimeMillis() - start;
+		log.info("Searching class-path took {} ms", time);
+		if (log.isDebugEnabled()) {
+			for (Class<?> cl : classes) {
+				log.debug("{}", cl);
+			}
+		}
 	}
 }

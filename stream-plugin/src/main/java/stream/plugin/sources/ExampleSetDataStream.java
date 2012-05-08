@@ -23,47 +23,86 @@
  */
 package stream.plugin.sources;
 
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.plugin.data.DataSourceObject;
-import stream.plugin.util.ExampleSetDataStreamWrapper;
 
+import com.rapidminer.beans.OperatorBean;
 import com.rapidminer.example.ExampleSet;
-import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
 import com.rapidminer.operator.ports.InputPort;
 import com.rapidminer.operator.ports.OutputPort;
 
 /**
- * @author chris
- *
+ * <p>
+ * 
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * 
  */
-public class ExampleSetDataStream extends Operator {
+@Description(name = "ExampleSet DataStream", group = "Data Stream.Sources", text = "Creates a data stream from a single example set.")
+public class ExampleSetDataStream extends OperatorBean {
 
-	final InputPort input = getInputPorts().createPort( "example set" );
-	
-	final OutputPort output = getOutputPorts().createPort( "stream" );
-	
-	
+	protected final InputPort input = getInputPorts().createPort("example set",
+			ExampleSet.class);
+	protected final OutputPort output = getOutputPorts().createPort("stream");
+
+	boolean shuffle = false;
+	Integer repeat = 1;
+
 	/**
 	 * @param description
 	 */
 	public ExampleSetDataStream(OperatorDescription description) {
 		super(description);
-		
-		this.acceptsInput( ExampleSet.class );
-		this.producesOutput( DataSourceObject.class );
 	}
 
+	/**
+	 * @return the shuffle
+	 */
+	public boolean isShuffle() {
+		return shuffle;
+	}
+
+	/**
+	 * @param shuffle
+	 *            the shuffle to set
+	 */
+	@Parameter(required = false, description = "Whether the example set should be processed in order or shuffled")
+	public void setShuffle(boolean shuffle) {
+		this.shuffle = shuffle;
+	}
+
+	/**
+	 * @return the repeat
+	 */
+	public Integer getRepeat() {
+		if (repeat == null)
+			repeat = 1;
+		return repeat;
+	}
+
+	/**
+	 * @param repeat
+	 *            the repeat to set
+	 */
+	@Parameter(required = true, defaultValue = "1", description = "Specify how many times the example set should be processed as a stream")
+	public void setRepeat(Integer repeat) {
+		this.repeat = repeat;
+	}
 
 	/**
 	 * @see com.rapidminer.operator.Operator#doWork()
 	 */
 	@Override
 	public void doWork() throws OperatorException {
-		ExampleSet exampleSet = input.getData( ExampleSet.class );
-		if( exampleSet != null ){
-			ExampleSetDataStreamWrapper wrapper = new ExampleSetDataStreamWrapper( exampleSet );
-			output.deliver( new DataSourceObject( wrapper ) );
+		ExampleSet exampleSet = input.getData(ExampleSet.class);
+		if (exampleSet != null) {
+			ExampleSetDataStreamWrapper wrapper = new ExampleSetDataStreamWrapper(
+					exampleSet, isShuffle(), getRepeat());
+			output.deliver(new DataSourceObject(wrapper));
 		}
 	}
 }

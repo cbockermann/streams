@@ -15,7 +15,6 @@ import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;
 
 import com.rapidminer.beans.utils.ParameterTypeFinder;
-import com.rapidminer.operator.IOObject;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.OperatorException;
@@ -48,13 +47,7 @@ public class GenericBeanOperator extends Operator {
 		super(description);
 		this.beanClass = beanClass;
 
-		Map<String, ParameterType> types = ParameterTypeFinder
-				.getParameterTypes(beanClass);
-
-		for (String key : types.keySet()) {
-			parameterTypes.add(types.get(key));
-		}
-
+		parameterTypes.addAll(ParameterTypeFinder.getParameterTypes(beanClass));
 		getTransformer().addPassThroughRule(input, output);
 	}
 
@@ -94,7 +87,9 @@ public class GenericBeanOperator extends Operator {
 	@Override
 	public void doWork() throws OperatorException {
 
-		IOObject in = input.getData(IOObject.class);
+		// TODO: Implement this!
+		//
+		// IOObject in = input.getData(IOObject.class);
 
 		super.doWork();
 	}

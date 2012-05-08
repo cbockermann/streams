@@ -1,0 +1,64 @@
+		<script type="text/javascript">
+var chart;
+$(document).ready(function() {
+	chart = new Highcharts.Chart({
+		chart: {
+			renderTo: '${container.id}',
+			zoomType: 'x',
+			spacingRight: 20,
+			animation: false,
+			borderWidth: 1,
+			borderColor: '#f0f0f0'
+		},
+		credits: {
+			enabled: false
+		},
+		exporting: {
+			enabled: false
+		},
+		title: {
+			text: 'Processed Items per Second'
+		},
+		subtitle: {
+		},
+		yAxis: {
+			title: { text: '# of items per second' }
+		},
+		tooltip: {
+			shared: true
+		},
+		legend: {
+			enabled: false
+		},
+		plotOptions: {
+			area: {
+				fillColor: {
+					linearGradient: [0, 0, 0, 300],
+					stops: [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, 'rgba(2,0,0,0)']
+					]
+				},
+				lineWidth: 1,
+				marker: {
+					enabled: false,
+					states: {
+						hover: {
+							enabled: true,
+							radius: 5
+						}
+					}
+				},
+				shadow: false,
+				states: {
+					hover: {
+						lineWidth: 1
+					}
+				}
+			}
+		},
+
+		${series}
+	});
+});
+		</script>

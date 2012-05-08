@@ -31,8 +31,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.annotations.Description;
+import stream.annotations.Parameter;
 import stream.data.Data;
 
+/**
+ * 
+ * 
+ * @author chris
+ * 
+ */
+@Description(group = "Data Stream.Processing.Transformations.Data", text = "Creates n-grams from a specified string attribute and adds the frequencies of the resulting n-grams to the data item as (key,value) pairs.")
 public class NGrams extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(NGrams.class);
 	String key = null;
@@ -42,6 +51,7 @@ public class NGrams extends AbstractProcessor {
 	@Override
 	public Data process(Data data) {
 
+		log.debug("Processing key '{}' of item {}", key, data);
 		if (key != null && n != null && n >= 0) {
 
 			Map<String, Double> counts = new LinkedHashMap<String, Double>();
@@ -68,6 +78,8 @@ public class NGrams extends AbstractProcessor {
 
 				log.debug("Added {} {}-grams to item", counts.size(), n);
 			}
+		} else {
+			log.warn("No key defined or parameter 'N' missing or smaller than 1!");
 		}
 
 		return data;
@@ -84,6 +96,7 @@ public class NGrams extends AbstractProcessor {
 	 * @param key
 	 *            the key to set
 	 */
+	@Parameter(required = true, description = "The attribute which is to be split into n-grams")
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -99,6 +112,7 @@ public class NGrams extends AbstractProcessor {
 	 * @param n
 	 *            the n to set
 	 */
+	@Parameter(required = true, defaultValue = "3", description = "The length of the n-grams that are to be created")
 	public void setN(Integer n) {
 		this.n = n;
 	}
@@ -114,6 +128,7 @@ public class NGrams extends AbstractProcessor {
 	 * @param prefix
 	 *            the prefix to set
 	 */
+	@Parameter(required = false, defaultValue = "", description = "An optional prefix that is to be prepended for all n-gram names before these are added to the data item")
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}

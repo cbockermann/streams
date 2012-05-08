@@ -29,7 +29,7 @@ import com.rapidminer.operator.OperatorDescription;
  * @author chris
  * 
  */
-public class GenericStreamOperatorChain extends DataStreamOperator {
+public class GenericStreamOperatorChain extends GenericStreamOperator {
 
 	/**
 	 * @param description

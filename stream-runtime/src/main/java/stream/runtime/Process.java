@@ -79,11 +79,22 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 				return null;
 			}
 
-			log.trace("Reading next item from {}", dataStream);
-			Data item = dataStream.readNext();
+			Data item = null;
+			int tries = 0;
+			while (item == null && tries < 10) {
+				try {
+					log.trace("Reading next item from {}", dataStream);
+					item = dataStream.readNext();
+					tries = 0;
+					return item;
+				} catch (Exception e) {
+					e.printStackTrace();
+					tries++;
+				}
+			}
 			return item;
-
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Failed to read next item from input '{}'", dataStream);
 			throw new RuntimeException("Failed to read next item from input '"
 					+ dataStream + "': " + e.getMessage());

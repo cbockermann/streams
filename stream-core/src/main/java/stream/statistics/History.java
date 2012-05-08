@@ -45,7 +45,7 @@ import java.util.List;
  * @param <T>
  *            The type of objects associated with each timepoint/timestamp.
  */
-public abstract class History<T> implements Serializable {
+public class History<T> implements Serializable {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 9079427772146519028L;
@@ -81,8 +81,8 @@ public abstract class History<T> implements Serializable {
 
 	long last = 0L;
 
-	public History(long t, long historyLength) {
-		stepSize = t;
+	public History(long stepSize, long historyLength) {
+		this.stepSize = stepSize;
 		this.historyLength = historyLength;
 	}
 
@@ -145,7 +145,9 @@ public abstract class History<T> implements Serializable {
 	 * @see org.jwall.web.audit.console.statistics.History#add(java.lang.Long,
 	 *      java.lang.Object)
 	 */
-	public abstract void add(Long timestamp, T data);
+	public void add(Long timestamp, T data) {
+		map.put(adjust(timestamp), data);
+	}
 
 	/**
 	 * This method maps the given timestamp to the last <i>official</i>
@@ -215,5 +217,10 @@ public abstract class History<T> implements Serializable {
 			list.add(map.get(key));
 		}
 		return list;
+	}
+
+	public void clear() {
+		this.last = 0L;
+		this.map.clear();
 	}
 }

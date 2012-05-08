@@ -23,12 +23,14 @@
  */
 package stream.statistics;
 
+import stream.annotations.Description;
 import stream.data.Data;
 
 /**
  * @author chris
  * 
  */
+@Description(group = "Data Stream.Processing.Statistics", text = "Continuously determines the average value of numeric attributes")
 public class Average extends Sum {
 
 	Double count = 0.0d;
@@ -38,6 +40,10 @@ public class Average extends Sum {
 	 */
 	@Override
 	public void updateStatistics(Data item) {
+
+		if (keys == null)
+			return;
+
 		count += 1.0d;
 
 		for (String key : keys) {
@@ -50,7 +56,10 @@ public class Average extends Sum {
 
 			if (val != null) {
 				statistics.add(key, val);
-				item.put(key, statistics.get(key) / count);
+				if (prefix != null)
+					item.put(prefix + key, statistics.get(key) / count);
+				else
+					item.put(key, statistics.get(key) / count);
 			}
 		}
 	}

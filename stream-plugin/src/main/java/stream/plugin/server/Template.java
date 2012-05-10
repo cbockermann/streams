@@ -20,7 +20,7 @@ public class Template {
 
 	public Template(String resource) throws IOException {
 		URL url = Template.class.getResource(resource);
-		template = URLUtilities.readContent(url);
+		template = URLUtilities.readContentOrEmpty(url);
 	}
 
 	public String expand(Map<String, String> vars) {

@@ -2,7 +2,7 @@
 #
 #
 VERSION=0.3-SNAPSHOT
-RAPIDMINER_HOME=/usr/local/rapidminer-5.1
+RAPIDMINER_HOME=../../RapidMiner_Unuk
 STREAMS_HOME=..
 
 STREAM_API_HOME=$(STREAMS_HOME)/stream-api

@@ -1,7 +1,7 @@
 #
 #
 #
-VERSION=0.3-SNAPSHOT
+VERSION=0.4-SNAPSHOT
 RAPIDMINER_HOME=/usr/local/rapidminer-5.1
 STREAMS_HOME=..
 

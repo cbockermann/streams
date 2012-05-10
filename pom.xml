@@ -4,7 +4,7 @@
 	<groupId>org.jwall</groupId>
 	<artifactId>streams</artifactId>
 	<name>streams</name>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>The streams library is a multi-module library for processing data from data streams</description>
 
@@ -17,6 +17,7 @@
 		<module>stream-api</module>
 		<module>stream-core</module>
 		<module>stream-runtime</module>
+		<module>stream-exec</module>
 	</modules>
 
 	<repositories>	
@@ -34,9 +35,9 @@
 			<url>https://secure.jwall.org/maven/repository/jwall</url>
 		</repository>
 		<snapshotRepository>
-			<id>jwall-snapshots</id>
-			<name>jwall.org Snapshot Repository</name>
-			<url>https://secure.jwall.org/maven/repository/snapshots</url>
+			<id>sonatype-snapshots</id>
+			<name>sonatype Snapshot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
 			<id>jwall-site</id>

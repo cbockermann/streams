@@ -1,51 +1,40 @@
 
-The <code>streams</code> Framework
-=======================
+The <code>stream-runtime</code> Module
+======================================
 
-The `streams` framework is a Java implementation of a variety of online machine
-learning algorithms. It provides several classifier implementations as well as
-algorithms for online counting or book-keeping statistics (e.g. *top-k* statistics,
-and *quantiles*).
+The *stream-runtime* module provides a light-weight runtime environment for
+processors implemented using the [stream-api](http://www.jwall.org/streams/stream-api/).
 
-In addition to the learning algorithms, it provides a simple plugin structure to
-data preprocessing and evaluation of the classifiers using a *test-then-train*
-strategy.
+The runtime module itself provides a simple multi-threaded execution engine that
+builds on top of a plain Java thread model and is intended for being embedded into
+your application.
 
-
-Overview
---------
-
-The `streams` framework comprises several modules, of which the central one is the
-*stream-api* module. The *stream-api* defines the basic interfaces and data structures
-used in all other modules.
-
-The other modules are
-
-  * [stream-core](stream-core/index.html) -- a library providing various preprocessing
-    functions (processors) as well as several data stream sources (stream.io) for
-    reading from CSV files, SVMlight format, URLs, etc.
-
-  * [stream-runtime](stream-runtime/index.html) -- this modules provides a generic
-    runtime environment for setting up and running stream processes that have been
-    defined in an XML file.
-
-The modules are again maven projects, each having a separate project page and
-documentation.
+A standalone version is also available that includes the stream-api, the stream-core
+module and the runtime itself. This standalone version is ready to be fired up with
+your custom classes (optional) and an XML file.
 
 
-Source Code & Usage
--------------------
+Starting a simple Process
+-------------------------
 
-The source code of the framework is available at [bitbucket.org](https://bitbucket.org/cbockermann/streams/).
+A simple process within the streams library is shown in the following XML snippet:
 
-Each of the modules can easily be integrated into your own code and used as library by
-listing it as maven dependency. The libraries are currently available via the following
-maven repository:
+     <container>
+         <stream id="sample" url="http://www.jwall.org/streams/sample.csv"
+                 class="stream.io.CsvStream" />
 
-      <repository>
-         <id>jwall</id>
-         <name>jwall.org Maven Repository</name>
-         <url>http://secure.jwall.org/maven/repository/all</url>
-      </repository>
+         <process input="sample">
+            <PrintData/>
+         </process>
+     </container>
 
+This sample snippet defines a single CSV stream that is fetched from the specified
+URL and is processed by a single process. The process itself will just print out any
+data item that is read from the stream.
+
+To start this sample, simply run:
+
+      java -cp stream-rt.jar stream.run example.xml
+
+This will produce the following output:
 

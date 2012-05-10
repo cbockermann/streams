@@ -98,21 +98,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.udo</groupId>
-			<artifactId>fact-tools</artifactId>
-			<version>0.3</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>mysql-connector-java</artifactId>
-					<groupId>mysql</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>2.2.8</version>

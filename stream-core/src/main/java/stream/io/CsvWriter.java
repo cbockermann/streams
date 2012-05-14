@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
@@ -60,18 +61,19 @@ import stream.expressions.ExpressionResolver;
 public class CsvWriter extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	protected PrintStream p;
-	protected String separator = ",";
-	protected String lastHeader = null;
-	protected boolean headerWritten = false;
-	protected String filter = ".*";
-	protected List<String> headers = new LinkedList<String>();
-	protected boolean closed = false;
+	protected String separator;
+	protected String lastHeader;
+	protected boolean headerWritten;
+	protected String filter;
+	protected List<String> headers;
+	protected boolean closed;
 	protected String[] keys;
 	protected String urlString;
 	protected URL url;
 	protected File file;
 
 	public CsvWriter() {
+		super();
 	}
 
 	public CsvWriter(URL url) throws Exception {
@@ -88,19 +90,6 @@ public class CsvWriter extends AbstractProcessor {
 		this(new FileOutputStream(file));
 	}
 
-	public CsvWriter(File file, String separator) throws IOException {
-		this(file);
-		this.separator = separator;
-	}
-
-	public void setUrl(String url) {
-		this.urlString = url;
-	}
-
-	public String getUrl() {
-		return this.urlString;
-	}
-
 	/**
 	 * 
 	 * 
@@ -111,8 +100,23 @@ public class CsvWriter extends AbstractProcessor {
 	}
 
 	public CsvWriter(OutputStream out, String separator) {
+		this();
 		p = new PrintStream(out);
 		this.separator = separator;
+	}
+
+	public CsvWriter(File file, String separator) throws IOException {
+		this(file);
+		this.separator = separator;
+	}
+
+	@Parameter(required = true, description = "The url to write to.")
+	public void setUrl(String url) {
+		this.urlString = url;
+	}
+
+	public String getUrl() {
+		return this.urlString;
 	}
 
 	public void setAttributeFilter(String filter) {
@@ -146,7 +150,20 @@ public class CsvWriter extends AbstractProcessor {
 	 */
 	@Parameter(required = false, description = "The attributes to write out, leave blank to write out all attributes.")
 	public void setKeys(String[] str) {
+		if (str == null || str.length == 0)
+			this.keys = null;
 		this.keys = str;
+	}
+
+	@Override
+	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
+		headers = new LinkedList<String>();
+		closed = false;
+		separator = ",";
+		lastHeader = null;
+		headerWritten = false;
+		filter = ".*";
 	}
 
 	/**
@@ -231,7 +248,7 @@ public class CsvWriter extends AbstractProcessor {
 		//
 
 		Iterator<String> it = null;
-		if (keys != null)
+		if (keys != null && keys.length != 0)
 			it = Arrays.asList(keys).iterator();
 		else
 			it = datum.keySet().iterator();

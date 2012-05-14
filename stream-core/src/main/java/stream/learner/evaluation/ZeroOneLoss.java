@@ -26,14 +26,13 @@ package stream.learner.evaluation;
 import java.io.Serializable;
 
 /**
- * @author chris
+ * @author chris,Hendrik Blom
  * 
  */
 public class ZeroOneLoss<T extends Serializable> implements LossFunction<T> {
 	/* The loss function used to assess the prediction error */
 	@Override
 	public double loss(T x1, T x2) {
-
 		if (x1 == x2 || x1.toString().equals(x2.toString())) {
 			return 0.0d;
 		} else

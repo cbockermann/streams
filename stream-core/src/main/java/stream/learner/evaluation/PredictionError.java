@@ -44,7 +44,7 @@ import stream.data.Data;
 public class PredictionError extends AbstractProcessor {
 
 	LossFunction<Serializable> loss = new ZeroOneLoss<Serializable>();
-	String prefix = "@error:";
+	String prefix = "@error";
 	String label = "@label";
 	String[] learner;
 
@@ -112,10 +112,12 @@ public class PredictionError extends AbstractProcessor {
 			for (String classifier : learner) {
 				String key = Data.PREDICTION_PREFIX + ":" + classifier;
 				Serializable pred = data.get(key);
-				if (pred != null) {
-					Double error = loss.loss(labelValue, pred);
-					errors.put(prefix + classifier, error);
-				}
+				// First Element
+				if (pred == null)
+					continue;
+
+				Double error = loss.loss(labelValue, pred);
+				errors.put(prefix + classifier, error);
 			}
 		} else {
 			//
@@ -127,7 +129,8 @@ public class PredictionError extends AbstractProcessor {
 					Serializable pred = data.get(key);
 					String errKey = key.replaceFirst(Data.PREDICTION_PREFIX,
 							prefix);
-
+					if (pred == null)
+						continue;
 					Double error = loss.loss(labelValue, pred);
 					errors.put(errKey, error);
 				}

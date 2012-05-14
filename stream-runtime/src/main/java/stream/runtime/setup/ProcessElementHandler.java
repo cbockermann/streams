@@ -109,6 +109,10 @@ public class ProcessElementHandler implements ElementHandler {
 
 		if (copies != null && !"".equals(copies.trim())) {
 
+			VariableContext var = new VariableContext(container.getContext()
+					.getProperties());
+			copies = var.expand(copies);
+
 			Integer times = new Integer(copies);
 
 			for (int i = 0; i < times; i++) {

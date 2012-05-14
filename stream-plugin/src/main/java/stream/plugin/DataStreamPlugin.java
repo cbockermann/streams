@@ -31,17 +31,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
-import stream.data.NumericalBinning;
-import stream.data.RenameKey;
-import stream.flow.Delay;
-import stream.generator.RandomStream;
-import stream.learner.MetaDataLearner;
-import stream.learner.NaiveBayes;
-import stream.parser.NGrams;
 import stream.plugin.monitoring.StreamPlotView;
 import stream.plugin.server.DataStreamServer;
-import stream.statistics.Sum;
 
 import com.rapidminer.beans.RapidMinerBeans;
 import com.rapidminer.gui.MainFrame;
@@ -104,20 +95,26 @@ public final class DataStreamPlugin {
 	}
 
 	public static void initPlugin() {
-		initLogging();
-		log.info("");
-		log.info("Initializing {}, {}", NAME, VERSION);
-		System.setProperty("stream.plugin.version", VERSION);
-		System.setProperty("stream.plugin.url",
-				"http://kirmes.cs.uni-dortmund.de/streams/stream-plugin/");
-		log.info("Running in Rapidminer-Streaming-Mode?  {}", inStreamingMode());
-		log.info("");
-		log.info("Using NamingService {}", OperatorNamingService.getInstance());
-		log.info("");
+		try {
+			initLogging();
+			log.info("");
+			log.info("Initializing {}, {}", NAME, VERSION);
+			System.setProperty("stream.plugin.version", VERSION);
+			System.setProperty("stream.plugin.url",
+					"http://kirmes.cs.uni-dortmund.de/streams/stream-plugin/");
+			log.info("Running in Rapidminer-Streaming-Mode?  {}",
+					inStreamingMode());
+			log.info("");
+			log.info("Using NamingService {}",
+					OperatorNamingService.getInstance());
+			log.info("");
 
-		RapidMinerBeans.findAndRegisterBeans();
+			RapidMinerBeans.findAndRegisterBeans();
 
-		startServer();
+			startServer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected static void startServer() {
@@ -127,51 +124,4 @@ public final class DataStreamPlugin {
 		log.info("Starting DataStreamServer...");
 		server.start();
 	}
-
-	public static void main(String[] args) throws Exception {
-		initPlugin();
-
-		OperatorNamingService.getInstance().registerProcessor("ngrams",
-				new NGrams());
-		OperatorNamingService.getInstance().registerProcessor("Rename Keys",
-				new RenameKey());
-
-		MetaDataLearner mdlearner = new MetaDataLearner();
-		OperatorNamingService.getInstance().register("meta-data", mdlearner);
-
-		Sum sum = new Sum();
-		OperatorNamingService.getInstance().register("sum", sum);
-
-		RandomStream rnd = new RandomStream();
-		rnd.setKeys("x1,f1,x2,x3,x4,x5,x6,x7,x8".split(","));
-		rnd.setLimit(500000L);
-		rnd.init();
-		Delay delay = new Delay();
-		delay.setTime("10ms");
-		delay.init(null);
-
-		NaiveBayes nb = new NaiveBayes();
-		nb.setLabel("f1");
-		OperatorNamingService.getInstance().register("NaiveBayes", nb);
-
-		NumericalBinning bin = new NumericalBinning();
-		bin.setInclude("f1");
-		bin.setMinimum(-1.0d);
-		bin.setMaximum(1.0d);
-		bin.setBins(10);
-
-		Data item = rnd.readNext();
-		while (item != null) {
-			// log.info("Stream revealed {}", item);
-			item = bin.process(item);
-			item = nb.process(item);
-			item = mdlearner.process(item);
-			// item = delay.process(item);
-			item = rnd.readNext();
-		}
-
-		System.out.println("Press RETURN to continue...");
-		System.in.read();
-	}
-
 }

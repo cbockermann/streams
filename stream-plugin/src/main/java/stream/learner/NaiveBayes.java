@@ -5,7 +5,6 @@ package stream.learner;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,8 +39,8 @@ import stream.mining.NumericalDistributionModel;
  * 
  */
 @Description(group = "Data Stream.Mining.Classification", text = "A classifier based on the Bayes theorem")
-public class NaiveBayes extends UnicastRemoteObject implements
-		StatefulProcessor, PredictionService, Serializable {
+public class NaiveBayes implements StatefulProcessor, PredictionService,
+		Serializable {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 628570935563478204L;
@@ -441,14 +440,6 @@ public class NaiveBayes extends UnicastRemoteObject implements
 	}
 
 	/**
-	 * @see stream.learner.PredictionService#getName()
-	 */
-	@Override
-	public String getName() {
-		return "NaiveBayes";
-	}
-
-	/**
 	 * @see stream.StatefulProcessor#init(stream.ProcessContext)
 	 */
 	@Override
@@ -467,5 +458,10 @@ public class NaiveBayes extends UnicastRemoteObject implements
 	 */
 	@Override
 	public void finish() throws Exception {
+	}
+
+	@Override
+	public String getName() throws RemoteException {
+		return "NaiveBayes";
 	}
 }

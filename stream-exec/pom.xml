@@ -3,7 +3,7 @@
   <parent>
     <artifactId>streams</artifactId>
     <groupId>org.jwall</groupId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>stream-exec</artifactId>
@@ -21,20 +21,44 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.5</version>
 				<configuration>
-					<finalName>stream</finalName>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>stream.run</mainClass>
-						</manifest>
-						<manifestEntries>
-						</manifestEntries>
-					</archive>
+					<transformers>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<manifestEntries>
+								<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
+								<Implementation-Title>streams-runtime</Implementation-Title>
+								<Implementation-URL>http://www.jwall.org/streams/</Implementation-URL>
+								<Implementation-Version>1.0</Implementation-Version>
+								<Implementation-Revision>${pom.version}</Implementation-Revision>
+								<Specification-Title>streams-runtime</Specification-Title>
+								<Specification-Version>1.0</Specification-Version>
+								<main-class>stream.run</main-class>
+							</manifestEntries>
+						</transformer>
+					</transformers>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>  
@@ -42,17 +66,17 @@
   		<dependency>
   			<groupId>org.jwall</groupId>
   			<artifactId>stream-core</artifactId>
-  			<version>1.0</version>
+  			<version>1.0-SNAPSHOT</version>
   		</dependency>
   		<dependency>
   			<groupId>org.jwall</groupId>
   			<artifactId>stream-runtime</artifactId>
-  			<version>1.0</version>
+  			<version>1.0-SNAPSHOT</version>
   		</dependency>
   		<dependency>
   			<groupId>org.slf4j</groupId>
   			<artifactId>slf4j-log4j12</artifactId>
-  			<version>1.6.4</version>
+  			<version>[1.6.4,)</version>
   		</dependency>
   	</dependencies>
 </project>

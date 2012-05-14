@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
 import stream.plugin.DataStreamPlugin;
+import stream.plugin.FakePlugin;
 import stream.plugin.GenericOperatorDescription;
 
 import com.rapidminer.annotations.OperatorInfo;
@@ -134,7 +135,8 @@ public class RapidMinerBeans {
 
 			GenericOperatorDescription sod = new GenericOperatorDescription(
 					group, key, clazz, DataStreamPlugin.class.getClassLoader(),
-					null, null);
+					null, FakePlugin.createPlugin("RapidMiner Beans", "1.0",
+							"rmx_beans"));
 
 			try {
 				OperatorService.registerOperator(sod, null);

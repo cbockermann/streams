@@ -13,6 +13,7 @@
    		reportable="false">
       <renderer>stream.plugin.ui.DataSourceRenderer</renderer>
    </ioobject>
+<!-- 
    	<ioobject
    		name="FactEvent"
    		class="fact.plugin.FactEventObject"
@@ -20,4 +21,5 @@
    		reportable="true">
       <renderer>fact.plugin.ui.FactEventObjectRenderer</renderer>
    </ioobject>
+ -->
 </ioobjects>

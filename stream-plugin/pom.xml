@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.udo.cs.ai</groupId>
+	<groupId>org.jwall</groupId>
 	<artifactId>stream-plugin</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<name>RapidMiner_StreamPlugin</name>
 
 	<repositories>
@@ -13,14 +13,19 @@
 			<url>http://secure.jwall.org/maven/repository/all</url>
 		</repository>
 		<repository>
-			<id>jwall-snapshots</id>
-			<name>jwall.org Maven Repository</name>
-			<url>http://secure.jwall.org/maven/repository/snapshots</url>
+			<id>snapshots</id>
+			<name>SonaType SnapShot Maven Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>codehaus</id>
 			<name>Maven Codehaus repository</name>
 			<url>http://repository.codehaus.org/</url>
+		</repository>
+		<repository>
+			<id>sonatype-snapshots</id>
+			<name>SonaType SnapShot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 
@@ -68,7 +73,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-plotter</artifactId>
-			<version>1.0</version>
+			<version>1.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jfreechart</artifactId>
@@ -79,12 +84,12 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-runtime</artifactId>
-			<version>1.0</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-core</artifactId>
-			<version>1.0</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.rapid-i</groupId>
@@ -96,21 +101,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>edu.udo</groupId>
-			<artifactId>fact-tools</artifactId>
-			<version>0.3</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>mysql-connector-java</artifactId>
-					<groupId>mysql</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
@@ -140,6 +130,13 @@
 			<version>1.0</version>
 		</dependency>
   -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 

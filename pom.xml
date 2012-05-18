@@ -17,7 +17,7 @@
 		<module>stream-api</module>
 		<module>stream-core</module>
 		<module>stream-runtime</module>
-		<module>stream-exec</module>
+		<module>stream-analysis</module>
 	</modules>
 
 	<repositories>	

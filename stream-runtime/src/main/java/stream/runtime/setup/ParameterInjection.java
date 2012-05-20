@@ -82,6 +82,11 @@ public class ParameterInjection {
 
 			Class<?>[] t = m.getParameterTypes();
 
+			if (ServiceInjection.isServiceSetter(m)) {
+				log.debug("Skipping ServiceSetter '{}'", m.getName());
+				continue;
+			}
+
 			if (embedded != null && m.getName().startsWith("set")
 					&& t.length == 1 && t[0] == BodyContent.class) {
 				log.debug("Setting embedded content...");

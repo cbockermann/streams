@@ -92,6 +92,23 @@ public class ServiceInjection {
 		}
 	}
 
+	public static boolean hasServiceSetter(String name, Object o) {
+		try {
+
+			for (Method m : o.getClass().getMethods()) {
+				if (m.getName().equalsIgnoreCase("set" + name)
+						&& isServiceSetter(m)) {
+
+				}
+			}
+
+			return false;
+		} catch (Exception e) {
+			log.error("Failed to determine service-setter: {}", e.getMessage());
+			return false;
+		}
+	}
+
 	public static void injectServices(Collection<ServiceReference> refs,
 			NamingService ns) throws Exception {
 
@@ -198,6 +215,12 @@ public class ServiceInjection {
 
 		if (clazz == Service.class)
 			return true;
+
+		if (clazz.isArray()) {
+			// return isServiceImplementation(clazz.getComponentType());
+			log.error("Injection of arrays of service references is not yet supported!");
+			return false;
+		}
 
 		for (Class<?> intf : clazz.getInterfaces()) {
 			log.trace("Checking if {} = {}", intf, Service.class);

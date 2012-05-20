@@ -23,21 +23,6 @@
  */
 package stream.plugin.test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import stream.io.CsvStream;
-import stream.io.SQLWriter;
-import stream.parser.ParseJSON;
-import stream.plugin.processing.DataStreamProcess;
-import stream.plugin.util.ParameterTypeDiscovery;
-
-import com.rapidminer.parameter.ParameterType;
 
 /**
  * @author chris
@@ -45,29 +30,30 @@ import com.rapidminer.parameter.ParameterType;
  */
 public class ParameterDiscoveryTest {
 
-	static Logger log = LoggerFactory.getLogger(ParameterDiscoveryTest.class);
+	// static Logger log =
+	// LoggerFactory.getLogger(ParameterDiscoveryTest.class);
 
-	@Test
-	public void test() {
-
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		classes.add(CsvStream.class);
-		classes.add(DataStreamProcess.class);
-		classes.add(SQLWriter.class);
-		classes.add(ParseJSON.class);
-
-		for (Class<?> clazz : classes) {
-			log.info("");
-			log.info("");
-			log.info("Checking class {}", CsvStream.class);
-			log.info("");
-			Map<String, ParameterType> types = ParameterTypeDiscovery
-					.discoverParameterTypes(clazz);
-			for (String key : types.keySet()) {
-				log.info("{} => {}", key, types.get(key));
-			}
-		}
-
-		// fail("Not yet implemented");
-	}
+	// @Test
+	// public void test() {
+	// //
+	// // List<Class<?>> classes = new ArrayList<Class<?>>();
+	// // classes.add(CsvStream.class);
+	// // classes.add(DataStreamProcess.class);
+	// // classes.add(SQLWriter.class);
+	// // classes.add(ParseJSON.class);
+	// //
+	// // for (Class<?> clazz : classes) {
+	// // log.info("");
+	// // log.info("");
+	// // log.info("Checking class {}", CsvStream.class);
+	// // log.info("");
+	// // Map<String, ParameterType> types = ParameterTypeDiscovery
+	// // .discoverParameterTypes(clazz);
+	// // for (String key : types.keySet()) {
+	// // log.info("{} => {}", key, types.get(key));
+	// // }
+	// // }
+	//
+	// // fail("Not yet implemented");
+	// }
 }

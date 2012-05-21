@@ -48,6 +48,7 @@ import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.ExpressionResolver;
+import stream.service.Service;
 
 /**
  * <p>
@@ -58,7 +59,7 @@ import stream.expressions.ExpressionResolver;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
 @Description(group = "Data Stream.Output")
-public class CsvWriter extends AbstractProcessor {
+public class CsvWriter extends AbstractProcessor implements Service {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	protected PrintStream p;
 	protected String separator;
@@ -295,5 +296,15 @@ public class CsvWriter extends AbstractProcessor {
 			p.close();
 		}
 		closed = true;
+	}
+
+	@Override
+	public void reset() throws Exception {
+		headers = new LinkedList<String>();
+		closed = false;
+		separator = ",";
+		lastHeader = null;
+		headerWritten = false;
+
 	}
 }

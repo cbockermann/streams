@@ -151,7 +151,7 @@ public class CsvStream extends AbstractDataStream {
 		String dt[] = data.split(splitExpression);
 		for (int i = 0; i < tok.length && i < dt.length; i++) {
 			if (i < dt.length) {
-				if (dt[i].matches("\\d*\\.\\d*"))
+				if (dt[i].matches("-{0,1}\\d*\\.\\d*E{0,1}-{0,1}\\d*"))
 					attributes.put(tok[i], Double.class);
 				else
 					attributes.put(tok[i], String.class);

@@ -209,6 +209,19 @@ public class ProcessElementHandler implements ElementHandler {
 
 			for (String key : params.keySet()) {
 
+				if (ServiceInjection.hasServiceSetter(key, o)) {
+					log.debug(
+							"Found service setter for key '{}' in processor {}",
+							key, o);
+
+					String ref = params.get(key);
+					ref = vctx.expand(ref);
+					ServiceReference serviceRef = new ServiceReference(ref, o,
+							key);
+					container.getServiceRefs().add(serviceRef);
+					continue;
+				}
+
 				if (key.endsWith("-ref")) {
 					String ref = params.get(key);
 					ref = vctx.expand(ref);

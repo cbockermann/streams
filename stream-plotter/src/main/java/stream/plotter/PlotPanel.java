@@ -74,7 +74,7 @@ public class PlotPanel extends JPanel {
 
 	static Logger log = LoggerFactory.getLogger(PlotPanel.class);
 	final JTextField valueField = new JTextField(10);
-	final XYPlot plot;
+	protected final XYPlot plot;
 	XYSeriesCollection series = new XYSeriesCollection();
 	List<ValueListener> listener = new ArrayList<ValueListener>();
 
@@ -181,6 +181,14 @@ public class PlotPanel extends JPanel {
 
 		this.setSteps(stepSlider.getValue());
 
+	}
+
+	public XYPlot getPlot() {
+		return plot;
+	}
+
+	public JFreeChart getChart() {
+		return chart;
 	}
 
 	public void reset() {
@@ -290,10 +298,8 @@ public class PlotPanel extends JPanel {
 
 			series.add(pivotValue, value);
 		}
-
-		if (System.currentTimeMillis() - lastUpdate >= 1000) {
+		if (System.currentTimeMillis() - lastUpdate >= 1000)
 			updateChart();
-		}
 	}
 
 	public void updateChart() {

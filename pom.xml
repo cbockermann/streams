@@ -28,11 +28,11 @@
 	</repositories>
 
 	<distributionManagement>
-		<repository>
-			<id>jwall</id>
-			<name>jwall.org Maven Repository</name>
-			<url>https://secure.jwall.org/maven/repository/jwall</url>
-		</repository>
+                <repository>
+                        <id>sonatype-releases</id>
+                        <name>sonatype Maven Repository</name>
+                        <url>https://oss.sonatype.org/content/repositories/releases/</url>
+                </repository>
 		<snapshotRepository>
 			<id>sonatype-snapshots</id>
 			<name>sonatype Snapshot Repository</name>

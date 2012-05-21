@@ -346,7 +346,7 @@ public class ProcessContainer {
 			Iterator<AbstractProcess> it = processes.iterator();
 			while (it.hasNext()) {
 				AbstractProcess p = it.next();
-				if (!p.isRunning()) {
+				if (!p.isRunning() || p instanceof Monitor) {
 					log.debug("Process '{}' is finished.", p);
 					log.debug("Removing finished process {}", p);
 					it.remove();

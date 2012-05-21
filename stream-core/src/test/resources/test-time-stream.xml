@@ -1,11 +1,20 @@
 <container>
 
 	<stream id="test"
-			class="stream.io.TimeStream" limit="10" interval="1000ms" />
+			class="stream.io.TimeStream" limit="100" interval="10ms" />
 			
 	<process input="test">
-		<PrintData />
+		<stream.monitor.AverageThroughput id="tp">
+			<PrintData />
+		</stream.monitor.AverageThroughput>
 	</process>
+	
+	<monitor interval="1second">
+		<stream.monitor.MemoryUsage id="mem"/>
+		<stream.statistics.AddStatistics service-ref="mem" />
+		<stream.statistics.AddStatistics service-ref="tp" />
+		<PrintData />
+	</monitor>
 	
 </container>
 

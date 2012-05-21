@@ -18,8 +18,12 @@ import stream.runtime.setup.ParameterDiscovery;
  */
 public class TexParameterTable implements ParameterTableWriter {
 
-	/* (non-Javadoc)
-	 * @see stream.doc.helper.ParameterTableCreator#writeParameterTable(java.lang.Class, java.io.PrintStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * stream.doc.helper.ParameterTableCreator#writeParameterTable(java.lang
+	 * .Class, java.io.PrintStream)
 	 */
 	@Override
 	public void writeParameterTable(Class<?> clazz, PrintStream out) {
@@ -41,7 +45,8 @@ public class TexParameterTable implements ParameterTableWriter {
 				if (p.name() != null && !p.name().trim().isEmpty())
 					name = p.name();
 				out.println("<td>" + name + "</td>");
-				out.println("<td>" + p.description() + "</td>");
+				out.println("<td>" + p.description().replaceAll("%", "\\%")
+						+ "</td>");
 				out.println("<td>" + p.required() + "</td>");
 			} else {
 				out.println("<td>" + key + "</td>");
@@ -55,7 +60,9 @@ public class TexParameterTable implements ParameterTableWriter {
 
 	public static void main(String args[]) throws Exception {
 		TexParameterTable table = new TexParameterTable();
-		table.writeParameterTable(stream.data.AsJSON.class, System.out);
-		table.writeParameterTable(stream.parser.ParseJSON.class, System.out);
+		// table.writeParameterTable(stream.data.AsJSON.class, System.out);
+		// table.writeParameterTable(stream.parser.ParseJSON.class, System.out);
+		table.writeParameterTable(stream.io.LineStream.class, System.out);
+
 	}
 }

@@ -41,6 +41,10 @@ public class Monitor extends AbstractProcess {
 	Long interval = 1000L;
 	String intervalString = "1000ms";
 
+	public Monitor() {
+		setDaemon(true);
+	}
+
 	/**
 	 * @return the interval
 	 */

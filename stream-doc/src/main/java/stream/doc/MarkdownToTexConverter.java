@@ -115,7 +115,7 @@ public class MarkdownToTexConverter implements DocConverter {
 					name = p.name();
 				out.print(name);
 				out.print(" & " + typeName);
-				out.print(" & " + p.description());
+				out.print(" & " + p.description().replaceAll("%", "\\%"));
 				out.print(" & " + p.required());
 			} else {
 				out.print(key);

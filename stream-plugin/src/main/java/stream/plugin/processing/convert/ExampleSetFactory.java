@@ -70,7 +70,7 @@ public class ExampleSetFactory {
 		int i = 0;
 		for (String key : attributes.keySet()) {
 
-			int type = Ontology.NUMERICAL;
+			int type = Ontology.REAL;
 
 			if (String.class.equals(attributes.get(key))) {
 				type = Ontology.NOMINAL;

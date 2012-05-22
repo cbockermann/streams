@@ -79,6 +79,7 @@ public class CsvWriter extends AbstractProcessor implements Service {
 
 	public CsvWriter(URL url) throws Exception {
 		this(new FileOutputStream(new File(url.toURI())));
+		this.setUrl(url.toString());
 	}
 
 	/**

@@ -46,7 +46,7 @@ public class Vector implements Serializable, Measurable {
 	Type type;
 	double scale = 1.0d;
 	double snorm = 0.0d;
-	// For type==SPRASE
+	// For type==SPARSE
 	HashMap<Integer, Double> pairs;
 	int max_index = -1;
 	// For type==DENSE
@@ -408,7 +408,7 @@ public class Vector implements Serializable, Measurable {
 		return size;
 	}
 
-	public static InputVector createSparseVector(Data datum) {
+	public static Vector createSparseVector(Data datum) {
 		if (datum.containsKey(Data.ANNOTATION_PREFIX + "__sparse-vector")) {
 			return (InputVector) datum.get(Data.ANNOTATION_PREFIX
 					+ "__sparse-vector");
@@ -424,7 +424,7 @@ public class Vector implements Serializable, Measurable {
 		for (String key : datum.keySet()) {
 			Serializable val = datum.get(key);
 			if (!DataUtils.isAnnotation(key) && key.matches("\\d+")
-					&& val instanceof Double) {
+					&& Number.class.isAssignableFrom(val.getClass())) {
 				indexes.add(key);
 			}
 		}

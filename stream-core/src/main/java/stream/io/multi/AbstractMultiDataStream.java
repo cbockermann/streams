@@ -123,6 +123,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	@Override
 	public void addStream(String id, DataStream stream) {
 		streams.put(id, new ActiveDataStreamImpl(stream));
+		log.info("added Stream {}", stream);
 	}
 
 	@Override
@@ -172,10 +173,11 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	 */
 	@Override
 	public void init() throws Exception {
+
 		for (DataStream s : streams.values()) {
 			s.init();
 			((ActiveDataStream) s).activate();
-
 		}
+		log.info("initialized all Streams.");
 	}
 }

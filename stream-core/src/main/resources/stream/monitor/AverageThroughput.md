@@ -22,7 +22,7 @@ The results are added to the current data item and are plotted by a plotter.
              <SQLWriter table="golf" ... />
          </AverageThroughput>
 
-         <AddStatistics service="throughput" />
+         <AddStatistics service-ref="throughput" />
 
          <Plotter keys="@avg:milliseconds-per-item" />
       </process>

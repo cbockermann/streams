@@ -2,58 +2,43 @@
 The <code>streams</code> Framework
 =======================
 
-The `streams` framework is a Java implementation of a variety of online machine
-learning algorithms. It provides several classifier implementations as well as
-algorithms for online counting or book-keeping statistics (e.g. *top-k* statistics,
-and *quantiles*).
+The `streams` framework is a Java implementation of a simple stream processing
+environment. It aims at providing a clean and easy-to-use Java-based platform to
+process streaming data.
 
-In addition to the learning algorithms, it provides a simple plugin structure to
-data preprocessing and evaluation of the classifiers using a *test-then-train*
-strategy.
+The core module of the `streams` library is a thin API layer of interfaces and
+classes that reflect a high-level view of streaming processes. This API serves
+as a basis for implementing custom processors and providing services with the
+`streams` library.
 
+<div style="margin:auto; border: none; text-align: center;">
+   <img style="margin:auto; height: 200px;" src="architecture2.png" />
+   <p>Figure 1: Components of the <code>streams</code> library.</p>
+</div>
 
-Overview
---------
-
-The `streams` framework comprises several modules, of which the central one is the
-*stream-api* module. The *stream-api* defines the basic interfaces and data structures
-used in all other modules.
-
-The basic modules are
-  
-  * [stream-api](stream-api/index.html) -- the basic API interfaces and classes. This
-    module is used as glue element, new modules/extensions can include this module as
-    their base dependency.
-    Among the basic interfaces, the stream-api module provides a very small number of 
-    generic processors, e.g. for executing JavaScript or JRuby (if the jruby library
-    is available in the class path).
-
-  * [stream-core](stream-core/index.html) -- a library providing various preprocessing
-    functions (processors) as well as several data stream sources (stream.io) for
-    reading from CSV files, SVMlight format, URLs, etc.
-
-  * [stream-runtime](stream-runtime/index.html) -- this modules provides a generic
-    runtime environment for setting up and running stream processes that have been
-    defined in an XML file.
-
-The modules are again maven projects, each having a separate project page and
-documentation.
+Figure 1 shows the components of the `streams` library. The binding glue element
+is a thin API layer that attaches to a runtime provided as a separate module or
+can embedded into existing code.
 
 
+### Process Design with JavaBeans
 
-Source Code & Usage
--------------------
 
-The source code of the framework is available at [bitbucket.org](https://bitbucket.org/cbockermann/streams/).
+The `streams` library promotes simple software design patterns such as JavaBean
+conventions and dependency injection to allow for a quick setup of streaming
+processes using simple XML files.
 
-Each of the modules can easily be integrated into your own code and used as library by
-listing it as maven dependency. The libraries are currently available via the following
-maven repository:
+As shown in Figure 2, the idea of the `streams` library is to provide a simple
+runtime environment that lets users define streaming processes in XML files,
+with a close relation to the implementing Java classes.
 
-      <repository>
-         <id>jwall</id>
-         <name>jwall.org Maven Repository</name>
-         <url>http://secure.jwall.org/maven/repository/all</url>
-      </repository>
+<div style="margin:auto; border: none; text-align: center;">
+   <img style="margin:auto; height: 200px;" src="process-design.png" />
+   <p>Figure 1: Components of the <code>streams</code> library.</p>
+</div>
 
+Based on the conventions and patterns used, components of the
+`streams` library are simple Java classes.  Following the basic design
+patterns of the `streams` library allows for quickly adding custom
+classes to the streaming processes without much trouble.
 

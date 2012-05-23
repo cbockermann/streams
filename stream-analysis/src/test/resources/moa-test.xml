@@ -1,0 +1,27 @@
+<container>
+
+	<stream id="stream" class="stream.io.CsvStream"
+		url="classpath:/multi-golf.csv.gz" limit="1000"/>
+
+	<process input="stream">
+	
+		<RenameKey from="play" to="@label" />
+		
+	
+		<stream.learner.Prediction learner="NB" />
+		<stream.learner.Prediction learner="HT" />
+
+		<stream.learner.evaluation.PredictionError />
+
+		<moa.classifiers.bayes.NaiveBayes id="NB"/>
+		
+		<moa.classifiers.trees.HoeffdingTree id="HT" binarySplits="true" />
+		
+		<stream.statistics.Sum keys="@error:NB,@error:HT" />
+		
+		<PrintData />
+		
+		
+	
+	</process>
+</container>

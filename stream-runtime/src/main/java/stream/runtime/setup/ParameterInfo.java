@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.rapidminer.beans.utils;
+package stream.runtime.setup;
 
 /**
  * This class is a wrapper for the different types of parameter annotations,
@@ -11,15 +11,35 @@ package com.rapidminer.beans.utils;
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  */
-public class ParameterInfo extends stream.runtime.setup.ParameterInfo {
+public class ParameterInfo {
 
-	public ParameterInfo(com.rapidminer.annotations.Parameter param) {
-		super(param.name(), param.description(), param.required(), param
-				.defaultValue(), param.min(), param.max(), param.values());
-	}
+	protected final String name;
+	protected final String description;
+	protected final String[] values;
+	protected final boolean required;
+	protected final String defaultValue;
+	protected final Double min;
+	protected final Double max;
 
 	public ParameterInfo(stream.annotations.Parameter param) {
-		super(param);
+		name = param.name();
+		description = param.description();
+		required = param.required();
+		defaultValue = param.defaultValue();
+		min = param.min();
+		max = param.max();
+		values = param.values();
+	}
+
+	public ParameterInfo(String name, String description, boolean required,
+			String defaultValue, Double min, Double max, String[] values) {
+		this.name = name;
+		this.description = description;
+		this.required = required;
+		this.defaultValue = defaultValue;
+		this.min = min;
+		this.max = max;
+		this.values = values;
 	}
 
 	/**

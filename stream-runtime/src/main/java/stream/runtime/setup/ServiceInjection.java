@@ -98,7 +98,7 @@ public class ServiceInjection {
 			for (Method m : o.getClass().getMethods()) {
 				if (m.getName().equalsIgnoreCase("set" + name)
 						&& isServiceSetter(m)) {
-
+					return true;
 				}
 			}
 
@@ -218,7 +218,7 @@ public class ServiceInjection {
 
 		if (clazz.isArray()) {
 			// return isServiceImplementation(clazz.getComponentType());
-			log.error("Injection of arrays of service references is not yet supported!");
+			log.debug("Injection of arrays of service references is not yet supported!");
 			return false;
 		}
 

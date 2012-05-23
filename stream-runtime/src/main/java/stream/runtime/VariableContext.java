@@ -87,9 +87,8 @@ public class VariableContext {
 				String variable = content.substring(start + 2, end);
 				log.debug("Found variable: {}", variable);
 				log.trace("   content is: {}", content);
-				if (variables.containsKey(variable))
-					content = content.substring(0, start)
-							+ variables.get(variable)
+				if (containsKey(variable))
+					content = content.substring(0, start) + get(variable)
 							+ content.substring(end + 1);
 				else
 					content = content.substring(0, start) + ""
@@ -103,5 +102,19 @@ public class VariableContext {
 				start = -1;
 		}
 		return content;
+	}
+
+	protected boolean containsKey(String key) {
+		return variables.containsKey(key) || System.getProperty(key) != null;
+	}
+
+	public String get(String key) {
+
+		String val = variables.get(key);
+		if (val == null) {
+			val = System.getProperty(key);
+		}
+
+		return val;
 	}
 }

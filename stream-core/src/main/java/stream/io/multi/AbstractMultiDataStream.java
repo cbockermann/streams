@@ -56,13 +56,75 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 
 	protected Long limit = -1L;
 	protected Long count = 0L;
+	protected Boolean activate;
 
 	protected Map<String, DataStream> streams;
+	protected List<String> additionOrder;
+
+	protected ActiveDataStream activeWrapper;
 
 	public AbstractMultiDataStream() {
 		this.attributes = new LinkedHashMap<String, Class<?>>();
 		this.preprocessors = new ArrayList<Processor>();
 		this.streams = new HashMap<String, DataStream>();
+		this.additionOrder = new ArrayList<String>();
+	}
+
+	@Override
+	public void addStream(String id, DataStream stream) {
+		streams.put(id, stream);
+		additionOrder.add(id);
+		log.info("added Stream {}", stream);
+	}
+
+	@Override
+	public Map<String, DataStream> getStreams() {
+		return streams;
+	}
+
+	public Long getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Long limit) {
+		this.limit = limit;
+	}
+
+	public Boolean getActivate() {
+		return activate;
+	}
+
+	public void setActivate(Boolean activate) {
+		this.activate = activate;
+	}
+
+	/**
+	 * This method returns a mapping of attributes to types for all substreams.
+	 * 
+	 * @return
+	 */
+	public Map<String, Class<?>> getAttributes() {
+		return this.attributes;
+	}
+
+	public List<Processor> getPreprocessors() {
+		return this.preprocessors;
+	}
+
+	public void addPreprocessor(Processor proc) {
+		preprocessors.add(proc);
+	}
+
+	public void addPreprocessor(int idx, Processor proc) {
+		preprocessors.add(idx, proc);
+	}
+
+	public boolean removePreprocessor(Processor proc) {
+		return preprocessors.remove(proc);
+	}
+
+	public Processor removePreprocessor(int idx) {
+		return preprocessors.remove(idx);
 	}
 
 	protected abstract Data readNext(Data item, Map<String, DataStream> streams)
@@ -120,54 +182,6 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 		}
 	}
 
-	@Override
-	public void addStream(String id, DataStream stream) {
-		streams.put(id, new ActiveDataStreamImpl(stream));
-		log.info("added Stream {}", stream);
-	}
-
-	@Override
-	public Map<String, DataStream> getStreams() {
-		return streams;
-	}
-
-	public Long getLimit() {
-		return limit;
-	}
-
-	public void setLimit(Long limit) {
-		this.limit = limit;
-	}
-
-	/**
-	 * This method returns a mapping of attributes to types for all substreams.
-	 * 
-	 * @return
-	 */
-	public Map<String, Class<?>> getAttributes() {
-		return this.attributes;
-	}
-
-	public List<Processor> getPreprocessors() {
-		return this.preprocessors;
-	}
-
-	public void addPreprocessor(Processor proc) {
-		preprocessors.add(proc);
-	}
-
-	public void addPreprocessor(int idx, Processor proc) {
-		preprocessors.add(idx, proc);
-	}
-
-	public boolean removePreprocessor(Processor proc) {
-		return preprocessors.remove(proc);
-	}
-
-	public Processor removePreprocessor(int idx) {
-		return preprocessors.remove(idx);
-	}
-
 	/**
 	 * @see stream.io.DataStream#init()
 	 */
@@ -176,8 +190,13 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 
 		for (DataStream s : streams.values()) {
 			s.init();
-			((ActiveDataStream) s).activate();
 		}
 		log.info("initialized all Streams.");
+		if (activate) {
+			this.activeWrapper = new ActiveDataStreamImpl(this);
+			this.activeWrapper.activate();
+			log.info("Activated this multiStream.");
+		}
+
 	}
 }

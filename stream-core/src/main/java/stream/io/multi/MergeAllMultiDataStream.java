@@ -52,7 +52,8 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 
 		boolean stop = true;
 
-		for (DataStream s : streams.values()) {
+		for (String id : additionOrder) {
+			DataStream s = streams.get(id);
 			Data d = s.readNext(item);
 			if (d != null) {
 				item.putAll(d);
@@ -62,15 +63,6 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 		if (stop)
 			return null;
 		return item;
-	}
-
-	@Override
-	public void init() throws Exception {
-
-		for (DataStream s : streams.values()) {
-			s.init();
-		}
-		log.info("initialized all Streams.");
 	}
 
 }

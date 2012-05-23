@@ -3,7 +3,7 @@
   <parent>
     <artifactId>streams</artifactId>
     <groupId>org.jwall</groupId>
-    <version>0.9-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>stream-plotter</artifactId>
@@ -30,15 +30,13 @@
   	<dependency>
   		<groupId>org.jwall</groupId>
   		<artifactId>stream-runtime</artifactId>
-  		<version>1.0-SNAPSHOT</version>
+  		<version>1.0.0-SNAPSHOT</version>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.jwall</groupId>
   		<artifactId>stream-api</artifactId>
-  		<version>1.0-SNAPSHOT</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
+  		<version>1.0.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
 </project>

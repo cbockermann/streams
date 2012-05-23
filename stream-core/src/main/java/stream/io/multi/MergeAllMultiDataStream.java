@@ -64,4 +64,13 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 		return item;
 	}
 
+	@Override
+	public void init() throws Exception {
+
+		for (DataStream s : streams.values()) {
+			s.init();
+		}
+		log.info("initialized all Streams.");
+	}
+
 }

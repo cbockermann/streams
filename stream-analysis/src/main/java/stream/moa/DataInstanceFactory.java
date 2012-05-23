@@ -3,6 +3,7 @@
  */
 package stream.moa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import weka.core.Attribute;
-import weka.core.Instance;
 
 /**
  * @author chris
@@ -25,21 +25,22 @@ public class DataInstanceFactory {
 
 	final DataInstanceHeader header = new DataInstanceHeader();
 
-	public Instance wrap(Data item) {
+	public DataInstance wrap(Data item) {
 
 		for (String key : item.keySet()) {
 
 			if (header.getAttribute(key) == null) {
 				if (!isNumerical(key, item)) {
-					List<String> vals = new ArrayList<String>();
-					vals.add(item.get(key).toString());
 					Attribute attr = new Attribute(key, (List<String>) null);
 					log.info("Created string-attribute for {}", key);
 					header.attributes.add(attr);
-					String val = item.get(key).toString();
-					int idx = attr.indexOfValue(val);
-					if (idx < 0) {
-						idx = attr.addStringValue(val);
+					Serializable value = item.get(key);
+					if (value != null) {
+						String val = value.toString();
+						int idx = attr.indexOfValue(val);
+						if (idx < 0) {
+							idx = attr.addStringValue(val);
+						}
 					}
 				} else {
 					Attribute attr = new Attribute(key);
@@ -71,8 +72,11 @@ public class DataInstanceFactory {
 	}
 
 	public static boolean isNumerical(String key, Data item) {
-		return item.containsKey(key)
-				&& item.get(key).getClass() == Double.class;
+		Serializable value = item.get(key);
+		if (value != null && Number.class.isAssignableFrom(value.getClass())) {
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean isNominal(String key, Data item) {

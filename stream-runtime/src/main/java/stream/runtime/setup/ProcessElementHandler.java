@@ -210,7 +210,7 @@ public class ProcessElementHandler implements ElementHandler {
 			for (String key : params.keySet()) {
 
 				if (ServiceInjection.hasServiceSetter(key, o)) {
-					log.debug(
+					log.info(
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 

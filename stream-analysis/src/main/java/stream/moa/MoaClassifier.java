@@ -6,6 +6,7 @@ package stream.moa;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import moa.classifiers.AbstractClassifier;
 import stream.ProcessContext;
 import stream.data.Data;
 import stream.learner.PredictionService;
@@ -22,10 +23,13 @@ import weka.core.Instance;
 public class MoaClassifier extends MoaProcessor implements PredictionService {
 
 	private Object lock = new Object();
+	AbstractClassifier classifier;
 
 	public MoaClassifier(Class<?> moaClass) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
 		super(moaClass);
+
+		classifier = (AbstractClassifier) this.moaClass.newInstance();
 	}
 
 	/**
@@ -40,7 +44,7 @@ public class MoaClassifier extends MoaProcessor implements PredictionService {
 	 * @see stream.moa.MoaProcessor#process(weka.core.Instance)
 	 */
 	@Override
-	public void process(Instance instance) {
+	public void processInstance(Instance instance) {
 		synchronized (lock) {
 			classifier.trainOnInstance(instance);
 		}

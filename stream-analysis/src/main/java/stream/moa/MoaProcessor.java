@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.Measurable;
 import stream.ProcessContext;
 import stream.data.Data;
 import weka.core.Instance;
@@ -23,7 +24,7 @@ import weka.core.Instance;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class MoaProcessor extends AbstractProcessor {
+public class MoaProcessor extends AbstractProcessor implements Measurable {
 
 	static Logger log = LoggerFactory.getLogger(MoaProcessor.class);
 	final Class<?> moaClass;
@@ -84,16 +85,16 @@ public class MoaProcessor extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data input) {
-		Instance instance = wrap(input);
-		process(instance);
+		DataInstance instance = wrap(input);
+		processInstance(instance);
 		return input;
 	}
 
-	public Instance wrap(Data input) {
+	public DataInstance wrap(Data input) {
 		return instanceWrapper.wrap(input);
 	}
 
-	public void process(Instance instance) {
+	public void processInstance(Instance instance) {
 
 	}
 
@@ -103,5 +104,13 @@ public class MoaProcessor extends AbstractProcessor {
 	@Override
 	public void finish() throws Exception {
 		super.finish();
+	}
+
+	/**
+	 * @see stream.Measurable#getByteSize()
+	 */
+	@Override
+	public double getByteSize() {
+		return classifier.measureByteSize();
 	}
 }

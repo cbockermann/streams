@@ -61,8 +61,9 @@ public class ParameterInjection {
 	 * @param params
 	 *            The parameters to set on the object.
 	 * @throws Exception
+	 * @return Returns the parameter key that have been set using this method.
 	 */
-	public static void inject(Object o, Map<String, ?> params,
+	public static Set<String> inject(Object o, Map<String, ?> params,
 			VariableContext variableContext) throws Exception {
 		log.debug("Injecting parameters {} into object {}", params, o);
 
@@ -122,6 +123,7 @@ public class ParameterInjection {
 						// in the parameter-map, we simply inject that object
 						//
 						m.invoke(o, params.get(k));
+						alreadySet.add(k);
 
 					} else {
 
@@ -186,10 +188,13 @@ public class ParameterInjection {
 						}
 
 						m.invoke(o, po);
+						alreadySet.add(k);
 					}
 				}
 			}
 		}
+
+		return alreadySet;
 	}
 
 	public static void injectSystemProperties(Object object, String prefix)

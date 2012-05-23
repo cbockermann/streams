@@ -199,7 +199,7 @@ public class ParameterTypeFinder {
 					!param.required());
 
 			try {
-				defaultValue = new Double(param.defaultValue);
+				defaultValue = new Double(param.defaultValue());
 			} catch (Exception e) {
 				defaultValue = new Double(0.0d);
 			}
@@ -243,7 +243,7 @@ public class ParameterTypeFinder {
 			pt = new ParameterTypeBoolean(key, desc, !param.required());
 
 			try {
-				defaultValue = new Boolean(param.defaultValue);
+				defaultValue = new Boolean(param.defaultValue());
 			} catch (Exception e) {
 				defaultValue = false;
 			}

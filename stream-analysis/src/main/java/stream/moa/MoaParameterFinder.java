@@ -132,7 +132,7 @@ public class MoaParameterFinder implements ParameterFinder {
 				if (value == null) {
 					log.error(
 							"No value specified for parameter '{}' found in class {}",
-							name, o.getClass());
+							name, o.getClass().getCanonicalName());
 					filled.add(name);
 				} else {
 					opt.setValueViaCLIString(value.toString());

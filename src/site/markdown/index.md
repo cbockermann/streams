@@ -34,7 +34,8 @@ with a close relation to the implementing Java classes.
 
 <div style="margin:auto; border: none; text-align: center;">
    <img style="margin:auto; height: 200px;" src="process-design.png" />
-   <p>Figure 1: Components of the <code>streams</code> library.</p>
+   <p style="margin-left:20px; margin-right:20px;">Figure 2: XML process definitions mapped to a runtime environment, using 
+   stream-api components and other libraries.</p>
 </div>
 
 Based on the conventions and patterns used, components of the

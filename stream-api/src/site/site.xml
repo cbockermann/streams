@@ -21,7 +21,7 @@
         </menu>
 
 	<menu name="Development">
-	    <item name="A simple DataProcessor" href="dataprocessor.html" />
+	    <item name="A simple Processor" href="processor.html" />
 	</menu>
   
 	<menu ref="reports"/>

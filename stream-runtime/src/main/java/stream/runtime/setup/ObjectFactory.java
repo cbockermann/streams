@@ -67,6 +67,7 @@ public class ObjectFactory extends VariableContext {
 	ClassLoader classLoader = ObjectFactory.class.getClassLoader();
 
 	final List<String> searchPath = new ArrayList<String>();
+	final static List<ObjectCreator> objectCreators = new ArrayList<ObjectCreator>();
 
 	protected ObjectFactory() {
 		super(new HashMap<String, String>());
@@ -85,7 +86,7 @@ public class ObjectFactory extends VariableContext {
 		}
 
 		URL[] url = new URL[files.size()];
-		log.info("Extra class paths:");
+		log.debug("Extra class paths:");
 		int i = 0;
 		for (File f : files) {
 			try {
@@ -119,6 +120,10 @@ public class ObjectFactory extends VariableContext {
 		classNames.put(name.toLowerCase(), clazz.getName());
 	}
 
+	public static void registerObjectCreator(ObjectCreator creator) {
+		objectCreators.add(creator);
+	}
+
 	public static ObjectFactory newInstance() {
 		return new ObjectFactory();
 	}
@@ -136,6 +141,14 @@ public class ObjectFactory extends VariableContext {
 		Map<String, String> params = getAttributes(node);
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
+
+		String name = node.getNodeName();
+		for (ObjectCreator creator : objectCreators) {
+			if (name.startsWith(creator.getNamespace())) {
+				return creator.create(name, params);
+			}
+		}
+
 		Object obj = create(this.findClassForElement(node), params);
 		return obj;
 	}
@@ -149,11 +162,6 @@ public class ObjectFactory extends VariableContext {
 
 		log.debug("Parameters for new class: {}", params);
 		log.debug("object-factory.variables: {}", this.variables);
-		Class<?> clazz = Class.forName(className, false, classLoader);
-
-		// create an instance of this class
-		//
-		Object object = clazz.newInstance();
 
 		Map<String, String> p = new HashMap<String, String>();
 		for (String key : parameter.keySet()) {
@@ -172,6 +180,23 @@ public class ObjectFactory extends VariableContext {
 				p.put(key, expanded);
 			}
 		}
+
+		Object object = null;
+
+		for (ObjectCreator creator : objectCreators) {
+			if (className.startsWith(creator.getNamespace())) {
+				log.info("Found object-creator {} for class {}", creator,
+						className);
+
+				object = creator.create(className, params);
+				return object;
+			}
+		}
+
+		// create an instance of this class
+		//
+		Class<?> clazz = Class.forName(className, false, classLoader);
+		object = clazz.newInstance();
 
 		// Inject the parameters into the object...
 		//

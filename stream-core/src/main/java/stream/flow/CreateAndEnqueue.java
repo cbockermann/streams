@@ -82,10 +82,13 @@ public class CreateAndEnqueue extends Enqueue {
 			Object o = ExpressionResolver.resolve(key, context, data);
 			if (o != null) {
 				String[] s = ExpressionResolver.extractName(key);
-				result.put(s[1], create(o));
+				Serializable ser = create(o);
+				if (ser != null)
+					result.put(s[1], ser);
 			}
 		}
-		queue.enqueue(result);
+		if (!result.isEmpty())
+			queue.enqueue(result);
 		return data;
 	}
 

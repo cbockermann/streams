@@ -83,8 +83,6 @@ public class ArffStream extends AbstractDataStream {
 	public Data readItem(Data datum) throws Exception {
 		if (datum == null)
 			datum = DataFactory.create();
-		else
-			datum.clear();
 
 		String line = reader.readLine();
 		while (line != null && line.trim().isEmpty())

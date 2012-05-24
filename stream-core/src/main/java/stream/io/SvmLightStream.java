@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.data.DataUtils;
 import stream.data.vector.InputVector;
 
@@ -99,6 +100,9 @@ public class SvmLightStream extends AbstractDataStream {
 	 */
 	@Override
 	public Data readItem(Data item) throws Exception {
+
+		if (item == null)
+			item = DataFactory.create();
 
 		if (limit > 0 && lineNumber > limit) {
 			return null;

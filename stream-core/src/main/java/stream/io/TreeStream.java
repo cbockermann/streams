@@ -95,6 +95,10 @@ public class TreeStream implements DataStream {
 	 */
 	@Override
 	public Data readNext(Data datum) throws Exception {
+
+		if (datum == null)
+			datum = DataFactory.create();
+
 		String line = reader.readLine();
 
 		// skip comment lines

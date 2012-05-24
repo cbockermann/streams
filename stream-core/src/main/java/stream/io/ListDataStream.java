@@ -56,6 +56,9 @@ public class ListDataStream implements DataStream {
 
 	@Override
 	public Data readNext(Data datum) throws Exception {
+		if (datum == null)
+			datum = DataFactory.create();
+
 		if (pos < data.size()) {
 			datum.putAll(data.get(pos++));
 			return datum;

@@ -25,6 +25,7 @@ package stream.runtime.setup;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,11 +82,7 @@ public class DataStreamFactory {
 			stream = (DataStream) constr.newInstance(new Object[0]);
 		}
 
-		List<Processor> preProcessors = processorFactory
-				.createNestedProcessors(node);
-		for (Processor p : preProcessors) {
-			stream.getPreprocessors().add(p);
-		}
+		List<Processor> preProcessors = new ArrayList<Processor>();
 
 		ParameterInjection.inject(stream, params, new VariableContext());
 
@@ -96,8 +93,13 @@ public class DataStreamFactory {
 			NodeList nodes = node.getChildNodes();
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node inner = nodes.item(i);
-				if (inner.getNodeType() == Node.ELEMENT_NODE) {
-					Element child = (Element) inner;
+				if (inner.getNodeType() != Node.ELEMENT_NODE)
+					continue;
+
+				Element child = (Element) inner;
+
+				if (child.getNodeName().equalsIgnoreCase("stream")
+						|| child.getNodeName().equalsIgnoreCase("datastream")) {
 					DataStream innerStream = createStream(objectFactory,
 							processorFactory, child);
 					log.debug("Created inner stream {}", innerStream);
@@ -105,8 +107,22 @@ public class DataStreamFactory {
 					if (id == null || "".equals(id.trim()))
 						id = innerStream.toString();
 					multiStream.addStream(id, innerStream);
+				} else {
+					log.debug("Creating pre-processors...");
+					List<Processor> procs = processorFactory
+							.createNestedProcessors(child);
+					preProcessors.addAll(procs);
 				}
 			}
+			stream = multiStream;
+		} else {
+			List<Processor> procs = processorFactory
+					.createNestedProcessors(node);
+			preProcessors.addAll(procs);
+		}
+
+		for (Processor p : preProcessors) {
+			stream.getPreprocessors().add(p);
 		}
 
 		return stream;

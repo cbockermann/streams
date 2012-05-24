@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
 
@@ -155,6 +156,9 @@ public class LineStream extends AbstractDataStream {
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
+
+		if (instance == null)
+			instance = DataFactory.create();
 
 		String line = reader.readLine();
 		if (line == null)

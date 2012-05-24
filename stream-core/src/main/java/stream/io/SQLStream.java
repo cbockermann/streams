@@ -33,6 +33,7 @@ import java.sql.ResultSetMetaData;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.io.sql.DatabaseDialect;
 import stream.io.sql.HsqlDialect;
 
@@ -117,6 +118,9 @@ public class SQLStream extends AbstractDataStream {
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
+
+		if (instance == null)
+			instance = DataFactory.create();
 
 		if (result != null && result.next()) {
 

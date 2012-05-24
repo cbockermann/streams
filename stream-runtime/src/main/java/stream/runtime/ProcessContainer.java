@@ -48,6 +48,7 @@ import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
+import stream.runtime.setup.LibrariesElementHandler;
 import stream.runtime.setup.MonitorElementHandler;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessElementHandler;
@@ -123,6 +124,8 @@ public class ProcessContainer {
 				processorFactory));
 		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
 		elementHandler.put("Service", new ServiceElementHandler(objectFactory));
+		elementHandler.put("Dependencies", new LibrariesElementHandler(
+				objectFactory));
 
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
@@ -368,6 +371,10 @@ public class ProcessContainer {
 
 	public Set<String> getStreamListenerNames() {
 		return listeners.keySet();
+	}
+
+	public ObjectFactory getObjectFactory() {
+		return this.objectFactory;
 	}
 
 	public void dataArrived(String key, Data item) {

@@ -122,9 +122,14 @@ public class ProcessElementHandler implements ElementHandler {
 				Map<String, String> extra = new HashMap<String, String>();
 				extra.put("process.id", pid);
 				extra.put("copy.id", pid);
+				var.addVariables(extra);
 				log.info("Creating process '{}'", pid);
 				Process process = createProcess(processClass, attr, container,
 						element, extra);
+
+				String input = var.expand(src);
+				log.info("Setting source for process {} to {}", process, input);
+				process.setInput(input);
 				container.getProcesses().add(process);
 			}
 

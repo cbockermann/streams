@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
 import stream.data.Data;
+import stream.data.DataFactory;
 
 /**
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
@@ -81,6 +82,9 @@ public class JSONStream extends AbstractDataStream {
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
+
+		if (instance == null)
+			instance = DataFactory.create();
 
 		if (reader == null)
 			this.initReader();

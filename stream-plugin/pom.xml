@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.rapid-i</groupId>
 			<artifactId>rapidminer</artifactId>
-			<version>5.2.003</version>
+			<version>5.2.004</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>

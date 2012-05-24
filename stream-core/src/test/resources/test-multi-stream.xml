@@ -1,0 +1,13 @@
+
+<container id="preprocess_cmapss">
+    <stream id="multi_csv" class="stream.io.multi.MergeAllMultiDataStream" limit="30">
+        <stream id="stream1" class="stream.io.CsvStream"
+            url="classpath:/stream1.csv" />
+        <stream id="stream2" class="stream.io.CsvStream"
+            url="classpath:/stream2.csv" />
+    </stream>
+    
+    <process id="process_cmapss" input="multi_csv">
+        <PrintData />
+    </process>
+</container>

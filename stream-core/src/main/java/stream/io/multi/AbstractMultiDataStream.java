@@ -56,7 +56,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 
 	protected Long limit = -1L;
 	protected Long count = 0L;
-	protected Boolean activate;
+	protected Boolean activate = false;
 
 	protected Map<String, DataStream> streams;
 	protected List<String> additionOrder;

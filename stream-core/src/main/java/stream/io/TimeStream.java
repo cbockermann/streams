@@ -24,6 +24,7 @@
 package stream.io;
 
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.util.parser.TimeParser;
 
 /**
@@ -78,6 +79,10 @@ public class TimeStream extends AbstractDataStream {
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
+
+		if (instance == null)
+			instance = DataFactory.create();
+
 		Long timestamp = System.currentTimeMillis();
 
 		if (gap > 0) {

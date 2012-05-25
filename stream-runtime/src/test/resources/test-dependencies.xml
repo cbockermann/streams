@@ -17,6 +17,10 @@
 		</dependency>
 	</dependencies>
 
+	<Stream id="stream-0" class="stream.test.TestStream" limit = "10" />
+	<Stream id="stream-1" class="stream.test.TestStream" limit = "10" />
+
+
 	<Process input="stream-${copy.id}" copies="2">
 
 	<!-- 

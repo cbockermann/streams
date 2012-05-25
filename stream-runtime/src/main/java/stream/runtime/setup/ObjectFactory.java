@@ -25,12 +25,15 @@ package stream.runtime.setup;
 
 import java.io.File;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import stream.annotations.BodyContent;
+import stream.runtime.RuntimeClassLoader;
 import stream.runtime.VariableContext;
 import stream.utils.FileUtils;
 
@@ -64,8 +68,10 @@ public class ObjectFactory extends VariableContext {
 	// TODO: Extend this with a custom class loader that will search other
 	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any
 	// other search path list found in the system environment/system settings
-	ClassLoader classLoader = ObjectFactory.class.getClassLoader();
+	RuntimeClassLoader classLoader = new RuntimeClassLoader(new URL[0],
+			ObjectFactory.class.getClassLoader());
 
+	final Set<URL> urls = new LinkedHashSet<URL>();
 	final List<String> searchPath = new ArrayList<String>();
 	final static List<ObjectCreator> objectCreators = new ArrayList<ObjectCreator>();
 
@@ -89,16 +95,38 @@ public class ObjectFactory extends VariableContext {
 		log.debug("Extra class paths:");
 		int i = 0;
 		for (File f : files) {
+			if (!f.getName().endsWith(".jar")
+					|| f.getName().indexOf("stream-runtime") >= 0)
+				continue;
 			try {
 				url[i] = f.toURI().toURL();
-				log.info("   {}", f);
+				urls.add(f.toURI().toURL());
+				log.debug("   {}", f);
+				classLoader.addExtraURLs(f.toURI().toURL());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		classLoader = URLClassLoader.newInstance(url,
-				ObjectFactory.class.getClassLoader());
+		log.debug("URLs: {}", classLoader.getURLs());
+	}
+
+	public void addClassPathUrls(Collection<URL> newUrls) {
+		log.debug("Adding urls {}", newUrls);
+		this.urls.addAll(newUrls);
+		log.debug("URLs now are: {}", this.urls);
+
+		Iterator<URL> it = urls.iterator();
+		while (it.hasNext()) {
+			URL url = it.next();
+			if (url.toString().indexOf("stream-runtime") >= 0) {
+				log.debug("Removing referenced URL {}", url);
+				it.remove();
+			} else {
+				classLoader.addExtraURLs(url);
+			}
+		}
+		log.debug("URLClassLoader.getURLs(): {}", classLoader.getURLs());
 	}
 
 	public void addPackage(String pkg) {

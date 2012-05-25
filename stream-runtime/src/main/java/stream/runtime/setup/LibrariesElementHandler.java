@@ -4,27 +4,31 @@
 package stream.runtime.setup;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URL;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.dependencies.Dependency;
+import stream.runtime.dependencies.DependencyResolver;
 
 /**
  * @author chris
  * 
  */
-public class LibrariesElementHandler implements ElementHandler {
+public class LibrariesElementHandler implements DocumentHandler, ElementHandler {
 
 	static Logger log = LoggerFactory.getLogger(LibrariesElementHandler.class);
-	ObjectFactory objectFactory;
+	final ObjectFactory objectFactory;
+	final DependencyResolver resolver = new DependencyResolver();
 
 	public LibrariesElementHandler(ObjectFactory factory) {
 		this.objectFactory = factory;
@@ -44,8 +48,7 @@ public class LibrariesElementHandler implements ElementHandler {
 	@Override
 	public boolean handlesElement(Element element) {
 		if (element.getNodeName().equalsIgnoreCase("libraries")
-				|| element.getNodeName().equalsIgnoreCase("libs")
-				|| element.getNodeName().equalsIgnoreCase("dependencies"))
+				|| element.getNodeName().equalsIgnoreCase("libs"))
 			return true;
 		return false;
 	}
@@ -72,94 +75,90 @@ public class LibrariesElementHandler implements ElementHandler {
 
 			} else {
 				Dependency d = new Dependency(dep[0], dep[1], dep[2]);
-				File file = null;
-				if (d.getLocalFile().exists()) {
-					log.info("Dependency {} already exists at {}", line.trim(),
-							d.getLocalFile());
-					file = d.getLocalFile();
-				} else {
-					file = d.download();
+				try {
+					resolver.resolve(d);
+				} catch (Exception e) {
+
 				}
-				System.out.println("Adding file " + file.getAbsolutePath()
-						+ " to classpath!");
 			}
 
 			line = reader.readLine();
 		}
+
+		objectFactory.addClassPathUrls(resolver.getClasspathURLs());
 	}
 
-	public static class Dependency {
+	/**
+	 * @see stream.runtime.setup.DocumentHandler#handle(stream.runtime.ProcessContainer,
+	 *      org.w3c.dom.Document)
+	 */
+	@Override
+	public void handle(ProcessContainer container, Document doc)
+			throws Exception {
 
-		String groupId;
-		String artifactId;
-		String version;
+		log.debug("Checking for dependency definitions...");
 
-		public Dependency(String groupId, String artifactId, String version) {
-			this.groupId = groupId;
-			this.artifactId = artifactId;
-			this.version = version;
+		Set<Dependency> deps = findDependencies(doc.getDocumentElement());
+		log.info("Found {} dependencies...", deps.size());
+
+		for (Dependency dep : deps) {
+			resolver.resolve(dep);
 		}
 
-		public File getLocalFile() {
+		objectFactory.addClassPathUrls(resolver.getClasspathURLs());
+	}
 
-			StringBuffer s = new StringBuffer(System.getProperty("user.home")
-					+ File.separator + ".m2" + File.separator + "repository"
-					+ File.separator);
-			s.append(getPath());
-			File file = new File(s.toString());
-			return file;
-		}
+	public Set<Dependency> findDependencies(Element root) {
 
-		public String getPath() {
-			return groupId.replace('.', '/') + "/" + artifactId + "/" + version
-					+ "/" + artifactId + "-" + version + ".jar";
-		}
+		Set<Dependency> deps = new LinkedHashSet<Dependency>();
 
-		public File download() throws Exception {
+		NodeList list = root.getElementsByTagName("dependency");
+		for (int i = 0; i < list.getLength(); i++) {
 
-			StringBuffer s = new StringBuffer(
-					"http://repo.maven.apache.org/maven2/");
+			Element el = (Element) list.item(i);
 
-			s.append(getPath());
+			String groupId = null;
+			String artifactId = null;
+			String version = null;
+			String scope = null;
 
-			URL url = new URL(s.toString());
-			InputStream in = url.openStream();
+			NodeList children = el.getChildNodes();
+			for (int j = 0; j < children.getLength(); j++) {
 
-			log.info("Downloading library {} from {}", artifactId, url);
-			File file = new File(System.getProperty("user.home") + "/.streams/"
-					+ artifactId + "-" + version + ".jar");
+				Node node = children.item(j);
+				if (node.getNodeName().equals("groupId"))
+					groupId = node.getTextContent();
 
-			File lib = new File(System.getProperty("user.home")
-					+ File.separator + ".streams" + File.separator + getPath());
-			lib.getParentFile().mkdirs();
-			file = lib;
+				if (node.getNodeName().equals("artifactId"))
+					artifactId = node.getTextContent();
 
-			FileOutputStream out = new FileOutputStream(file);
+				if (node.getNodeName().equals("version"))
+					version = node.getTextContent();
 
-			byte[] buf = new byte[8192];
-			int total = 0;
-			int read = in.read(buf);
-			while (read > 0) {
-				total += read;
-				out.write(buf, 0, read);
-				read = in.read(buf);
-				// System.out.println(total + " bytes fetched...");
+				if (node.getNodeName().equals("scope"))
+					scope = node.getTextContent();
 			}
-			log.info("{} bytes fetched.", total);
-			out.close();
-			return file;
+
+			if (groupId != null && artifactId != null && version != null) {
+
+				if (version.startsWith("["))
+					version = version.substring(1);
+
+				if (version.endsWith(",)"))
+					version = version.replace(",)", "");
+
+				if (resolver.isScopeIncluded(scope)) {
+					log.debug("Adding dependency {} with scope {}", artifactId,
+							scope);
+					deps.add(new Dependency(groupId, artifactId, version));
+				} else {
+					log.debug("Dependencies with scope '{}' will be ignored.",
+							scope);
+				}
+
+			}
 		}
-	}
 
-	public static void main(String[] args) throws Exception {
-
-		Dependency dep = new Dependency("org.jwall", "org.jwall.web.audit",
-				"0.6.2");
-		File file = dep.getLocalFile();
-		System.out.println("Dependency should be at " + file.getAbsolutePath());
-
-		File download = dep.download();
-		System.out.println("Downloaded artifact to "
-				+ download.getAbsolutePath());
+		return deps;
 	}
 }

@@ -48,6 +48,7 @@ import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
+import stream.runtime.setup.DocumentHandler;
 import stream.runtime.setup.LibrariesElementHandler;
 import stream.runtime.setup.MonitorElementHandler;
 import stream.runtime.setup.ObjectFactory;
@@ -104,6 +105,8 @@ public class ProcessContainer {
 
 	protected final Map<String, ElementHandler> elementHandler = new HashMap<String, ElementHandler>();
 
+	protected final List<DocumentHandler> documentHandler = new ArrayList<DocumentHandler>();
+
 	public ProcessContainer(URL url) throws Exception {
 		this(url, null);
 	}
@@ -118,14 +121,17 @@ public class ProcessContainer {
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
 
+		LibrariesElementHandler libHandler = new LibrariesElementHandler(
+				objectFactory);
+		documentHandler.add(libHandler);
+
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
 		elementHandler.put("Service", new ServiceElementHandler(objectFactory));
-		elementHandler.put("Dependencies", new LibrariesElementHandler(
-				objectFactory));
+		elementHandler.put("Libs", libHandler);
 
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
@@ -213,6 +219,10 @@ public class ProcessContainer {
 
 		context.getProperties().putAll(getProperties(root));
 		objectFactory.addVariables(context.getProperties());
+
+		for (DocumentHandler handle : documentHandler) {
+			handle.handle(this, doc);
+		}
 
 		NodeList children = root.getChildNodes();
 

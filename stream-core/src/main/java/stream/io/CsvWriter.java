@@ -42,7 +42,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
+import stream.ConditionedProcessor;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
@@ -59,7 +59,7 @@ import stream.service.Service;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
 @Description(group = "Data Stream.Output")
-public class CsvWriter extends AbstractProcessor implements Service {
+public class CsvWriter extends ConditionedProcessor implements Service {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	protected PrintStream p;
 	protected String separator;
@@ -172,7 +172,7 @@ public class CsvWriter extends AbstractProcessor implements Service {
 	 * @see stream.io.DataStreamListener#dataArrived(java.util.Map)
 	 */
 	@Override
-	public Data process(Data datum) {
+	public Data processMatchingData(Data datum) {
 		String expandedUrlString = (String) ExpressionResolver.expand(
 				urlString, context, datum);
 		if (expandedUrlString == null) {
@@ -188,6 +188,7 @@ public class CsvWriter extends AbstractProcessor implements Service {
 				this.url = new URL(expandedUrlString);
 				file = new File(url.toURI());
 				p = new PrintStream(new FileOutputStream(file));
+				lastHeader = null;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {

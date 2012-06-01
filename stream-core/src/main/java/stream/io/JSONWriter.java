@@ -30,6 +30,7 @@ import java.net.URL;
 
 import net.minidev.json.JSONObject;
 import stream.data.Data;
+import stream.data.DataFactory;
 
 /**
  * <p>
@@ -74,6 +75,15 @@ public class JSONWriter extends CsvWriter {
 	 */
 	@Override
 	public void write(Data datum) {
-		p.println(JSONObject.toJSONString(datum));
+
+		if (this.keys != null) {
+			Data item = DataFactory.create();
+			for (String key : keys) {
+				if (datum.containsKey(key))
+					item.put(key, datum.get(key));
+			}
+			p.println(JSONObject.toJSONString(item));
+		} else
+			p.println(JSONObject.toJSONString(datum));
 	}
 }

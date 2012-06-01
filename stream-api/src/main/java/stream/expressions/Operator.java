@@ -80,10 +80,8 @@ public abstract class Operator implements Serializable {
 		public boolean eval(Object left, Object right) {
 			if (left == null && right == null)
 				return false;
-			if ((left == null && right != null)
-					|| (left != null && right == null))
-				return true;
-			if (isNumeric(left) && isNumeric(right)) {
+			if (left != null && right != null && isNumeric(left)
+					&& isNumeric(right)) {
 				try {
 					Double v = new Double(left.toString());
 					Double w = new Double(right.toString());
@@ -92,7 +90,7 @@ public abstract class Operator implements Serializable {
 				} catch (Exception e) {
 				}
 			}
-			return !left.equals(right);
+			return !("" + left).equals(("" + right));
 		}
 	};
 

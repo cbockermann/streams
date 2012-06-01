@@ -68,7 +68,7 @@ public class ObjectFactory extends VariableContext {
 	// TODO: Extend this with a custom class loader that will search other
 	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any
 	// other search path list found in the system environment/system settings
-	RuntimeClassLoader classLoader = new RuntimeClassLoader(new URL[0],
+	final RuntimeClassLoader classLoader = new RuntimeClassLoader(new URL[0],
 			ObjectFactory.class.getClassLoader());
 
 	final Set<URL> urls = new LinkedHashSet<URL>();
@@ -113,7 +113,7 @@ public class ObjectFactory extends VariableContext {
 
 	public void addClassPathUrls(Collection<URL> newUrls) {
 		log.debug("Adding urls {}", newUrls);
-		this.urls.addAll(newUrls);
+		urls.addAll(newUrls);
 		log.debug("URLs now are: {}", this.urls);
 
 		Iterator<URL> it = urls.iterator();
@@ -211,6 +211,8 @@ public class ObjectFactory extends VariableContext {
 
 		Object object = null;
 
+		// check if a custom creator is registered for that package
+		//
 		for (ObjectCreator creator : objectCreators) {
 			if (className.startsWith(creator.getNamespace())) {
 				log.info("Found object-creator {} for class {}", creator,
@@ -221,7 +223,7 @@ public class ObjectFactory extends VariableContext {
 			}
 		}
 
-		// create an instance of this class
+		// create an instance of this class using the "default way"
 		//
 		Class<?> clazz = Class.forName(className, false, classLoader);
 		object = clazz.newInstance();

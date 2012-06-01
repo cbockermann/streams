@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 import stream.io.DataStream;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.service.Service;
 
 /**
  * @author chris
@@ -85,6 +86,10 @@ public class StreamElementHandler implements ElementHandler {
 				if (id == null)
 					id = "" + stream;
 				container.setStream(id, stream);
+			}
+
+			if (stream instanceof Service) {
+				container.getContext().register(id, (Service) stream);
 			}
 
 		} catch (Exception e) {

@@ -54,6 +54,7 @@ import stream.runtime.setup.MonitorElementHandler;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessElementHandler;
 import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.PropertiesHandler;
 import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
@@ -124,6 +125,7 @@ public class ProcessContainer {
 		LibrariesElementHandler libHandler = new LibrariesElementHandler(
 				objectFactory);
 		documentHandler.add(libHandler);
+		documentHandler.add(new PropertiesHandler());
 
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
@@ -217,12 +219,10 @@ public class ProcessContainer {
 		if (name == null)
 			name = "local";
 
-		context.getProperties().putAll(getProperties(root));
-		objectFactory.addVariables(context.getProperties());
-
 		for (DocumentHandler handle : documentHandler) {
 			handle.handle(this, doc);
 		}
+		objectFactory.addVariables(context.getProperties());
 
 		NodeList children = root.getChildNodes();
 
@@ -295,29 +295,6 @@ public class ProcessContainer {
 
 	public void setStream(String id, DataStream stream) {
 		streams.put(id, stream);
-	}
-
-	protected Map<String, String> getProperties(Element element) {
-		Map<String, String> props = new LinkedHashMap<String, String>();
-		NodeList ch = element.getChildNodes();
-		for (int i = 0; i < ch.getLength(); i++) {
-			Node child = ch.item(i);
-			if (child instanceof Element) {
-				Element el = (Element) child;
-				if (el.getNodeName().equalsIgnoreCase("property")) {
-
-					String key = el.getAttribute("name");
-					String value = el.getAttribute("value");
-
-					if (key != null && !"".equals(key.trim()) && value != null
-							&& !"".equals(value.trim())) {
-						props.put(key, value);
-					}
-				}
-			}
-		}
-		log.debug("Found properties: {}", props);
-		return props;
 	}
 
 	public void run() throws Exception {

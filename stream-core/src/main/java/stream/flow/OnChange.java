@@ -29,11 +29,12 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
+import stream.expressions.ExpressionResolver;
 
 /**
  * <p>
- * This class provides a data process that will identify return true if the
- * given attribute will change from "from" to "to".
+ * This class provides a processorList that will be processed under certain
+ * conditions.
  * </p>
  * 
  * @author Hendrik Blom &lt;hendrik.blom@udo.edu&gt;
@@ -69,7 +70,7 @@ public class OnChange extends If {
 	}
 
 	public OnChange() {
-		oldValue = "";
+		oldValue = null;
 	}
 
 	@Parameter(required = true, defaultValue = "")
@@ -81,18 +82,88 @@ public class OnChange extends If {
 		return key;
 	}
 
+	/**
+	 * * There are 4 use cases:
+	 * <p>
+	 * 1. "from" and "to" are not set: Any change from the last item to the new
+	 * item will be detected and the processorList will be processed.
+	 * </p>
+	 * <p>
+	 * 2. "from" is not set but "to" is set: if the new value equals to the "to"
+	 * value and it is different to the last value, then the processorList will
+	 * be processed.
+	 * </p>
+	 * <p>
+	 * 3. "from" is set but "to" is not set: if the last value equals to the
+	 * "from" value and the new value is different to the from value, then the
+	 * processorList will be processed.
+	 * </p>
+	 * <p>
+	 * 4. "from" and "to" is set: if the last value equals "from" and the new
+	 * value equals to "to", then the processorList will be processed.
+	 * </p>
+	 **/
 	public boolean matches(Data item) {
-		String value = String.valueOf(item.get(key));
-		boolean result = false;
 
-		if (from.equals(to) && "".equals(from)) {
-			if (!oldValue.equals(value))
-				result = true;
-		} else if (oldValue.equals(from) && value.equals(to)) {
-			result = true;
-			log.debug(key + " changed from " + from + " to " + to + "!");
+		if (key == null)
+			return false;
+		String value = String.valueOf(ExpressionResolver.resolve(key, context,
+				item));
+
+		boolean result = false;
+		// UseCase 1
+
+		if (from == null && to == null) {
+			if (oldValue == null && (value == null || value.equals("null")))
+				return false;
+			else if (oldValue == null && value != null) {
+				oldValue = value;
+				return true;
+			}
+			result = !oldValue.equals(value);
+			oldValue = value;
+			return result;
+			// UseCase 1
+		} else if (from == null && to != null) {
+			if (oldValue == null && (value == null || to.equals("null"))) {
+				oldValue = value;
+				return false;
+			} else if (oldValue == null && value != null) {
+				oldValue = value;
+				return to.equals(value);
+			}
+			result = !oldValue.equals(value) && to.equals(value);
+			oldValue = value;
+			return result;
+		} else if (from != null && to == null) {
+			if (from.equals("null") && oldValue == null && value != null
+					&& !"null".equals(value)) {
+				oldValue = value;
+				return true;
+			}
+			if (oldValue == null) {
+				oldValue = value;
+				return false;
+			}
+			if (from.equals(oldValue) && (value == null || !from.equals(value))) {
+				oldValue = value;
+				return true;
+			}
+
+		} else {
+			if (from.equals(to))
+				return false;
+			if (from.equals("null") && oldValue == null && to.equals(value)) {
+				oldValue = value;
+				return true;
+			}
+			if (from.equals(oldValue) && to.equals(value)) {
+				oldValue = value;
+				return true;
+			}
+
 		}
 		oldValue = value;
-		return result;
+		return false;
 	}
 }

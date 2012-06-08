@@ -115,17 +115,14 @@ public class ExpressionList implements Expression {
 	}
 
 	public String toString() {
-		StringBuffer s = new StringBuffer("");
-		if (exps.size() > 1)
-			s.append("{");
+		StringBuffer s = new StringBuffer("( ");
 
 		for (Expression e : exps) {
 			if (s.length() > 2)
 				s.append("  " + op + "  ");
 			s.append(e.toString()); // FilterCompiler.toFilterString( e ) );
 		}
-		if (exps.size() > 1)
-			s.append(" }");
+		s.append(" )");
 		return s.toString();
 	}
 }

@@ -95,44 +95,52 @@ public class ExpressionReader {
 	protected Expression readFilterExpression() throws ExpressionException {
 
 		skipWhiteSpace();
+
+		Expression first;
+
 		if (startsWith("(")) {
-			log.debug("Found nested expression at pos {}: {}", pos,
-					input.substring(pos));
-			ExpressionList list = this.readNestedExpression();
-			// if( list.size() == 1 )
-			// return list.getFirst();
-			log.debug("\nnested expression: {}\n\n", list.toString());
-			return list;
+			first = readNestedExpression();
+		} else
+			first = readSimpleFilter();
 
-		} else {
+		/*
+		 * if (startsWith("(")) {
+		 * log.debug("Found nested expression at pos {}: {}", pos,
+		 * input.substring(pos)); ExpressionList list =
+		 * this.readNestedExpression(); // if( list.size() == 1 ) // return
+		 * list.getFirst(); log.debug("\nnested expression: {}\n\n",
+		 * list.toString()); return list;
+		 * 
+		 * } else {
+		 */
+		if (!endOfLine() && !hasBooleanOperator() && !startsWith(")"))
+			throw new ExpressionException(
+					"Boolean operator 'AND' or 'OR' expected after '"
+							+ input.substring(0, pos) + "'!");
 
-			Expression first = readSimpleFilter();
-			if (!endOfLine() && !hasBooleanOperator() && !startsWith(")"))
-				throw new ExpressionException(
-						"Boolean operator 'AND' or 'OR' expected after '"
-								+ input.substring(0, pos) + "'!");
+		if (endOfLine())
+			return first;
 
-			if (endOfLine())
-				return first;
+		log.info("remainder: {}", this.input.substring(pos));
 
-			List<Expression> exps = new ArrayList<Expression>();
-			List<BooleanOperator> ops = new ArrayList<BooleanOperator>();
-			exps.add(first);
-			while (!endOfLine() && hasBooleanOperator()) {
-				ops.add(readBooleanOperator());
-				if (startsWith("("))
-					exps.add(readNestedExpression());
-				else
-					exps.add(readSimpleFilter());
-			}
-			log.debug("Ops: {}", ops);
-			log.debug("Exps: {}", exps);
-
-			if (exps.size() == 1)
-				return first;
-
-			return new ExpressionList(ops.iterator().next(), exps);
+		List<Expression> exps = new ArrayList<Expression>();
+		List<BooleanOperator> ops = new ArrayList<BooleanOperator>();
+		exps.add(first);
+		while (!endOfLine() && hasBooleanOperator()) {
+			ops.add(readBooleanOperator());
+			if (startsWith("("))
+				exps.add(readNestedExpression());
+			else
+				exps.add(readSimpleFilter());
 		}
+		log.debug("Ops: {}", ops);
+		log.debug("Exps: {}", exps);
+
+		if (exps.size() == 1)
+			return first;
+
+		return new ExpressionList(ops.iterator().next(), exps);
+		// }
 	}
 
 	public boolean endOfLine() {
@@ -149,7 +157,7 @@ public class ExpressionReader {
 
 		Collection<Expression> exp = new ArrayList<Expression>();
 		exp.add(readFilterExpression());
-		BooleanOperator op = null;
+		BooleanOperator op = BooleanOperator.AND;
 		while (!startsWith(")")) {
 
 			if (endOfLine())
@@ -163,7 +171,8 @@ public class ExpressionReader {
 			else
 				exp.add(readFilterExpression());
 		}
-		pos++;
+		this.skipWhiteSpace();
+		pos++; // <-- consume closing bracket?
 		return new ExpressionList(op, exp);
 	}
 

@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-plotter</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.9.4-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jfreechart</artifactId>
@@ -84,12 +84,12 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-runtime</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.9.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.9.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.rapid-i</groupId>
@@ -140,7 +140,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-analysis</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>0.9.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

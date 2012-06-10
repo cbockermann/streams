@@ -217,6 +217,7 @@ public abstract class DatabaseDialect {
 	public Map<String, Class<?>> getColumnTypes(Data item) {
 		Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
 		for (String key : item.keySet()) {
+			log.info("Checking type of key {}", key);
 			types.put(key, item.get(key).getClass());
 		}
 		return types;

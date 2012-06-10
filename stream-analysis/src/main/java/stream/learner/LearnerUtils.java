@@ -67,7 +67,7 @@ public class LearnerUtils extends DataUtils {
 	public static Map<String, Double> getNumericVector(Data item) {
 		Map<String, Double> set = new LinkedHashMap<String, Double>();
 		for (String key : item.keySet())
-			if (!isLabel(key)
+			if (!key.startsWith("@")
 					&& (isNumerical(key, item) || parseDouble(key, item) != null))
 				set.put(key, parseDouble(key, item));
 		return set;

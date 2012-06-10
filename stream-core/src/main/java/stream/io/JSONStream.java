@@ -100,6 +100,8 @@ public class JSONStream extends AbstractDataStream {
 		if (object != null) {
 			for (String key : object.keySet()) {
 				Object val = object.get(key);
+				if (val == null)
+					continue;
 				if (val instanceof Serializable)
 					instance.put(key, (Serializable) val);
 				else

@@ -32,7 +32,6 @@ import stream.annotations.Description;
 import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionResolver;
-import stream.io.CsvWriter;
 
 /**
  * @author chris
@@ -41,7 +40,7 @@ import stream.io.CsvWriter;
 @Description(text = "", group = "Data Stream.Monitoring")
 public class Message extends ConditionedProcessor {
 
-	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
+	static Logger log = LoggerFactory.getLogger(Message.class);
 
 	protected Expression filter;
 	protected String txt;

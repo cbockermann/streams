@@ -1,5 +1,6 @@
 package stream.classifier;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,23 +73,31 @@ public class Perceptron extends AbstractClassifier {
 	@Override
 	public void train(Data item) {
 
-		String label = null;
-		if (item.get(label) == null) {
+		if (label == null)
+			label = LearnerUtils.detectLabelAttribute(item);
+
+		if (label == null) {
+			log.error("No label found for example!");
+		}
+
+		String clazz = null;
+		Serializable classValue = item.get(label);
+		if (classValue == null) {
 			log.error("No label found for example!");
 			return;
 		} else {
-			label = item.get(label).toString();
+			clazz = classValue.toString();
 		}
 
-		int labelIndex = labels.indexOf(label);
+		int labelIndex = labels.indexOf(clazz);
 		if (labelIndex < 0 && labels.size() < 2) {
-			log.info("Adding label '{}'", label);
-			labels.add(label);
-			labelIndex = labels.indexOf(label);
+			log.info("Adding class '{}'", clazz);
+			labels.add(clazz);
+			labelIndex = labels.indexOf(clazz);
 		}
 
 		if (labelIndex < 0) {
-			log.error("My labels are {}, unknown label: {}", labels, label);
+			log.error("My labels are {}, unknown label: {}", labels, clazz);
 			if (labels.size() == 2)
 				log.error("The perceptron algorithm only works for binary classification tasks!");
 			return;
@@ -98,6 +107,12 @@ public class Perceptron extends AbstractClassifier {
 		if (example.isEmpty()) {
 			log.info("No numerical attributes found for learning! Ignoring example!");
 			return;
+		} else {
+			for (String key : example.keySet()) {
+				if (!attributes.contains(key)) {
+					attributes.add(key);
+				}
+			}
 		}
 
 		// ---reading label
@@ -130,7 +145,7 @@ public class Perceptron extends AbstractClassifier {
 	public String predict(Data item) {
 		if (labels.isEmpty()) {
 			log.warn("No labels available, predicting '?'!");
-			return "?";
+			return null;
 		}
 
 		if (labels.size() == 1) {

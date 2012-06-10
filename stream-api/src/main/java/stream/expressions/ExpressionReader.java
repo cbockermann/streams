@@ -98,21 +98,11 @@ public class ExpressionReader {
 
 		Expression first;
 
-		if (startsWith("(")) {
+		if (startsWith("("))
 			first = readNestedExpression();
-		} else
+		else
 			first = readSimpleFilter();
 
-		/*
-		 * if (startsWith("(")) {
-		 * log.debug("Found nested expression at pos {}: {}", pos,
-		 * input.substring(pos)); ExpressionList list =
-		 * this.readNestedExpression(); // if( list.size() == 1 ) // return
-		 * list.getFirst(); log.debug("\nnested expression: {}\n\n",
-		 * list.toString()); return list;
-		 * 
-		 * } else {
-		 */
 		if (!endOfLine() && !hasBooleanOperator() && !startsWith(")"))
 			throw new ExpressionException(
 					"Boolean operator 'AND' or 'OR' expected after '"
@@ -140,7 +130,6 @@ public class ExpressionReader {
 			return first;
 
 		return new ExpressionList(ops.iterator().next(), exps);
-		// }
 	}
 
 	public boolean endOfLine() {

@@ -214,7 +214,8 @@ public class ProcessElementHandler implements ElementHandler {
 
 			for (String key : params.keySet()) {
 
-				if (ServiceInjection.hasServiceSetter(key, o)) {
+				Class<? extends Service> serviceClass = ServiceInjection.hasServiceSetter( key, o);
+				if ( serviceClass != null ){
 					log.info(
 							"Found service setter for key '{}' in processor {}",
 							key, o);
@@ -222,7 +223,7 @@ public class ProcessElementHandler implements ElementHandler {
 					String ref = params.get(key);
 					ref = vctx.expand(ref);
 					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key);
+							key, serviceClass );
 					container.getServiceRefs().add(serviceRef);
 					continue;
 				}
@@ -231,7 +232,7 @@ public class ProcessElementHandler implements ElementHandler {
 					String ref = params.get(key);
 					ref = vctx.expand(ref);
 					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key);
+							key, serviceClass );
 					container.getServiceRefs().add(serviceRef);
 				}
 			}

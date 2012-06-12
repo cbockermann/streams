@@ -25,7 +25,7 @@ public class ComplexConditionTest {
 	final Context ctx = new Context() {
 
 		@Override
-		public Service lookup(String ref) throws Exception {
+		public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
 			return null;
 		}
 

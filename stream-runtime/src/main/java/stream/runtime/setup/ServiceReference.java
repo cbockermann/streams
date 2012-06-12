@@ -25,6 +25,8 @@ package stream.runtime.setup;
 
 import java.io.Serializable;
 
+import stream.service.Service;
+
 /**
  * <p>
  * This class is a simple service-reference object. It provides the service
@@ -61,11 +63,13 @@ public final class ServiceReference implements Serializable {
 	protected final String ref;
 	protected final Object receiver;
 	protected final String property;
+	protected final Class<? extends Service> serviceClass;
 
-	public ServiceReference(String ref, Object receiver, String property) {
+	public ServiceReference(String ref, Object receiver, String property, Class<? extends Service> serviceClass ) {
 		this.ref = ref;
 		this.receiver = receiver;
 		this.property = property;
+		this.serviceClass = serviceClass;
 	}
 
 	/**
@@ -88,4 +92,10 @@ public final class ServiceReference implements Serializable {
 	public String getProperty() {
 		return property;
 	}
+
+	public Class<? extends Service> getServiceClass() {
+		return serviceClass;
+	}
+	
+	
 }

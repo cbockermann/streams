@@ -41,9 +41,10 @@ public class LocalContext implements ProcessContext {
 	/**
 	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Service lookup(String ref) throws Exception {
-		return lookupService.get(ref);
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+		return (T) lookupService.get(ref);
 	}
 
 	/**

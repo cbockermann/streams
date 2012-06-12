@@ -56,7 +56,7 @@ public class MultiEnqueue extends AbstractProcessor {
 		super.init(ctx);
 		queues = new QueueService[queuesNames.length];
 		for (int i = 0; i < queuesNames.length; i++) {
-			queues[i] = (QueueService) context.lookup(queuesNames[i]);
+			queues[i] = context.lookup(queuesNames[i], QueueService.class );
 		}
 	}
 

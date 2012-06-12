@@ -63,8 +63,9 @@ public class DefaultNamingService implements NamingService {
 	/**
 	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Service lookup(String ref) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
 		log.debug("Looking up processor by reference '{}'", ref);
 
 		if (!isLocal(ref)) {
@@ -73,8 +74,8 @@ public class DefaultNamingService implements NamingService {
 		}
 
 		if (!ref.startsWith("//" + name + "/"))
-			return services.get("//" + name + "/" + ref);
-		return services.get(ref);
+			return (T) services.get("//" + name + "/" + ref);
+		return (T) services.get(ref);
 	}
 
 	/**

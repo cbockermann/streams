@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
+import stream.service.Service;
 import stream.util.SizeOf;
 
 /**
@@ -77,7 +78,7 @@ public class MemorySize extends AbstractProcessor {
 	public Data process(Data input) {
 
 		try {
-			Object p = context.lookup(getRef());
+			Service p = context.lookup(getRef(), Service.class );
 			log.debug("checking memory of processor {}", p);
 			Double size = SizeOf.sizeOf(p);
 			input.put(prefix + ":" + getRef(), size);

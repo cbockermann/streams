@@ -43,7 +43,7 @@ public interface NamingService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Service lookup(String ref) throws Exception;
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception;
 
 	/**
 	 * This method registers a given Service in the naming service.

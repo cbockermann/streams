@@ -73,7 +73,7 @@ public class ServiceInjection {
 			String serviceRef = c.expand(ref.getRef());
 			Object consumer = ref.getReceiver();
 
-			Service service = (Service) ctx.lookup(serviceRef);
+			Service service = (Service) ctx.lookup(serviceRef, ref.getServiceClass());
 			if (service == null) {
 				throw new Exception(
 						"No service could be injected for reference '"
@@ -92,20 +92,21 @@ public class ServiceInjection {
 		}
 	}
 
-	public static boolean hasServiceSetter(String name, Object o) {
+	@SuppressWarnings("unchecked")
+	public static Class<? extends Service> hasServiceSetter(String name, Object o) {
 		try {
 
 			for (Method m : o.getClass().getMethods()) {
 				if (m.getName().equalsIgnoreCase("set" + name)
 						&& isServiceSetter(m)) {
-					return true;
+					return (Class<? extends Service>) m.getParameterTypes()[0];
 				}
 			}
 
-			return false;
+			return null;
 		} catch (Exception e) {
 			log.error("Failed to determine service-setter: {}", e.getMessage());
-			return false;
+			return null;
 		}
 	}
 
@@ -120,7 +121,7 @@ public class ServiceInjection {
 			String serviceRef = ref.getRef();
 			Object consumer = ref.getReceiver();
 
-			Service service = (Service) ns.lookup(serviceRef);
+			Service service = (Service) ns.lookup(serviceRef, ref.getServiceClass());
 			if (service == null) {
 				throw new Exception(
 						"No service could be injected for reference '"

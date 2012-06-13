@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
-import stream.flow.ResetService;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.service.Service;
 
@@ -87,7 +86,7 @@ public class ParameterTableCreator {
 	}
 
 	public static void main(String[] args) {
-		List<ParameterInfo> infos = getParameterInfos(ResetService.class);
+		List<ParameterInfo> infos = getParameterInfos(Service.class);
 		for (ParameterInfo info : infos) {
 			System.out.println(info.name);
 		}

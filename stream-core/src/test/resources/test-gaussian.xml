@@ -1,0 +1,25 @@
+<container namingService="stream.runtime.rpc.RMINamingService">
+
+	<stream id="test" class="stream.io.multi.RandomMultiStream" limit="10"
+			weights="0.01,0.99">
+		<stream id="outlier" class="stream.generator.GaussianStream" 
+				attributes="0.0,1.0,2.0,0.25" />
+		<stream id="normal" class="stream.generator.GaussianStream"
+				attributes="10.0,4.0,-12.0,0.25" />
+	</stream>
+
+	<process input="test" >
+	
+		<CreateID />
+	
+		<stream.monitor.AverageThroughput id="througput"/>
+	
+		<PrintData />
+	
+		<stream.flow.Delay time="30seconds" />
+	
+	</process>
+	
+</container>
+
+

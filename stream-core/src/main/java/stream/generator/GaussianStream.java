@@ -52,6 +52,12 @@ public class GaussianStream extends GeneratorDataStream {
 	Long seed = System.currentTimeMillis();
 
 	Random seedGenerator = new Random();
+	
+	Double[] attributes;
+
+	Long limit = -1L;
+	
+	Long count = 0L;
 
 	/**
 	 * Create a new Gaussian stream with the given number of classes. The map
@@ -64,6 +70,21 @@ public class GaussianStream extends GeneratorDataStream {
 	 *            The parameterization of the attribute distributions.
 	 */
 	public GaussianStream() {
+	}
+
+	@Override
+	public void init() throws Exception {
+		super.init();
+
+		if( attributes == null ){
+			throw new Exception( "Parameter 'attributes' missing! This should be a list of mean,deviation pairs!" );
+		}
+		
+		int cnt = 1;
+		for( int i = 0; i + 1< attributes.length; i += 2 ){
+			setGenerator( "x" + cnt, new Gaussian( attributes[i], attributes[i+1] ) );
+			cnt++;
+		}
 	}
 
 	/**
@@ -81,6 +102,16 @@ public class GaussianStream extends GeneratorDataStream {
 		this.seed = seed;
 		random = new Random(this.seed);
 		this.seedGenerator = new Random(this.seed);
+	}
+
+	
+	
+	public Long getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Long limit) {
+		this.limit = limit;
 	}
 
 	public Data generate() {
@@ -104,6 +135,11 @@ public class GaussianStream extends GeneratorDataStream {
 			log.info("Setting seed for new generator to {}", seed);
 			dist.setSeed(seed);
 		}
+	}
+	
+
+	public void setAttributes(Double[] attributes) {
+		this.attributes = attributes;
 	}
 
 	/**
@@ -132,9 +168,15 @@ public class GaussianStream extends GeneratorDataStream {
 		// should not
 		// happen... :-)
 		//
+		
+		if( limit > 0 && count >= limit ){
+			return null;
+		}
+		
 		Data gen = this.generate();
 		item.clear();
 		item.putAll(gen);
+		count++;
 		return item;
 	}
 

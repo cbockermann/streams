@@ -1,0 +1,10 @@
+<container>
+
+	<stream id="twitter" class="stream.twitter.TweetStream" limit="100"/>
+	
+	
+	<process input="twitter">
+		<stream.logger.Message message="%{data.txt}" />
+	</process>
+
+</container>

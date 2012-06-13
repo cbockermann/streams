@@ -162,6 +162,7 @@ public class ProcessContainer {
 		} catch (Exception e) {
 			log.error("Faild to instantiate naming service '{}': {}",
 					root.getAttribute("namingService"), e.getMessage());
+			e.printStackTrace();
 			throw new Exception("Faild to instantiate naming service '"
 					+ root.getAttribute("namingService") + "': "
 					+ e.getMessage());

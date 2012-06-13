@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ import stream.service.Service;
 public class CsvWriter extends ConditionedProcessor implements Service {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	protected PrintStream p;
-	protected String separator;
+	protected String separator = ",";
 	protected String lastHeader;
 	protected boolean headerWritten;
 	protected String filter;
@@ -187,7 +188,14 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			try {
 				this.url = new URL(expandedUrlString);
 				file = new File(url.toURI());
-				p = new PrintStream(new FileOutputStream(file));
+				
+				OutputStream out;
+				if( file.getAbsolutePath().endsWith( ".gz" ) )
+					out = new GZIPOutputStream( new FileOutputStream( file ) );
+				else
+					out = new FileOutputStream( file );
+				
+				p = new PrintStream(out);
 				lastHeader = null;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -195,6 +203,8 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+			} catch (IOException e){
+				log.error( "Failed to open file: {}", e.getMessage() );
 			}
 		}
 

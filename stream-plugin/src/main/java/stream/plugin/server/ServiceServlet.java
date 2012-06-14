@@ -82,7 +82,8 @@ public class ServiceServlet extends AbstractStreamServlet {
 		log.info("service is would be: '{}'", name);
 
 		try {
-			Service service = OperatorNamingService.getInstance().lookup(name);
+			Service service = OperatorNamingService.getInstance().lookup(name,
+					Service.class);
 			Class<?>[] intf = service.getClass().getInterfaces();
 			for (Class<?> interf : intf) {
 				log.info("Service implements interface {}",

@@ -31,9 +31,6 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
  -->
-	<listener>
-		<listener-class>stream.node.StreamNodeContext</listener-class>
-	</listener>
 
 
 	<filter>
@@ -56,6 +53,9 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<listener>
+		<listener-class>stream.node.StreamNodeContext</listener-class>
+	</listener>
 
 	<servlet>
 		<servlet-name>DeploymentServlet</servlet-name>
@@ -68,6 +68,10 @@
 		<servlet-class>stream.node.servlets.ContainerServlet</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>DocServlet</servlet-name>
+		<servlet-class>stream.node.servlets.DocServlet</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>DeploymentServlet</servlet-name>
@@ -77,6 +81,11 @@
 	<servlet-mapping>
 		<servlet-name>ContainerServlet</servlet-name>
 		<url-pattern>/api/container/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>DocServlet</servlet-name>
+		<url-pattern>/doc/*</url-pattern>
 	</servlet-mapping>
 
 <!-- 

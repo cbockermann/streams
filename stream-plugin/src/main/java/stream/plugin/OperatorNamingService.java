@@ -65,9 +65,10 @@ public class OperatorNamingService extends DefaultNamingService implements
 	 * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
 	 */
 	@Override
-	public Service lookup(String ref) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
 		synchronized (lock) {
-			return super.lookup(ref);
+			return super.lookup(ref, serviceClass);
 		}
 	}
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>DataStreamNode</title>
+	<link rel="stylesheet" type="text/css" href="${context.path}/css/base.css">
+	<link rel="stylesheet" type="text/css" href="${context.path}/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${context.path}/css/config.css">
+	<link rel="SHORTCUT ICON" href="${context.path}/favicon.ico" type="image/x-icon">
+	
+	
+</head>
+
+	
+<body>
+  
+
+<div id="page-header" class="header" >
+
+  
+
+  <ul class="component">
+	<li style="list-style-image: url('${context.path}/images/home.png');"><a href="/index">Status</a></li>
+  </ul>
+  <ul class="component">
+	<li><a href="/processes">Processes</a></li>
+  </ul>
+  
+  <div class="menuNodeStorage">
+<!-- 
+	<div class="subMenu">
+		<ul>
+			<li> <a href="/audit-event-index">Audit Events</a> </li>
+			<li> <a href="/log-message-index">Log Messages</a> </li>
+		</ul>
+	</div>
+ -->	
+  </div>
+
+  
+  <ul style="float: right;" class="component">
+	<li style="list-style-image: url('${context.path}/images/system-help.png');"><a href="/doc/">Help</a></li>
+  </ul>
+  
+</div>
+    
+
+<div class="content">
+
+	${content}
+
+</div>
+
+<div style="clear: both;"></div>
+    
+<div id="footer">
+  <div style="float: right;">
+  	Data Stream Node, ${stream.node.version}
+  </div>
+</div>
+  
+</body>
+</html>

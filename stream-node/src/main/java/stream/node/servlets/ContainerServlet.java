@@ -41,8 +41,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.node.StreamNodeContext;
-import stream.runtime.Context;
 import stream.runtime.ProcessContainer;
 
 /**
@@ -93,7 +93,7 @@ public class ContainerServlet extends HttpServlet {
 			try {
 				Context ctx = container.getContext();
 				log.debug("Using contxt {} for lookup", ctx);
-				Object object = ctx.lookup(id);
+				Object object = ctx.resolve(id);
 				if (object == null) {
 					resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;

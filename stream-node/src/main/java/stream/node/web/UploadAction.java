@@ -35,8 +35,8 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-@Result(name = "success", location = "/WEB-INF/content/upload.jsp")
-public class HelpAction extends ActionSupport {
+@Result(name = "success", location = "/WEB-INF/content/help.jsp")
+public class UploadAction extends ActionSupport {
 	/** The unique class ID */
 	private static final long serialVersionUID = -5120299089079573448L;
 

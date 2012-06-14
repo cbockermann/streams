@@ -57,6 +57,7 @@ public class DisableStruts2Filter implements Filter {
 
 	public DisableStruts2Filter() {
 		patterns.add("/api/");
+		patterns.add("/doc/");
 	}
 
 	/**

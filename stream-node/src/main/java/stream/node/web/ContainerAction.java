@@ -40,9 +40,9 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.node.StreamNodeContext;
 import stream.node.servlets.ContainerServlet;
-import stream.runtime.Context;
 import stream.runtime.ProcessContainer;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -53,7 +53,8 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 @Results({ @Result(name = "notfound", type = "httpheader", params = { "status",
 		"404", "errorMessage", "Not Found" }) })
-public class ContainerAction extends ActionSupport implements ServletRequestAware {
+public class ContainerAction extends ActionSupport implements
+		ServletRequestAware {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -4595878396489464885L;
@@ -140,7 +141,7 @@ public class ContainerAction extends ActionSupport implements ServletRequestAwar
 				try {
 					Context ctx = container.getContext();
 					log.debug("Using contxt {} for lookup", ctx);
-					Object object = ctx.lookup(id);
+					Object object = ctx.resolve(id);
 					if (object == null) {
 						return "notfound";
 					}

@@ -94,7 +94,7 @@ public class IndexServlet extends AbstractStreamServlet {
 			String link = "<td>" + name + "</td>";
 
 			try {
-				Service s = ns.lookup(name);
+				Service s = ns.lookup(name, Service.class);
 				log.info("Service is {}", s);
 				if (ServiceServlet.canRender(s)) {
 					log.info("Yes! we have a renderer for {}", s);
@@ -109,7 +109,7 @@ public class IndexServlet extends AbstractStreamServlet {
 			}
 			sb.append(link);
 			try {
-				Service service = ns.lookup(name);
+				Service service = ns.lookup(name, Service.class);
 				sb.append("<td><code>" + service.getClass().getCanonicalName()
 						+ "</code></td>");
 

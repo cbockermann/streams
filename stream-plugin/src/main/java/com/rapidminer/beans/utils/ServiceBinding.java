@@ -47,7 +47,7 @@ public class ServiceBinding {
 							serviceName);
 
 					Service service = OperatorNamingService.getInstance()
-							.lookup(serviceName);
+							.lookup(serviceName, Service.class);
 					log.info("Found service for name '{}': {}", serviceName,
 							service);
 
@@ -56,7 +56,8 @@ public class ServiceBinding {
 					}
 
 					ServiceReference ref = new ServiceReference(serviceName,
-							op.getProcessor(), serviceParam.getKey());
+							op.getProcessor(), serviceParam.getKey(),
+							serviceParam.serviceType);
 					refs.add(ref);
 				} catch (Exception e) {
 					e.printStackTrace();

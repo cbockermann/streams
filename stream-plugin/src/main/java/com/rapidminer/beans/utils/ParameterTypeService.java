@@ -62,7 +62,7 @@ public class ParameterTypeService extends ParameterTypeCategory {
 		while (it.hasNext()) {
 			String name = it.next();
 			try {
-				Service srv = namingService.lookup(name);
+				Service srv = namingService.lookup(name, Service.class);
 				if (srv != null && serviceType.isAssignableFrom(srv.getClass())) {
 					log.info(
 							"Found possible service match for type {} with name {}",

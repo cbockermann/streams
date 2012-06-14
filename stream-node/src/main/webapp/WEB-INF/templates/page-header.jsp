@@ -29,7 +29,7 @@
 
   
   <ul style="float: right;" class="component">
-	<li style="list-style-image: url('<%= request.getContextPath() %>/images/system-help.png');"><a href="<%= request.getContextPath() %>/help">Help</a></li>
+	<li style="list-style-image: url('<%= request.getContextPath() %>/images/system-help.png');"><a href="<%= request.getContextPath() %>/doc/">Help</a></li>
   </ul>
   
   <!-- 

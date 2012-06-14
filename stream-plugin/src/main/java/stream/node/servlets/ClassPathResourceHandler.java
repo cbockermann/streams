@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.plugin.server;
+package stream.node.servlets;
 
 import java.io.IOException;
 import java.io.InputStream;

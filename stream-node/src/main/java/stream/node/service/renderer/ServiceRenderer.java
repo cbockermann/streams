@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.server.renderer;
+package stream.node.service.renderer;
 
 import stream.service.Service;
 

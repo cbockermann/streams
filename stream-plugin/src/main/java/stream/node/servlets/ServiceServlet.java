@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.plugin.server;
+package stream.node.servlets;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.learner.MetaDataService;
+import stream.node.service.renderer.MetaDataServiceRenderer;
+import stream.node.service.renderer.ServiceRenderer;
 import stream.plugin.OperatorNamingService;
-import stream.server.renderer.MetaDataServiceRenderer;
-import stream.server.renderer.ServiceRenderer;
 import stream.service.Service;
 
 /**

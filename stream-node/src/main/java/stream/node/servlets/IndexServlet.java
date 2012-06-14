@@ -1,10 +1,11 @@
 /**
  * 
  */
-package stream.plugin.server;
+package stream.node.servlets;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Processor;
-import stream.plugin.OperatorNamingService;
+import stream.runtime.rpc.RMINamingService;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -29,12 +31,18 @@ public class IndexServlet extends AbstractStreamServlet {
 	private static final long serialVersionUID = -7612686573328499862L;
 
 	static Logger log = LoggerFactory.getLogger(IndexServlet.class);
-	final OperatorNamingService ns = OperatorNamingService.getInstance();
+	final NamingService ns;
 
 	final Map<String, String> ctx = new HashMap<String, String>();
 
 	public IndexServlet() {
 		super("/template.html");
+		try {
+			ns = new RMINamingService();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException( "Failed to create naming service!" );
+		}
 	}
 
 	/**
@@ -65,7 +73,7 @@ public class IndexServlet extends AbstractStreamServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
 		sb.append("<tr><th>Name</th><th>Type</th></tr>");
-		Map<String, Processor> serviceNames = ns.getProcessors();
+		Map<String, Processor> serviceNames = new LinkedHashMap<String,Processor>(); //ns.getProcessors();
 		for (String name : serviceNames.keySet()) {
 			sb.append("<tr>");
 			sb.append("<td><a href=\"/processor/" + name + "\">" + name
@@ -87,6 +95,7 @@ public class IndexServlet extends AbstractStreamServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
 		sb.append("<tr><th>Name</th><th>Provider</th><th>Services</tr>");
+		/*
 		Set<String> serviceNames = ns.getServiceNames();
 		for (String name : serviceNames) {
 			sb.append("<tr>");
@@ -138,6 +147,7 @@ public class IndexServlet extends AbstractStreamServlet {
 			}
 			sb.append("</tr>");
 		}
+		 */
 		sb.append("</table>");
 		return sb.toString();
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.plugin.server;
+package stream.node.servlets;
 
 import javax.servlet.http.HttpServlet;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.server.renderer;
+package stream.node.service.renderer;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import stream.data.Statistics;
 import stream.learner.MetaDataService;
 import stream.learner.MetaDataService.StreamInfo;
-import stream.plugin.server.Template;
+import stream.node.servlets.Template;
 import stream.statistics.StatisticsHistory;
 import stream.util.MD5;
 

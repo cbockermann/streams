@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.plugin.server;
+package stream.node.servlets;
 
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.server.Handler;

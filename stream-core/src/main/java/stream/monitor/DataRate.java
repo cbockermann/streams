@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
+import stream.data.Statistics;
+import stream.statistics.StatisticsService;
 
-public class DataRate extends AbstractProcessor {
+public class DataRate extends AbstractProcessor implements StatisticsService {
 
 	static Logger log = LoggerFactory.getLogger(DataRate.class);
 	String clock = null;
@@ -15,6 +17,7 @@ public class DataRate extends AbstractProcessor {
 	Long windowCount = 0L;
 	Long last = 0L;
 	Double elapsed = 0.0d;
+	Double rate = new Double( 0.0 );
 
 	String key = "dataRate";
 
@@ -56,14 +59,15 @@ public class DataRate extends AbstractProcessor {
 		Double seconds = Math.abs(last - now) / 1000.0d;
 		if (now > last) {
 			elapsed += seconds;
-			log.info("data rate: {}  (overall: {})", windowCount / seconds,
+			rate = windowCount / seconds;
+			log.debug("data rate: {}  (overall: {})", rate,
 					count / elapsed);
 			last = now;
 			windowCount = 1L;
 
 			if (key != null) {
 				input.put("time", new Double(elapsed));
-				input.put(key, new Double(windowCount / seconds));
+				input.put(key, new Double( rate ) );
 			}
 
 		} else {
@@ -72,5 +76,19 @@ public class DataRate extends AbstractProcessor {
 
 		count++;
 		return input;
+	}
+
+	@Override
+	public void reset() throws Exception {
+		count = 0L;
+		windowCount = 1L;
+		last = 0L;
+	}
+
+	@Override
+	public Statistics getStatistics() {
+		Statistics st = new Statistics();
+		st.put( "dataRate", rate);
+		return st;
 	}
 }

@@ -23,6 +23,7 @@
  */
 package stream.runtime;
 
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
+import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.DocumentHandler;
 import stream.runtime.setup.LibrariesElementHandler;
 import stream.runtime.setup.MonitorElementHandler;
@@ -153,7 +155,22 @@ public class ProcessContainer {
 		else
 			name = "local";
 
-		NamingService namingService = new DefaultNamingService();
+		
+		String host = "localhost";
+		if( root.getAttribute( "address" ) != null && ! "".equals( root.getAttribute("port").trim()) ){
+			host = InetAddress.getByName( root.getAttribute( "address" ) ).getHostAddress();
+			log.info( "Container address will be {}", host );
+		}
+		
+		Integer port = 9105;
+		
+		if( root.getAttribute( "port" ) != null && ! "".equals( root.getAttribute( "port" ).trim() ) ){
+			port = new Integer( root.getAttribute("port" ) );
+			log.info( "Container port will be {}", port );
+		}
+		
+		NamingService namingService = new RMINamingService( name, host, port );
+		
 		try {
 			String nsClass = root.getAttribute("namingService");
 			if (nsClass != null && !nsClass.trim().isEmpty())
@@ -167,7 +184,7 @@ public class ProcessContainer {
 					+ root.getAttribute("namingService") + "': "
 					+ e.getMessage());
 		}
-
+		log.info( "Using naming-service {}", namingService );
 		context = new ContainerContext(name, namingService);
 		this.init(doc);
 	}

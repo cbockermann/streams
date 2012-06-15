@@ -3,6 +3,9 @@
  */
 package stream.expressions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -40,6 +43,11 @@ public class ComplexConditionTest {
 		@Override
 		public Object resolve(String variable) {
 			return null;
+		}
+
+		@Override
+		public Map<String, String> list() throws Exception {
+			return new HashMap<String,String>();
 		}
 	};
 

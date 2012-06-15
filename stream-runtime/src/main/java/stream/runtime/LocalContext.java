@@ -24,6 +24,7 @@
 package stream.runtime;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.ProcessContext;
@@ -90,4 +91,13 @@ public class LocalContext implements ProcessContext {
 		return get(variable);
 	}
 
+
+	@Override
+	public Map<String, String> list() throws Exception {
+		Map<String,String> classes = new LinkedHashMap<String,String>();
+		for( String key : lookupService.keySet() ){
+			classes.put( key, lookupService.get( key ).getClass().getSimpleName() );
+		}
+		return classes;
+	}
 }

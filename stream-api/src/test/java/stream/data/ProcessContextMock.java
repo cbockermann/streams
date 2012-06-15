@@ -4,6 +4,7 @@
 package stream.data;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.ProcessContext;
@@ -53,6 +54,18 @@ public class ProcessContextMock implements ProcessContext {
 		services.remove(ref);
 	}
 
+	/**
+	 * @see stream.service.NamingService#list()
+	 */
+	@Override
+	public Map<String, String> list() throws Exception {
+		Map<String,String> classes = new LinkedHashMap<String,String>();
+		for( String key : services.keySet() ){
+			classes.put( key, services.get( key ).getClass().getSimpleName() );
+		}
+		return classes;
+	}
+	
 	/**
 	 * @see stream.ProcessContext#get(java.lang.String)
 	 */

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.runtime.rpc.RMINamingService;
 import stream.service.NamingService;
-import stream.service.Service;
 
 /**
  * @author chris
@@ -41,7 +39,7 @@ public class IndexServlet extends AbstractStreamServlet {
 			ns = new RMINamingService();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException( "Failed to create naming service!" );
+			throw new RuntimeException("Failed to create naming service!");
 		}
 	}
 
@@ -73,7 +71,7 @@ public class IndexServlet extends AbstractStreamServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
 		sb.append("<tr><th>Name</th><th>Type</th></tr>");
-		Map<String, Processor> serviceNames = new LinkedHashMap<String,Processor>(); //ns.getProcessors();
+		Map<String, Processor> serviceNames = new LinkedHashMap<String, Processor>(); // ns.getProcessors();
 		for (String name : serviceNames.keySet()) {
 			sb.append("<tr>");
 			sb.append("<td><a href=\"/processor/" + name + "\">" + name
@@ -96,57 +94,34 @@ public class IndexServlet extends AbstractStreamServlet {
 		sb.append("<table>");
 		sb.append("<tr><th>Name</th><th>Provider</th><th>Services</tr>");
 		/*
-		Set<String> serviceNames = ns.getServiceNames();
-		for (String name : serviceNames) {
-			sb.append("<tr>");
-
-			String link = "<td>" + name + "</td>";
-
-			try {
-				Service s = ns.lookup(name, Service.class);
-				log.info("Service is {}", s);
-				if (ServiceServlet.canRender(s)) {
-					log.info("Yes! we have a renderer for {}", s);
-					link = "<td><a href=\"/service/" + name + "\">" + name
-							+ "</a></td>";
-				} else {
-					log.info("No renderer exists for {}", s);
-				}
-			} catch (Exception e) {
-				log.error("Failed to look up service '{}': {}", name,
-						e.getMessage());
-			}
-			sb.append(link);
-			try {
-				Service service = ns.lookup(name, Service.class);
-				sb.append("<td><code>" + service.getClass().getCanonicalName()
-						+ "</code></td>");
-
-				sb.append("<td>");
-				Class<?>[] intf = service.getClass().getInterfaces();
-				int services = 0;
-				for (Class<?> interf : intf) {
-					log.info("Service implements interface {}",
-							interf.getCanonicalName());
-
-					if (interf != Service.class
-							&& Service.class.isAssignableFrom(interf)) {
-						if (services > 0)
-							sb.append("<br/>");
-						sb.append("<a href='${context}/documentation/"
-								+ interf.getCanonicalName() + "'>");
-						sb.append("<code>");
-						sb.append(interf.getCanonicalName());
-						sb.append("</code>");
-						services++;
-					}
-				}
-				sb.append("</td>");
-
-			} catch (Exception e) {
-			}
-			sb.append("</tr>");
-		}
+		 * Set<String> serviceNames = ns.getServiceNames(); for (String name :
+		 * serviceNames) { sb.append("<tr>");
+		 * 
+		 * String link = "<td>" + name + "</td>";
+		 * 
+		 * try { Service s = ns.lookup(name, Service.class);
+		 * log.info("Service is {}", s); if (ServiceServlet.canRender(s)) {
+		 * log.info("Yes! we have a renderer for {}", s); link =
+		 * "<td><a href=\"/service/" + name + "\">" + name + "</a></td>"; } else
+		 * { log.info("No renderer exists for {}", s); } } catch (Exception e) {
+		 * log.error("Failed to look up service '{}': {}", name,
+		 * e.getMessage()); } sb.append(link); try { Service service =
+		 * ns.lookup(name, Service.class); sb.append("<td><code>" +
+		 * service.getClass().getCanonicalName() + "</code></td>");
+		 * 
+		 * sb.append("<td>"); Class<?>[] intf =
+		 * service.getClass().getInterfaces(); int services = 0; for (Class<?>
+		 * interf : intf) { log.info("Service implements interface {}",
+		 * interf.getCanonicalName());
+		 * 
+		 * if (interf != Service.class &&
+		 * Service.class.isAssignableFrom(interf)) { if (services > 0)
+		 * sb.append("<br/>"); sb.append("<a href='${context}/documentation/" +
+		 * interf.getCanonicalName() + "'>"); sb.append("<code>");
+		 * sb.append(interf.getCanonicalName()); sb.append("</code>");
+		 * services++; } } sb.append("</td>");
+		 * 
+		 * } catch (Exception e) { } sb.append("</tr>"); }
 		 */
 		sb.append("</table>");
 		return sb.toString();

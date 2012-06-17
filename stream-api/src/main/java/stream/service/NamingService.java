@@ -23,6 +23,8 @@
  */
 package stream.service;
 
+import java.util.Map;
+
 /**
  * <p>
  * This interface provides a service registry. Services can be registered using
@@ -61,4 +63,14 @@ public interface NamingService {
 	 * @throws Exception
 	 */
 	public void unregister(String ref) throws Exception;
+	
+	
+	/**
+	 * This method returns a list of names, registered and the service interfaces for
+	 * these names.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String,String> list() throws Exception;
 }

@@ -2,7 +2,7 @@
     This simple container experiment checks whether the ServiceInjection is working properly.
  -->
 
-<Container>
+<Container address="192.168.10.4" port="9106">
 
 	<Stream id="input" class="stream.test.TestStream" limit = "10" />
 

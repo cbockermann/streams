@@ -123,6 +123,7 @@ public class IndexServlet extends AbstractStreamServlet {
 		 * 
 		 * } catch (Exception e) { } sb.append("</tr>"); }
 		 */
+
 		sb.append("</table>");
 		return sb.toString();
 	}

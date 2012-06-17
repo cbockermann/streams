@@ -1,40 +1,41 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>streams</artifactId>
-    <groupId>org.jwall</groupId>
-    <version>0.9.4-SNAPSHOT</version>
-    <relativePath>..</relativePath>
-  </parent>
-  <name>stream-runtime</name>
-  <artifactId>stream-runtime</artifactId>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.jwall</groupId>
-  		<artifactId>stream-api</artifactId>
-  		<version>${pom.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.10</version>
-  		<scope>test</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.slf4j</groupId>
-  		<artifactId>slf4j-log4j12</artifactId>
-  		<version>1.6.4</version>
-  		<scope>test</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.hsqldb</groupId>
-  		<artifactId>hsqldb</artifactId>
-  		<version>2.2.8</version>
-  		<scope>test</scope>
-  	</dependency>
-  </dependencies>
-  
-  	<developers>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>streams</artifactId>
+		<groupId>org.jwall</groupId>
+		<version>0.9.4-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<name>stream-runtime</name>
+	<artifactId>stream-runtime</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.2.8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<developers>
 		<developer>
 			<name>Christian Bockermann</name>
 			<email>christian.bockermann@cs.uni-dortmund.de</email>
@@ -43,7 +44,7 @@
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -71,6 +72,21 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>stream.Shell</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
-	</build>  
+	</build>
 </project>

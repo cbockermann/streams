@@ -24,6 +24,7 @@
 package stream.runtime;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -111,5 +112,16 @@ public class DefaultNamingService implements NamingService {
 			services.remove(ref);
 		} else
 			log.debug("No processor registered for reference {}", ref);
+	}
+
+	@Override
+	public Map<String, String> list() throws Exception {
+
+		Map<String,String> lst = new LinkedHashMap<String,String>();
+		for( String key : services.keySet() ){
+			lst.put( key, services.get(key).getClass().getSimpleName() );
+		}
+		
+		return lst;
 	}
 }

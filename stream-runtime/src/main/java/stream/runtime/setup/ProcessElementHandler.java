@@ -214,27 +214,41 @@ public class ProcessElementHandler implements ElementHandler {
 
 			for (String key : params.keySet()) {
 
-				Class<? extends Service> serviceClass = ServiceInjection.hasServiceSetter( key, o);
-				if ( serviceClass != null ){
+				// remove obsolete "-ref" string, this is to keep
+				// backwards-compatibility
+				//
+				String k = key;
+
+				if (key.endsWith("-ref"))
+					key = key.replace("-ref", "");
+
+				Class<? extends Service> serviceClass = ServiceInjection
+						.hasServiceSetter(key, o);
+				if (serviceClass != null) {
 					log.info(
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String ref = params.get(key);
+					String ref = params.get(k);
 					ref = vctx.expand(ref);
 					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key, serviceClass );
+							key, serviceClass);
 					container.getServiceRefs().add(serviceRef);
 					continue;
 				}
 
-				if (key.endsWith("-ref")) {
-					String ref = params.get(key);
-					ref = vctx.expand(ref);
-					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key, serviceClass );
-					container.getServiceRefs().add(serviceRef);
-				}
+				/*
+				 * if (key.endsWith("-ref")) { String ref = params.get(key); ref
+				 * = vctx.expand(ref);
+				 * 
+				 * if (serviceClass == null) throw new Exception(
+				 * "Service interface of referenced service '" + key +
+				 * "' cannot be determined!");
+				 * 
+				 * ServiceReference serviceRef = new ServiceReference(ref, o,
+				 * key, serviceClass);
+				 * container.getServiceRefs().add(serviceRef); }
+				 */
 			}
 
 			return (Processor) o;

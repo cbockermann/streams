@@ -82,6 +82,12 @@ public class ProcessContextImpl implements ProcessContext {
 		containerContext.unregister(ref);
 	}
 
+	
+	@Override
+	public Map<String, String> list() throws Exception {
+		return containerContext.list();
+	}
+
 	/**
 	 * @see stream.ProcessContext#get(java.lang.String)
 	 */

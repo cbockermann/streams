@@ -111,4 +111,9 @@ public class ContainerContext implements Context {
 	public void unregister(String ref) throws Exception {
 		namingService.unregister(ref);
 	}
+
+	@Override
+	public Map<String, String> list() throws Exception {
+		return namingService.list();
+	}
 }

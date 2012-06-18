@@ -46,10 +46,15 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	public RMINamingService(String name) throws Exception {
-		this(name, "localhost", 9105);
+		this(name, "localhost", 9105, true);
 	}
 
 	public RMINamingService(String name, String host, int port)
+			throws Exception {
+		this(name, host, port, false);
+	}
+
+	public RMINamingService(String name, String host, int port, boolean announce)
 			throws Exception {
 		this.name = name;
 		this.namespace = "//" + name + "/";
@@ -94,9 +99,11 @@ public class RMINamingService extends UnicastRemoteObject implements
 		announcement = new ContainerAnnouncement(name, "rmi",
 				address.getHostAddress(), port);
 		log.info("Announcement will be: {}", announcement);
-		announcer = new Announcer(9200, announcement);
-		announcer.setDaemon(true);
-		announcer.start();
+		if (announce) {
+			announcer = new Announcer(9200, announcement);
+			announcer.setDaemon(true);
+			announcer.start();
+		}
 	}
 
 	/**
@@ -142,6 +149,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 	@Override
 	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
 			throws Exception {
+		log.info("Received lookup for {} ({})", ref, serviceClass);
+
 		String localRef = getLocalRef(ref);
 		if (localRef == null)
 			throw new Exception("No local reference for '" + ref + "'!");
@@ -262,14 +271,20 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	@Override
-	public Serializable call(String name, String method, Serializable... args)
-			throws RemoteException {
+	public Serializable call(String name, String method, String signature,
+			Serializable... args) throws RemoteException {
 		try {
 			log.info("calling '{}.{}'", name, method);
 			log.info("   args: {}", args);
+
+			List<Serializable> params = new ArrayList<Serializable>();
+			for (int i = 0; i < args.length; i++) {
+				params.add(args[i]);
+			}
+
 			RemoteEndpoint re = (RemoteEndpoint) registry
 					.lookup(getLocalRef(name));
-			return re.call(method, args);
+			return re.call(method, signature, params);
 		} catch (Exception e) {
 			throw new RemoteException(e.getMessage());
 		}

@@ -173,7 +173,8 @@ public class ProcessContainer {
 		if (root.hasAttribute("id"))
 			name = root.getAttribute("id");
 
-		NamingService namingService = new RMINamingService(name, host, port);
+		NamingService namingService = new RMINamingService(name, host, port,
+				true);
 
 		try {
 			String nsClass = root.getAttribute("namingService");

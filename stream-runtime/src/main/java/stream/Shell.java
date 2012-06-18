@@ -87,7 +87,7 @@ public class Shell {
 		}
 
 		try {
-			return "" + namingService.call(name, method, params);
+			return "" + namingService.call(name, method, "", params);
 		} catch (Exception e) {
 			return "Error: " + e.getMessage();
 		}

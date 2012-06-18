@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,16 +84,16 @@ public final class Naming {
 				 * "Arguments are not serializable!" ); }
 				 */
 
-				Serializable[] params = null;
+				List<Serializable> params = new ArrayList<Serializable>();
 
 				if (args != null) {
-					params = new Serializable[args.length];
 					for (int i = 0; i < args.length; i++) {
-						params[i] = (Serializable) args[i];
+						params.add((Serializable) args[i]);
 					}
 				}
 
-				Object result = endpoint.call(method.getName(), params);
+				Object result = endpoint.call(method.getName(),
+						RMIServiceDelegator.computeSignature(method), params);
 				return result;
 			} catch (Exception e) {
 				e.printStackTrace();

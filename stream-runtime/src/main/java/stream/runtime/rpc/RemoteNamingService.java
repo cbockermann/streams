@@ -9,7 +9,9 @@ import stream.service.NamingService;
 
 public interface RemoteNamingService extends NamingService, Remote {
 
-	public Map<String,String> getServiceInfo( String name ) throws RemoteException;
-	
-	public Serializable call( String name, String method, Serializable...args ) throws RemoteException;
+	public Map<String, String> getServiceInfo(String name)
+			throws RemoteException;
+
+	public Serializable call(String name, String method, String signature,
+			Serializable... args) throws RemoteException;
 }

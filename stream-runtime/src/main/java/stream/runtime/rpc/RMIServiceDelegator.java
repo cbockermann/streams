@@ -3,9 +3,13 @@ package stream.runtime.rpc;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import stream.util.MD5;
 
 public class RMIServiceDelegator implements InvocationHandler, Serializable {
 
@@ -35,30 +39,63 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 				return this.toString();
 			}
 
-			log.trace("received invoke-request, method: {}, args: {}",
+			log.info("received invoke-request, method: {}, args: {}",
 					method.getName(), args);
-			log.trace("   object reference is: {}", proxy);
+			log.info("   object reference is: {}", proxy);
+			log.info("   arg-types: {}", method.getParameterTypes());
 
 			if (args != null
 					&& !(args.getClass().getComponentType() instanceof Serializable)) {
 				log.error("Arguments are not serializable!");
 			}
 
-			Serializable[] params = null;
-
+			List<Serializable> params = new ArrayList<Serializable>();
 			if (args != null) {
-				params = new Serializable[args.length];
 				for (int i = 0; i < args.length; i++) {
-					params[i] = (Serializable) args[i];
+					params.add((Serializable) args[i]);
 				}
 			}
 
-			Object result = endpoint.call(method.getName(), params);
+			/*
+			 * Serializable[] params = null;
+			 * 
+			 * if (args != null) { params = new Serializable[args.length]; for
+			 * (int i = 0; i < args.length; i++) { params[i] = (Serializable)
+			 * args[i]; if (args[i] != null) log.info("args[{}] = {}", i,
+			 * args[i].getClass()); } }
+			 */
+			log.info("Calling endpoint {} with {}", endpoint, method);
+			Object result;
+			String signature = computeSignature(method);
+
+			if (method.getParameterTypes().length == 0) {
+				result = endpoint.call(method.getName(), signature,
+						new ArrayList<Serializable>());
+			} else
+				result = endpoint.call(method.getName(), signature, params);
 			return result;
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return null;
+	}
+
+	public static String computeSignature(Method m) {
+		StringBuffer s = new StringBuffer();
+		s.append(m.getName() + "(");
+		Class<?> types[] = m.getParameterTypes();
+		for (int i = 0; i < types.length; i++) {
+			s.append(types[i].getClass().getCanonicalName());
+			if (i + 1 < types.length)
+				s.append(",");
+		}
+		s.append(")");
+
+		log.info("Method {} signature string is: {}", m, s);
+
+		return MD5.md5(s.toString());
 	}
 }

@@ -2,7 +2,7 @@
     This simple container experiment checks whether the ServiceInjection is working properly.
  -->
 
-<Container address="192.168.10.4" port="9106">
+<Container>
 
 	<Stream id="input" class="stream.test.TestStream" limit = "10" />
 
@@ -13,6 +13,8 @@
 		<stream.data.stats.CountCheck countService-ref="metaData" />
 
 		<stream.test.LogData />
+		
+		<PrintData />
 		
 	</Process>
 	

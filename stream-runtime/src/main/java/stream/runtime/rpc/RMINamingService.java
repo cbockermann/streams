@@ -127,8 +127,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 */
 	protected String getLocalRef(String ref) {
 		if (isLocal(ref)) {
-			if (ref.startsWith(namespace))
-				return ref.substring(namespace.length());
+			if (!ref.startsWith(namespace))
+				return namespace + ref; // ref.substring(namespace.length());
 			return ref;
 		}
 		return null;

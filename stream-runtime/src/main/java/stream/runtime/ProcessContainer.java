@@ -145,31 +145,33 @@ public class ProcessContainer {
 		Document doc = db.parse(url.openStream());
 
 		Element root = doc.getDocumentElement();
+		Map<String, String> attr = objectFactory.getAttributes(root);
 
 		if (!root.getNodeName().equalsIgnoreCase("experiment")
 				&& !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
 
-		if (root.hasAttribute("id"))
-			name = root.getAttribute("id");
-		else
-			name = "local";
+		String host = InetAddress.getLocalHost().getHostAddress(); // .getHostName();
+		name = InetAddress.getLocalHost().getHostName();
+		if (name.indexOf(".") > 0) {
+			name = name.substring(0, name.indexOf("."));
+		}
 
-		String host = "localhost";
-		if (root.getAttribute("address") != null
-				&& !"".equals(root.getAttribute("address").trim())) {
-			host = InetAddress.getByName(root.getAttribute("address"))
-					.getHostAddress();
+		log.info("Default hostname is: {}", host);
+		// String host = "localhost";
+		if (attr.containsKey("address")
+				&& !attr.get("address").trim().isEmpty()) {
+			host = InetAddress.getByName(attr.get("address")).getHostAddress();
 			log.info("Container address will be {}", host);
 		}
 
 		Integer port = 9105;
-
-		if (root.getAttribute("port") != null
-				&& !"".equals(root.getAttribute("port").trim())) {
-			port = new Integer(root.getAttribute("port"));
+		if (attr.containsKey("port") && !attr.get("port").trim().isEmpty()) {
+			port = new Integer(attr.get("port"));
 			log.info("Container port will be {}", port);
 		}
+		if (root.hasAttribute("id"))
+			name = root.getAttribute("id");
 
 		NamingService namingService = new RMINamingService(name, host, port);
 
@@ -177,7 +179,7 @@ public class ProcessContainer {
 			String nsClass = root.getAttribute("namingService");
 			if (nsClass != null && !nsClass.trim().isEmpty())
 				namingService = (NamingService) objectFactory.create(nsClass,
-						new HashMap<String, String>());
+						attr);
 		} catch (Exception e) {
 			log.error("Faild to instantiate naming service '{}': {}",
 					root.getAttribute("namingService"), e.getMessage());

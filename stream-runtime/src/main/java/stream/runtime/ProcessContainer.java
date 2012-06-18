@@ -173,8 +173,7 @@ public class ProcessContainer {
 		if (root.hasAttribute("id"))
 			name = root.getAttribute("id");
 
-		NamingService namingService = new RMINamingService(name, host, port,
-				true);
+		NamingService namingService = null;
 
 		try {
 			String nsClass = root.getAttribute("namingService");
@@ -189,6 +188,14 @@ public class ProcessContainer {
 					+ root.getAttribute("namingService") + "': "
 					+ e.getMessage());
 		}
+
+		//
+		// create the default NamingService if none has been specified, yet.
+		//
+		if (namingService == null) {
+			namingService = new RMINamingService(name, host, port, true);
+		}
+
 		log.info("Using naming-service {}", namingService);
 		context = new ContainerContext(name, namingService);
 		this.init(doc);

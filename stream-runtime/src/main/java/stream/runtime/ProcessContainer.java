@@ -193,8 +193,14 @@ public class ProcessContainer {
 		// create the default NamingService if none has been specified, yet.
 		//
 		if (namingService == null) {
-			System.setProperty( "java.rmi.server.hostname", host );
-			namingService = new RMINamingService(name, host, port, true);
+
+			if (attr.containsKey("address")) {
+				System.setProperty("java.rmi.server.hostname", host);
+				namingService = new RMINamingService(name, host, port, true);
+			} else {
+				log.info("No address specified, using local naming-service. Container will not be able to reference other containers!");
+				namingService = new DefaultNamingService();
+			}
 		}
 
 		log.info("Using naming-service {}", namingService);

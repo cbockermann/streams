@@ -66,12 +66,13 @@ public class DefaultNamingService implements NamingService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
 		log.debug("Looking up processor by reference '{}'", ref);
 
 		if (!isLocal(ref)) {
-			log.debug("Reference is non-local. Non-local references are currently not supported!");
-			return null;
+			throw new Exception(
+					"Reference is non-local. Non-local references are currently not supported!");
 		}
 
 		if (!ref.startsWith("//" + name + "/"))
@@ -117,11 +118,11 @@ public class DefaultNamingService implements NamingService {
 	@Override
 	public Map<String, String> list() throws Exception {
 
-		Map<String,String> lst = new LinkedHashMap<String,String>();
-		for( String key : services.keySet() ){
-			lst.put( key, services.get(key).getClass().getSimpleName() );
+		Map<String, String> lst = new LinkedHashMap<String, String>();
+		for (String key : services.keySet()) {
+			lst.put(key, services.get(key).getClass().getSimpleName());
 		}
-		
+
 		return lst;
 	}
 }

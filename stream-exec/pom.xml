@@ -3,7 +3,7 @@
   <parent>
     <artifactId>streams</artifactId>
     <groupId>org.jwall</groupId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.9.4-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>stream-exec</artifactId>
@@ -66,12 +66,12 @@
   		<dependency>
   			<groupId>org.jwall</groupId>
   			<artifactId>stream-core</artifactId>
-  			<version>0.9.0</version>
+  			<version>${project.version}</version>
   		</dependency>
   		<dependency>
   			<groupId>org.jwall</groupId>
   			<artifactId>stream-runtime</artifactId>
-  			<version>0.9.0</version>
+  			<version>${project.version}</version>
   		</dependency>
   		<dependency>
   			<groupId>org.slf4j</groupId>

@@ -107,6 +107,28 @@ public class RMINamingService extends UnicastRemoteObject implements
 			announcer.setDaemon(true);
 			announcer.start();
 		}
+		
+		discover();
+	}
+	
+	
+	protected void discover() {
+		try {
+			Discovery discovery = new Discovery();
+			discovery.discover();
+			
+			
+			Map<String,ContainerAnnouncement> containers = discovery.getAnnouncements();
+			for( String key : containers.keySet() ){
+				
+				ContainerAnnouncement info = containers.get(key);
+				log.info( "found   {} => {}", key, info);
+				if( info.equals( announcement) )
+					log.info( "  => That's me!" );
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

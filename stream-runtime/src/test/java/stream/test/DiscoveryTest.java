@@ -31,12 +31,16 @@ import org.junit.Test;
  * @author chris
  * 
  */
-public class DependencyTest {
+public class DiscoveryTest {
 
 	@Test
 	public void test() throws Exception {
 		System.setProperty("process.multiply", "true");
-		URL url = DiscoveryTest.class.getResource("/test-dependencies.xml");
-		stream.run.main(url);		
+		URL url = DependencyTest.class.getResource("/example.xml");
+		stream.run.main(url);
+	}
+	
+	public static void main( String[] args ) throws Exception {
+		(new DiscoveryTest()).test();
 	}
 }

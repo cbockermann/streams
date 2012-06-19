@@ -54,4 +54,15 @@ public final class ContainerAnnouncement implements Serializable {
 	public String toString(){
 		return (name + "|" + protocol + "|" + host + "|" + port);
 	}
+	
+	
+	public boolean equals( Object o ){
+		if( o == this )
+			return true;
+		
+		if( o != null && toString().equals( o.toString() ) )
+			return true;
+		
+		return false;
+	}
 }

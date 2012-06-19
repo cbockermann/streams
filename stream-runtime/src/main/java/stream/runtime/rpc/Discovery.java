@@ -145,4 +145,10 @@ public class Discovery extends Thread {
 		}
 		return urls;
 	}
+	
+	public Map<String,ContainerAnnouncement> getAnnouncements(){
+		synchronized(containers){
+			return new LinkedHashMap<String,ContainerAnnouncement>( containers );
+		}
+	}
 }

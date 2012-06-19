@@ -35,19 +35,19 @@ public class Announcer extends Thread {
 		while( running ){
 
 			try {
-				log.info( "Waiting for container queries to {}:{}", broadcast.getLocalAddress(), broadcast.getLocalPort() );
+				log.debug( "Waiting for container queries to {}:{}", broadcast.getLocalAddress(), broadcast.getLocalPort() );
 				
 				DatagramPacket query = new DatagramPacket( ContainerAnnouncement.CONTAINER_QUERY, ContainerAnnouncement.CONTAINER_QUERY.length );
 				broadcast.receive( query );
 				
 				
 				DatagramPacket p = new DatagramPacket( data, len );
-				log.info( "Sending response to {}:{}", query.getAddress(), query.getPort() );
+				log.debug( "Sending response to {}:{}", query.getAddress(), query.getPort() );
 				p.setAddress( query.getAddress() );
 				p.setPort( query.getPort() );
 				broadcast.send( p );
 
-				log.info( "Sent '" + new String( p.getData() ) + "' to broadcast..." );
+				log.debug( "Sent '" + new String( p.getData() ) + "' to broadcast..." );
 				
 			} catch (Exception e) {
 				e.printStackTrace();

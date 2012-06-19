@@ -43,7 +43,7 @@ public class Discovery extends Thread {
 		query.setAddress(InetAddress.getByName("255.255.255.255"));
 		query.setPort(announcementPort);
 
-		log.info("Sending broadcast-query to {}:{}", query.getAddress(),
+		log.debug("Sending broadcast-query to {}:{}", query.getAddress(),
 				query.getPort());
 		discovery.send(query);
 
@@ -60,7 +60,7 @@ public class Discovery extends Thread {
 				if (p.getData() != null) {
 					ContainerAnnouncement announcement = new ContainerAnnouncement(
 							p.getData());
-					log.info(
+					log.debug(
 							"Discovered container {} at "
 									+ announcement.getProtocol() + "://"
 									+ announcement.getHost() + ":"
@@ -92,24 +92,14 @@ public class Discovery extends Thread {
 		while (running) {
 
 			try {
-				System.out.println("Waiting for announcement...");
 				DatagramPacket p = new DatagramPacket(new byte[1024], 1024);
 				discovery.receive(p);
-
-				if (p.getData() != null) {
-					System.out.println("Received " + p.getData() + " from "
-							+ p.getAddress());
-				} else {
-					System.out.println("Recevied null!?");
-				}
-
 			} catch (Exception e) {
 
 				e.printStackTrace();
 			}
 
 			try {
-				System.out.println("Sleeping for " + interval + "ms");
 				Thread.sleep(interval);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -121,7 +111,7 @@ public class Discovery extends Thread {
 
 		synchronized (alive) {
 			for (String key : alive.keySet()) {
-				log.info("  {}   (last checked: {})", key,
+				log.debug("  {}   (last checked: {})", key,
 						new Date(alive.get(key)));
 			}
 		}

@@ -28,35 +28,12 @@ RemoteEndpoint {
 	Class<? extends Service> serviceInterfaces[];
 	Map<String, Method> methods = new LinkedHashMap<String, Method>();
 
-	@SuppressWarnings("unchecked")
 	public ServiceProxy(Service service) throws RemoteException {
 		log.debug("Creating ServiceProxy for {}", service);
 		this.serviceImpl = service;
 
 		serviceInterfaces = getServiceInterfaces( service );
-		log.info( "------------------------------------------------" );
 		
-		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
-
-		Class<?> cur = serviceImpl.getClass();
-
-		while( cur != null ){
-			log.info( "checking interfaces of class {}", cur );
-			for (Class<?> clazz : cur.getInterfaces()) {
-				if (clazz != Service.class
-						&& ServiceInjection.isServiceImplementation(clazz)) {
-					log.info( "Adding service interface: {}", clazz );
-					intfs.add((Class<? extends Service>) clazz);
-				} else {
-					log.info( "Not a service interface: {}", clazz );
-				}
-			}
-			cur = cur.getSuperclass();
-		}
-
-		serviceInterfaces = (Class<? extends Service>[]) intfs
-				.toArray(new Class<?>[intfs.size()]);
-
 		for (Class<? extends Service> cl : serviceInterfaces) {
 
 			for (Method m : cl.getMethods()) {
@@ -64,7 +41,7 @@ RemoteEndpoint {
 				log.debug("    Args: {}", m.getParameterTypes());
 				String sig = RMIServiceDelegator.computeSignature(m);
 				methods.put(sig, m);
-				log.info("Adding (method,signature) with ({},{})", m, sig);
+				log.debug("Adding (method,signature) with ({},{})", m, sig);
 			}
 		}
 	}
@@ -117,14 +94,14 @@ RemoteEndpoint {
 		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
 
 		while( cur != null ){
-			log.info( "checking interfaces of class {}", cur );
+			log.debug( "checking interfaces of class {}", cur );
 			for (Class<?> clazz : cur.getInterfaces()) {
 				if (clazz != Service.class
 						&& ServiceInjection.isServiceImplementation(clazz)) {
-					log.info( "Adding service interface: {}", clazz );
+					log.debug( "Adding service interface: {}", clazz );
 					intfs.add((Class<? extends Service>) clazz);
 				} else {
-					log.info( "Not a service interface: {}", clazz );
+					log.debug( "Not a service interface: {}", clazz );
 				}
 			}
 			cur = cur.getSuperclass();

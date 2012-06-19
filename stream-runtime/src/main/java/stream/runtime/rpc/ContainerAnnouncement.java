@@ -23,7 +23,6 @@ public final class ContainerAnnouncement implements Serializable {
 	
 	public ContainerAnnouncement( byte[] array ){
 		String str = new String( array, Charset.forName( "UTF-8" ) ).trim();
-		System.out.println( "Announcement-string is: '" + str + "'" );
 		String[] tok = str.split( "\\|" );
 		this.name = tok[0];
 		this.protocol = tok[1];

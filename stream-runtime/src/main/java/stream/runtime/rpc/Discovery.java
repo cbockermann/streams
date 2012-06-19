@@ -30,7 +30,6 @@ public class Discovery extends Thread {
 	}
 
 	public Discovery(int announcementPort) throws Exception {
-		int port = 9500;
 		this.announcementPort = announcementPort;
 		discovery = new DatagramSocket(0);
 		discovery.setBroadcast(true);

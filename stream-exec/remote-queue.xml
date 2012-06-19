@@ -1,13 +1,31 @@
-<container address="127.0.0.1" port="9109">
 
-    <stream id="twitter" class="stream.io.JSONStream" limit="1000"
-    	url="http://kirmes.cs.uni-dortmund.de/data/twitter.json" />
 
-    <process input="twitter">
-    	<PrintData />
-		<stream.flow.Delay time="1second" />
-		<stream.logger.Message message="Sending data to kirmes/twitter" />
-		<stream.flow.Enqueue queue="//kirmes/twitter" />
+<container address="192.168.128.116" port="9109">
+
+    <stream id="random" class="stream.generator.GaussianStream" attributes="0.0,1.0"  limit="1000000"/>
+
+    <process input="random">
+		<stream.flow.Enqueue queue="//nico:storage/twitter" />
     </process>
 
 </container>
+
+
+
+
+
+
+
+
+
+
+<!-- 
+    <stream id="twitter" class="stream.io.JSONStream" limit="10000"
+    	url="http://kirmes.cs.uni-dortmund.de/data/twitter.json" />
+ -->
+    	
+    <!-- 
+    	<PrintData />
+		<stream.flow.Delay time="1second" />
+		<stream.logger.Message message="Sending data to kirmes/twitter" />
+     -->

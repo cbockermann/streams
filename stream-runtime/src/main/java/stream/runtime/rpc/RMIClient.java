@@ -24,7 +24,7 @@ public class RMIClient implements RemoteNamingService {
 	public RMIClient(String host, int port) throws Exception {
 		registry = LocateRegistry.getRegistry(host, port);
 		log.info("Registry is: {}", registry);
-		namingService = (RemoteNamingService) registry.lookup("@ns");
+		namingService = (RemoteNamingService) registry.lookup( RemoteNamingService.DIRECTORY_NAME );
 		log.info("NamingService is: {}", namingService);
 	}
 

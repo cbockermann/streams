@@ -1,4 +1,4 @@
-<container id="kirmes" port="9105">
+<container id="nico:storage" port="9105">
 
     <Stream id="twitter" class="stream.io.BlockingQueue" size="1000" />
 

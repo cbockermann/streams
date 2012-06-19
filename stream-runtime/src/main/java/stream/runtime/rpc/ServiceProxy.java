@@ -33,6 +33,9 @@ RemoteEndpoint {
 		log.debug("Creating ServiceProxy for {}", service);
 		this.serviceImpl = service;
 
+		serviceInterfaces = getServiceInterfaces( service );
+		log.info( "------------------------------------------------" );
+		
 		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
 
 		Class<?> cur = serviceImpl.getClass();
@@ -105,5 +108,32 @@ RemoteEndpoint {
 		}
 
 		return null;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public static Class<? extends Service>[] getServiceInterfaces( Class<?> serviceImpl ){
+		Class<?> cur = serviceImpl;
+		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
+
+		while( cur != null ){
+			log.info( "checking interfaces of class {}", cur );
+			for (Class<?> clazz : cur.getInterfaces()) {
+				if (clazz != Service.class
+						&& ServiceInjection.isServiceImplementation(clazz)) {
+					log.info( "Adding service interface: {}", clazz );
+					intfs.add((Class<? extends Service>) clazz);
+				} else {
+					log.info( "Not a service interface: {}", clazz );
+				}
+			}
+			cur = cur.getSuperclass();
+		}
+		
+		return (Class<? extends Service>[]) intfs.toArray( new Class<?>[ intfs.size() ] );
+	}
+	
+	public static Class<? extends Service>[] getServiceInterfaces( Service p ){
+		return getServiceInterfaces( p.getClass() );
 	}
 }

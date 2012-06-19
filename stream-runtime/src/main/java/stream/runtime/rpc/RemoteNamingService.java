@@ -9,6 +9,8 @@ import stream.service.NamingService;
 
 public interface RemoteNamingService extends NamingService, Remote {
 
+	public final static String DIRECTORY_NAME = "__NAMING_SERVICE_DIRECTORY__";
+	
 	public Map<String, String> getServiceInfo(String name)
 			throws RemoteException;
 

@@ -95,7 +95,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 			throw new Exception("Failed to create RMI registry at port " + port
 					+ ": " + e.getMessage());
 		}
-
+		
+		log.info( "my rmi server name is: {}", address.getHostAddress() );
 		log.debug("Binding myself to RMI...");
 		registry.rebind("@ns", this);
 
@@ -125,6 +126,20 @@ public class RMINamingService extends UnicastRemoteObject implements
 				log.info( "found   {} => {}", key, info);
 				if( info.equals( announcement) )
 					log.info( "  => That's me!" );
+				else {
+					NamingService remote = new RMIClient( info.getHost(), info.getPort() );
+					log.info( "Created new NamingService-connection for container {}: {}", key, remote );
+					
+					Map<String,String> services = remote.list();
+					log.info( "RemoteServices are:" );
+					for( String s : services.keySet() ){
+						log.info( "   {} = {}", s, services.get(s) );
+					}
+					
+					container.put( key, remote );
+					log.info( "Remote-connection added..." );
+					//this.
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -305,7 +320,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 		log.info("list() query received, classes are: {}", classes);
 		Map<String, String> lst = new LinkedHashMap<String, String>();
 		for (String key : classes.keySet()) {
-			lst.put(namespace + key, classes.get(key).getCanonicalName());
+			if( classes.get( key ) != null )
+				lst.put(namespace + key, classes.get(key).getCanonicalName());
 		}
 
 		return lst;

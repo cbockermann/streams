@@ -36,9 +36,9 @@
 			<url>https://secure.jwall.org/maven/repository/jwall</url>
 		</repository>
 		<snapshotRepository>
-			<id>jwall-snapshots</id>
-			<name>jwall.org Snapshot Repository</name>
-			<url>https://secure.jwall.org/maven/repository/snapshots</url>
+			<id>sonatype-snapshots</id>
+			<name>SonaType Snapshot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
 			<id>kirmes</id>

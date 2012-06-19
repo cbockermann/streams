@@ -77,10 +77,11 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 
 	public static String computeSignature(Method m) {
 		StringBuffer s = new StringBuffer();
+
 		s.append(m.getName() + "(");
 		Class<?> types[] = m.getParameterTypes();
 		for (int i = 0; i < types.length; i++) {
-			s.append(types[i].getClass().getCanonicalName());
+			s.append(types[i].toString());
 			if (i + 1 < types.length)
 				s.append(",");
 		}

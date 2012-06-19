@@ -17,7 +17,7 @@ import stream.runtime.setup.ServiceInjection;
 import stream.service.Service;
 
 public final class ServiceProxy extends UnicastRemoteObject implements
-		RemoteEndpoint {
+RemoteEndpoint {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -8727610044832533407L;
@@ -34,11 +34,21 @@ public final class ServiceProxy extends UnicastRemoteObject implements
 		this.serviceImpl = service;
 
 		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
-		for (Class<?> clazz : serviceImpl.getClass().getInterfaces()) {
-			if (clazz != Service.class
-					&& ServiceInjection.isServiceImplementation(clazz)) {
-				intfs.add((Class<? extends Service>) clazz);
+
+		Class<?> cur = serviceImpl.getClass();
+
+		while( cur != null ){
+			log.info( "checking interfaces of class {}", cur );
+			for (Class<?> clazz : cur.getInterfaces()) {
+				if (clazz != Service.class
+						&& ServiceInjection.isServiceImplementation(clazz)) {
+					log.info( "Adding service interface: {}", clazz );
+					intfs.add((Class<? extends Service>) clazz);
+				} else {
+					log.info( "Not a service interface: {}", clazz );
+				}
 			}
+			cur = cur.getSuperclass();
 		}
 
 		serviceInterfaces = (Class<? extends Service>[]) intfs
@@ -51,7 +61,7 @@ public final class ServiceProxy extends UnicastRemoteObject implements
 				log.debug("    Args: {}", m.getParameterTypes());
 				String sig = RMIServiceDelegator.computeSignature(m);
 				methods.put(sig, m);
-				log.debug("Adding (method,signature) with ({},{})", m, sig);
+				log.info("Adding (method,signature) with ({},{})", m, sig);
 			}
 		}
 	}

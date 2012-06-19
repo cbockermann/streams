@@ -362,7 +362,7 @@ public class ProcessContainer {
 
 		log.debug("waiting for processes to finish...");
 		while (!processes.isEmpty()) {
-			log.debug("{} processes running", processes.size());
+			log.trace("{} processes running", processes.size());
 			Iterator<AbstractProcess> it = processes.iterator();
 			while (it.hasNext()) {
 				AbstractProcess p = it.next();
@@ -371,7 +371,7 @@ public class ProcessContainer {
 					log.debug("Removing finished process {}", p);
 					it.remove();
 				} else {
-					log.debug("    {} is still running", p);
+					log.trace("    {} is still running", p);
 				}
 			}
 			try {

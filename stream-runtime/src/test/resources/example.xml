@@ -1,0 +1,10 @@
+<container address="192.168.128.116" port="9105">
+
+    <stream id="twitter" class="stream.test.TestStream" />
+
+    <process input="twitter">
+	<stream.flow.Delay time="10 second" />
+	<stream.test.LogData />
+    </process>
+
+</container>

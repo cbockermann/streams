@@ -16,6 +16,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -41,6 +42,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 	Discovery discoverer;
 	ContainerAnnouncement announcement;
 
+	Map<String,NamingService> container = new LinkedHashMap<String,NamingService>();
+	
 	public RMINamingService() throws Exception {
 		this("local");
 	}
@@ -69,9 +72,9 @@ public class RMINamingService extends UnicastRemoteObject implements
 			//
 			reg = LocateRegistry.getRegistry(port);
 			names = reg.list();
-			log.info("Found existing registry, names: {}", names);
+			log.debug("Found existing registry, names: {}", names);
 		} catch (Exception e) {
-			log.info(
+			log.debug(
 					"No RMI-registry exists as port {}: a new one will be created.",
 					port);
 			// e.printStackTrace();
@@ -81,7 +84,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			if (names == null) {
 				log.debug("Trying to create new registry at port {}", port);
 				registry = LocateRegistry.createRegistry(port);
-				log.info("New registry has registered objects: {}",
+				log.debug("New registry has registered objects: {}",
 						registry.list());
 			} else {
 				registry = reg;
@@ -93,18 +96,34 @@ public class RMINamingService extends UnicastRemoteObject implements
 					+ ": " + e.getMessage());
 		}
 
-		log.info("Binding myself to RMI...");
+		log.debug("Binding myself to RMI...");
 		registry.rebind("@ns", this);
 
 		announcement = new ContainerAnnouncement(name, "rmi",
 				address.getHostAddress(), port);
-		log.info("Announcement will be: {}", announcement);
+		log.debug("Announcement will be: {}", announcement);
 		if (announce) {
 			announcer = new Announcer(9200, announcement);
 			announcer.setDaemon(true);
 			announcer.start();
 		}
 	}
+	
+	
+	protected String discover( String container ) throws Exception {
+		
+		Discovery discovery = new Discovery();
+		discovery.discover();
+		
+		Map<String,String> containers = discovery.getContainerURLs();
+		if( containers == null || ! containers.containsKey( container ) ){
+			throw new Exception( "No container found for name '" + container + "'!" );
+		} else {
+			log.info( "Found container {}: {}", container, containers.get( container ) );
+			return containers.get( container );
+		}
+	}
+	
 
 	/**
 	 * Checks if the given reference is local to this naming service. It is
@@ -122,6 +141,23 @@ public class RMINamingService extends UnicastRemoteObject implements
 			return true;
 
 		return false;
+	}
+	
+	/**
+	 * Extracts the container name from a service reference.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected String getContainerName( String ref ){
+		if( ! ref.startsWith( "//" ) )
+			return this.name;
+		
+		int idx = ref.indexOf( "/", 3 );
+		if( idx < 0 )
+			return null;
+		
+		return ref.substring( 2, idx );
 	}
 
 	/**
@@ -149,8 +185,31 @@ public class RMINamingService extends UnicastRemoteObject implements
 	@Override
 	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
 			throws Exception {
-		log.info("Received lookup for {} ({})", ref, serviceClass);
+		log.debug("Received lookup for {} ({})", ref, serviceClass);
 
+		if( ! isLocal( ref ) ){
+			
+			log.debug( "Current list of known containers:" );
+			for( String key : this.container.keySet() ){
+				log.debug( "   {} => {}", container.get(key) );
+			}
+			
+			String con = this.getContainerName( ref );
+			log.info( "Container reference is '{}'", con );
+			if( con == null )
+				throw new Exception( "Failed to determine container for reference '" + ref +"'!" );
+			
+			NamingService ns = container.get( con );
+			if( ns == null ){
+				String url = discover( con );
+				log.info( "Discovered container {} at {}", con, url );
+				throw new Exception( "No container known for name '" + con + "'!" );
+			}
+			
+			return ns.lookup( ref, serviceClass );
+			//throw new Exception( "Remote container connections are currently not supported!" );
+		}
+		
 		String localRef = getLocalRef(ref);
 		if (localRef == null)
 			throw new Exception("No local reference for '" + ref + "'!");

@@ -18,6 +18,7 @@ public class Discovery extends Thread {
 	boolean running = true;
 
 	final Map<String, Long> alive = new LinkedHashMap<String, Long>();
+	final Map<String, ContainerAnnouncement> containers = new LinkedHashMap<String,ContainerAnnouncement>();
 	final DatagramSocket discovery;
 
 	Long interval = 1000L;
@@ -67,6 +68,10 @@ public class Discovery extends Thread {
 									+ announcement.getPort(),
 							announcement.getName());
 					discovered.add(announcement);
+					synchronized(containers){
+						containers.put( announcement.getName(), announcement);
+					}
+					
 					synchronized (alive) {
 						alive.put(announcement.toString(),
 								System.currentTimeMillis());
@@ -127,5 +132,17 @@ public class Discovery extends Thread {
 		synchronized (alive) {
 			return new LinkedHashMap<String, Long>(alive);
 		}
+	}
+	
+	public Map<String,String> getContainerURLs(){
+		Map<String,String> urls = new LinkedHashMap<String,String>();
+		synchronized( containers ){
+			for( String key : containers.keySet() ){
+				ContainerAnnouncement rem = containers.get(key);
+				String url = rem.getProtocol() + "://" + rem.getHost() + ":" + rem.getPort();
+				urls.put( key, url );
+			}
+		}
+		return urls;
 	}
 }

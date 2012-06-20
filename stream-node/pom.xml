@@ -67,9 +67,36 @@
 			<artifactId>stream-core</artifactId>
 			<version>0.9.4-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.allen-sauer.gwt.dnd</groupId>
+			<artifactId>gwt-dnd</artifactId>
+			<version>3.1.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>gwt-user</artifactId>
+					<groupId>com.google.gwt</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.4.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>node</finalName>
+		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

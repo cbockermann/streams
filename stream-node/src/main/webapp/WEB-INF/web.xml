@@ -33,11 +33,12 @@
  -->
 
 
+	<!-- 
+	 -->
 	<filter>
 		<filter-name>struts2</filter-name>
 		<filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
 	</filter>
-	
 	<filter>
 		<filter-name>strutsDisableFilter</filter-name>
 		<filter-class>stream.node.servlets.DisableStruts2Filter</filter-class>
@@ -73,6 +74,11 @@
 		<servlet-class>stream.node.servlets.DocServlet</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>WebShellServlet</servlet-name>
+		<servlet-class>stream.node.shell.server.WebShellServiceImpl</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>DeploymentServlet</servlet-name>
 		<url-pattern>/api/deploy/*</url-pattern>
@@ -87,6 +93,12 @@
 		<servlet-name>DocServlet</servlet-name>
 		<url-pattern>/doc/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>WebShellServlet</servlet-name>
+		<url-pattern>/stream.node.shell.WebShell/web-shell</url-pattern>
+	</servlet-mapping>
+
 
 <!-- 
 	<servlet-mapping>

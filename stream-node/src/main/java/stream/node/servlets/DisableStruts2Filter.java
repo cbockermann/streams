@@ -58,6 +58,7 @@ public class DisableStruts2Filter implements Filter {
 	public DisableStruts2Filter() {
 		patterns.add("/api/");
 		patterns.add("/doc/");
+		patterns.add( "/stream.node.shell.WebShell/" );
 	}
 
 	/**

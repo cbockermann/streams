@@ -3,6 +3,7 @@ package stream.runtime.rpc;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -76,6 +77,7 @@ public class Discovery extends Thread {
 								System.currentTimeMillis());
 					}
 				}
+			} catch (SocketTimeoutException ste){
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 			}

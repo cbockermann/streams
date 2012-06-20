@@ -121,7 +121,6 @@ public class RMINamingService extends UnicastRemoteObject implements
 			
 			Map<String,ContainerAnnouncement> containers = discovery.getAnnouncements();
 			for( String key : containers.keySet() ){
-				
 				ContainerAnnouncement info = containers.get(key);
 				log.debug( "found   {} => {}", key, info);
 				if( info.equals( announcement) )

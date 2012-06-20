@@ -10,18 +10,54 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.runtime.rpc.ContainerAnnouncement;
 import stream.runtime.rpc.Discovery;
 import stream.runtime.rpc.RMIClient;
 
 public class Shell {
 
-	static String prompt = "streams> ";
-	static RMIClient namingService;
-	static Discovery discovery = null;
-	static Map<String, RMIClient> clients = new LinkedHashMap<String, RMIClient>();
+	static Logger log = LoggerFactory.getLogger( Shell.class );
 
-	public static String eval(String line) throws Exception {
+	String prompt = "streams> ";
+	RMIClient namingService;
+	Discovery discovery = null;
+	Map<String, RMIClient> clients = new LinkedHashMap<String, RMIClient>();
+
+
+	public Shell(){
+		try {
+			discovery = new Discovery(9200);
+			ContainerAnnouncement container = discovery.discover();
+			System.out.println("Found container: " + container);
+
+			// System.setSecurityManager( new RMISecurityManager() );
+			System.out.println("Connecting to RMI naming service '"
+					+ container.getName() + "' at port " + container.getPort()
+					+ "...");
+			namingService = new RMIClient(container.getHost(), container.getPort());
+			System.out.println("Naming service is: " + namingService);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public String eval(String line) throws Exception {
+		log.info( "Executing {}", line );
+
+		if (line.equalsIgnoreCase("list")) {
+			Map<String, String> list = namingService.list();
+			StringBuffer s = new StringBuffer();
+			s.append("Registered Services:\n");
+			s.append("====================");
+			for (String key : list.keySet()) {
+				s.append("   " + key + "  ~>  " + list.get(key));
+			}
+			return s.toString();
+		}
 
 		if (line.equals("discover")) {
 			StringBuffer s = new StringBuffer(
@@ -79,7 +115,7 @@ public class Shell {
 		return "";
 	}
 
-	public static String call(String name, String method, String... args) {
+	public String call(String name, String method, String... args) {
 
 		Serializable[] params = new Serializable[args.length];
 		for (int i = 0; i < params.length; i++) {
@@ -93,7 +129,7 @@ public class Shell {
 		}
 	}
 
-	public static void repl(InputStream in, OutputStream out) throws Exception {
+	public void repl(InputStream in, OutputStream out) throws Exception {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		PrintWriter writer = new PrintWriter(out);
@@ -110,7 +146,7 @@ public class Shell {
 
 			if (line.equalsIgnoreCase("list")) {
 				Map<String, String> list = namingService.list();
-				writer.println("Registered Services:");
+				writer.println("Registered Services:\n");
 				writer.println("====================");
 				for (String key : list.keySet()) {
 					writer.println("   " + key + "  ~>  " + list.get(key));
@@ -144,19 +180,7 @@ public class Shell {
 		}
 
 		System.out.println("connecting to " + host + ":" + port + "...");
-
-		discovery = new Discovery(9200);
-		ContainerAnnouncement container = discovery.discover();
-		System.out.println("Found container: " + container);
-
-		// System.setSecurityManager( new RMISecurityManager() );
-		System.out.println("Connecting to RMI naming service '"
-				+ container.getName() + "' at port " + container.getPort()
-				+ "...");
-		namingService = new RMIClient(container.getHost(), container.getPort());
-		System.out.println("Naming service is: " + namingService);
-
-		repl(System.in, System.out);
-
+		Shell shell = new Shell();
+		shell.repl(System.in, System.out);
 	}
 }

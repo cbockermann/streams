@@ -75,6 +75,15 @@
 		</developer>
 	</developers>
 
+	<mailingLists>
+		<mailingList>
+			<name>streams development</name>
+			<subscribe>streams-dev-subscribe@lists.jwall.org</subscribe>
+			<unsubscribe>streams-dev-unsubscribe@lists.jwall.org</unsubscribe>
+			<post>streams-dev@lists.jwall.org</post>
+		</mailingList>
+	</mailingLists>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -96,6 +105,11 @@
 						<artifactId>doxia-module-markdown</artifactId>
 						<version>1.1.4</version>
 					</dependency>
+            <dependency><!-- add support for ssh/scp -->
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ssh</artifactId>
+              <version>1.0</version>
+            </dependency>
 				</dependencies>
 				<configuration>
 					<inputEncoding>UTF-8</inputEncoding>

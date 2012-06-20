@@ -10,7 +10,7 @@ import stream.io.DataStream;
 
 public class SequentialMultiStream extends AbstractMultiDataStream {
 
-	static Logger log = LoggerFactory.getLogger( SequentialMultiStreamTest.class );
+	static Logger log = LoggerFactory.getLogger( SequentialMultiStream.class );
 	
 	String sourceKey = "@source";
 	

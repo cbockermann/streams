@@ -52,11 +52,11 @@ public class GaussianStream extends GeneratorDataStream {
 	Long seed = System.currentTimeMillis();
 
 	Random seedGenerator = new Random();
-	
+
 	Double[] attributes;
 
 	Long limit = -1L;
-	
+
 	Long count = 0L;
 
 	/**
@@ -76,14 +76,16 @@ public class GaussianStream extends GeneratorDataStream {
 	public void init() throws Exception {
 		super.init();
 
-		if( attributes == null ){
+		if( attributes == null && generators.isEmpty() ){
 			throw new Exception( "Parameter 'attributes' missing! This should be a list of mean,deviation pairs!" );
 		}
-		
-		int cnt = 1;
-		for( int i = 0; i + 1< attributes.length; i += 2 ){
-			setGenerator( "x" + cnt, new Gaussian( attributes[i], attributes[i+1] ) );
-			cnt++;
+
+		if( attributes != null ){
+			int cnt = 1;
+			for( int i = 0; i + 1< attributes.length; i += 2 ){
+				setGenerator( "x" + cnt, new Gaussian( attributes[i], attributes[i+1] ) );
+				cnt++;
+			}
 		}
 	}
 
@@ -104,8 +106,8 @@ public class GaussianStream extends GeneratorDataStream {
 		this.seedGenerator = new Random(this.seed);
 	}
 
-	
-	
+
+
 	public Long getLimit() {
 		return limit;
 	}
@@ -136,7 +138,7 @@ public class GaussianStream extends GeneratorDataStream {
 			dist.setSeed(seed);
 		}
 	}
-	
+
 
 	public void setAttributes(Double[] attributes) {
 		this.attributes = attributes;
@@ -168,11 +170,11 @@ public class GaussianStream extends GeneratorDataStream {
 		// should not
 		// happen... :-)
 		//
-		
+
 		if( limit > 0 && count >= limit ){
 			return null;
 		}
-		
+
 		Data gen = this.generate();
 		item.clear();
 		item.putAll(gen);

@@ -79,6 +79,12 @@
 		<servlet-class>stream.node.shell.server.WebShellServiceImpl</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>ContainerEditorService</servlet-name>
+		<servlet-class>stream.node.shell.server.ContainerEditorServiceImpl</servlet-class>
+	</servlet>
+	
+
 	<servlet-mapping>
 		<servlet-name>DeploymentServlet</servlet-name>
 		<url-pattern>/api/deploy/*</url-pattern>
@@ -97,6 +103,11 @@
 	<servlet-mapping>
 		<servlet-name>WebShellServlet</servlet-name>
 		<url-pattern>/stream.node.shell.WebShell/web-shell</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>ContainerEditorService</servlet-name>
+		<url-pattern>/stream.node.shell.WebShell/container-editor</url-pattern>
 	</servlet-mapping>
 
 

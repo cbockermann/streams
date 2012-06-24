@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import stream.Context;
 import stream.data.Data;
 import stream.data.DataFactory;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -28,7 +29,8 @@ public class ComplexConditionTest {
 	final Context ctx = new Context() {
 
 		@Override
-		public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+		public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+				throws Exception {
 			return null;
 		}
 
@@ -47,7 +49,12 @@ public class ComplexConditionTest {
 
 		@Override
 		public Map<String, String> list() throws Exception {
-			return new HashMap<String,String>();
+			return new HashMap<String, String>();
+		}
+
+		@Override
+		public void addContainer(String key, NamingService remoteNamingService)
+				throws Exception {
 		}
 	};
 

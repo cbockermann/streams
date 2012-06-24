@@ -148,6 +148,16 @@
 					</archive>
 				</configuration>
 			</plugin>
+                        <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>gwt-maven-plugin</artifactId>
+                                <version>2.4.0</version>
+                                <configuration>
+                                        <inplace>true</inplace>
+                                        <resourceBundle>org.jwall.web.audit.console.Reporting</resourceBundle>
+                                        <message>true</message>
+                                </configuration>
+                        </plugin>
 		</plugins>
 
 	</build>

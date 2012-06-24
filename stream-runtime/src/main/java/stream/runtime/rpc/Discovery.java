@@ -19,7 +19,7 @@ public class Discovery extends Thread {
 	boolean running = true;
 
 	final Map<String, Long> alive = new LinkedHashMap<String, Long>();
-	final Map<String, ContainerAnnouncement> containers = new LinkedHashMap<String,ContainerAnnouncement>();
+	final Map<String, ContainerAnnouncement> containers = new LinkedHashMap<String, ContainerAnnouncement>();
 	final DatagramSocket discovery;
 
 	Long interval = 1000L;
@@ -37,6 +37,9 @@ public class Discovery extends Thread {
 	}
 
 	public ContainerAnnouncement discover() throws Exception {
+
+		this.containers.clear();
+		this.alive.clear();
 
 		DatagramPacket query = new DatagramPacket(
 				ContainerAnnouncement.CONTAINER_QUERY,
@@ -68,16 +71,16 @@ public class Discovery extends Thread {
 									+ announcement.getPort(),
 							announcement.getName());
 					discovered.add(announcement);
-					synchronized(containers){
-						containers.put( announcement.getName(), announcement);
+					synchronized (containers) {
+						containers.put(announcement.getName(), announcement);
 					}
-					
+
 					synchronized (alive) {
 						alive.put(announcement.toString(),
 								System.currentTimeMillis());
 					}
 				}
-			} catch (SocketTimeoutException ste){
+			} catch (SocketTimeoutException ste) {
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 			}
@@ -124,22 +127,23 @@ public class Discovery extends Thread {
 			return new LinkedHashMap<String, Long>(alive);
 		}
 	}
-	
-	public Map<String,String> getContainerURLs(){
-		Map<String,String> urls = new LinkedHashMap<String,String>();
-		synchronized( containers ){
-			for( String key : containers.keySet() ){
+
+	public Map<String, String> getContainerURLs() {
+		Map<String, String> urls = new LinkedHashMap<String, String>();
+		synchronized (containers) {
+			for (String key : containers.keySet()) {
 				ContainerAnnouncement rem = containers.get(key);
-				String url = rem.getProtocol() + "://" + rem.getHost() + ":" + rem.getPort();
-				urls.put( key, url );
+				String url = rem.getProtocol() + "://" + rem.getHost() + ":"
+						+ rem.getPort();
+				urls.put(key, url);
 			}
 		}
 		return urls;
 	}
-	
-	public Map<String,ContainerAnnouncement> getAnnouncements(){
-		synchronized(containers){
-			return new LinkedHashMap<String,ContainerAnnouncement>( containers );
+
+	public Map<String, ContainerAnnouncement> getAnnouncements() {
+		synchronized (containers) {
+			return new LinkedHashMap<String, ContainerAnnouncement>(containers);
 		}
 	}
 }

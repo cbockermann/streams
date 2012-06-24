@@ -50,6 +50,7 @@ import stream.io.BlockingQueue;
 import stream.io.DataStream;
 import stream.io.DataStreamQueue;
 import stream.runtime.rpc.RMINamingService;
+import stream.runtime.setup.ContainerRefElementHandler;
 import stream.runtime.setup.DocumentHandler;
 import stream.runtime.setup.LibrariesElementHandler;
 import stream.runtime.setup.MonitorElementHandler;
@@ -129,6 +130,8 @@ public class ProcessContainer {
 		documentHandler.add(libHandler);
 		documentHandler.add(new PropertiesHandler());
 
+		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
+				objectFactory));
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
@@ -146,6 +149,13 @@ public class ProcessContainer {
 
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);
+
+		if (System.getProperty("container.address") != null) {
+			attr.put("address", System.getProperty("container.address"));
+		}
+		if (System.getProperty("container.port") != null) {
+			attr.put("port", System.getProperty("container.port"));
+		}
 
 		if (!root.getNodeName().equalsIgnoreCase("experiment")
 				&& !root.getNodeName().equalsIgnoreCase("container"))
@@ -195,6 +205,7 @@ public class ProcessContainer {
 		if (namingService == null) {
 
 			if (attr.containsKey("address")) {
+				log.info("Creating RMI naming-service...");
 				System.setProperty("java.rmi.server.hostname", host);
 				namingService = new RMINamingService(name, host, port, true);
 			} else {

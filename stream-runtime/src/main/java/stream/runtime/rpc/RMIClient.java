@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.service.NamingService;
 import stream.service.Service;
 
 public class RMIClient implements RemoteNamingService {
@@ -16,6 +18,7 @@ public class RMIClient implements RemoteNamingService {
 	static Logger log = LoggerFactory.getLogger(RMIClient.class);
 	final Registry registry;
 	RemoteNamingService namingService;
+	Map<String, NamingService> remotes = new LinkedHashMap<String, NamingService>();
 
 	public RMIClient(int port) throws Exception {
 		this("127.0.0.1", port);
@@ -24,7 +27,8 @@ public class RMIClient implements RemoteNamingService {
 	public RMIClient(String host, int port) throws Exception {
 		registry = LocateRegistry.getRegistry(host, port);
 		log.debug("Registry is: {}", registry);
-		namingService = (RemoteNamingService) registry.lookup( RemoteNamingService.DIRECTORY_NAME );
+		namingService = (RemoteNamingService) registry
+				.lookup(RemoteNamingService.DIRECTORY_NAME);
 		log.debug("NamingService is: {}", namingService);
 	}
 
@@ -57,5 +61,15 @@ public class RMIClient implements RemoteNamingService {
 	public Serializable call(String name, String method, String signature,
 			Serializable... args) throws RemoteException {
 		return namingService.call(name, method, signature, args);
+	}
+
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		this.remotes.put(key, remoteNamingService);
 	}
 }

@@ -45,7 +45,8 @@ public interface NamingService {
 	 * @return
 	 * @throws Exception
 	 */
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception;
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception;
 
 	/**
 	 * This method registers a given Service in the naming service.
@@ -63,14 +64,16 @@ public interface NamingService {
 	 * @throws Exception
 	 */
 	public void unregister(String ref) throws Exception;
-	
-	
+
 	/**
-	 * This method returns a list of names, registered and the service interfaces for
-	 * these names.
+	 * This method returns a list of names, registered and the service
+	 * interfaces for these names.
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String,String> list() throws Exception;
+	public Map<String, String> list() throws Exception;
+
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception;
 }

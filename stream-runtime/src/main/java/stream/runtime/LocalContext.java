@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.ProcessContext;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -44,7 +45,8 @@ public class LocalContext implements ProcessContext {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
 		return (T) lookupService.get(ref);
 	}
 
@@ -75,8 +77,7 @@ public class LocalContext implements ProcessContext {
 
 	/**
 	 * 
-	 * @see stream.ProcessContext#set(java.lang.String,
-	 *      java.lang.Object)
+	 * @see stream.ProcessContext#set(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void set(String key, Object o) {
@@ -91,13 +92,23 @@ public class LocalContext implements ProcessContext {
 		return get(variable);
 	}
 
-
 	@Override
 	public Map<String, String> list() throws Exception {
-		Map<String,String> classes = new LinkedHashMap<String,String>();
-		for( String key : lookupService.keySet() ){
-			classes.put( key, lookupService.get( key ).getClass().getSimpleName() );
+		Map<String, String> classes = new LinkedHashMap<String, String>();
+		for (String key : lookupService.keySet()) {
+			classes.put(key, lookupService.get(key).getClass().getSimpleName());
 		}
 		return classes;
+	}
+
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		throw new Exception(
+				"Addition of remote naming services is not supported by local context!");
 	}
 }

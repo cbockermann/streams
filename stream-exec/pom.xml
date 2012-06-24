@@ -78,5 +78,10 @@
   			<artifactId>slf4j-log4j12</artifactId>
   			<version>[1.6.4,)</version>
   		</dependency>
+  		<dependency>
+  			<groupId>org.eclipse.jetty</groupId>
+  			<artifactId>jetty-server</artifactId>
+  			<version>8.1.4.v20120524</version>
+  		</dependency>
   	</dependencies>
 </project>

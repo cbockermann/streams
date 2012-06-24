@@ -13,40 +13,31 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.runtime.DefaultNamingService;
 import stream.runtime.rpc.ContainerAnnouncement;
 import stream.runtime.rpc.Discovery;
 import stream.runtime.rpc.RMIClient;
 
 public class Shell {
 
-	static Logger log = LoggerFactory.getLogger( Shell.class );
+	static Logger log = LoggerFactory.getLogger(Shell.class);
 
 	String prompt = "streams> ";
-	RMIClient namingService;
+	// RMIClient namingService;
 	Discovery discovery = null;
 	Map<String, RMIClient> clients = new LinkedHashMap<String, RMIClient>();
+	final DefaultNamingService namingService = new DefaultNamingService();
 
-
-	public Shell(){
+	public Shell() {
 		try {
 			discovery = new Discovery(9200);
-			ContainerAnnouncement container = discovery.discover();
-			System.out.println("Found container: " + container);
-
-			// System.setSecurityManager( new RMISecurityManager() );
-			System.out.println("Connecting to RMI naming service '"
-					+ container.getName() + "' at port " + container.getPort()
-					+ "...");
-			namingService = new RMIClient(container.getHost(), container.getPort());
-			System.out.println("Naming service is: " + namingService);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-
 	public String eval(String line) throws Exception {
-		log.info( "Executing {}", line );
+		log.info("Executing {}", line);
 
 		if (line.equalsIgnoreCase("list")) {
 			Map<String, String> list = namingService.list();
@@ -63,11 +54,31 @@ public class Shell {
 			StringBuffer s = new StringBuffer(
 					"\nContainers:\n-------------\n\n");
 
+			log.info("Running discovery.discover()");
 			discovery.discover();
+
+			try {
+				for (String key : discovery.getAnnouncements().keySet()) {
+					ContainerAnnouncement ref = discovery.getAnnouncements()
+							.get(key);
+
+					log.info("Adding RMI connection for container {}", ref);
+					if (namingService.getContainer(key) != null) {
+						log.info("Container already known: {}",
+								namingService.getContainer(key));
+					} else {
+						this.namingService.addContainer(key,
+								new RMIClient(ref.getHost(), ref.getPort()));
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			Map<String, Long> list = discovery.getContainers();
 			for (String key : list.keySet()) {
 				s.append("  " + key + "  (" + new Date(list.get(key)) + ")\n");
+
 			}
 			s.append("\n");
 			return s.toString();
@@ -80,17 +91,16 @@ public class Shell {
 				return "Error: Missing service name to command 'info'!";
 			}
 
-			Map<String, String> info = namingService.getServiceInfo(args[1]);
-			if (info == null) {
-				return "No information for service " + args[1] + " available!";
-			} else {
-				StringBuffer s = new StringBuffer();
-				for (String key : info.keySet()) {
-					s.append("  " + key + "  =>  " + info.get(key));
-					s.append("\n");
-				}
-				return s.toString();
-			}
+			/*
+			 * 
+			 * Map<String, String> info = namingService.getServiceInfo(args[1]);
+			 * if (info == null) { return "No information for service " +
+			 * args[1] + " available!"; } else { StringBuffer s = new
+			 * StringBuffer(); for (String key : info.keySet()) { s.append("  "
+			 * + key + "  =>  " + info.get(key)); s.append("\n"); } return
+			 * s.toString(); }
+			 */
+
 		}
 
 		if (line.startsWith("call")) {
@@ -122,11 +132,11 @@ public class Shell {
 			params[i] = args[i];
 		}
 
-		try {
-			return "" + namingService.call(name, method, "", params);
-		} catch (Exception e) {
-			return "Error: " + e.getMessage();
-		}
+		/*
+		 * try { return "" + namingService.call(name, method, "", params); }
+		 * catch (Exception e) { return "Error: " + e.getMessage(); }
+		 */
+		return "";
 	}
 
 	public void repl(InputStream in, OutputStream out) throws Exception {
@@ -164,6 +174,10 @@ public class Shell {
 
 		reader.close();
 		writer.close();
+	}
+
+	public DefaultNamingService getNamingService() {
+		return this.namingService;
 	}
 
 	/**

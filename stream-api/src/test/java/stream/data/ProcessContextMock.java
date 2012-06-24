@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.ProcessContext;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -32,7 +33,8 @@ public class ProcessContextMock implements ProcessContext {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
 		return (T) services.get(ref);
 	}
 
@@ -59,13 +61,13 @@ public class ProcessContextMock implements ProcessContext {
 	 */
 	@Override
 	public Map<String, String> list() throws Exception {
-		Map<String,String> classes = new LinkedHashMap<String,String>();
-		for( String key : services.keySet() ){
-			classes.put( key, services.get( key ).getClass().getSimpleName() );
+		Map<String, String> classes = new LinkedHashMap<String, String>();
+		for (String key : services.keySet()) {
+			classes.put(key, services.get(key).getClass().getSimpleName());
 		}
 		return classes;
 	}
-	
+
 	/**
 	 * @see stream.ProcessContext#get(java.lang.String)
 	 */
@@ -83,4 +85,13 @@ public class ProcessContextMock implements ProcessContext {
 			ctx.put(key, o);
 	}
 
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		throw new Exception("Remote containers not supported by this mock");
+	}
 }

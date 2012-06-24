@@ -1,12 +1,16 @@
 
 
-<container address="192.168.128.116" port="9109">
+<container address="192.168.10.2" port="0">
+<!-- address="192.168.128.116" port="9109"> -->
 
 <!-- 
-    <stream id="random" class="stream.generator.GaussianStream" attributes="0.0,1.0"  limit="10000000"/>
+	<container-ref id="storage" url="rmi://129.217.31.55:9105" />
  -->
-    <stream id="twitter" class="stream.io.JSONStream" limit="10000000"
+<!-- 
+ -->
+    <stream id="twitter" class="stream.io.JSONStream" limit="1000000000"
     	url="http://kirmes.cs.uni-dortmund.de/data/twitter.json" />
+    <stream id="random" class="stream.generator.GaussianStream" attributes="0.0,1.0"  limit="10000000"/>
 
 
     <process input="twitter">
@@ -15,11 +19,13 @@
     	<RenameKey from="id" to="@id" />
     	<AsJSON key="data" />
     	<stream.logger.Message message="%{data.@id} => %{data.data}" />
+    	<PrintData />
      -->
-    	
+	<stream.flow.Enqueue queue="//nico:storage/twitter" />
+    	<stream.flow.Delay time="10 seconds" />
     	<!-- 
+		<stream.flow.Enqueue queue="//storage/input" />
     	 -->
-		<stream.flow.Enqueue queue="//kirmes/input" />
     </process>
 
 </container>

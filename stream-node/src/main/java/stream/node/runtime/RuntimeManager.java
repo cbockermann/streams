@@ -26,6 +26,7 @@ package stream.node.runtime;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,12 +52,19 @@ public class RuntimeManager {
 
 	RuntimeDeploymentMonitor deploymentMonitor;
 
+	final static RuntimeManager globalRuntimeManager = new RuntimeManager(
+			new File("/tmp"));
+
+	public static RuntimeManager getInstance() {
+		return globalRuntimeManager;
+	}
+
 	/**
 	 * @param name
 	 * @param description
 	 * @param version
 	 */
-	public RuntimeManager(File deployDir) {
+	private RuntimeManager(File deployDir) {
 		this.deploymentDirectory = deployDir;
 	}
 
@@ -75,7 +83,7 @@ public class RuntimeManager {
 
 		deploymentMonitor = new RuntimeDeploymentMonitor(this,
 				deploymentDirectory);
-		deploymentMonitor.start();
+		// deploymentMonitor.start();
 	}
 
 	/**
@@ -94,6 +102,43 @@ public class RuntimeManager {
 			}
 		}
 
+	}
+
+	public void deploy(File f) throws Exception {
+
+		log.info("Deploying file {}", f);
+		if (isDeployed(f)) {
+			throw new Exception("File " + f.getAbsolutePath()
+					+ " is already being executed!");
+		}
+
+		try {
+			URL url = f.toURI().toURL();
+			log.info("Deploying process-container from file {}", url);
+
+			ProcessContainer pc = new ProcessContainer(url);
+			if (pc.getName() == null)
+				pc.setName(f.getName().replaceAll("\\.xml", ""));
+			log.info("created container '{}'", pc.getName());
+			log.info("container is listening for: {}",
+					pc.getStreamListenerNames());
+
+			ProcessContainerThread workerThread = new ProcessContainerThread(f,
+					pc);
+
+			this.containers.put(pc.getName(), pc);
+			this.worker.add(workerThread);
+
+			log.info("Starting process-container-thread: {}", workerThread);
+			workerThread.start();
+
+		} catch (Exception e) {
+			log.error(
+					"Failed to create process-container from {}, error was: {}",
+					f, e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+		}
 	}
 
 	public void checkDeployments() {
@@ -145,10 +190,17 @@ public class RuntimeManager {
 	}
 
 	public boolean isDeployed(File file) {
-		for (ProcessContainerThread t : worker) {
-			if (file.equals(t.getFile())) {
+		Iterator<ProcessContainerThread> it = worker.iterator();
+		while (it.hasNext()) {
+			ProcessContainerThread t = it.next();
+			if (file.equals(t.getFile()) && t.isAlive()) {
 				log.trace("File {} already deployed, run by thread {}", file, t);
 				return true;
+			}
+
+			if (!t.isAlive()) {
+				log.info("Removing dead process-container-thread {}", t);
+				it.remove();
 			}
 		}
 		return false;

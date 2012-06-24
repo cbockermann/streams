@@ -47,6 +47,11 @@ h1 {
 	margin: 0px;
 }
 
+.xml-area {
+	font-family: Courier,Monospaced;
+	color: #444;
+}
+
 .shell-output {
 	font-family: Courier,Monospaced;
 	background-color: #e0e0e0;
@@ -61,10 +66,77 @@ h1 {
 	padding-bottom: 8px;
 }
 
+.container-view {
+	margin: auto;
+}
+
+.container-view-area {
+	margin: auto;
+	background-color: #e0e0e0;
+	border: solid 1px #d0d0d0;
+}
+
 .container-element {
 	text-align: center;
-	border: solid 1px #a0a0a0;
-	background-color: #e0e0e0;
+	border: solid 2px #a0a0a0;
+	background-color: white;
 	color: #444;
 	font-weight: bold;
+	padding: 0px;
+}
+
+.container-element-title {
+	height: 22px;
+	background-color: #444;
+	color: white;
+}
+
+.container-element-content {
+	padding: 4px;
+	background-color: white;
+}
+
+.editor-tools {
+	margin-left: 60px;
+}
+
+.xml-editor {
+	margin: auto;
+}
+
+.process {
+	margin: 0px;
+	padding: 0px;
+	background-color: #e0e0e0;
+	border: solid 1px #d0d0d0;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.process:hover {
+	border: solid 1px #444;
+}
+
+.process-panel {
+	margin: 0px;
+	padding: 0px;
+	float:left;
+}
+
+.process-panel td {
+	padding: 2px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin: 0px;
+}
+
+.process-element {
+	height: 36px;
+}
+
+.process-panel-spacer {
+	height: 60px;
+	width: 4px;
+	padding: 0px;
+	margin: 0px;
 }

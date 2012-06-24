@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessContext;
+import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -55,10 +56,11 @@ public class ProcessContextImpl implements ProcessContext {
 	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
 		if (containerContext == null)
 			throw new Exception("No parent context exists!");
-		return containerContext.lookup(ref, serviceClass );
+		return containerContext.lookup(ref, serviceClass);
 	}
 
 	/**
@@ -82,7 +84,6 @@ public class ProcessContextImpl implements ProcessContext {
 		containerContext.unregister(ref);
 	}
 
-	
 	@Override
 	public Map<String, String> list() throws Exception {
 		return containerContext.list();
@@ -117,5 +118,16 @@ public class ProcessContextImpl implements ProcessContext {
 		}
 
 		return get(variable.substring("process.".length()));
+	}
+
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		throw new Exception(
+				"Addition of remote naming services is not supported by local context!");
 	}
 }

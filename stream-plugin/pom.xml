@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>8.1.3.v20120416</version>
+			<version>8.1.4.v20120524</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -233,7 +233,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>DataStream-Plugin-${pom.version}</finalName>
+					<finalName>RapidMiner-Streams-${pom.version}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -243,7 +243,7 @@
 						</manifest>
 						<manifestEntries>
 							<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
-							<Implementation-Title>DataStream-Plugin</Implementation-Title>
+							<Implementation-Title>Streams-Plugin</Implementation-Title>
 							<Implementation-URL>http://sfb876.cs.tu-dortmund.de/streams/stream-plugin/</Implementation-URL>
 							<Implementation-Version>1.0</Implementation-Version>
 							<Implementation-Revision>${pom.version}</Implementation-Revision>
@@ -251,8 +251,8 @@
 							<Specification-Version>1.0</Specification-Version>
 							<RapidMiner-Version>5.1</RapidMiner-Version>
 							<RapidMiner-Type>RapidMiner_Extension</RapidMiner-Type>
-							<Extension-ID>rmx_stream</Extension-ID>
-							<Namespace>DataStream</Namespace>
+							<Extension-ID>rmx_streams</Extension-ID>
+							<Namespace>streams</Namespace>
 							<Initialization-Class>stream.plugin.DataStreamPlugin</Initialization-Class>
 							<IOObject-Descriptor>/stream/plugin/resources/DataStreamIOObjects.xml</IOObject-Descriptor>
 							<Operator-Descriptor>/stream/plugin/resources/DataStreamOperators.xml</Operator-Descriptor>

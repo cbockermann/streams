@@ -18,7 +18,6 @@
 		<module>stream-runtime</module>
 		<module>stream-analysis</module>
 		<module>stream-plotter</module>
-		<module>stream-twitter</module>
 	</modules>
 
 	<repositories>

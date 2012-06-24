@@ -41,6 +41,7 @@ public class DefaultNamingService implements NamingService {
 
 	static Logger log = LoggerFactory.getLogger(DefaultNamingService.class);
 	final Map<String, Service> services = new HashMap<String, Service>();
+	final Map<String, NamingService> remoteContainer = new LinkedHashMap<String, NamingService>();
 	final String name;
 
 	public DefaultNamingService() {
@@ -115,6 +116,9 @@ public class DefaultNamingService implements NamingService {
 			log.debug("No processor registered for reference {}", ref);
 	}
 
+	/**
+	 * @see stream.service.NamingService#list()
+	 */
 	@Override
 	public Map<String, String> list() throws Exception {
 
@@ -124,5 +128,19 @@ public class DefaultNamingService implements NamingService {
 		}
 
 		return lst;
+	}
+
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		this.remoteContainer.put(key, remoteNamingService);
+	}
+
+	public NamingService getContainer(String key) {
+		return remoteContainer.get(key);
 	}
 }

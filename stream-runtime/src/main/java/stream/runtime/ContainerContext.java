@@ -43,6 +43,7 @@ public class ContainerContext implements Context {
 	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
 	final Map<String, String> properties = new LinkedHashMap<String, String>();
 	final NamingService namingService;
+	final Map<String, NamingService> remoteContainers = new LinkedHashMap<String, NamingService>();
 
 	public ContainerContext() {
 		this(new DefaultNamingService());
@@ -91,8 +92,9 @@ public class ContainerContext implements Context {
 	 * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
 	 */
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass ) throws Exception {
-		return namingService.lookup(ref, serviceClass );
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception {
+		return namingService.lookup(ref, serviceClass);
 	}
 
 	/**
@@ -115,5 +117,17 @@ public class ContainerContext implements Context {
 	@Override
 	public Map<String, String> list() throws Exception {
 		return namingService.list();
+	}
+
+	/**
+	 * @see stream.service.NamingService#addContainer(java.lang.String,
+	 *      stream.service.NamingService)
+	 */
+	@Override
+	public void addContainer(String key, NamingService remoteNamingService)
+			throws Exception {
+		log.info("Adding remote container '{}' at {}", key, remoteNamingService);
+		// remoteContainers.put(key, remoteNamingService);
+		this.namingService.addContainer(key, remoteNamingService);
 	}
 }

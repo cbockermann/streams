@@ -59,7 +59,7 @@ public class StreamNodeContext implements ServletContextListener {
 		deployDirectory.mkdirs();
 
 		log.info("Using deployment-directory {}", deployDirectory);
-		runtimeManager = new RuntimeManager(deployDirectory);
+		runtimeManager = RuntimeManager.getInstance(); // (deployDirectory);
 		try {
 			runtimeManager.start();
 		} catch (Exception e) {

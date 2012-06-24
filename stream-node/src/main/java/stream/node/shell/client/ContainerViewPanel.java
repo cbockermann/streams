@@ -5,38 +5,37 @@ import java.util.Map;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
-public class ContainerViewPanel extends AbsolutePanel {
+public class ContainerViewPanel extends SimplePanel {
 
-	Map<Element,Widget> widgets = new HashMap<Element,Widget>();
-	
+	Map<Element, ElementWidget> widgets = new HashMap<Element, ElementWidget>();
+
+	final AbsolutePanel area = new AbsolutePanel();
 	private PickupDragController dragController;
-	
-	
-	public ContainerViewPanel(){
-		this.setPixelSize( 1024, 640 );
-		dragController = new PickupDragController( this, true );
+
+	public ContainerViewPanel() {
+		this.setPixelSize(1024, 640);
+		area.setPixelSize(1000, 600);
+		area.addStyleName("container-view-area");
+		dragController = new PickupDragController(area, true);
+
+		this.setWidget(area);
 	}
-	
-	public void add( Element el ){
-		Widget w = createWidget( el );
-		if( w != null ){
-			dragController.makeDraggable( w );
-			widgets.put( el, w );
-			add( w, this.getOffsetWidth() / 2, this.getOffsetHeight() / 2 );
+
+	public void add(Element el) {
+		ElementWidget w = createWidget(el);
+		if (w != null) {
+			// widgets.put(el, w);
+			area.add(w, this.getOffsetWidth() / 2, this.getOffsetHeight() / 2);
+			dragController.makeDraggable(w);
+
+			// dropController.drop(w, this.getOffsetWidth() / 2,
+			// this.getOffsetHeight() / 2);
 		}
 	}
-	
-	public Widget createWidget( Element element ){
-		
-		FlowPanel p = new FlowPanel();
-		p.addStyleName( "container-element" );
-		p.setWidth( "120px" );
-		p.setHeight( "80px" );
-		p.add( new Label( element.getName() ) );
-		return p;
+
+	public ElementWidget createWidget(Element element) {
+		return new ElementWidget(element);
 	}
 }

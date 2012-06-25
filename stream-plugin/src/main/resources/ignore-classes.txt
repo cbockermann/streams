@@ -4,5 +4,9 @@ stream.io.DefaultTreeParser
 stream.io.LogStreamParser
 stream.io.DataStreamProcessor
 stream.io.DataStreamLoop
-stream.learner.Prediction
-stream.learner.evaluation.PredictionError
+#stream.learner.Prediction
+#stream.learner.evaluation.PredictionError
+
+
+stream.flow.If
+stream.flow.OnChange

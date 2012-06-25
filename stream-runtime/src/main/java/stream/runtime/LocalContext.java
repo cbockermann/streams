@@ -30,6 +30,7 @@ import java.util.Map;
 import stream.ProcessContext;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -93,10 +94,11 @@ public class LocalContext implements ProcessContext {
 	}
 
 	@Override
-	public Map<String, String> list() throws Exception {
-		Map<String, String> classes = new LinkedHashMap<String, String>();
+	public Map<String, ServiceInfo> list() throws Exception {
+		Map<String, ServiceInfo> classes = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : lookupService.keySet()) {
-			classes.put(key, lookupService.get(key).getClass().getSimpleName());
+			classes.put(key,
+					ServiceInfo.createServiceInfo(key, lookupService.get(key)));
 		}
 		return classes;
 	}

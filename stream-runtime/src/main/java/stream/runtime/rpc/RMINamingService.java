@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * An implementation of the NamingService that uses RMI as underlying transport
@@ -37,7 +38,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	final String name;
 	final String namespace;
 	final Registry registry;
-	final Map<String, Class<? extends Service>> classes = new LinkedHashMap<String, Class<? extends Service>>();
+	final Map<String, ServiceInfo> classes = new LinkedHashMap<String, ServiceInfo>();
 
 	Announcer announcer;
 	Discovery discoverer;
@@ -159,7 +160,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 							"Created new NamingService-connection for container {}: {}",
 							key, remote);
 
-					Map<String, String> services = remote.list();
+					Map<String, ServiceInfo> services = remote.list();
 					log.debug("RemoteServices are:");
 					for (String s : services.keySet()) {
 						log.debug("   {} = {}", s, services.get(s));
@@ -297,9 +298,17 @@ public class RMINamingService extends UnicastRemoteObject implements
 			throw new Exception("No service entity found for reference '" + ref
 					+ "'!");
 
+		ServiceInfo info = classes.get(ref);
+		if (info == null)
+			throw new Exception("No service information available for '" + ref
+					+ "'!");
+
+		log.info("Creating proxy for {}, service interfaces: {}", ref,
+				classes.get(ref));
+
 		Service service = (Service) Proxy.newProxyInstance(re.getClass()
-				.getClassLoader(), new Class<?>[] { serviceClass },
-				new RMIServiceDelegator(re));
+				.getClassLoader(), info.getServices(), new RMIServiceDelegator(
+				re));
 		log.debug("Service lookup of '{}' => {}", localRef, service);
 		return (T) service;
 	}
@@ -327,7 +336,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 					+ "' as local reference!");
 		registry.rebind(localRef, proxy);
 
-		classes.put(localRef, services[0]);
+		classes.put(localRef, ServiceInfo.createServiceInfo(localRef, p));
 		log.debug("After registration, classes are: {}", classes);
 	}
 
@@ -347,12 +356,15 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	@Override
-	public Map<String, String> list() throws Exception {
+	public Map<String, ServiceInfo> list() throws Exception {
 		log.debug("list() query received, classes are: {}", classes);
-		Map<String, String> lst = new LinkedHashMap<String, String>();
+		Map<String, ServiceInfo> lst = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : classes.keySet()) {
-			if (classes.get(key) != null)
-				lst.put(namespace + key, classes.get(key).getCanonicalName());
+			if (classes.get(key) != null) {
+				ServiceInfo info = classes.get(key);
+				log.info("Adding info {} for service {}", info, key);
+				lst.put(key, info);
+			}
 		}
 
 		return lst;
@@ -370,7 +382,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 		log.debug("Query for service-info on {} received!", name);
 		Map<String, String> info = new LinkedHashMap<String, String>();
 
-		Class<? extends Service> clazz = classes.get(getLocalRef(name));
+		ServiceInfo serviceInfo = this.classes.get(getLocalRef(name));
+		Class<? extends Service> clazz = serviceInfo.getServices()[0];
 
 		info.put("name", name);
 

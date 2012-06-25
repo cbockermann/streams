@@ -3,8 +3,6 @@
  */
 package stream.plugin;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -15,9 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Processor;
+import stream.learner.MetaDataLearner;
 import stream.runtime.DefaultNamingService;
+import stream.runtime.rpc.ContainerAnnouncement;
+import stream.runtime.rpc.Discovery;
+import stream.runtime.rpc.RMIClient;
+import stream.runtime.rpc.RMINamingService;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * This naming service extends the default naming service of the stream-api and
@@ -26,8 +30,7 @@ import stream.service.Service;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class OperatorNamingService extends DefaultNamingService implements
-		NamingService {
+public class OperatorNamingService extends DefaultNamingService {
 
 	static Logger log = LoggerFactory.getLogger(OperatorNamingService.class);
 
@@ -35,8 +38,9 @@ public class OperatorNamingService extends DefaultNamingService implements
 	protected final Set<String> names = new LinkedHashSet<String>();
 	protected final Map<String, Processor> processors = new LinkedHashMap<String, Processor>();
 
-	private Registry registry;
+	private RMINamingService localServices;
 	private final Object lock = new Object();
+	final Discovery discovery;
 
 	public static OperatorNamingService getInstance() {
 		return service;
@@ -47,17 +51,46 @@ public class OperatorNamingService extends DefaultNamingService implements
 		String host = "127.0.0.1";
 		try {
 
+			localServices = new RMINamingService("RapidMiner", host, port);
+
 			System.setProperty("stream.service.rmi.port", port + "");
 			System.setProperty("stream.service.rmi.host", host);
 
 			System.setProperty("java.rmi.server.hostname", host);
-			registry = LocateRegistry.createRegistry(port);
-			log.info("Created RMI registry at port {}: {}", port, registry);
+			log.info("Created RMI registry at port {}: {}", port, localServices);
+
 		} catch (Exception e) {
 			log.error("Failed to create RMI registry at port {}: {}", port,
 					e.getMessage());
 			if (log.isDebugEnabled())
 				e.printStackTrace();
+		}
+
+		try {
+			discovery = new Discovery();
+			discovery.discover();
+
+			for (String key : discovery.getAnnouncements().keySet()) {
+				ContainerAnnouncement an = discovery.getAnnouncements()
+						.get(key);
+
+				if ("rmi".equalsIgnoreCase(an.getProtocol())) {
+
+					addContainer(key, new RMIClient(an.getHost(), an.getPort()));
+					log.info("Adding container '{}' at rmi://{}:{}/",
+							an.getHost(), an.getPort());
+				} else {
+					log.error(
+							"container-refs with protocol {} are not supported!",
+							an.getProtocol());
+				}
+			}
+
+		} catch (Exception e) {
+			if (log.isTraceEnabled())
+				e.printStackTrace();
+			throw new RuntimeException("Failed to create discovery-module: "
+					+ e.getMessage());
 		}
 	}
 
@@ -68,7 +101,12 @@ public class OperatorNamingService extends DefaultNamingService implements
 	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
 			throws Exception {
 		synchronized (lock) {
-			return super.lookup(ref, serviceClass);
+			if (ref.startsWith("//RapidMiner/") || !ref.startsWith("//")) {
+				return localServices.lookup(ref, serviceClass);
+			} else {
+				throw new Exception(
+						"Remote services are currently not supported!");
+			}
 		}
 	}
 
@@ -79,12 +117,12 @@ public class OperatorNamingService extends DefaultNamingService implements
 	@Override
 	public void register(String ref, Service p) throws Exception {
 		synchronized (lock) {
-			super.register(ref, p);
 			log.info("Adding '{}' to set of registered service-names...", ref);
-			names.add(ref);
 			try {
 				log.info("Registering service {} in RMI registry...", p);
-				registry.rebind(ref, p);
+				localServices.register(ref, p);
+				log.info("Registered local services:\n{}", localServices.list());
+				names.add(ref);
 			} catch (Exception e) {
 				log.error("Failed to register service {} at rmi registry: {}",
 						p, e.getMessage());
@@ -102,11 +140,10 @@ public class OperatorNamingService extends DefaultNamingService implements
 		try {
 			synchronized (lock) {
 				try {
-					registry.unbind(ref);
+					localServices.unregister(ref);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				super.unregister(ref);
 				names.remove(ref);
 			}
 		} catch (Exception e) {
@@ -116,15 +153,83 @@ public class OperatorNamingService extends DefaultNamingService implements
 
 	public Set<String> getServiceNames() {
 		synchronized (lock) {
-			return Collections.unmodifiableSet(names);
+
+			Set<String> services = new LinkedHashSet<String>();
+
+			try {
+				Map<String, ServiceInfo> list = localServices.list();
+				for (String service : list.keySet()) {
+					log.info("Adding local service {}", service);
+					services.add(service);
+				}
+			} catch (Exception e) {
+				log.error("Failed to add list of local services: {}",
+						e.getMessage());
+				if (log.isTraceEnabled())
+					e.printStackTrace();
+			}
+
+			for (String remote : this.remoteContainer.keySet()) {
+				NamingService remoteServices = remoteContainer.get(remote);
+				try {
+					Map<String, ServiceInfo> list = remoteServices.list();
+					for (String service : list.keySet()) {
+						log.info("Adding service {}", service);
+						services.add(service);
+					}
+				} catch (Exception e) {
+					log.error("Error: {}", e.getMessage());
+				}
+			}
+			return Collections.unmodifiableSet(services);
 		}
 	}
 
-	public void registerProcessor(String id, Processor p) {
-		processors.put(id, p);
+	/*
+	 * public void registerProcessor(String id, Processor p) {
+	 * 
+	 * if (!id.startsWith("//")) { processors.put("//RapidMiner/" + id, p); }
+	 * else processors.put(id, p); }
+	 * 
+	 * public Map<String, Processor> getProcessors() { return processors; }
+	 */
+
+	/**
+	 * @see stream.runtime.DefaultNamingService#list()
+	 */
+	@Override
+	public Map<String, ServiceInfo> list() throws Exception {
+		Map<String, ServiceInfo> list = new LinkedHashMap<String, ServiceInfo>();
+
+		Map<String, ServiceInfo> infos = localServices.list();
+		for (String key : infos.keySet()) {
+			log.info("Adding info ({},{})", key, infos.get(key));
+			list.put(key, infos.get(key));
+		}
+
+		for (String container : remoteContainer.keySet()) {
+
+			Map<String, ServiceInfo> rlist = remoteContainer.get(container)
+					.list();
+			log.info("Container {} has services: {}", container, rlist);
+			list.putAll(rlist);
+		}
+
+		return list;
 	}
 
-	public Map<String, Processor> getProcessors() {
-		return processors;
+	public static void main(String[] args) throws Exception {
+
+		OperatorNamingService ons = OperatorNamingService.getInstance();
+
+		ons.register("MetaDataLearner", new MetaDataLearner());
+
+		Thread.sleep(500);
+
+		Map<String, ServiceInfo> list = ons.list();
+		log.info("List of services: {}", list);
+		for (String key : list.keySet()) {
+			log.info("{} = {}", key, list.get(key));
+		}
 	}
 }

@@ -72,7 +72,7 @@ public interface NamingService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, String> list() throws Exception;
+	public Map<String, ServiceInfo> list() throws Exception;
 
 	public void addContainer(String key, NamingService remoteNamingService)
 			throws Exception;

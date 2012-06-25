@@ -10,6 +10,7 @@ import java.util.Map;
 import stream.ProcessContext;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -60,10 +61,11 @@ public class ProcessContextMock implements ProcessContext {
 	 * @see stream.service.NamingService#list()
 	 */
 	@Override
-	public Map<String, String> list() throws Exception {
-		Map<String, String> classes = new LinkedHashMap<String, String>();
+	public Map<String, ServiceInfo> list() throws Exception {
+		Map<String, ServiceInfo> classes = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : services.keySet()) {
-			classes.put(key, services.get(key).getClass().getSimpleName());
+			classes.put(key,
+					ServiceInfo.createServiceInfo(key, services.get(key)));
 		}
 		return classes;
 	}

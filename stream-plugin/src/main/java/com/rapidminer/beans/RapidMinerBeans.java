@@ -18,6 +18,7 @@ import stream.annotations.Description;
 import stream.plugin.DataStreamPlugin;
 import stream.plugin.FakePlugin;
 import stream.plugin.GenericOperatorDescription;
+import stream.util.URLUtilities;
 
 import com.rapidminer.annotations.OperatorInfo;
 import com.rapidminer.beans.utils.ClassFinder;
@@ -30,8 +31,8 @@ import com.rapidminer.tools.OperatorService;
 public class RapidMinerBeans {
 
 	static Logger log = LoggerFactory.getLogger(RapidMinerBeans.class);
-	final static Set<Class<?>> REGISTERED_PROCESSORS = new HashSet<Class<?>>();
-	final static Set<String> IGNORE_LIST = new HashSet<String>();
+	public final static Set<Class<?>> REGISTERED_PROCESSORS = new HashSet<Class<?>>();
+	public final static Set<String> IGNORE_LIST = new HashSet<String>();
 
 	static String beanDirectory = System.getProperty("user.home")
 			+ File.separator + ".RapidMiner5" + File.separator + "beans";
@@ -144,7 +145,6 @@ public class RapidMinerBeans {
 			} catch (Exception e) {
 				log.error("Failed to register operator for class {}: {}",
 						clazz, e.getMessage());
-				// if (log.isDebugEnabled())
 				e.printStackTrace();
 			}
 		}
@@ -152,4 +152,21 @@ public class RapidMinerBeans {
 		log.info("{} generic RapidMinerBeans registered.",
 				REGISTERED_PROCESSORS.size());
 	}
+
+	public static void loadIgnoreList(URL url) {
+
+		if (url == null) {
+			return;
+		}
+
+		String list = URLUtilities.readContentOrEmpty(url);
+
+		for (String line : list.split("\n+")) {
+			if (!line.trim().startsWith("#") && !"".equals(line.trim())) {
+				log.info("Adding '{}' to ignore-list...", line.trim());
+				IGNORE_LIST.add(line.trim());
+			}
+		}
+	}
+
 }

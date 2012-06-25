@@ -19,6 +19,7 @@ import stream.node.service.renderer.MetaDataServiceRenderer;
 import stream.node.service.renderer.ServiceRenderer;
 import stream.plugin.OperatorNamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -79,13 +80,19 @@ public class ServiceServlet extends AbstractStreamServlet {
 		while (name.startsWith("/"))
 			name = name.substring(1);
 
+		name = name.replaceAll("%2F", "/").replaceAll("%2f", "/");
 		log.info("service is would be: '{}'", name);
 
 		try {
+
+			Map<String, ServiceInfo> infos = OperatorNamingService
+					.getInstance().list();
+			ServiceInfo info = infos.get(name);
+
 			Service service = OperatorNamingService.getInstance().lookup(name,
 					Service.class);
-			Class<?>[] intf = service.getClass().getInterfaces();
-			for (Class<?> interf : intf) {
+			log.info("service is: {}", service);
+			for (Class<?> interf : info.getServices()) {
 				log.info("Service implements interface {}",
 						interf.getCanonicalName());
 

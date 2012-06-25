@@ -1,12 +1,13 @@
-<container address="192.168.128.116" port="9105">
+<container address="127.0.0.1" port="9105">
 
-    <stream id="twitter" class="stream.test.TestStream" />
+    <stream id="twitter" class="stream.test.TestStream" limit="100"/>
 
     <process input="twitter">
-	<stream.flow.Delay time="10 second" />
+	<stream.flow.Delay time="10ms" />
 	<stream.test.LogData />
-	
+<!-- 
 		<stream.flow.Enqueue queue="//kirmes/twitter" />
+ -->	
     </process>
 
 </container>

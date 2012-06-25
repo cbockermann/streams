@@ -43,7 +43,7 @@ public class RMINamingServiceTest {
 			RMIClient client = new RMIClient("localhost", port);
 
 			log.info("Looking up service 'reverse'");
-			ReverseStringService reverse = client.lookup("reverse",
+			ReverseStringService reverse = client.lookup("//test/reverse",
 					ReverseStringService.class);
 
 			log.info("Reverse service is: {}", reverse);

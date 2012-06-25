@@ -50,7 +50,8 @@ public final class DataStreamPlugin {
 
 	public final static String NAME = "DataStream-Plugin";
 
-	public final static String VERSION = "v0.3";
+	public final static String VERSION = DataStreamPlugin.class.getPackage()
+			.getImplementationVersion();
 
 	public final static String DATA_ITEM_PORT_NAME = "data item";
 
@@ -108,6 +109,10 @@ public final class DataStreamPlugin {
 			log.info("Using NamingService {}",
 					OperatorNamingService.getInstance());
 			log.info("");
+
+			URL url = DataStreamPlugin.class.getResource("/ignore-classes.txt");
+			log.info("Using ignore-list {}", url);
+			RapidMinerBeans.loadIgnoreList(url);
 
 			RapidMinerBeans.findAndRegisterBeans();
 

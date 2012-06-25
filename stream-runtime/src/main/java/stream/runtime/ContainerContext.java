@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import stream.Context;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -115,7 +116,7 @@ public class ContainerContext implements Context {
 	}
 
 	@Override
-	public Map<String, String> list() throws Exception {
+	public Map<String, ServiceInfo> list() throws Exception {
 		return namingService.list();
 	}
 

@@ -16,6 +16,7 @@ import stream.data.Data;
 import stream.data.DataFactory;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -48,8 +49,8 @@ public class ComplexConditionTest {
 		}
 
 		@Override
-		public Map<String, String> list() throws Exception {
-			return new HashMap<String, String>();
+		public Map<String, ServiceInfo> list() throws Exception {
+			return new HashMap<String, ServiceInfo>();
 		}
 
 		@Override

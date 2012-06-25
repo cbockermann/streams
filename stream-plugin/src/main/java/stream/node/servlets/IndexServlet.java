@@ -6,7 +6,6 @@ package stream.node.servlets;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Processor;
 import stream.plugin.OperatorNamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -49,7 +48,14 @@ public class IndexServlet extends AbstractStreamServlet {
 
 		ctx.put("context", req.getContextPath());
 
-		String services = this.printServiceList();
+		String services = "";
+		try {
+			services = printServiceList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return;
+		}
 
 		Template serv = new Template("/templates/services.html");
 		ctx.put("content", serv.expand("content", services));
@@ -65,76 +71,80 @@ public class IndexServlet extends AbstractStreamServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
 		sb.append("<tr><th>Name</th><th>Type</th></tr>");
-		Map<String, Processor> serviceNames = ns.getProcessors();
-		for (String name : serviceNames.keySet()) {
-			sb.append("<tr>");
-			sb.append("<td><a href=\"/processor/" + name + "\">" + name
-					+ "</a></td>");
-			try {
-				Processor service = serviceNames.get(name);
-				sb.append("<td><code>" + service.getClass().getCanonicalName()
-						+ "</code></td>");
-			} catch (Exception e) {
-				sb.append("<td>" + e.getMessage() + "</td>");
+
+		try {
+			Map<String, ServiceInfo> services = ns.list();
+			// Map<String, Processor> serviceNames = ns.getProcessors();
+			for (String name : services.keySet()) {
+				sb.append("<tr>");
+				sb.append("<td><a href=\"/processor/" + name + "\">" + name
+						+ "</a></td>");
+				try {
+
+					Class<? extends Service>[] sc = services.get(name)
+							.getServices();
+					Object service = ns.lookup(name, sc[0]);
+					sb.append("<td><code>"
+							+ service.getClass().getCanonicalName()
+							+ "</code></td>");
+				} catch (Exception e) {
+					sb.append("<td>" + e.getMessage() + "</td>");
+				}
+				sb.append("</tr>");
 			}
-			sb.append("</tr>");
+			sb.append("</table>");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		sb.append("</table>");
 		return sb.toString();
 	}
 
-	protected String printServiceList() {
+	protected String printServiceList() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
-		sb.append("<tr><th>Name</th><th>Provider</th><th>Services</tr>");
-		Set<String> serviceNames = ns.getServiceNames();
-		for (String name : serviceNames) {
-			sb.append("<tr>");
+		sb.append("<tr><th>Name</th><th>Services</tr>");
+		Map<String, ServiceInfo> serviceNames = ns.list(); // .getServiceNames();
+		for (String name : serviceNames.keySet()) {
 
+			log.info("Service  ( {}, {} )", name, serviceNames.get(name));
+
+			sb.append("<tr>");
 			String link = "<td>" + name + "</td>";
 
 			try {
-				Service s = ns.lookup(name, Service.class);
+
+				Class<? extends Service>[] serviceClasses = serviceNames.get(
+						name).getServices();
+				Object s = ns.lookup(name, serviceClasses[0]);
 				log.info("Service is {}", s);
-				if (ServiceServlet.canRender(s)) {
+				if (ServiceServlet.canRender((Service) s)) {
 					log.info("Yes! we have a renderer for {}", s);
-					link = "<td><a href=\"/service/" + name + "\">" + name
+					link = "<td><a href=\"/service/"
+							+ name.replaceAll("\\/", "%2F") + "\">" + name
 							+ "</a></td>";
 				} else {
 					log.info("No renderer exists for {}", s);
 				}
-			} catch (Exception e) {
-				log.error("Failed to look up service '{}': {}", name,
-						e.getMessage());
-			}
-			sb.append(link);
-			try {
-				Service service = ns.lookup(name, Service.class);
-				sb.append("<td><code>" + service.getClass().getCanonicalName()
-						+ "</code></td>");
+				sb.append(link);
 
 				sb.append("<td>");
-				Class<?>[] intf = service.getClass().getInterfaces();
 				int services = 0;
-				for (Class<?> interf : intf) {
+				for (Class<? extends Service> interf : serviceClasses) {
 					log.info("Service implements interface {}",
 							interf.getCanonicalName());
-
-					if (interf != Service.class
-							&& Service.class.isAssignableFrom(interf)) {
-						if (services > 0)
-							sb.append("<br/>");
-						sb.append("<a href='${context}/documentation/"
-								+ interf.getCanonicalName() + "'>");
-						sb.append("<code>");
-						sb.append(interf.getCanonicalName());
-						sb.append("</code>");
-						services++;
-					}
+					if (services > 0)
+						sb.append("<br/>");
+					sb.append("<a href='${context}/documentation/"
+							+ interf.getCanonicalName() + "'>");
+					sb.append("<code>");
+					sb.append(interf.getCanonicalName());
+					sb.append("</code>");
+					services++;
 				}
 				sb.append("</td>");
 
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			sb.append("</tr>");
 		}

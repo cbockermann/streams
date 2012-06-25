@@ -4,8 +4,6 @@
 
 <Container>
 
-	<container-ref id="kilab55" address="129.217.31.55" port="9105" />
-
 	<Stream id="input" class="stream.test.TestStream" limit = "10" />
 
 	<Process input="input">
@@ -16,8 +14,6 @@
 
 		<stream.test.LogData />
 		
-		<stream.flow.Enqueue queue="//kilab55/input" />
-
 <!-- 
 		<PrintData />
  -->		

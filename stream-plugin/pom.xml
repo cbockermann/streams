@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jwall</groupId>
 	<artifactId>stream-plugin</artifactId>
-	<version>0.4-SNAPSHOT</version>
-	<name>RapidMiner_StreamPlugin</name>
+	<version>0.9.4-SNAPSHOT</version>
+	<name>RapidMiner-Streams</name>
 
 	<repositories>
 		<repository>
@@ -160,23 +160,23 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>1.5</version>
 				<configuration>
-					<finalName>DataStream-Plugin-${pom.version}</finalName>
+					<finalName>RapidMiner-Streams-${pom.version}</finalName>
 					<!-- put your configurations here -->
 					<transformers>
 						<transformer
 							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<manifestEntries>
 								<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
-								<Implementation-Title>DataStream-Plugin</Implementation-Title>
-								<Implementation-URL>http://sfb876.cs.tu-dortmund.de/streams/stream-plugin/</Implementation-URL>
-								<Implementation-Version>1.0</Implementation-Version>
+								<Implementation-Title>RapidMiner-Streams</Implementation-Title>
+								<Implementation-URL>http://www.jwall.org/streams/doc/rapidminer.html</Implementation-URL>
+								<Implementation-Version>${pom.version}</Implementation-Version>
 								<Implementation-Revision>${pom.version}</Implementation-Revision>
-								<Specification-Title>DataStream-Plugin</Specification-Title>
+								<Specification-Title>Streams-Plugin</Specification-Title>
 								<Specification-Version>1.0</Specification-Version>
 								<RapidMiner-Version>5.1</RapidMiner-Version>
 								<RapidMiner-Type>RapidMiner_Extension</RapidMiner-Type>
 								<Extension-ID>rmx_stream</Extension-ID>
-								<Namespace>DataStream</Namespace>
+								<Namespace>streams</Namespace>
 								<Initialization-Class>stream.plugin.DataStreamPlugin</Initialization-Class>
 								<IOObject-Descriptor>/stream/plugin/resources/DataStreamIOObjects.xml</IOObject-Descriptor>
 								<Operator-Descriptor>/stream/plugin/resources/DataStreamOperators.xml</Operator-Descriptor>

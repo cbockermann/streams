@@ -102,9 +102,9 @@ public class GenericStreamOperator extends OperatorBean implements Measurable,
 		super.registerOperator(process);
 
 		try {
-			log.info("Registering processor {} => {}", getName(), processor);
-			OperatorNamingService.getInstance().registerProcessor(getName(),
-					processor);
+			// log.info("Registering processor {} => {}", getName(), processor);
+			// OperatorNamingService.getInstance().registerProcessor(getName(),
+			// processor);
 
 			log.info("Checking if {} provides a service... ", processor);
 			if (processor instanceof Service) {

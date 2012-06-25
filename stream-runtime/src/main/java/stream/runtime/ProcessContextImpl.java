@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import stream.ProcessContext;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
@@ -85,7 +86,7 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	@Override
-	public Map<String, String> list() throws Exception {
+	public Map<String, ServiceInfo> list() throws Exception {
 		return containerContext.list();
 	}
 

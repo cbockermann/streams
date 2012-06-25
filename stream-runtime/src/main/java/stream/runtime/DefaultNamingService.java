@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -41,7 +42,7 @@ public class DefaultNamingService implements NamingService {
 
 	static Logger log = LoggerFactory.getLogger(DefaultNamingService.class);
 	final Map<String, Service> services = new HashMap<String, Service>();
-	final Map<String, NamingService> remoteContainer = new LinkedHashMap<String, NamingService>();
+	protected final Map<String, NamingService> remoteContainer = new LinkedHashMap<String, NamingService>();
 	final String name;
 
 	public DefaultNamingService() {
@@ -60,6 +61,10 @@ public class DefaultNamingService implements NamingService {
 			return true;
 
 		return false;
+	}
+
+	public String getNamespace() {
+		return this.name;
 	}
 
 	/**
@@ -120,11 +125,11 @@ public class DefaultNamingService implements NamingService {
 	 * @see stream.service.NamingService#list()
 	 */
 	@Override
-	public Map<String, String> list() throws Exception {
+	public Map<String, ServiceInfo> list() throws Exception {
 
-		Map<String, String> lst = new LinkedHashMap<String, String>();
+		Map<String, ServiceInfo> lst = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : services.keySet()) {
-			lst.put(key, services.get(key).getClass().getSimpleName());
+			lst.put(key, ServiceInfo.createServiceInfo(key, services.get(key)));
 		}
 
 		return lst;

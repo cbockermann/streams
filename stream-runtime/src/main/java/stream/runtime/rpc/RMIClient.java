@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 public class RMIClient implements RemoteNamingService {
 
@@ -47,7 +48,7 @@ public class RMIClient implements RemoteNamingService {
 	}
 
 	@Override
-	public Map<String, String> list() throws Exception {
+	public Map<String, ServiceInfo> list() throws Exception {
 		return namingService.list();
 	}
 

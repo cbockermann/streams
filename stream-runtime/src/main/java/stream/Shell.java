@@ -17,6 +17,7 @@ import stream.runtime.DefaultNamingService;
 import stream.runtime.rpc.ContainerAnnouncement;
 import stream.runtime.rpc.Discovery;
 import stream.runtime.rpc.RMIClient;
+import stream.service.ServiceInfo;
 
 public class Shell {
 
@@ -40,7 +41,7 @@ public class Shell {
 		log.info("Executing {}", line);
 
 		if (line.equalsIgnoreCase("list")) {
-			Map<String, String> list = namingService.list();
+			Map<String, ServiceInfo> list = namingService.list();
 			StringBuffer s = new StringBuffer();
 			s.append("Registered Services:\n");
 			s.append("====================");
@@ -155,7 +156,7 @@ public class Shell {
 			}
 
 			if (line.equalsIgnoreCase("list")) {
-				Map<String, String> list = namingService.list();
+				Map<String, ServiceInfo> list = namingService.list();
 				writer.println("Registered Services:\n");
 				writer.println("====================");
 				for (String key : list.keySet()) {

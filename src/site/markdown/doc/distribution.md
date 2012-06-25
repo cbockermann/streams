@@ -35,7 +35,7 @@ The second container `crawler` reads data items from Twitter and sends these
 to the input queue of the `storage` container.
 
 <div class="figure">
-   <img src="crawler-storage.png" />
+   <img src="crawler-storage.png" style="height: 200px;" />
    <p>
      Figure 2: Two simple crawler and storage containers.
    </p>

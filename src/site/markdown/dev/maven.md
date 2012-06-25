@@ -23,7 +23,7 @@ basic classes required for running stream processes. The `stream-api`
 dependency is:
 
        <dependency>
-           <groupId>jwall.org</groupId>
+           <groupId>org.jwall</groupId>
            <artifactId>stream-api</artifactId>
            <version>[0.9.3,)</version>
        </dependency>

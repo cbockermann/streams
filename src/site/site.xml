@@ -20,9 +20,8 @@
     </links>
     
 	<menu name="Documentation">
-		<item name="Quickstart" href="quickstart.html">
-		</item>
 		<item name="Overview" href="doc/index.html" collapse="true">
+		  <item name="Quickstart" href="quickstart.html" />
 		  <item name="Basic Concepts" href="doc/concepts.html" collapse="true">
 		    <item name="Container" href="doc/concepts.html#container" />
 		    <item name="Stream" href="doc/concepts.html#streams" />
@@ -73,12 +72,14 @@
 
 	<menu ref="reports"/>
 
+<!--
 	<menu ref="modules" />	
+  -->
   </body>
 
   <skin>
-    <groupId>edu.udo.cs</groupId>
-    <artifactId>sfb876-skin</artifactId>
+    <groupId>org.jwall</groupId>
+    <artifactId>streams-skin</artifactId>
     <version>1.0</version>
   </skin>
   

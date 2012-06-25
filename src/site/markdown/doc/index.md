@@ -21,8 +21,8 @@ is a thin API layer that attaches to a runtime provided as a separate module or
 can embedded into existing code.
 
 
-### Process Design with JavaBeans
-
+Process Design with JavaBeans
+-----------------------------
 
 The `streams` library promotes simple software design patterns such as JavaBean
 conventions and dependency injection to allow for a quick setup of streaming

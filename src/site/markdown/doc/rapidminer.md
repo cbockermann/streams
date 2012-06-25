@@ -1,10 +1,10 @@
 RapidMiner Streams Plugin
 =========================
 
-The popular RapidMiner application provides a toolkit for designing
-batch-type data mining and machine learning processes. It includes a
-powerful mechanism allowing for extending its capabilities with extra
-modules.
+The popular [RapidMiner](http://rapid-i.com/) application provides a
+toolkit for designing batch-type data mining and machine learning
+processes. It includes a powerful mechanism allowing for extending its
+capabilities with extra modules.
 
 The *Streams Plugin* encapsulates the streaming runtime of the
 *streams* library and provides data stream processing for RapidMiner.

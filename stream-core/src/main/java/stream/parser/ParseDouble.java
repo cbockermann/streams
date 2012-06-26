@@ -32,7 +32,7 @@ import stream.data.Data;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Processing.Transformations.Data", text = "Parses a double value from a string and replaces the attribute string value with the double object.")
+@Description(group = "Streams.Processing.Transformations.Data", text = "Parses a double value from a string and replaces the attribute string value with the double object.")
 public class ParseDouble extends AbstractProcessor {
 
 	String[] keys = new String[0];

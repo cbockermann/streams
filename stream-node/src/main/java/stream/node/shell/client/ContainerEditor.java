@@ -55,8 +55,10 @@ public class ContainerEditor implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		XMLEditor editor = new XMLEditor();
-		RootPanel.get("editor").add(editor);
+		// XMLEditor editor = new XMLEditor();
+		// RootPanel.get("editor").add(editor);
+		if (RootPanel.get("editor-tools") != null)
+			showView();
 	}
 
 	public void showView() {

@@ -64,18 +64,18 @@ public class RMINamingService extends UnicastRemoteObject implements
 		this.name = name;
 		this.namespace = "//" + name + "/";
 
-		log.info("Looking up host address {}", host);
+		log.debug("Looking up host address {}", host);
 		InetAddress address = InetAddress.getByName(host);
 		String hostAddress = address.getHostAddress();
-		log.info("Host address is {}", hostAddress);
+		log.debug("Host address is {}", hostAddress);
 		System.setProperty("java.rmi.server.hostname", hostAddress);
 		String names[] = null;
 		Registry reg = null;
 
 		if (port <= 0) {
-			log.info("Checking for free port...");
+			log.debug("Checking for free port...");
 			port = this.getFreePort();
-			log.info("Using port {}", port);
+			log.debug("Using port {}", port);
 		}
 
 		try {
@@ -124,7 +124,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 		discover();
 	}
 
-	private int getFreePort() throws Exception {
+	public static int getFreePort() throws Exception {
 		ServerSocket sock = new ServerSocket(0);
 		int port = sock.getLocalPort();
 		sock.close();
@@ -264,10 +264,10 @@ public class RMINamingService extends UnicastRemoteObject implements
 			String con = this.getContainerName(ref);
 
 			if (this.container.containsKey(con)) {
-				log.info("Found container-ref {}", con);
+				log.debug("Found container-ref {}", con);
 
 				NamingService namingService = container.get(con);
-				log.info("remote end-point is: {}", namingService);
+				log.debug("remote end-point is: {}", namingService);
 				return namingService.lookup(ref, serviceClass);
 			}
 
@@ -298,12 +298,12 @@ public class RMINamingService extends UnicastRemoteObject implements
 			throw new Exception("No service entity found for reference '" + ref
 					+ "'!");
 
-		ServiceInfo info = classes.get(ref);
+		ServiceInfo info = classes.get(localRef);
 		if (info == null)
 			throw new Exception("No service information available for '" + ref
 					+ "'!");
 
-		log.info("Creating proxy for {}, service interfaces: {}", ref,
+		log.debug("Creating proxy for {}, service interfaces: {}", ref,
 				classes.get(ref));
 
 		Service service = (Service) Proxy.newProxyInstance(re.getClass()
@@ -362,7 +362,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 		for (String key : classes.keySet()) {
 			if (classes.get(key) != null) {
 				ServiceInfo info = classes.get(key);
-				log.info("Adding info {} for service {}", info, key);
+				log.debug("Adding info {} for service {}", info, key);
 				lst.put(key, info);
 			}
 		}

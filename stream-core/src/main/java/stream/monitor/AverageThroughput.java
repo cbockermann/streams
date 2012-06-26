@@ -15,7 +15,7 @@ import stream.statistics.StatisticsService;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Performance", text = "Measures the time per item of inner processors")
+@Description(group = "Streams.Monitoring", text = "Measures the time per item of inner processors")
 public class AverageThroughput extends ProcessorList implements
 		StatisticsService {
 

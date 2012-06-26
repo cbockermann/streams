@@ -66,9 +66,9 @@ public class GenericStreamOperator extends OperatorBean implements Measurable,
 	static Logger log = LoggerFactory.getLogger(GenericStreamOperator.class);
 
 	protected final InputPort input = getInputPorts().createPort(
-			DataStreamPlugin.DATA_ITEM_PORT_NAME);
+			StreamsPlugin.DATA_ITEM_PORT_NAME);
 	protected final OutputPort output = getOutputPorts().createPort(
-			DataStreamPlugin.DATA_ITEM_PORT_NAME);
+			StreamsPlugin.DATA_ITEM_PORT_NAME);
 
 	ProcessContext processContext = null;
 	Processor processor;

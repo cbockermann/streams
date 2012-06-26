@@ -22,6 +22,12 @@ The *Streams Plugin* encapsulates the streaming runtime of the
      </div>
 </div>
 
+Other versions also exists for download at
+
+<div style="text-align: center;">
+    <a href="http://download.jwall.org/streams/">http://download.jwall.org/streams/</a>
+</div>
+
 
 Stream Processes within RapidMiner
 ----------------------------------

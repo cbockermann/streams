@@ -1,4 +1,4 @@
-<container id="nico:storage" port="0" address="192.168.10.2">
+<container id="nico:storage" port="41020" address="192.168.10.4">
 
     <Stream id="twitter" class="stream.io.BlockingQueue" size="1000" />
 

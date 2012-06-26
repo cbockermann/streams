@@ -35,8 +35,8 @@ import com.rapidminer.operator.ports.OutputPort;
  */
 public class GenericStreamWriter extends Operator {
 	
-	final InputPort input = getInputPorts().createPort( DataStreamPlugin.DATA_ITEM_PORT_NAME );
-	final OutputPort output = getOutputPorts().createPort( DataStreamPlugin.DATA_ITEM_PORT_NAME );
+	final InputPort input = getInputPorts().createPort( StreamsPlugin.DATA_ITEM_PORT_NAME );
+	final OutputPort output = getOutputPorts().createPort( StreamsPlugin.DATA_ITEM_PORT_NAME );
 
 	/**
 	 * @param description

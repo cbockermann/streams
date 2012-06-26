@@ -50,7 +50,7 @@ public class Discovery extends Thread {
 		log.debug("Sending broadcast-query to {}:{}", query.getAddress(),
 				query.getPort());
 		discovery.send(query);
-
+		log.debug("query sent...");
 		int i = 0;
 		List<ContainerAnnouncement> discovered = new ArrayList<ContainerAnnouncement>();
 
@@ -58,7 +58,8 @@ public class Discovery extends Thread {
 
 			try {
 				DatagramPacket p = new DatagramPacket(new byte[1024], 1024);
-				discovery.setSoTimeout(5);
+				discovery.setSoTimeout(100);
+				log.debug("receiving...");
 				discovery.receive(p);
 
 				if (p.getData() != null) {
@@ -79,6 +80,8 @@ public class Discovery extends Thread {
 						alive.put(announcement.toString(),
 								System.currentTimeMillis());
 					}
+				} else {
+					log.debug("received data-gram without data... {}", p);
 				}
 			} catch (SocketTimeoutException ste) {
 			} catch (Exception e) {

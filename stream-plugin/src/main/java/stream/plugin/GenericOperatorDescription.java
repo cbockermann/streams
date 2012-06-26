@@ -74,7 +74,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 
 		Description desc = clazz.getAnnotation(Description.class);
 		if (desc != null) {
-			setFullyQualifiedGroupKey(desc.group());
+			// setFullyQualifiedGroupKey(desc.group());
 		}
 
 		libClass = clazz;
@@ -129,7 +129,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 						"Creating GenericStreamingSourceOperator for class {}",
 						libClass.getName());
 
-				if (DataStreamPlugin.inStreamingMode()) {
+				if (StreamsPlugin.inStreamingMode()) {
 					// op = new GenericStreamingSourceOperator(description,
 					// (Class<? extends DataStream>) sod.libClass);
 				} else {
@@ -143,7 +143,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 			log.debug("Creating GenericStreamOperator for processor-class {}",
 					libClass);
 
-			if (DataStreamPlugin.inStreamingMode()) {
+			if (StreamsPlugin.inStreamingMode()) {
 				// op = new GenericStreamingProcessorOperator(description,
 				// (Class<? extends Processor>) sod.libClass);
 			} else {

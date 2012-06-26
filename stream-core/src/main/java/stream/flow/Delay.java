@@ -41,7 +41,7 @@ import stream.util.parser.TimeParser;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-@Description(group = "Data Stream.Flow")
+@Description(group = "Streams.Flow")
 public class Delay extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Delay.class);

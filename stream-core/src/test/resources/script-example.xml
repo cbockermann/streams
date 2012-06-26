@@ -15,11 +15,11 @@
  			var uri = data.get( "REQUEST_URI" );
  			println( "uri=" + uri );
  			data.put( "@id", "test" );
- 			data.put( "test", new Double( 1.0 ) );
+ 			data.put( "test", new java.lang.Double( 1.0 ) );
  			println( data );
  		</stream.scripting.JavaScript>
  		
- 		<stream.data.test.PrintData />
+ 		<stream.data.PrintData />
  		
 	</Process>
 	

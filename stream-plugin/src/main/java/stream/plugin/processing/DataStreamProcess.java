@@ -35,7 +35,7 @@ import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.Condition;
 import stream.io.ListDataStream;
-import stream.plugin.DataStreamPlugin;
+import stream.plugin.StreamsPlugin;
 import stream.plugin.GenericStreamOperator;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
@@ -83,8 +83,8 @@ public class DataStreamProcess extends
 	 */
 	public DataStreamProcess(OperatorDescription description) {
 		super(description, "Process Data Stream",
-				DataStreamPlugin.DATA_STREAM_PORT_NAME, DataSourceObject.class,
-				DataStreamPlugin.DATA_ITEM_PORT_NAME);
+				StreamsPlugin.DATA_STREAM_PORT_NAME, DataSourceObject.class,
+				StreamsPlugin.DATA_ITEM_PORT_NAME);
 	}
 
 	/**

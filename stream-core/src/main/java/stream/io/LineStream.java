@@ -169,11 +169,7 @@ public class LineStream extends AbstractDataStream {
 		if (parser != null) {
 			Map<String, String> map = parser.parse(line);
 			for (String key : map.keySet()) {
-				try {
-					instance.put(key, new Double(map.get(key)));
-				} catch (Exception e) {
-					instance.put(key, map.get(key));
-				}
+				instance.put(key, map.get(key));
 			}
 		}
 

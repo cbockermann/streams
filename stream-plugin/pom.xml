@@ -1,10 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jwall</groupId>
 	<artifactId>stream-plugin</artifactId>
-	<version>0.9.4-SNAPSHOT</version>
 	<name>RapidMiner-Streams</name>
+	
+	<parent>
+		<groupId>org.jwall</groupId>
+		<artifactId>streams</artifactId>
+		<relativePath>..</relativePath>
+		<version>0.9.4-SNAPSHOT</version>
+	</parent>
 
 	<repositories>
 		<repository>
@@ -41,8 +46,8 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
-			<id>kirmes</id>
-			<url>scp://bockerma@kirmes.cs.uni-dortmund.de/home/bockerma/public_html/streams/stream-plugin/</url>
+			<id>jwall-site</id>
+			<url>scp://jwall.org/var/www/jwall.org/htdocs/streams/stream-plugin/</url>
 		</site>
 	</distributionManagement>
 
@@ -123,13 +128,6 @@
 			<artifactId>jetty-servlet</artifactId>
 			<version>8.1.3.v20120416</version>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.jwall</groupId>
-			<artifactId>stream-doc</artifactId>
-			<version>1.0</version>
-		</dependency>
-  -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -175,9 +173,9 @@
 								<Specification-Version>1.0</Specification-Version>
 								<RapidMiner-Version>5.1</RapidMiner-Version>
 								<RapidMiner-Type>RapidMiner_Extension</RapidMiner-Type>
-								<Extension-ID>rmx_stream</Extension-ID>
+								<Extension-ID>rmx_streams</Extension-ID>
 								<Namespace>streams</Namespace>
-								<Initialization-Class>stream.plugin.DataStreamPlugin</Initialization-Class>
+								<Initialization-Class>stream.plugin.StreamsPlugin</Initialization-Class>
 								<IOObject-Descriptor>/stream/plugin/resources/DataStreamIOObjects.xml</IOObject-Descriptor>
 								<Operator-Descriptor>/stream/plugin/resources/DataStreamOperators.xml</Operator-Descriptor>
 								<ParseRule-Descriptor>/stream/plugin/resources/DataStreamParseRules.xml</ParseRule-Descriptor>
@@ -208,62 +206,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>stream.plugin.util.OperatorGenerator</mainClass>
-					<arguments>
-						<argument>src/generated-sources/java</argument>
-						<argument>/stream/plugin/resources/DataStreamOperators-core.xml</argument>
-						<argument>src/main/resources/stream/plugin/resources/DataStreamOperators.xml</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<finalName>RapidMiner-Streams-${pom.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
-							<Implementation-Title>Streams-Plugin</Implementation-Title>
-							<Implementation-URL>http://sfb876.cs.tu-dortmund.de/streams/stream-plugin/</Implementation-URL>
-							<Implementation-Version>1.0</Implementation-Version>
-							<Implementation-Revision>${pom.version}</Implementation-Revision>
-							<Specification-Title>DataStream-Plugin</Specification-Title>
-							<Specification-Version>1.0</Specification-Version>
-							<RapidMiner-Version>5.1</RapidMiner-Version>
-							<RapidMiner-Type>RapidMiner_Extension</RapidMiner-Type>
-							<Extension-ID>rmx_streams</Extension-ID>
-							<Namespace>streams</Namespace>
-							<Initialization-Class>stream.plugin.DataStreamPlugin</Initialization-Class>
-							<IOObject-Descriptor>/stream/plugin/resources/DataStreamIOObjects.xml</IOObject-Descriptor>
-							<Operator-Descriptor>/stream/plugin/resources/DataStreamOperators.xml</Operator-Descriptor>
-							<ParseRule-Descriptor>/stream/plugin/resources/DataStreamParseRules.xml</ParseRule-Descriptor>
-							<Group-Descriptor>/stream/plugin/resources/DataStreamGroups.properties</Group-Descriptor>
-							<Error-Descriptor>/stream/plugin/resources/i18n/DataStreamErrors.properties</Error-Descriptor>
-							<UserError-Descriptor>/stream/plugin/resources/i18n/DataStreamUserErrorMessages.properties</UserError-Descriptor>
-							<GUI-Descriptor>/stream/plugin/resources/i18n/DataStreamGUI.properties</GUI-Descriptor>
-						</manifestEntries>
-					</archive>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

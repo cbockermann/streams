@@ -1,8 +1,9 @@
 #
 #
 #
-VERSION=0.4-SNAPSHOT
-RAPIDMINER_HOME=../../RapidMiner_Unuk
+NAME=RapidMiner-Streams
+VERSION=0.9.4-SNAPSHOT
+#RAPIDMINER_HOME=../../RapidMiner_Unuk
 STREAMS_HOME=..
 
 STREAM_API_HOME=$(STREAMS_HOME)/stream-api
@@ -16,12 +17,12 @@ plugin:
 	@mvn -DskipTests=true compile package 
 	@echo ""
 	@echo "The plugin can be found in \n"
-	@echo "\t$(PWD)/target/DataStream-Plugin-$(VERSION).jar"
+	@echo "\t$(PWD)/target/$(NAME)-$(VERSION).jar"
 	@echo ""
 
 install:
 	@echo "Installing plugin in $(RAPIDMINER_HOME)/lib/plugins"
-	@cp target/DataStream-Plugin-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
+	@cp target/$(NAME)-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
 all:	plugin
 

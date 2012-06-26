@@ -37,7 +37,7 @@ import stream.expressions.ExpressionResolver;
  * @author chris
  * 
  */
-@Description(text = "", group = "Data Stream.Monitoring")
+@Description(text = "", group = "Streams.Monitoring")
 public class Message extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Message.class);

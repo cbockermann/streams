@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Description;
-import stream.plugin.DataStreamPlugin;
 import stream.plugin.FakePlugin;
 import stream.plugin.GenericOperatorDescription;
+import stream.plugin.StreamsPlugin;
 import stream.util.URLUtilities;
 
 import com.rapidminer.annotations.OperatorInfo;
@@ -81,6 +81,11 @@ public class RapidMinerBeans {
 	}
 
 	public static void findAndRegisterBeans() {
+		findAndRegisterBeans("RapidMiner-Beans", "1.0", "rmx_beans");
+	}
+
+	public static void findAndRegisterBeans(String pluginName, String version,
+			String namespace) {
 		log.debug("findAndRegisterBeans()");
 		String[] packages = new String[] { "", "stream", "fact" };
 
@@ -133,11 +138,14 @@ public class RapidMinerBeans {
 			if (desc != null) {
 				group = desc.group();
 			}
+			log.info("   group: {}", group);
+			group = group.replace("Data Stream.", "Streams.");
+			log.info("   renamed group: {}", group);
 
 			GenericOperatorDescription sod = new GenericOperatorDescription(
-					group, key, clazz, DataStreamPlugin.class.getClassLoader(),
-					null, FakePlugin.createPlugin("RapidMiner Beans", "1.0",
-							"rmx_beans"));
+					group, key, clazz, StreamsPlugin.class.getClassLoader(),
+					null, FakePlugin.createPlugin(pluginName, version,
+							namespace));
 
 			try {
 				OperatorService.registerOperator(sod, null);

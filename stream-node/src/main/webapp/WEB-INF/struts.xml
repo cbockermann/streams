@@ -73,6 +73,6 @@
     		<result name="failure">/mainMenu.jsp</result>
     		<result>/WEB-INF/content/index.jsp</result>
 		</action>
-	</package>
+		</package>
 	
 </struts>

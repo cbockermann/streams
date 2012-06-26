@@ -10,10 +10,24 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>stream-node</artifactId>
-	<version>0.1</version>
 	<packaging>war</packaging>
 	<name>stream-node Maven Webapp</name>
 	<url>http://maven.apache.org</url>
+
+
+	<distributionManagement>
+		<repository>
+			<id>jwall</id>
+			<name>jwall.org Maven Repository</name>
+			<url>https://secure.jwall.org/maven/repository/jwall</url>
+		</repository>
+		<snapshotRepository>
+			<id>jwall-snapshots</id>
+			<name>jwall.org Snapshot Repository</name>
+			<url>https://secure.jwall.org/maven/repository/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -30,7 +44,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-api</artifactId>
-			<version>0.9.4-SNAPSHOT</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -43,19 +57,9 @@
 			<version>1.2.14</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-convention-plugin</artifactId>
-			<version>2.3.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-runtime</artifactId>
-			<version>0.9.4-SNAPSHOT</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.markdownj</groupId>
@@ -65,7 +69,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-core</artifactId>
-			<version>0.9.4-SNAPSHOT</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -87,11 +91,6 @@
 					<groupId>com.google.gwt</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>2.4.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -140,6 +139,7 @@
 							<addDefaultImplementationEntries>false</addDefaultImplementationEntries>
 						</manifest>
 						<manifestEntries>
+							<Main-Class>stream.Node</Main-Class>
 							<Product-Name>DataStreamNode</Product-Name>
 							<Product-Version>${pom.version}</Product-Version>
 							<Created-By>Christian Bockermann - chris@jwall.org</Created-By>
@@ -148,16 +148,16 @@
 					</archive>
 				</configuration>
 			</plugin>
-                        <plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>gwt-maven-plugin</artifactId>
-                                <version>2.4.0</version>
-                                <configuration>
-                                        <inplace>true</inplace>
-                                        <resourceBundle>org.jwall.web.audit.console.Reporting</resourceBundle>
-                                        <message>true</message>
-                                </configuration>
-                        </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>2.4.0</version>
+				<configuration>
+					<inplace>true</inplace>
+					<resourceBundle>org.jwall.web.audit.console.Reporting</resourceBundle>
+					<message>true</message>
+				</configuration>
+			</plugin>
 		</plugins>
 
 	</build>

@@ -38,6 +38,7 @@ public class MoaClassifier extends MoaProcessor implements PredictionService {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
+		classifier.resetLearning();
 	}
 
 	/**

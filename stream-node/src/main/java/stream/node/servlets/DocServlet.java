@@ -50,25 +50,25 @@ public class DocServlet extends AbstractStreamServlet {
 		params.put("context.path", req.getContextPath());
 		params.put("stream.node.version", "0.9.4-SNAPSHOT");
 
-		log.info("Handing request to {}", req.getRequestURI());
+		log.debug("Handing request to {}", req.getRequestURI());
 		String prefix = req.getContextPath() + req.getServletPath();
 		String resource = req.getRequestURI().substring(prefix.length());
-		log.info("Resource requested is: '{}'", resource);
+		log.debug("Resource requested is: '{}'", resource);
 
 		if (resource.endsWith("/"))
 			resource += "index.md";
 
 		URL url = null;
 		if (resource.endsWith(".md") || resource.matches("^/\\w+(\\.\\w+)+")) {
-			log.info("Checking for documentation {}", resource);
+			log.debug("Checking for documentation {}", resource);
 			String[] tests = new String[] { ".md", "/index.md" };
 
 			for (String test : tests) {
 				String res = resource.replace('.', '/') + test;
 				url = DocServlet.class.getResource(res);
-				log.info("exists '{}'?  url: {}", res, url);
+				log.debug("exists '{}'?  url: {}", res, url);
 				if (url != null) {
-					log.info("Found markdown-documentation at {}", url);
+					log.debug("Found markdown-documentation at {}", url);
 					break;
 				}
 			}
@@ -76,7 +76,7 @@ public class DocServlet extends AbstractStreamServlet {
 
 		if (url == null) {
 			String path = "/web/documentation" + resource;
-			log.info("Checking for resource '{}' in classpath at '{}'",
+			log.debug("Checking for resource '{}' in classpath at '{}'",
 					resource, path);
 			url = DocServlet.class.getResource(path);
 		}

@@ -4,7 +4,6 @@
 package stream.statistics;
 
 import stream.Processor;
-import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.data.Statistics;
@@ -13,7 +12,8 @@ import stream.data.Statistics;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Process.Statistics", text = "Adds statistics from statistic services to the current data item")
+// @Description(group = "Data Stream.Process.Statistics", text =
+// "Adds statistics from statistic services to the current data item")
 public class AddStatistics implements Processor {
 
 	StatisticsService service;

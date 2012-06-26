@@ -12,7 +12,7 @@ as a basis for implementing custom processors and providing services with the
 `streams` library.
 
 <div style="margin:auto; border: none; text-align: center;">
-   <img style="margin:auto; height: 200px;" src="architecture2.png" />
+   <img style="margin:auto; height: 200px;" src="doc/architecture2.png" />
    <p>Figure 1: Components of the <code>streams</code> library.</p>
 </div>
 
@@ -33,7 +33,7 @@ runtime environment that lets users define streaming processes in XML files,
 with a close relation to the implementing Java classes.
 
 <div style="margin:auto; border: none; text-align: center;">
-   <img style="margin:auto; height: 200px;" src="process-design.png" />
+   <img style="margin:auto; height: 200px;" src="doc/process-design.png" />
    <p style="margin-left:20px; margin-right:20px;">Figure 2: XML process definitions mapped to a runtime environment, using 
    stream-api components and other libraries.</p>
 </div>

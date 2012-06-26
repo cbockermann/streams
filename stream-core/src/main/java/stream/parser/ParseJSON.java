@@ -20,7 +20,7 @@ import stream.data.Data;
  * @author chris
  * 
  */
-@Description(group = "Data Stream.Processing.Transformations.Data")
+@Description(group = "Streams.Processing.Transformations.Data")
 public class ParseJSON implements Processor {
 
 	static Logger log = LoggerFactory.getLogger(ParseJSON.class);

@@ -111,6 +111,8 @@ public class ProcessContainer {
 
 	protected final List<DocumentHandler> documentHandler = new ArrayList<DocumentHandler>();
 
+	boolean server = true;
+
 	public ProcessContainer(URL url) throws Exception {
 		this(url, null);
 	}
@@ -155,6 +157,12 @@ public class ProcessContainer {
 		}
 		if (System.getProperty("container.port") != null) {
 			attr.put("port", System.getProperty("container.port"));
+		}
+
+		try {
+			server = new Boolean(attr.get("server"));
+		} catch (Exception e) {
+			server = true;
 		}
 
 		if (!root.getNodeName().equalsIgnoreCase("experiment")
@@ -384,7 +392,13 @@ public class ProcessContainer {
 			Iterator<AbstractProcess> it = processes.iterator();
 			while (it.hasNext()) {
 				AbstractProcess p = it.next();
-				if (!p.isRunning() || p instanceof Monitor) {
+
+				if (!server && p instanceof Monitor) {
+					it.remove();
+					continue;
+				}
+
+				if (!p.isRunning()) {
 					log.debug("Process '{}' is finished.", p);
 					log.debug("Removing finished process {}", p);
 					it.remove();

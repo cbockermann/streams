@@ -79,7 +79,7 @@ public class ContainerServlet extends HttpServlet {
 
 			int idx = name.indexOf("/");
 			containerName = name.substring(0, idx);
-			log.info("Container-name is '{}'", containerName);
+			log.debug("Container-name is '{}'", containerName);
 
 			String id = name.substring(idx + 1);
 			log.debug("reference to look for is: {}", id);

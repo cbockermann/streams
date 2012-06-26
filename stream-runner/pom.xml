@@ -6,9 +6,23 @@
     <version>0.9.4-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>stream-exec</artifactId>
-  <name>stream-exec</name>
+  <artifactId>stream-runner</artifactId>
+  <name>stream-runner</name>
   <description>This is a very simple module that includes various dependencies and provides a standalone executable jar including the stream-api, stream-core, stream-runtime and log4j logging libraries.</description>
+  
+  <repositories>
+		<repository>
+			<id>jwall</id>
+			<name>jwall.org Maven Repository</name>
+			<url>https://secure.jwall.org/maven/repository/jwall</url>
+		</repository>
+		<repository>
+			<id>jwall-snapshots</id>
+			<name>jwall.org Snapshot Repository</name>
+			<url>https://secure.jwall.org/maven/repository/snapshots</url>
+		</repository>  
+  </repositories>
+  
   
   	<build>
 		<plugins>
@@ -30,13 +44,13 @@
 							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<manifestEntries>
 								<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
-								<Implementation-Title>streams-runtime</Implementation-Title>
+								<Implementation-Title>stream-runner</Implementation-Title>
 								<Implementation-URL>http://www.jwall.org/streams/</Implementation-URL>
-								<Implementation-Version>1.0</Implementation-Version>
+								<Implementation-Version>${pom.version}</Implementation-Version>
 								<Implementation-Revision>${pom.version}</Implementation-Revision>
 								<Specification-Title>streams-runtime</Specification-Title>
 								<Specification-Version>1.0</Specification-Version>
-								<main-class>stream.run</main-class>
+								<main-class>stream.Runner</main-class>
 							</manifestEntries>
 						</transformer>
 					</transformers>
@@ -83,5 +97,21 @@
   			<artifactId>jetty-server</artifactId>
   			<version>8.1.4.v20120524</version>
   		</dependency>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-node</artifactId>
+			<version>0.9.4-SNAPSHOT</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>8.1.4.v20120524</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jsp</artifactId>
+			<version>8.1.4.v20120524</version>
+		</dependency>
   	</dependencies>
 </project>

@@ -89,10 +89,9 @@ public class StreamNodeContext implements ServletContextListener {
 	public static Map<String, String> getSystemInfo() {
 		Map<String, String> info = new LinkedHashMap<String, String>();
 
-		info.put("DataNode User", System.getProperty("user.name"));
-		info.put("stream-api Version", "0.9.4-SNAPSHOT"); // TODO: fix this to
-															// use dynamic
-															// version lookup
+		info.put("Stream Node User", System.getProperty("user.name"));
+		info.put("stream-api Version", StreamNodeContext.class.getPackage()
+				.getImplementationVersion());
 		// Version.getVersion("org.jwall", "stream-api").getVersion());
 		info.put("Java VM", System.getProperty("java.vm.name"));
 		info.put("Java VM Vendor", System.getProperty("java.vm.vendor"));

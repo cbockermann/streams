@@ -1,4 +1,4 @@
-<container>
+<container server="false">
 
 	<stream id="test"
 			class="stream.io.TimeStream" limit="100" interval="10ms" />

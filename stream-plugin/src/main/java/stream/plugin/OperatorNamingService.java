@@ -40,7 +40,8 @@ public class OperatorNamingService extends DefaultNamingService {
 
 	private RMINamingService localServices;
 	private final Object lock = new Object();
-	final Discovery discovery;
+	private Discovery discovery;
+	String localName = "RapidMiner";
 
 	public static OperatorNamingService getInstance() {
 		return service;
@@ -51,7 +52,10 @@ public class OperatorNamingService extends DefaultNamingService {
 		String host = "127.0.0.1";
 		try {
 
-			localServices = new RMINamingService("RapidMiner", host, port);
+			port = RMINamingService.getFreePort();
+			log.info("Using port {}", port);
+			localName = "RapidMiner-" + port;
+			localServices = new RMINamingService(localName, host, port);
 
 			System.setProperty("stream.service.rmi.port", port + "");
 			System.setProperty("stream.service.rmi.host", host);
@@ -66,19 +70,31 @@ public class OperatorNamingService extends DefaultNamingService {
 				e.printStackTrace();
 		}
 
+		this.discover();
+	}
+
+	protected void discover() {
 		try {
-			discovery = new Discovery();
+
+			log.info("auto-discovery of remote containers...");
+
+			if (discovery == null)
+				discovery = new Discovery();
+
 			discovery.discover();
 
 			for (String key : discovery.getAnnouncements().keySet()) {
+
 				ContainerAnnouncement an = discovery.getAnnouncements()
 						.get(key);
+
+				log.info("Found container: {}", an);
 
 				if ("rmi".equalsIgnoreCase(an.getProtocol())) {
 
 					addContainer(key, new RMIClient(an.getHost(), an.getPort()));
-					log.info("Adding container '{}' at rmi://{}:{}/",
-							an.getHost(), an.getPort());
+					log.info("Adding container '{}' at rmi://{}/", key,
+							an.getHost() + ":" + an.getPort());
 				} else {
 					log.error(
 							"container-refs with protocol {} are not supported!",
@@ -87,10 +103,7 @@ public class OperatorNamingService extends DefaultNamingService {
 			}
 
 		} catch (Exception e) {
-			if (log.isTraceEnabled())
-				e.printStackTrace();
-			throw new RuntimeException("Failed to create discovery-module: "
-					+ e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -101,11 +114,17 @@ public class OperatorNamingService extends DefaultNamingService {
 	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
 			throws Exception {
 		synchronized (lock) {
-			if (ref.startsWith("//RapidMiner/") || !ref.startsWith("//")) {
+			if (ref.startsWith("//" + localName + "/") || !ref.startsWith("//")) {
 				return localServices.lookup(ref, serviceClass);
 			} else {
-				throw new Exception(
-						"Remote services are currently not supported!");
+
+				String container = getContainerName(ref);
+				NamingService remote = remoteContainer.get(container);
+				if (remote == null)
+					throw new Exception("No container known for name '"
+							+ container + "'!");
+
+				return remote.lookup(ref, serviceClass);
 			}
 		}
 	}
@@ -199,6 +218,9 @@ public class OperatorNamingService extends DefaultNamingService {
 	 */
 	@Override
 	public Map<String, ServiceInfo> list() throws Exception {
+
+		discover();
+
 		Map<String, ServiceInfo> list = new LinkedHashMap<String, ServiceInfo>();
 
 		Map<String, ServiceInfo> infos = localServices.list();

@@ -68,6 +68,23 @@ public class DefaultNamingService implements NamingService {
 	}
 
 	/**
+	 * Extracts the container name from a service reference.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected String getContainerName(String ref) {
+		if (!ref.startsWith("//"))
+			return this.name;
+
+		int idx = ref.indexOf("/", 3);
+		if (idx < 0)
+			return null;
+
+		return ref.substring(2, idx);
+	}
+
+	/**
 	 * @see stream.service.NamingService#lookup(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")

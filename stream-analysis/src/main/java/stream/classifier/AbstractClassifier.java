@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import stream.AbstractProcessor;
+import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.learner.PredictionService;
 
@@ -45,6 +46,7 @@ public abstract class AbstractClassifier extends AbstractProcessor implements
 	 * @param label
 	 *            the label to set
 	 */
+	@Parameter(description = "The label attribute to use")
 	public void setLabel(String label) {
 		this.label = label;
 	}

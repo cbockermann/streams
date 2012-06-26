@@ -1,4 +1,4 @@
-<container>
+<container id="moa-test" address="192.168.128.4" port="9101" >
 
 	<stream id="stream" class="stream.io.CsvStream"
 		url="classpath:/multi-golf.csv.gz" limit="1000"/>
@@ -9,19 +9,28 @@
 		
 	
 		<stream.learner.Prediction learner="NB" />
+		<!-- 
 		<stream.learner.Prediction learner="HT" />
+		 -->
 
 		<stream.learner.evaluation.PredictionError />
 
 		<moa.classifiers.bayes.NaiveBayes id="NB"/>
-		
+		<!-- 
 		<moa.classifiers.trees.HoeffdingTree id="HT" binarySplits="true" />
+		 -->
 		
-		<stream.statistics.Sum keys="@error:NB,@error:HT" />
+		<stream.statistics.Sum keys="@error:NB" />
 		
+<!--
 		<PrintData />
-		
-		
+		<stream.flow.Delay time="1s" />
+  -->
 	
 	</process>
+
+	<Monitor interval="1 second">
+
+		<PrintData />
+	</Monitor>
 </container>

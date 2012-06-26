@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 import stream.learner.MetaDataService;
 import stream.node.service.renderer.MetaDataServiceRenderer;
 import stream.node.service.renderer.ServiceRenderer;
-import stream.runtime.rpc.Naming;
+import stream.service.NamingService;
 import stream.service.Service;
+import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -37,11 +38,13 @@ public class ServiceServlet extends AbstractStreamServlet {
 		renderer.put(MetaDataService.class, new MetaDataServiceRenderer());
 	}
 
+	NamingService namingService;
+
 	public static boolean canRender(Service service) {
 
 		Class<?>[] intf = service.getClass().getInterfaces();
 		for (Class<?> interf : intf) {
-			log.info("Service implements interface {}",
+			log.debug("Service implements interface {}",
 					interf.getCanonicalName());
 
 			if (renderer.containsKey(interf)) {
@@ -71,29 +74,32 @@ public class ServiceServlet extends AbstractStreamServlet {
 
 		Map<String, String> ctx = new HashMap<String, String>();
 
-		log.info("Processing request for {}", req.getRequestURI());
+		log.debug("Processing request for {}", req.getRequestURI());
 		String prefix = req.getContextPath() + req.getServletPath();
-		log.info("prefix is: {}", prefix);
+		log.debug("prefix is: {}", prefix);
 
 		String name = req.getRequestURI().substring(prefix.length());
 		while (name.startsWith("/"))
 			name = name.substring(1);
 
-		log.info("service is would be: '{}'", name);
+		log.debug("service is would be: '{}'", name);
 
 		try {
-			Service service = Naming.lookup(name,
-					Service.class);
-			Class<?>[] intf = service.getClass().getInterfaces();
-			for (Class<?> interf : intf) {
-				log.info("Service implements interface {}",
+
+			Map<String, ServiceInfo> infos = namingService.list();
+			ServiceInfo info = infos.get(name);
+			for (int i = 0; i < info.getServices().length; i++) {
+
+				Class<? extends Service> interf = info.getServices()[i];
+				log.debug("Service implements interface {}",
 						interf.getCanonicalName());
 
 				if (renderer.containsKey(interf)) {
-					log.info("Found renderer for service {}", name);
+					log.debug("Found renderer for service {}", name);
 
 					ServiceRenderer render = renderer.get(interf);
-					String html = render.renderToHtml(name, service);
+					String html = render.renderToHtml(name,
+							namingService.lookup(name, interf));
 					ctx.put("content", html);
 					break;
 				}

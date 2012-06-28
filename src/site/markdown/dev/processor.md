@@ -1,15 +1,68 @@
-Processor
-=========
+Implementing Custom Processors
+==============================
 
-Each class implementing the `Processor` interface represents a simple
-function that acts upon a single data item of the stream. Data processors
-can be plugged into the processing chain to perform a series of operations
-on the data.
+Processors in the *streams* framework can be plugged into the
+processing chain to perform a series of operations on the data.  A
+processor is a simple element of work that is executed for each data
+item. Essentially it is a simple function:
 
-As described in the [conventions](convention.html) page, the processors can
-access various parts of the data item by using the items keys.
+      public Data process( Data item ){
+           // your code here
+           return item;
+      }
 
-The following code snippet implements a simple data processor that checks
+The notion of a processor is captured by the Java interface `stream.Processor`
+that simply defines the `process(Data)` function mentioned above:
+
+      public interface Processor {
+          public Data process( Data item );
+      }
+
+Another property required for processors is that they need to provide a
+*no-args* constructor, i.e. they need to have a constructor that comes
+with no arguments.
+
+
+Example: A simple custom processor
+----------------------------------
+
+In the following, we will walk through a very simple example to show
+the implemenation of a processor in more detail. We will start with a
+basic class and extend this to have a complete processor in the end.
+
+The main construct is a Java class within some package:
+
+      package my.package;
+
+      public class Multiplier implements Processor {
+           public Data process( Data item ){
+               return item;
+           }
+      }
+
+This class implements a processor that simply passes through each data
+item to be further processed by all subsequent processors.
+
+
+This simple processor is already ready to be used within a simple stream
+processing chain. To use it, we can directly use the XML syntax of the *streams*
+framework to include it in to the process:
+
+       <container>
+         ...
+         <process input="...">
+            <my.package.Multiplier />
+         </process>
+       </container>
+
+### Processing data
+
+The simple example shows the direct correspondence between the XML
+definition of a container and the associated Java implemented
+processors. The data items are represented as simple Hashmaps with
+`String` keys and `Serializable` values.
+
+The following extended code implements a data processor that checks
 for the key `x` and adds the key `y` by multiplying `x` by 2:
 
      package my.package;
@@ -17,9 +70,7 @@ for the key `x` and adds the key `y` by multiplying `x` by 2:
      import stream.Processor;
      import stream.data.Data;
 
-     public class Multiplier
-         implements Processor 
-     {
+     public class Multiplier implements Processor {
 
          /**
           * Extract the attribute x and add y as y = 2 * x
@@ -27,28 +78,22 @@ for the key `x` and adds the key `y` by multiplying `x` by 2:
           */
          public Data process( Data item ){
              
-             if( item.get( "x" ) != null ){
-                //
-                // the values in all items are "serializable" by default
-                //
-                Serializable value = item.get( "x" );
+             Serializable value = item.get( "x" );	     
 
-                //
+             if( value != null  ){
+
                 // parse a double-value from the string representation
-                // of the serializable value:
                 //
                 Double x = new Double( value.toString() );
-                
                 
                 // add the value 2*x as new attribute of the item:
                 //
                 data.put( "y",  new Double(  2 * x ) );
-
              }
-             
              return item;
          }
      }
+
 
 This simple multiplier relies on parsing the double value from its string
 representation. If the double is available as Double object already in the
@@ -58,25 +103,11 @@ item, then we could also use a cast for this:
      //
      Double x = (Double) item.get( "x" );
 
-
-This simple processor is already ready to be used within a simple stream
-processing chain. To use it, we can directly use the XML syntax of the *streams*
-framework to include it in to the process:
-
-       <experiment>
-         ...
-         
-         <processo>
-            <my.package.Multiplier />
-         </process>
-       </experiment>
-
 The multiplier will be created at the startup of the experiment and will be
 called (i.e. the `process(..)` method) for each event of the data stream.
 
 
-Adding Parameters
------------------
+### Adding Parameters
 
 In most cases, we want to add a simple method for parameterizing our Processor
 implementation. This can easily be done by following the Convention&Configuration
@@ -121,12 +152,10 @@ as XML attributes. For example, to multiply all attributes `z` by `3.1415`, we c
 use the following XML setup:
 
        <container>
-         <Stream id="datastream" url="... " class="..." />
-         ...
-         <process input="datastream">
-            <my.package.Multiplier key="z" factor="3.1415" />
-         </process>
-         ...
+           ...
+           <process input="...">
+               <my.package.Multiplier key="z" factor="3.1415" />
+            </process>
        </container>
 
 Upon startup, the getters and setters of the Multiplier class will be checked and

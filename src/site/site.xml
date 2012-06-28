@@ -18,43 +18,47 @@
   
     <links>
     </links>
-    
-	<menu name="Documentation">
-		<item name="Overview" href="doc/index.html" collapse="true">
-		  <item name="Quickstart" href="quickstart.html" />
-		  <item name="Basic Concepts" href="doc/concepts.html" collapse="true">
-		    <item name="Container" href="doc/concepts.html#container" />
-		    <item name="Stream" href="doc/concepts.html#streams" />
-		    <item name="Process" href="doc/concepts.html#process" />
-		    <item name="Service" href="doc/concepts.html#service" />
-		  </item>
-<!--
-		  <item name="Example Process" href="doc/example.html" />
-		  <item name="Defining Streams" href="doc/index.html#streams"/>
-  -->
-		  <item name="Extended Concepts" href="doc/extensions.html" collapse="true">
-		  </item>
-		</item>
-		<item name="Distributed Processing" href="doc/distribution.html" collapse="true">
-		  <item name="Services &amp; Naming" href="doc/distributed/naming.html" />
-		  <item name="Remote Containers" href="doc/distributed/remote.html" collapse="true">
-		    <item name="Remote Example" href="doc/distributed/example.html" />
-		  </item>
-		</item>
-		<item name="Online Learning" href="doc/learning/index.html" collapse="true">
-			<item name="Counting" href="doc/learning/counter.html" />
-			<item name="Integrating MOA" href="doc/learning/moa.html" />
-		</item>
-		<item name="RapidMiner Plugin" href="doc/rapidminer.html" collapse="true">
-		</item>
-	</menu>
 
-	<menu name="Development">
-	  <item name="Maven integration" href="/dev/maven.html"/>
-	  <item name="Custom Processors" href="dev/index.html" collapse="true">
-	    <item name="Processor Scripts" href="dev/scripting.html" />
-	  </item>
-	</menu>
+    
+    <menu name="Streams">
+      <item name="Home" href="index.html" collapse="true" />
+    </menu>
+    <menu name="Documentation">
+      <item name="Overview" href="doc/index.html" collapse="true">
+	<item name="Quickstart" href="quickstart.html" />
+	<item name="Basic Concepts" href="doc/concepts.html" collapse="true">
+	  <item name="Container" href="doc/concepts.html#container" />
+	  <item name="Stream" href="doc/concepts.html#streams" />
+	  <item name="Process" href="doc/concepts.html#process" />
+	  <item name="Service" href="doc/concepts.html#service" />
+	</item>
+	<item name="Extended Concepts" href="doc/extensions.html" collapse="true">
+	</item>
+      </item>
+      <item name="Distributed Processing" href="doc/distribution.html" collapse="true">
+	<item name="Services &amp; Naming" href="doc/distributed/naming.html" />
+	<item name="Remote Containers" href="doc/distributed/remote.html" collapse="true">
+	  <item name="Remote Example" href="doc/distributed/example.html" />
+	</item>
+      </item>
+      <item name="Online Learning" href="doc/learning/index.html" collapse="true">
+	<item name="Generating Streams" href="doc/learning/synthetic.html" />
+	<item name="Counting" href="doc/learning/counter.html" />
+	<item name="Integrating MOA" href="doc/learning/moa.html" />
+      </item>
+      <item name="RapidMiner Plugin" href="doc/rapidminer.html" collapse="true">
+      </item>
+    </menu>
+    
+    <menu name="Development">
+      <item name="Maven integration" href="/dev/maven.html"/>
+      <item name="Custom Processors" href="dev/index.html" collapse="true">
+	<item name="Implementing Processors" href="dev/processor.html" />
+	<item name="Processor Scripts" href="dev/scripting.html" />
+      </item>
+      <item name="Custom Data Streams" href="dev/streams.html" collapse="true">
+      </item>
+    </menu>
 <!--  
 	<menu name="Downloads">
 	  <item name="Latest Versions" href="download.html" />
@@ -70,7 +74,7 @@
         </menu>
   -->
 
-	<menu ref="reports"/>
+<menu ref="reports"/>
 
 <!--
 	<menu ref="modules" />	

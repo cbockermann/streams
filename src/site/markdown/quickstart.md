@@ -13,19 +13,15 @@ The simple example presented below, defines a single process that
 reads from a CSV stream and prints out the data items to standard
 output:
 
-       <container>
 
-            <stream id="firstStream" class="stream.io.CsvStream"
-                    url="http://www.jwall.org/streams/sample-stream.csv" />
+    <container>
+        <stream id="firstStream" class="stream.io.CsvStream"
+                url="http://www.jwall.org/streams/sample-stream.csv" />
 
-            <process input="firstStream">
-
-                <PrintData />
-
-            </process>
-
-       </container>
-
+        <process input="firstStream">
+            <PrintData />
+        </process>
+     </container>
 
 The *stream-runner* required to execute this stream is a simple executable
 Java archive available for download:  [stream-runner.jar](stream-runner.jar).

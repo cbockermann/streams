@@ -31,8 +31,23 @@ body {
 
 #bodyColumn {
    margin-left: 260px;
-   padding-top: 10px;
+//   padding-top: 10px;
 }
+
+table th {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #a0a0a0;
+}
+
+table {
+    border: solid 1px #a0a0a0;
+}
+
+td {
+    text-align: center;
+}
+
 
 h1,h2,h3,h4,h5 {
    font-family: "Arial",Verdana,Arial,Helvetica;
@@ -40,8 +55,9 @@ h1,h2,h3,h4,h5 {
 }
 
 h1 {
-   font-size: 20px;
+   font-size: 24px;
    margin-left: 6px;
+   padding-top: 20px;
 }
 
 h2 {
@@ -52,7 +68,7 @@ h2 {
 }
 
 h3 {
-   font-size: 14px;
+   font-size: 16px;
    margin-left: 6px;
    margin-top: 25px;
 }

@@ -61,7 +61,7 @@ RMI reference to the `storage` container.
 
 
 <div class="figure">
-   <img src="crawler-explicit-ref.png" />
+   <img src="distributed/crawler-explicit-ref.png" />
    <p>
      Figure 2: Two simple crawler and storage containers.
    </p>

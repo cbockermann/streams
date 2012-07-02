@@ -24,16 +24,21 @@
 package stream.node;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.node.runtime.RuntimeManager;
+import stream.runtime.rpc.RMINamingService;
+import stream.service.NamingService;
 
 /**
  * @author chris
@@ -46,11 +51,31 @@ public class StreamNodeContext implements ServletContextListener {
 
 	static File deployDirectory = new File("deployments");
 
+	public static NamingService namingService;
+
 	/**
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent ctx) {
+
+		try {
+			URL url = StreamNodeContext.class.getResource("/log4j.properties");
+			log.debug("using log config from {}", url);
+			PropertyConfigurator.configure(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			int port = RMINamingService.getFreePort();
+			String name = InetAddress.getLocalHost().getHostName() + "-"
+					+ ctx.getServletContext().getServerInfo();
+			namingService = new RMINamingService(name, "127.0.0.1", port);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		log.info("Initializing StreamNodeContext...");
 		deployDirectory = new File(ctx.getServletContext().getRealPath(

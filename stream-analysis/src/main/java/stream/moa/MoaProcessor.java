@@ -37,10 +37,10 @@ public class MoaProcessor extends AbstractProcessor implements Measurable {
 			InstantiationException, IllegalAccessException {
 		this.moaClass = moaClass;
 
-		log.info("Creating new MoaProcessor for class {}", moaClass);
+		log.debug("Creating new MoaProcessor for class {}", moaClass);
 		classifier = (AbstractClassifier) moaClass.newInstance();
 
-		log.info("MOA object is {}", classifier);
+		log.debug("MOA object is {}", classifier);
 	}
 
 	/**

@@ -43,7 +43,8 @@ public class ContainerContext implements Context {
 	final static String CONTEXT_NAME = "container";
 	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
 	final Map<String, String> properties = new LinkedHashMap<String, String>();
-	final NamingService namingService;
+	NamingService namingService;
+	String name;
 	final Map<String, NamingService> remoteContainers = new LinkedHashMap<String, NamingService>();
 
 	public ContainerContext() {
@@ -57,6 +58,22 @@ public class ContainerContext implements Context {
 	public ContainerContext(String name, NamingService ns) {
 		this.namingService = ns;
 		log.debug("Creating experiment-context '{}'", name);
+		this.name = name;
+	}
+
+	/**
+	 * @return the namingService
+	 */
+	public NamingService getNamingService() {
+		return namingService;
+	}
+
+	/**
+	 * @param namingService
+	 *            the namingService to set
+	 */
+	public void setNamingService(NamingService namingService) {
+		this.namingService = namingService;
 	}
 
 	public Map<String, String> getProperties() {

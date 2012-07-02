@@ -21,7 +21,23 @@ import stream.statistics.StatisticsService;
  */
 public class MemoryUsage implements Processor, StatisticsService {
 
+	String key = "@jvm:memory";
 	AtomicLong memoryUsed = new AtomicLong(0L);
+
+	/**
+	 * @return the key
+	 */
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 * @param key
+	 *            the key to set
+	 */
+	public void setKey(String key) {
+		this.key = key;
+	}
 
 	/**
 	 * @see stream.service.Service#reset()
@@ -37,7 +53,7 @@ public class MemoryUsage implements Processor, StatisticsService {
 	@Override
 	public Statistics getStatistics() {
 		Statistics stats = new Statistics();
-		stats.put("@memory:jvm", memoryUsed.doubleValue());
+		stats.put(key, memoryUsed.doubleValue());
 		return stats;
 	}
 
@@ -46,10 +62,10 @@ public class MemoryUsage implements Processor, StatisticsService {
 	 */
 	@Override
 	public Data process(Data input) {
-		System.gc();
 		Runtime rt = Runtime.getRuntime();
-		long usedMB = (rt.totalMemory() - rt.freeMemory());
+		Long usedMB = (rt.totalMemory() - rt.freeMemory());
 		memoryUsed.set(usedMB);
+		input.put(key, usedMB);
 		return input;
 	}
 }

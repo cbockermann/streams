@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.node.StreamNodeContext;
-import stream.runtime.rpc.RMINamingService;
-import stream.service.NamingService;
 
 /**
  * @author chris
@@ -31,18 +29,11 @@ public class IndexServlet extends AbstractStreamServlet {
 	private static final long serialVersionUID = -7612686573328499862L;
 
 	static Logger log = LoggerFactory.getLogger(IndexServlet.class);
-	final NamingService ns;
 
 	final Map<String, String> ctx = new HashMap<String, String>();
 
 	public IndexServlet() {
 		super("/template.html");
-		try {
-			ns = new RMINamingService();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Failed to create naming service!");
-		}
 	}
 
 	/**

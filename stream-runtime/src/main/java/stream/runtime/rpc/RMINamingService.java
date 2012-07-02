@@ -17,6 +17,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.runtime.LifeCycle;
 import stream.service.NamingService;
 import stream.service.Service;
 import stream.service.ServiceInfo;
@@ -29,7 +30,7 @@ import stream.service.ServiceInfo;
  * 
  */
 public class RMINamingService extends UnicastRemoteObject implements
-		RemoteNamingService {
+		RemoteNamingService, LifeCycle {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 3886371094536580516L;
@@ -74,7 +75,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 
 		if (port <= 0) {
 			log.debug("Checking for free port...");
-			port = this.getFreePort();
+			port = getFreePort();
 			log.debug("Using port {}", port);
 		}
 
@@ -429,5 +430,21 @@ public class RMINamingService extends UnicastRemoteObject implements
 		} catch (Exception e) {
 			throw new RemoteException(e.getMessage());
 		}
+	}
+
+	/**
+	 * @see stream.runtime.LifeCycle#init()
+	 */
+	@Override
+	public void init() throws Exception {
+
+	}
+
+	/**
+	 * @see stream.runtime.LifeCycle#finish()
+	 */
+	@Override
+	public void finish() throws Exception {
+
 	}
 }

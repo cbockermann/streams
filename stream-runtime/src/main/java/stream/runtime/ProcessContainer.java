@@ -111,6 +111,8 @@ public class ProcessContainer {
 
 	protected final List<DocumentHandler> documentHandler = new ArrayList<DocumentHandler>();
 
+	protected NamingService namingService = null;
+
 	boolean server = true;
 
 	public ProcessContainer(URL url) throws Exception {
@@ -190,8 +192,6 @@ public class ProcessContainer {
 		}
 		if (root.hasAttribute("id"))
 			name = root.getAttribute("id");
-
-		NamingService namingService = null;
 
 		try {
 			String nsClass = root.getAttribute("namingService");

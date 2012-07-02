@@ -1,0 +1,13 @@
+<container>
+
+	<property name="test-name" value="test-value" />
+	<property name="copies" value="4" />
+
+	<stream id="test" class="stream.test.TestStream" limit="16"/>
+
+	<process input="test" copies="${copies}">
+		<stream.test.LogData />
+		<stream.flow.Delay time="1second" />
+	</process>
+
+</container>

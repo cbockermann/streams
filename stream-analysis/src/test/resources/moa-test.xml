@@ -1,7 +1,7 @@
-<container id="moa-test" address="192.168.128.4" port="9101" >
+<container id="moa-test" address="192.168.128.4" port="9101" server="false" >
 
 	<stream id="stream" class="stream.io.CsvStream"
-		url="classpath:/multi-golf.csv.gz" limit="1000"/>
+		url="classpath:/multi-golf.csv.gz" limit="100"/>
 
 	<process input="stream">
 	
@@ -24,8 +24,8 @@
 		
 <!--
 		<PrintData />
+-->
 		<stream.flow.Delay time="1s" />
-  -->
 	
 	</process>
 

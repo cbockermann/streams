@@ -57,7 +57,8 @@ public class Runner {
 
 		if (Desktop.isDesktopSupported()) {
 			Desktop desk = Desktop.getDesktop();
-			desk.browse(new URI("http://" + "localhost" + ":" + port));
+			desk.browse(new URI("http://" + "localhost" + ":" + port
+					+ "/index.html"));
 		} else {
 			log.error("Desktop is not supported.");
 		}

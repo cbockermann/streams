@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.Description;
 import stream.plugin.FakePlugin;
 import stream.plugin.GenericOperatorDescription;
-import stream.plugin.StreamsPlugin;
 import stream.util.URLUtilities;
 
 import com.rapidminer.annotations.OperatorInfo;
@@ -128,24 +127,37 @@ public class RapidMinerBeans {
 
 			log.info("Registering operator for class '{}'",
 					clazz.getCanonicalName());
-			Description desc = clazz.getAnnotation(Description.class);
-			String key = clazz.getSimpleName();
-			if (desc != null && desc.name() != null
-					&& !"".equals(desc.name().trim()))
-				key = desc.name();
 
 			String group = clazz.getPackage().getName();
+			String key = clazz.getSimpleName();
+
+			Description desc = clazz.getAnnotation(Description.class);
 			if (desc != null) {
-				group = desc.group();
+				if (desc.name() != null && !"".equals(desc.name().trim()))
+					key = desc.name();
+
+				if (desc.group() != null) {
+					group = desc.group();
+				}
 			}
+
+			OperatorInfo info = clazz.getAnnotation(OperatorInfo.class);
+			if (info != null) {
+				if (info.name() != null) {
+					key = info.name();
+				}
+
+				if (info.group() != null)
+					group = info.group();
+			}
+
 			log.info("   group: {}", group);
 			group = group.replace("Data Stream.", "Streams.");
 			log.info("   renamed group: {}", group);
 
 			GenericOperatorDescription sod = new GenericOperatorDescription(
-					group, key, clazz, StreamsPlugin.class.getClassLoader(),
-					null, FakePlugin.createPlugin(pluginName, version,
-							namespace));
+					group, key, clazz, clazz.getClassLoader(), null,
+					FakePlugin.createPlugin(pluginName, version, namespace));
 
 			try {
 				OperatorService.registerOperator(sod, null);

@@ -24,6 +24,9 @@ install:
 	@echo "Installing plugin in $(RAPIDMINER_HOME)/lib/plugins"
 	@cp target/$(NAME)-$(VERSION).jar $(RAPIDMINER_HOME)/lib/plugins
 
+upload:
+	@echo "Uploading plugin-jar to jwall.org..."
+
 all:	plugin
 
 clean:

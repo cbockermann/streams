@@ -105,15 +105,16 @@
 						<artifactId>doxia-module-markdown</artifactId>
 						<version>1.1.4</version>
 					</dependency>
-            <dependency><!-- add support for ssh/scp -->
-              <groupId>org.apache.maven.wagon</groupId>
-              <artifactId>wagon-ssh</artifactId>
-              <version>1.0</version>
-            </dependency>
+					<dependency><!-- add support for ssh/scp -->
+					  <groupId>org.apache.maven.wagon</groupId>
+					  <artifactId>wagon-ssh</artifactId>
+					  <version>1.0</version>
+					</dependency>
 				</dependencies>
 				<configuration>
-					<inputEncoding>UTF-8</inputEncoding>
-					<outputEncoding>UTF-8</outputEncoding>
+				  <templateFile>src/site/site.vm</templateFile>
+				  <inputEncoding>UTF-8</inputEncoding>
+				  <outputEncoding>UTF-8</outputEncoding>
 				</configuration>
 			</plugin>
 			<plugin>

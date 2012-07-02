@@ -51,24 +51,6 @@ public class DataInstanceFactory {
 
 		DataInstance inst = new DataInstance(item, header);
 		return inst;
-		/*
-		 * 
-		 * DenseInstance inst = new DenseInstance(attributes.size()); int i = 0;
-		 * for (Attribute a : attributes) { String name = attributeNames.get(i);
-		 * if (isNumerical(name, item)) inst.setValue(i, (Double)
-		 * item.get(name)); else { String val = item.get(name).toString(); int
-		 * idx = a.indexOfValue(val); if (idx < 0) idx = a.addStringValue(val);
-		 * 
-		 * if (idx < 0) inst.setMissing(i); else inst.setValue(i, idx); } i++; }
-		 * 
-		 * for (String key : item.keySet()) { if (key.startsWith("@label")) {
-		 * Serializable value = item.get(key); if
-		 * (Number.class.isAssignableFrom(value.getClass())) {
-		 * inst.setClassValue(((Number) value).doubleValue()); } else {
-		 * inst.setClassValue(value.toString()); } } }
-		 * 
-		 * return inst;
-		 */
 	}
 
 	public static boolean isNumerical(String key, Data item) {

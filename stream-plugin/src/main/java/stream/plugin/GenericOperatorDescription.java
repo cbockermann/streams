@@ -74,7 +74,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 
 		Description desc = clazz.getAnnotation(Description.class);
 		if (desc != null) {
-			// setFullyQualifiedGroupKey(desc.group());
+			setFullyQualifiedGroupKey(desc.group());
 		}
 
 		libClass = clazz;
@@ -85,7 +85,7 @@ public class GenericOperatorDescription extends OperatorDescription {
 		try {
 			String html = OperatorHelpFinder.findOperatorHelp(libClass);
 			if (html != null) {
-				log.debug("Adding operator-documentation:\n{}", html);
+				log.trace("Adding operator-documentation:\n{}", html);
 				getOperatorDocumentation().setDocumentation(html);
 			}
 		} catch (Exception e) {

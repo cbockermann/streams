@@ -108,10 +108,12 @@
 			<artifactId>jetty-webapp</artifactId>
 			<version>8.1.4.v20120524</version>
 		</dependency>
+<!--
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 			<version>8.1.4.v20120524</version>
 		</dependency>
+  -->
   	</dependencies>
 </project>

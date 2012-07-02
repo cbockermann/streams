@@ -106,9 +106,11 @@ public class PropertiesHandler extends VariableContext implements
 
 					if (key != null && !"".equals(key.trim()) && value != null
 							&& !"".equals(value.trim())) {
-						container.getContext().setProperty(key.trim(),
-								value.trim());
-						set(key.trim(), value.trim());
+						String k = key.trim();
+						String v = value.trim();
+						log.info("Setting property {} = {}", k, v);
+						container.getContext().setProperty(k, v);
+						set(k, v);
 					}
 				}
 			}

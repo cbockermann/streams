@@ -163,7 +163,6 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		super.init(ctx);
 		headers = new LinkedList<String>();
 		closed = false;
-		separator = ",";
 		lastHeader = null;
 		headerWritten = false;
 		filter = ".*";
@@ -188,13 +187,13 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			try {
 				this.url = new URL(expandedUrlString);
 				file = new File(url.toURI());
-				
+
 				OutputStream out;
-				if( file.getAbsolutePath().endsWith( ".gz" ) )
-					out = new GZIPOutputStream( new FileOutputStream( file ) );
+				if (file.getAbsolutePath().endsWith(".gz"))
+					out = new GZIPOutputStream(new FileOutputStream(file));
 				else
-					out = new FileOutputStream( file );
-				
+					out = new FileOutputStream(file);
+
 				p = new PrintStream(out);
 				lastHeader = null;
 			} catch (MalformedURLException e) {
@@ -203,8 +202,8 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (IOException e){
-				log.error( "Failed to open file: {}", e.getMessage() );
+			} catch (IOException e) {
+				log.error("Failed to open file: {}", e.getMessage());
 			}
 		}
 

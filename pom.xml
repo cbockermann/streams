@@ -112,7 +112,9 @@
 					</dependency>
 				</dependencies>
 				<configuration>
+<!--
 				  <templateFile>src/site/site.vm</templateFile>
+  -->
 				  <inputEncoding>UTF-8</inputEncoding>
 				  <outputEncoding>UTF-8</outputEncoding>
 				</configuration>

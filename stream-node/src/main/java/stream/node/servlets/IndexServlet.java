@@ -75,7 +75,7 @@ public class IndexServlet extends AbstractStreamServlet {
 
 	protected String printProcessorList() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<table>");
+		sb.append("<table class='table'>");
 		sb.append("<tr><th>Name</th><th>Type</th></tr>");
 		Map<String, Processor> serviceNames = new LinkedHashMap<String, Processor>(); // ns.getProcessors();
 		for (String name : serviceNames.keySet()) {
@@ -97,7 +97,7 @@ public class IndexServlet extends AbstractStreamServlet {
 
 	protected String printServiceList() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<table>");
+		sb.append("<table class='table'>");
 		sb.append("<tr><th>Name</th><th>Provider</th><th>Services</tr>");
 
 		sb.append("</table>");
@@ -106,7 +106,7 @@ public class IndexServlet extends AbstractStreamServlet {
 
 	public String createList(Map<String, String> list) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<table>\n");
+		sb.append("<table class='table'>\n");
 		sb.append("<tr><th>Key</th><th>Value</tr>\n");
 
 		for (String key : list.keySet()) {

@@ -78,9 +78,17 @@ table th, .tableHeader td {
 	background-color: #f0f0f0;
 }
 
-table td {
+table.table td {
 	padding: 10px;
 	border: solid 1px #e0e0e0;
+}
+
+table td {
+	padding: 8px;
+}
+
+.view {
+	border: none;
 }
 
 table tr {
@@ -226,4 +234,26 @@ ul.error li a {
 	width: 180px;
 	height: 200px;
 	padding-left: 0px;
+}
+
+.title {
+	font-weight: bold;
+	color: #444;
+}
+
+.objectAction {
+	color: blue;
+	cursor: pointer;
+}
+
+.objectAction:hover {
+	text-decoration: underline;
+}
+
+.objectActions {
+	visibility: hidden;
+}
+
+.objectRow:hover .objectActions {
+	visibility: visible;
 }

@@ -27,7 +27,7 @@ public class HtmlTemplate {
 
 			String str = s.toString();
 
-			Iterator<?> it = vars.keySet().iterator();
+			Iterator it = vars.keySet().iterator();
 			while (it.hasNext()) {
 				Object key = it.next();
 				String value = vars.getProperty(key.toString());

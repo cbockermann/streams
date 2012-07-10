@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
 import stream.io.DataStreamQueue;
+import stream.node.StreamNodeContext;
 import stream.runtime.ProcessContainer;
 
 /**
@@ -53,7 +54,7 @@ public class RuntimeManager {
 	RuntimeDeploymentMonitor deploymentMonitor;
 
 	final static RuntimeManager globalRuntimeManager = new RuntimeManager(
-			new File("/tmp"));
+			StreamNodeContext.getConfigDirectory());
 
 	public static RuntimeManager getInstance() {
 		return globalRuntimeManager;
@@ -113,24 +114,39 @@ public class RuntimeManager {
 		}
 
 		try {
+
+			File runEnv = new File("/tmp/stream-node/active" + File.separator
+					+ f.getName());
+			runEnv.mkdirs();
+			log.info("Deploying file {} in runtime directory {}", f, runEnv);
+
+			File config = new File(runEnv.getAbsolutePath() + File.separator
+					+ "container.xml");
+			f.renameTo(config);
+			f = config;
+
 			URL url = f.toURI().toURL();
 			log.info("Deploying process-container from file {}", url);
 
-			ProcessContainer pc = new ProcessContainer(url);
-			if (pc.getName() == null)
-				pc.setName(f.getName().replaceAll("\\.xml", ""));
-			log.info("created container '{}'", pc.getName());
-			log.info("container is listening for: {}",
-					pc.getStreamListenerNames());
+			/*
+			 * ProcessContainer pc = new ProcessContainer(url); if (pc.getName()
+			 * == null) pc.setName(f.getName().replaceAll("\\.xml", ""));
+			 * 
+			 * log.info("created container '{}'", pc.getName());
+			 * log.info("container is listening for: {}",
+			 * pc.getStreamListenerNames());
+			 * 
+			 * ProcessContainerThread workerThread = new
+			 * ProcessContainerThread(f, pc);
+			 * 
+			 * this.containers.put(pc.getName(), pc);
+			 * this.worker.add(workerThread); File lock = new
+			 * File(f.getAbsolutePath() + ".lock"); lock.createNewFile();
+			 * log.info("Starting process-container-thread: {}", workerThread);
+			 * workerThread.start();
+			 */
 
-			ProcessContainerThread workerThread = new ProcessContainerThread(f,
-					pc);
-
-			this.containers.put(pc.getName(), pc);
-			this.worker.add(workerThread);
-
-			log.info("Starting process-container-thread: {}", workerThread);
-			workerThread.start();
+			ProcessContainerThread.runVM(f);
 
 		} catch (Exception e) {
 			log.error(
@@ -142,7 +158,9 @@ public class RuntimeManager {
 	}
 
 	public void checkDeployments() {
+		log.trace("Checking deployment directory {}", deploymentDirectory);
 		File[] files = deploymentDirectory.listFiles();
+		log.trace("files: {}", files);
 		if (files != null) {
 
 			for (File f : files) {
@@ -157,22 +175,24 @@ public class RuntimeManager {
 						log.info("Deploying process-container from file {}",
 								url);
 
-						ProcessContainer pc = new ProcessContainer(url);
-						if (pc.getName() == null)
-							pc.setName(f.getName().replaceAll("\\.xml", ""));
-						log.info("created container '{}'", pc.getName());
-						log.info("container is listening for: {}",
-								pc.getStreamListenerNames());
-
-						ProcessContainerThread workerThread = new ProcessContainerThread(
-								f, pc);
-
-						this.containers.put(pc.getName(), pc);
-						this.worker.add(workerThread);
-
-						log.info("Starting process-container-thread: {}",
-								workerThread);
-						workerThread.start();
+						deploy(f);
+						/*
+						 * ProcessContainer pc = new ProcessContainer(url); if
+						 * (pc.getName() == null)
+						 * pc.setName(f.getName().replaceAll("\\.xml", ""));
+						 * log.info("created container '{}'", pc.getName());
+						 * log.info("container is listening for: {}",
+						 * pc.getStreamListenerNames());
+						 * 
+						 * ProcessContainerThread workerThread = new
+						 * ProcessContainerThread( f, pc);
+						 * 
+						 * this.containers.put(pc.getName(), pc);
+						 * this.worker.add(workerThread);
+						 * 
+						 * log.info("Starting process-container-thread: {}",
+						 * workerThread); workerThread.start();
+						 */
 
 					} catch (Exception e) {
 						log.error(
@@ -194,7 +214,7 @@ public class RuntimeManager {
 		while (it.hasNext()) {
 			ProcessContainerThread t = it.next();
 			if (file.equals(t.getFile()) && t.isAlive()) {
-				log.trace("File {} already deployed, run by thread {}", file, t);
+				log.info("File {} already deployed, run by thread {}", file, t);
 				return true;
 			}
 

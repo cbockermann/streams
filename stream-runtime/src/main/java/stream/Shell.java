@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,115 +13,68 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.DefaultNamingService;
-import stream.runtime.rpc.ContainerAnnouncement;
-import stream.runtime.rpc.Discovery;
-import stream.runtime.rpc.RMIClient;
-import stream.service.ServiceInfo;
+import stream.runtime.StreamRuntime;
+import stream.shell.Call;
+import stream.shell.Command;
+import stream.shell.Discover;
+import stream.shell.Info;
+import stream.shell.List;
 
 public class Shell {
 
 	static Logger log = LoggerFactory.getLogger(Shell.class);
 
-	String prompt = "streams> ";
-	// RMIClient namingService;
-	Discovery discovery = null;
-	Map<String, RMIClient> clients = new LinkedHashMap<String, RMIClient>();
+	final static String VERSION = "0.01";
+	final String prompt = "streams> ";
 	final DefaultNamingService namingService = new DefaultNamingService();
 
-	public Shell() {
-		try {
-			discovery = new Discovery(9200);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	final Map<String, String> env = new LinkedHashMap<String, String>();
+	final Map<String, Command> commands = new LinkedHashMap<String, Command>();
+
+	public Shell() throws Exception {
+		commands.put("discover", new Discover(this));
+		commands.put("shutdown", new stream.shell.Shutdown(this));
+		commands.put("info", new Info(this));
+		commands.put("call", new Call(this));
+		commands.put("list", new List(this));
+		commands.put("environment", new Environment(this));
+		commands.put("version", new Version(this));
+		// commands.get("discover").execute(new String[0]);
 	}
 
 	public String eval(String line) throws Exception {
 		log.info("Executing {}", line);
 
-		if (line.equalsIgnoreCase("list")) {
-			Map<String, ServiceInfo> list = namingService.list();
-			StringBuffer s = new StringBuffer();
-			s.append("Registered Services:\n");
-			s.append("====================");
-			for (String key : list.keySet()) {
-				s.append("   " + key + "  ~>  " + list.get(key));
+		if ("help".equalsIgnoreCase(line.trim())) {
+			System.out.println("  Available commands:\n");
+			for (String key : commands.keySet()) {
+				System.out.println("    " + key);
 			}
-			return s.toString();
+			return "\n";
 		}
 
-		if (line.equals("discover")) {
-			StringBuffer s = new StringBuffer(
-					"\nContainers:\n-------------\n\n");
+		for (String key : env.keySet()) {
+			if (key.startsWith("#")) {
+				line = line.replace(key, env.get(key));
+			}
+		}
+		log.info("After replacement: {}", line);
 
-			log.info("Running discovery.discover()");
-			discovery.discover();
+		for (String key : commands.keySet()) {
+			String[] args = line.split("\\s+", 2);
+			if (key.equalsIgnoreCase(args[0]) || key.startsWith(args[0])) {
+				log.info("Found command {}", commands.get(key));
 
-			try {
-				for (String key : discovery.getAnnouncements().keySet()) {
-					ContainerAnnouncement ref = discovery.getAnnouncements()
-							.get(key);
-
-					log.info("Adding RMI connection for container {}", ref);
-					if (namingService.getContainer(key) != null) {
-						log.info("Container already known: {}",
-								namingService.getContainer(key));
-					} else {
-						this.namingService.addContainer(key,
-								new RMIClient(ref.getHost(), ref.getPort()));
-					}
+				String params[] = new String[0];
+				if (args.length > 1) {
+					params = args[1].split("\\s+");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println();
+				return commands.get(key).execute(params);
 			}
-
-			Map<String, Long> list = discovery.getContainers();
-			for (String key : list.keySet()) {
-				s.append("  " + key + "  (" + new Date(list.get(key)) + ")\n");
-
-			}
-			s.append("\n");
-			return s.toString();
 		}
 
-		if (line.startsWith("info")) {
-
-			String[] args = line.split("\\s+");
-			if (args.length != 2) {
-				return "Error: Missing service name to command 'info'!";
-			}
-
-			/*
-			 * 
-			 * Map<String, String> info = namingService.getServiceInfo(args[1]);
-			 * if (info == null) { return "No information for service " +
-			 * args[1] + " available!"; } else { StringBuffer s = new
-			 * StringBuffer(); for (String key : info.keySet()) { s.append("  "
-			 * + key + "  =>  " + info.get(key)); s.append("\n"); } return
-			 * s.toString(); }
-			 */
-
-		}
-
-		if (line.startsWith("call")) {
-
-			String[] args = line.split("\\s+");
-			if (args.length < 3) {
-				return "Error: command 'call' requires at least name and method of the call!";
-			}
-
-			String name = args[1];
-			String method = args[2];
-			String[] params = new String[0];
-			if (args.length > 3) {
-				params = new String[args.length - 3];
-				for (int i = 0; i < params.length; i++) {
-					params[i] = args[i + 3];
-				}
-			}
-			return call(name, method, params);
-		}
-
+		log.info("No command found for '{}'", line);
 		return "";
 	}
 
@@ -155,17 +107,6 @@ public class Shell {
 				break;
 			}
 
-			if (line.equalsIgnoreCase("list")) {
-				Map<String, ServiceInfo> list = namingService.list();
-				writer.println("Registered Services:\n");
-				writer.println("====================");
-				for (String key : list.keySet()) {
-					writer.println("   " + key + "  ~>  " + list.get(key));
-				}
-				writer.println();
-				writer.flush();
-			}
-
 			String output = eval(line);
 			writer.println(output);
 			writer.print(prompt);
@@ -181,21 +122,72 @@ public class Shell {
 		return this.namingService;
 	}
 
+	public void set(String key, String value) {
+		env.put(key, value);
+	}
+
+	public String get(String key) {
+		return env.get(key);
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
 
+		StreamRuntime.setupLogging();
+
 		int port = 9105;
-		String host = "127.0.0.1";
+		String host = "192.168.10.2";
 
 		if (args.length > 1) {
 			host = args[0];
 			port = new Integer(args[1]);
 		}
-
+		System.out.println("  java.rmi.server.codebase = "
+				+ System.getProperty("java.rmi.server.codebase"));
 		System.out.println("connecting to " + host + ":" + port + "...");
 		Shell shell = new Shell();
 		shell.repl(System.in, System.out);
+	}
+
+	public final class Environment extends Command {
+
+		/**
+		 * @param shell
+		 */
+		public Environment(Shell shell) {
+			super(shell);
+		}
+
+		@Override
+		public String execute(String[] args) {
+			println("Environment:");
+			println("------------");
+			for (String key : env.keySet()) {
+				println("  " + key + "  =>  " + env.get(key));
+			}
+			println("");
+			return "";
+		}
+	}
+
+	public final class Version extends Command {
+
+		/**
+		 * @param shell
+		 */
+		public Version(Shell shell) {
+			super(shell);
+		}
+
+		/**
+		 * @see stream.shell.Command#execute(java.lang.String[])
+		 */
+		@Override
+		public String execute(String[] args) {
+			println("stream.Shell - Version " + VERSION);
+			return "";
+		}
 	}
 }

@@ -4,18 +4,18 @@
 
 <Container>
 
-	<property name="database.url" value="jdbc:hsqldb:mem:res:/test.db" />
+	<property name="database.url" value="jdbc:mysql://192.168.128.100:3306/storage" />
 
-	<Stream id="input" class="stream.test.TestStream" limit="10" keys="attr1,attr2,attr2" /> 
+	<Stream id="input" class="stream.test.TestStream" limit="10000" keys="attr1,attr2,attr2" /> 
 
 
 	<Process input="input">
 	
-		<CreateID key="@id" start="1"/>
+		<CreateID key="id" start="1"/>
 	
-		<stream.data.AsJSON key="json" />
+		<stream.data.AsJSON key="data" />
 		
-		<stream.io.SQLWriter url="${database.url}" username="root" password="" table="RANDOM" keys="@id,json" dropTable="true"/>
+		<stream.io.SQLWriter url="${database.url}" username="storage" password="storage" table="DATA" keys="id,data" dropTable="true"/>
 	
 	</Process>
 	

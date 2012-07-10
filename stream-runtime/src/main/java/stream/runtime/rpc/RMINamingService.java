@@ -52,7 +52,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	public RMINamingService(String name) throws Exception {
-		this(name, "localhost", 9105, true);
+		this(name, "localhost", 0, true);
 	}
 
 	public RMINamingService(String name, String host, int port)
@@ -445,6 +445,6 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 */
 	@Override
 	public void finish() throws Exception {
-
+		announcer.finish();
 	}
 }

@@ -3,11 +3,27 @@
  */
 package stream.shell;
 
+import stream.Shell;
+
 /**
  * @author chris
  * 
  */
-public interface Command {
+public abstract class Command {
 
-	public String execute(String[] args);
+	final Shell shell;
+
+	public Command(Shell shell) {
+		this.shell = shell;
+	}
+
+	public void print(String msg) {
+		System.out.print(msg);
+	}
+
+	public void println(String msg) {
+		System.out.println(msg);
+	}
+
+	public abstract String execute(String[] args);
 }

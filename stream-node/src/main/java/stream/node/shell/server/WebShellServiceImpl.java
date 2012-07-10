@@ -8,26 +8,25 @@ import stream.node.shell.client.WebShellService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class WebShellServiceImpl extends RemoteServiceServlet implements WebShellService {
+public class WebShellServiceImpl extends RemoteServiceServlet implements
+		WebShellService {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 6025330703026655607L;
-	
-	static Logger log = LoggerFactory.getLogger( WebShellServiceImpl.class );
-	
-	
+
+	static Logger log = LoggerFactory.getLogger(WebShellServiceImpl.class);
+
 	Shell shell;
-	
-	public WebShellServiceImpl(){
+
+	public WebShellServiceImpl() throws Exception {
 		shell = new Shell();
 	}
-	
 
 	@Override
 	public String execute(String command) throws Exception {
-		log.info( "Executing command: '{}'", command );
+		log.info("Executing command: '{}'", command);
 		try {
-			return shell.eval( command );
+			return shell.eval(command);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

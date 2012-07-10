@@ -24,8 +24,17 @@
 package stream.test;
 
 import java.net.URL;
+import java.util.Map;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.runtime.Controller;
+import stream.runtime.DefaultNamingService;
+import stream.runtime.rpc.ContainerAnnouncement;
+import stream.runtime.rpc.Discovery;
+import stream.runtime.rpc.RMIClient;
 
 /**
  * @author chris
@@ -33,14 +42,32 @@ import org.junit.Test;
  */
 public class DiscoveryTest {
 
+	static Logger log = LoggerFactory.getLogger(DiscoveryTest.class);
+
 	@Test
 	public void test() throws Exception {
 		System.setProperty("process.multiply", "true");
 		URL url = DependencyTest.class.getResource("/example.xml");
 		stream.run.main(url);
 	}
-	
-	public static void main( String[] args ) throws Exception {
-		(new DiscoveryTest()).test();
+
+	public static void main(String[] args) throws Exception {
+		// (new DiscoveryTest()).test();
+
+		Discovery discovery = new Discovery();
+		discovery.discover();
+
+		DefaultNamingService ns = new DefaultNamingService();
+
+		Map<String, ContainerAnnouncement> ann = discovery.getAnnouncements();
+		for (String key : ann.keySet()) {
+			log.info(" {} => {}", key, ann.get(key));
+			ContainerAnnouncement an = ann.get(key);
+			ns.addContainer(key, new RMIClient(an.getHost(), an.getPort()));
+		}
+
+		Controller ctrl = ns.lookup("//nico:storage/.ctrl", Controller.class);
+		log.info("Controller: {}", ctrl);
+		ctrl.shutdown();
 	}
 }

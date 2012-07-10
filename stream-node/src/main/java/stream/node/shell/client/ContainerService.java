@@ -15,6 +15,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("container-service")
 public interface ContainerService extends RemoteService {
 
-	public List<ContainerInfo> list();
+	public List<Configuration> getConfigurations();
 
+	public void startContainer(String name) throws Exception;
+
+	public Boolean shutdown(String containerName) throws Exception;
+
+	public List<ContainerInfo> list();
 }

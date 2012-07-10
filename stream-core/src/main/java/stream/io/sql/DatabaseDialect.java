@@ -178,18 +178,17 @@ public abstract class DatabaseDialect {
 			Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
 
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM " + table + " LIMIT 1");
-			if (rs.next()) {
+			rs = stmt.executeQuery("SELECT * FROM " + table);
 
-				ResultSetMetaData meta = rs.getMetaData();
-				for (int i = 0; i < meta.getColumnCount(); i++) {
-					String name = meta.getColumnName(i + 1);
-					int type = meta.getColumnType(i + 1);
-					Class<?> clazz = mapTypeToClass(type);
+			ResultSetMetaData meta = rs.getMetaData();
+			for (int i = 0; i < meta.getColumnCount(); i++) {
+				String name = meta.getColumnName(i + 1);
+				int type = meta.getColumnType(i + 1);
+				Class<?> clazz = mapTypeToClass(type);
 
-					log.info("Adding  {} => {}", name, clazz);
-					types.put(name, clazz);
-				}
+				name = this.unmapColumnName(name);
+				log.info("Adding  {} => {}", name, clazz);
+				types.put(name, clazz);
 			}
 			rs.close();
 			stmt.close();

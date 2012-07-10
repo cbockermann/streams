@@ -113,11 +113,13 @@
 			<version>2.2.8</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>org.jruby</groupId>
 			<artifactId>jruby-complete</artifactId>
 			<version>1.6.7.1</version>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
@@ -171,6 +173,7 @@
 								<Implementation-Revision>${pom.version}</Implementation-Revision>
 								<Specification-Title>Streams-Plugin</Specification-Title>
 								<Specification-Version>1.0</Specification-Version>
+								<Plugin-Dependencies>rmx_weka[3.7.3]</Plugin-Dependencies>
 								<RapidMiner-Version>5.1</RapidMiner-Version>
 								<RapidMiner-Type>RapidMiner_Extension</RapidMiner-Type>
 								<Extension-ID>rmx_streams</Extension-ID>

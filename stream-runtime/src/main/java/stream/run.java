@@ -24,6 +24,8 @@
 package stream;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -42,10 +44,24 @@ public class run {
 
 	static Logger log = LoggerFactory.getLogger(stream.run.class);
 
+	public static void setupOutput() throws Exception {
+		if (System.getProperty("container.stdout") != null) {
+			System.setOut(new PrintStream(new FileOutputStream(System
+					.getProperty("container.stdout"))));
+		}
+
+		if (System.getProperty("container.stderr") != null) {
+			System.setOut(new PrintStream(new FileOutputStream(System
+					.getProperty("container.stdout"))));
+		}
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
+
+		setupOutput();
 
 		URL url;
 		try {
@@ -58,6 +74,9 @@ public class run {
 	}
 
 	public static void main(URL url) throws Exception {
+
+		setupOutput();
+
 		StreamRuntime.setupLogging();
 
 		log.info("Creating process-container from configuration at {}", url);
@@ -65,6 +84,8 @@ public class run {
 
 		log.info("Starting process-container...");
 		container.run();
+		log.info("Container finished.");
+		System.exit(0);
 	}
 
 	public static void main(URL url, Map<String, ElementHandler> elementHandler)
@@ -77,6 +98,8 @@ public class run {
 
 		log.info("Starting process-container...");
 		container.run();
+		log.info("Container finished.");
+		System.exit(0);
 	}
 
 	public static void main(String resource) throws Exception {
@@ -91,5 +114,4 @@ public class run {
 				resource);
 		main(run.class.getResource(resource));
 	}
-
 }

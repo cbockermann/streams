@@ -90,7 +90,7 @@ public class ParserGenerator {
 		List<String> tokens = parseGrammar(grammarDefinition); // QuotedStringTokenizer.splitRespectQuotes(
 																// grammarDefinition,
 																// ' ' );
-		log.info("Grammar tokens: {}", tokens);
+		log.debug("Grammar tokens: {}", tokens);
 
 		for (String toks : tokens) {
 			tokenDefs.add(new Token(toks));

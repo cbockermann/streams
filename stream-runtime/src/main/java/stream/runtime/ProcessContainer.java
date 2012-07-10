@@ -83,6 +83,36 @@ public class ProcessContainer {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
+	final static List<ProcessContainer> container = new ArrayList<ProcessContainer>();
+
+	static {
+		// The rescue-shutdown handler in case the VM was killed by a signal...
+		//
+
+		if (System.getProperty("container.shutdown-hook") != null) {
+			log.info("Adding container shutdown-hook");
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+
+					if ("disabled".equalsIgnoreCase(System
+							.getProperty("container.shutdown-hook"))) {
+						log.info("Shutdown-hook disabled...");
+						return;
+					}
+
+					log.info("Running shutdown-hook...");
+					for (ProcessContainer pc : container) {
+						log.debug("Sending shutdown signal to {}", pc);
+						pc.shutdown();
+					}
+				}
+			});
+
+		} else {
+			log.info("Skipping setup of container shutdown-hook");
+		}
+	}
+
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
 	protected final ProcessorFactory processorFactory = new ProcessorFactory(
 			objectFactory);
@@ -113,7 +143,11 @@ public class ProcessContainer {
 
 	protected NamingService namingService = null;
 
+	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
+
 	boolean server = true;
+
+	Long startTime = 0L;
 
 	public ProcessContainer(URL url) throws Exception {
 		this(url, null);
@@ -185,7 +219,7 @@ public class ProcessContainer {
 			log.info("Container address will be {}", host);
 		}
 
-		Integer port = 9105;
+		Integer port = 0;
 		if (attr.containsKey("port") && !attr.get("port").trim().isEmpty()) {
 			port = new Integer(attr.get("port"));
 			log.info("Container port will be {}", port);
@@ -207,6 +241,9 @@ public class ProcessContainer {
 					+ e.getMessage());
 		}
 
+		// RemoteClassServer classServer = new RemoteClassServer(0);
+		// classServer.start();
+
 		//
 		// create the default NamingService if none has been specified, yet.
 		//
@@ -220,6 +257,10 @@ public class ProcessContainer {
 				log.info("No address specified, using local naming-service. Container will not be able to reference other containers!");
 				namingService = new DefaultNamingService();
 			}
+		}
+
+		if (namingService instanceof LifeCycle) {
+			lifeCyleObjects.add((LifeCycle) namingService);
 		}
 
 		log.info("Using naming-service {}", namingService);
@@ -309,7 +350,7 @@ public class ProcessContainer {
 
 		connectProcesses();
 
-		injectServices();
+		// injectServices();
 	}
 
 	/**
@@ -354,6 +395,17 @@ public class ProcessContainer {
 	}
 
 	public void run() throws Exception {
+
+		if (!container.contains(this)) {
+			container.add(this);
+		}
+
+		startTime = System.currentTimeMillis();
+		ContainerController controller = new ContainerController(this);
+		log.info("Registering container-controller {}", controller);
+		this.namingService.register(".ctrl", controller);
+
+		this.injectServices();
 
 		if (streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");
@@ -435,6 +487,7 @@ public class ProcessContainer {
 	}
 
 	public void shutdown() {
+
 		synchronized (processes) {
 			for (AbstractProcess process : processes) {
 				log.debug("Sending SHUTDOWN signal to process {}", process);
@@ -447,13 +500,40 @@ public class ProcessContainer {
 			}
 		}
 
-		while (!processes.isEmpty()) {
+		log.info("Sending finish() signal to life-cycle objects...");
+		for (LifeCycle object : lifeCyleObjects) {
 			try {
-				log.info("Waiting for processes to finish...");
-				Thread.sleep(500);
+				log.info("   sending finish() to {}", object);
+				object.finish();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+
+		while (!processes.isEmpty()) {
+			log.info("Waiting for {} processes to finish...", processes.size());
+			try {
+				Iterator<AbstractProcess> it = processes.iterator();
+				while (it.hasNext()) {
+					AbstractProcess process = it.next();
+					if (!process.isAlive()) {
+						log.info("another process finished...");
+						it.remove();
+					}
+				}
+
+				log.info("Waiting for {} processes to finish...",
+						processes.size());
+				log.info("   processes: {}", processes);
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		log.info("Container shut down.");
 	}
 }

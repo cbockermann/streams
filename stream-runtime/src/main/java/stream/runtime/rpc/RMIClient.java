@@ -17,6 +17,8 @@ import stream.service.ServiceInfo;
 public class RMIClient implements RemoteNamingService {
 
 	static Logger log = LoggerFactory.getLogger(RMIClient.class);
+	final String host;
+	final int port;
 	final Registry registry;
 	RemoteNamingService namingService;
 	Map<String, NamingService> remotes = new LinkedHashMap<String, NamingService>();
@@ -26,8 +28,22 @@ public class RMIClient implements RemoteNamingService {
 	}
 
 	public RMIClient(String host, int port) throws Exception {
+		this.host = host;
+		this.port = port;
+
+		String codeBase = System.getProperty("java.rmi.server.codebase", "");
+		if (!codeBase.contains("http://" + host + ":9999/")) {
+			if (codeBase.isEmpty())
+				codeBase = "http://" + host + ":9999/";
+			else {
+				codeBase = codeBase + " http://" + host + ":9999/";
+			}
+		}
+
+		System.setProperty("java.rmi.server.codebase", codeBase);
 		registry = LocateRegistry.getRegistry(host, port);
 		log.debug("Registry is: {}", registry);
+
 		namingService = (RemoteNamingService) registry
 				.lookup(RemoteNamingService.DIRECTORY_NAME);
 		log.debug("NamingService is: {}", namingService);
@@ -72,5 +88,13 @@ public class RMIClient implements RemoteNamingService {
 	public void addContainer(String key, NamingService remoteNamingService)
 			throws Exception {
 		this.remotes.put(key, remoteNamingService);
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "rmi://" + host + ":" + port;
 	}
 }

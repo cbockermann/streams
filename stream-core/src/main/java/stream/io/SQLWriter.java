@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -137,22 +138,18 @@ public class SQLWriter extends AbstractSQLProcessor {
 			if (schema != null) {
 				log.debug("Using existing table schema: {}", schema);
 
-				if (keys == null) {
-					log.debug("No keys defined, adding all columns...");
-					for (String col : schema.keySet()) {
-						tableSchema.put(dialect.unmapColumnName(col),
-								tableSchema.get(col));
-					}
-				} else {
+				log.info("Existing schema is: {}", schema);
+				if (tableSchema == null)
+					tableSchema = new LinkedHashMap<String, Class<?>>(schema);
+				else
+					tableSchema.putAll(schema);
+
+				if (keys != null) {
 					for (String key : keys) {
-						String col = dialect.mapColumnName(key);
-						if (schema.containsKey(col)) {
-							log.debug("Adding key {} (column {})", key, col);
-							tableSchema.put(key, schema.get(col));
+						if (tableSchema.containsKey(key)) {
 						} else {
-							log.debug(
-									"key '{}' (column {}) is not within specified keys and will not be stored.",
-									key, col);
+							log.info("Removing non-selected key '{}'", key);
+							tableSchema.remove(key);
 						}
 					}
 				}
@@ -306,5 +303,4 @@ public class SQLWriter extends AbstractSQLProcessor {
 		connection.close();
 		this.tableSchema = null;
 	}
-
 }

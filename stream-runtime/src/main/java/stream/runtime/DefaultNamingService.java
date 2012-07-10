@@ -94,8 +94,16 @@ public class DefaultNamingService implements NamingService {
 		log.debug("Looking up processor by reference '{}'", ref);
 
 		if (!isLocal(ref)) {
-			throw new Exception(
-					"Reference is non-local. Non-local references are currently not supported!");
+
+			String container = this.getContainerName(ref);
+			if (this.remoteContainer.containsKey(container)) {
+				log.debug("Delegating lookup to remote-container {} @{}",
+						container, remoteContainer.get(container));
+				return remoteContainer.get(container).lookup(ref, serviceClass);
+			}
+
+			throw new Exception("Failed to resolve non-local reference '" + ref
+					+ "'!");
 		}
 
 		if (!ref.startsWith("//" + name + "/"))

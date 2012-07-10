@@ -23,7 +23,20 @@
  */
 package stream.node.runtime;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stream.runtime.ProcessContainer;
 
@@ -32,8 +45,12 @@ import stream.runtime.ProcessContainer;
  * 
  */
 public class ProcessContainerThread extends Thread {
+
+	static Logger log = LoggerFactory.getLogger(ProcessContainerThread.class);
 	File containerFile;
 	ProcessContainer processContainer;
+
+	// Process jvm;
 
 	public ProcessContainerThread(File containerFile, ProcessContainer pc) {
 		this.containerFile = containerFile;
@@ -64,14 +81,141 @@ public class ProcessContainerThread extends Thread {
 	 */
 	@Override
 	public void run() {
+		log.info("Starting container from file {}", containerFile);
 		try {
-			processContainer.run();
+			// processContainer.run();
+			runVM(containerFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		log.info("Container {} finished.", containerFile);
 	}
 
 	public void shutdown() {
-		processContainer.shutdown();
+		if (processContainer != null)
+			processContainer.shutdown();
+		/*
+		 * if (jvm != null) {
+		 * log.debug("Sending 'destroy' signal to spawned JVM...");
+		 * jvm.destroy(); }
+		 */
+	}
+
+	public static void runVM(File file) throws Exception {
+
+		log.info("Running container {} in separate JVM", file);
+
+		LinkedHashSet<URL> urls = new LinkedHashSet<URL>();
+		Class<?>[] classes = new Class[] { stream.run.class,
+				stream.io.CsvWriter.class };
+
+		for (Class<?> cl : classes) {
+
+			URLClassLoader ucl = (URLClassLoader) cl.getClassLoader();
+			for (URL url : ucl.getURLs()) {
+				urls.add(url);
+			}
+		}
+
+		// StreamNodeContext.class.getClassLoader();
+		StringBuffer classPath = new StringBuffer();
+
+		Iterator<URL> it = urls.iterator();
+		while (it.hasNext()) {
+			URL url = it.next();
+			log.info("   " + url);
+
+			if (url.toURI().getScheme().equalsIgnoreCase("file")) {
+				classPath.append((new File(url.toURI().getPath()))
+						.getAbsolutePath());
+				if (it.hasNext())
+					classPath.append(File.pathSeparatorChar);
+			}
+		}
+
+		log.info("Classpath: " + classPath.toString());
+
+		log.debug("JAVA_HOME = " + System.getenv("JAVA_HOME"));
+		for (String key : System.getenv().keySet()) {
+			log.trace(key + " = " + System.getenv(key));
+		}
+
+		File stdoutFile = new File(file.getAbsolutePath() + ".stdout");
+		log.info("Writing jvm output to {}", stdoutFile);
+		File stderrFile = new File(file.getAbsolutePath() + ".stderr");
+
+		String exec = System.getProperty("java.home") + File.separator + "bin"
+				+ File.separator + "java";
+		File java = new File(exec);
+		log.info("file " + java + " exists? " + java.exists());
+
+		// Process jvm = Runtime.getRuntime().exec(
+		// new String[] { java.getAbsolutePath(), " -cp " + classPath,
+		// "stream.run", args[0] });
+
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(java.getAbsolutePath());
+		args.add("-cp");
+		args.add(classPath.toString());
+		args.add("-Dcontainer.stdout=" + stdoutFile.getAbsolutePath());
+		args.add("-Dcontainer.stderr=" + stderrFile.getAbsolutePath());
+
+		for (Object key : System.getProperties().keySet()) {
+			String k = key.toString();
+			String opt = "-D" + k + "=" + System.getProperty(k);
+			if (!args.contains(opt))
+				args.add(opt);
+		}
+
+		args.add("stream.Start");
+		args.add(file.getAbsolutePath());
+
+		log.info("Command:");
+		for (String arg : args) {
+			log.info("   {}", arg);
+		}
+
+		if (System.getProperty("runtime.exec") != null) {
+			log.info("Spawning new JVM with Runtime.getRuntime().exec(...)");
+			Process p = Runtime.getRuntime().exec(
+					args.toArray(new String[args.size()]));
+			log.info("Spawned process by Runtime.exec(...): {}", p);
+			return;
+		} else {
+
+			log.info("Spawning new JVM with process-builder...");
+			ProcessBuilder pb = new ProcessBuilder(args);
+			File cwd = file.getParentFile();
+			log.info("Working directory is: {}", cwd);
+			pb.directory(cwd);
+			pb.environment().put("CLASSPATH", classPath.toString());
+
+			log.info("Command: {}", pb.command());
+			log.info("Spawning and returning without a reference to the process...");
+			pb.start();
+		}
+	}
+
+	public class LogWriter extends Thread {
+		BufferedReader reader;
+		PrintStream writer;
+
+		public LogWriter(InputStream input, OutputStream output)
+				throws Exception {
+			reader = new BufferedReader(new InputStreamReader(input));
+			writer = new PrintStream(output);
+		}
+
+		public void run() {
+			try {
+				String line = reader.readLine();
+				while (line != null) {
+					writer.println(line);
+					line = reader.readLine();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

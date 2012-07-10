@@ -39,10 +39,10 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 				return this.toString();
 			}
 
-			log.debug("received invoke-request, method: {}, args: {}",
+			log.trace("received invoke-request, method: {}, args: {}",
 					method.getName(), args);
-			log.debug("   object reference is: {}", proxy);
-			log.debug("   arg-types: {}", method.getParameterTypes());
+			log.trace("   object reference is: {}", proxy);
+			log.trace("   arg-types: {}", method.getParameterTypes());
 
 			if (args != null
 					&& !(args.getClass().getComponentType() instanceof Serializable)) {
@@ -56,7 +56,7 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 				}
 			}
 
-			log.debug("Calling endpoint {} with {}", endpoint, method);
+			log.trace("Calling endpoint {} with {}", endpoint, method);
 			Object result;
 			String signature = computeSignature(method);
 
@@ -87,7 +87,7 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 		}
 		s.append(")");
 
-		log.debug("Method {} signature string is: {}", m, s);
+		log.trace("Method {} signature string is: {}", m, s);
 
 		return MD5.md5(s.toString());
 	}

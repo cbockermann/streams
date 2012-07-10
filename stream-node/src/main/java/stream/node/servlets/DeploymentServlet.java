@@ -82,7 +82,7 @@ public class DeploymentServlet extends HttpServlet {
 			name = name.substring(1);
 
 		InputStream in = req.getInputStream();
-		File file = new File(StreamNodeContext.getDeployDirectory()
+		File file = new File(StreamNodeContext.getConfigDirectory()
 				+ File.separator + name + ".tmp");
 		FileOutputStream fos = new FileOutputStream(file);
 

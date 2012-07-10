@@ -1,4 +1,4 @@
-<container server="true">
+<container id="mem-log" server="true" address="192.168.128.4" port="0">
    <stream id="time" class="stream.io.TimeStream" gap="1 second" />
 
    <process input="time">

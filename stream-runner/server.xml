@@ -1,12 +1,13 @@
-<container id="nico:storage" port="41020" address="192.168.10.4">
+<container id="nico:storage" port="41020" address="192.168.128.4">
 
     <Stream id="twitter" class="stream.io.BlockingQueue" size="1000" />
 
     <process input="twitter">
-	<PrintData />
+		<PrintData />
     </process>
 
     <Monitor interval="1 second">
+    	<stream.monitor.MemoryUsage id="memory"/>
         <PrintData />
     </Monitor>
 

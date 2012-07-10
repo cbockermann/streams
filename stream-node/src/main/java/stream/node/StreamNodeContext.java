@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.node.runtime.RuntimeManager;
+import stream.runtime.DefaultNamingService;
 import stream.runtime.rpc.RMINamingService;
 import stream.service.NamingService;
 
@@ -50,6 +51,7 @@ public class StreamNodeContext implements ServletContextListener {
 	public static RuntimeManager runtimeManager;
 
 	static File deployDirectory = new File("deployments");
+	static File configDirectory = new File("configs");
 
 	public static NamingService namingService;
 
@@ -72,7 +74,8 @@ public class StreamNodeContext implements ServletContextListener {
 			int port = RMINamingService.getFreePort();
 			String name = InetAddress.getLocalHost().getHostName() + "-"
 					+ ctx.getServletContext().getServerInfo();
-			namingService = new RMINamingService(name, "127.0.0.1", port);
+			namingService = new DefaultNamingService(); // RMINamingService(name,
+														// "127.0.0.1", port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -82,6 +85,12 @@ public class StreamNodeContext implements ServletContextListener {
 				"deployments"));
 
 		deployDirectory.mkdirs();
+
+		configDirectory = new File(ctx.getServletContext().getRealPath(
+				"configs"));
+		configDirectory.mkdirs();
+
+		log.info("Using config-directory {}", configDirectory);
 
 		log.info("Using deployment-directory {}", deployDirectory);
 		runtimeManager = RuntimeManager.getInstance(); // (deployDirectory);
@@ -109,6 +118,10 @@ public class StreamNodeContext implements ServletContextListener {
 
 	public static File getDeployDirectory() {
 		return deployDirectory;
+	}
+
+	public static File getConfigDirectory() {
+		return configDirectory;
 	}
 
 	public static Map<String, String> getSystemInfo() {

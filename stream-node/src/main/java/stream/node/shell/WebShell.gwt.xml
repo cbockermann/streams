@@ -11,5 +11,5 @@
 	<entry-point class="stream.node.shell.client.WebShell" />
 	<entry-point class="stream.node.shell.client.ContainerEditor" />
 
-	<entry-point class="stream.node.shell.client.ContainerList" />
+	<entry-point class="stream.node.shell.client.ContainerView" />
 </module>

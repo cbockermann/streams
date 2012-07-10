@@ -71,6 +71,7 @@ public class RuntimeDeploymentMonitor extends Thread {
 
 	public void checkDeployments() {
 		File[] files = deploymentDirectory.listFiles();
+		log.trace("Files to check: {}", files);
 		if (files != null) {
 
 			for (File f : files) {

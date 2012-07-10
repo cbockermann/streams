@@ -30,6 +30,7 @@ public class SQLWriterTest {
 			pc.run();
 		} catch (Exception e) {
 			log.error("Failed to create process-container: {}", e.getMessage());
+			e.printStackTrace();
 			fail("Failed to create process-container: " + e.getMessage());
 		}
 	}

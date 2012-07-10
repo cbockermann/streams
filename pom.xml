@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jwall</groupId>
 	<artifactId>streams</artifactId>
@@ -19,6 +20,7 @@
 		<module>stream-runner</module>
 		<module>stream-analysis</module>
 		<module>stream-plotter</module>
+		<module>stream-node</module>
 	</modules>
 
 	<repositories>
@@ -30,11 +32,11 @@
 	</repositories>
 
 	<distributionManagement>
-                <repository>
-                        <id>sonatype-releases</id>
-                        <name>sonatype Maven Staging Repository</name>
-                        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
+		<repository>
+			<id>sonatype-releases</id>
+			<name>sonatype Maven Staging Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 		<snapshotRepository>
 			<id>sonatype-snapshots</id>
 			<name>sonatype Snapshot Repository</name>
@@ -106,17 +108,15 @@
 						<version>1.1.4</version>
 					</dependency>
 					<dependency><!-- add support for ssh/scp -->
-					  <groupId>org.apache.maven.wagon</groupId>
-					  <artifactId>wagon-ssh</artifactId>
-					  <version>1.0</version>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>1.0</version>
 					</dependency>
 				</dependencies>
 				<configuration>
-<!--
-				  <templateFile>src/site/site.vm</templateFile>
-  -->
-				  <inputEncoding>UTF-8</inputEncoding>
-				  <outputEncoding>UTF-8</outputEncoding>
+					<!-- <templateFile>src/site/site.vm</templateFile> -->
+					<inputEncoding>UTF-8</inputEncoding>
+					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -187,38 +187,64 @@
 	<scm>
 		<url>https://bitbucket.org/cbockermann/streams</url>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/cbockermann/streams</developerConnection>
-		<tag>0.9</tag>
 		<connection>scm:git:ssh://git@bitbucket.org/cbockermann/streams</connection>
 	</scm>
 
 
-<profiles>
-  <profile>
-    <id>release-sign-artifacts</id>
-    <activation>
-      <property>
-        <name>performRelease</name>
-        <value>true</value>
-      </property>
-    </activation>
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.1</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </build>
-  </profile>
-</profiles>
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<activation>
+				<property>
+					<name>repo</name>
+					<value>jwall</value>
+				</property>
+			</activation>
+			<repositories>
+				<repository>
+					<id>jwall-snapshots</id>
+					<name>jwall.org Maven SNAPSHOT Repository</name>
+					<url>https://secure.jwall.org/maven/repository/snapshots</url>
+				</repository>
+			</repositories>
+			<distributionManagement>
+				<repository>
+					<id>jwall</id>
+					<name>jwall.org Maven Repository</name>
+					<url>https://secure.jwall.org/maven/repository/jwall</url>
+				</repository>
+				<snapshotRepository>
+					<id>jwall-snapshots</id>
+					<name>jwall.org Snapshot Repository</name>
+					<url>https://secure.jwall.org/maven/repository/snapshots</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>

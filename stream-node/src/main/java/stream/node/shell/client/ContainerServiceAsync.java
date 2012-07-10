@@ -15,4 +15,10 @@ public interface ContainerServiceAsync {
 
 	void list(AsyncCallback<List<ContainerInfo>> callback);
 
+	void shutdown(String containerName, AsyncCallback<Boolean> callback);
+
+	void startContainer(String name, AsyncCallback<Void> callback);
+
+	void getConfigurations(AsyncCallback<List<Configuration>> callback);
+
 }

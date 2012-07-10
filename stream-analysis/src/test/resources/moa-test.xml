@@ -24,9 +24,9 @@
 		
 <!--
 		<PrintData />
--->
 		<stream.flow.Delay time="1s" />
-	
+	-->
+
 	</process>
 
 	<Monitor interval="1 second">

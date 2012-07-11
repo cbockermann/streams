@@ -84,7 +84,9 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 			while (item == null && tries < 10) {
 				try {
 					log.trace("Reading next item from {}", dataStream);
-					item = dataStream.readNext();
+					synchronized (dataStream) {
+						item = dataStream.readNext();
+					}
 					tries = 0;
 					return item;
 				} catch (Exception e) {

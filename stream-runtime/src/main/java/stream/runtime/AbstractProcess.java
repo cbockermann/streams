@@ -109,7 +109,8 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 			}
 		}
 
-		Thread.currentThread().interrupt();
+		this.interrupt();
+		// Thread.currentThread().interrupt();
 	}
 
 	/**

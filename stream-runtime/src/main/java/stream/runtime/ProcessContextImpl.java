@@ -68,7 +68,6 @@ public class ProcessContextImpl implements ProcessContext {
 	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
-	@Override
 	public void register(String ref, Service p) throws Exception {
 		if (containerContext == null)
 			throw new Exception("No parent context exists!");
@@ -78,14 +77,12 @@ public class ProcessContextImpl implements ProcessContext {
 	/**
 	 * @see stream.service.NamingService#unregister(java.lang.String)
 	 */
-	@Override
 	public void unregister(String ref) throws Exception {
 		if (containerContext == null)
 			throw new Exception("No parent context exists!");
 		containerContext.unregister(ref);
 	}
 
-	@Override
 	public Map<String, ServiceInfo> list() throws Exception {
 		return containerContext.list();
 	}
@@ -125,7 +122,6 @@ public class ProcessContextImpl implements ProcessContext {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	@Override
 	public void addContainer(String key, NamingService remoteNamingService)
 			throws Exception {
 		throw new Exception(

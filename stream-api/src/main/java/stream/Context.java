@@ -23,7 +23,7 @@
  */
 package stream;
 
-import stream.service.NamingService;
+import stream.service.Service;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ import stream.service.NamingService;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public interface Context extends NamingService {
+public interface Context {
 
 	/**
 	 * This constant defines the name of the data item context, i.e. when
@@ -67,4 +67,17 @@ public interface Context extends NamingService {
 	 */
 	public Object resolve(String variable); // TODO: Shouldn't we rename this
 											// method to 'get(String)' ??
+
+	/**
+	 * The lookup method provides the lookup of a given reference within the
+	 * Lookup service. If there is no service registered for that reference,
+	 * this method will return <code>null</code>.
+	 * 
+	 * @param ref
+	 * @return
+	 * @throws Exception
+	 */
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+			throws Exception;
+
 }

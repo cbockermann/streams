@@ -55,7 +55,6 @@ public class LocalContext implements ProcessContext {
 	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */
-	@Override
 	public void register(String ref, Service p) throws Exception {
 		lookupService.put(ref, p);
 	}
@@ -63,7 +62,6 @@ public class LocalContext implements ProcessContext {
 	/**
 	 * @see stream.service.NamingService#unregister(java.lang.String)
 	 */
-	@Override
 	public void unregister(String ref) throws Exception {
 		lookupService.remove(ref);
 	}
@@ -93,7 +91,6 @@ public class LocalContext implements ProcessContext {
 		return get(variable);
 	}
 
-	@Override
 	public Map<String, ServiceInfo> list() throws Exception {
 		Map<String, ServiceInfo> classes = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : lookupService.keySet()) {
@@ -107,7 +104,6 @@ public class LocalContext implements ProcessContext {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	@Override
 	public void addContainer(String key, NamingService remoteNamingService)
 			throws Exception {
 		throw new Exception(

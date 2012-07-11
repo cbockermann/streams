@@ -3,9 +3,6 @@
  */
 package stream.expressions;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import stream.Context;
 import stream.data.Data;
 import stream.data.DataFactory;
-import stream.service.NamingService;
 import stream.service.Service;
-import stream.service.ServiceInfo;
 
 /**
  * @author chris
@@ -36,26 +31,8 @@ public class ComplexConditionTest {
 		}
 
 		@Override
-		public void register(String ref, Service p) throws Exception {
-		}
-
-		@Override
-		public void unregister(String ref) throws Exception {
-		}
-
-		@Override
 		public Object resolve(String variable) {
 			return null;
-		}
-
-		@Override
-		public Map<String, ServiceInfo> list() throws Exception {
-			return new HashMap<String, ServiceInfo>();
-		}
-
-		@Override
-		public void addContainer(String key, NamingService remoteNamingService)
-				throws Exception {
 		}
 	};
 

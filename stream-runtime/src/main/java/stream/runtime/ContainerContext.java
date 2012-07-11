@@ -119,7 +119,6 @@ public class ContainerContext implements Context {
 	 * @see stream.runtime.DefaultNamingService#register(java.lang.String,
 	 *      stream.service.Service)
 	 */
-	@Override
 	public void register(String ref, Service p) throws Exception {
 		namingService.register(ref, p);
 	}
@@ -127,12 +126,10 @@ public class ContainerContext implements Context {
 	/**
 	 * @see stream.runtime.DefaultNamingService#unregister(java.lang.String)
 	 */
-	@Override
 	public void unregister(String ref) throws Exception {
 		namingService.unregister(ref);
 	}
 
-	@Override
 	public Map<String, ServiceInfo> list() throws Exception {
 		return namingService.list();
 	}
@@ -141,7 +138,6 @@ public class ContainerContext implements Context {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	@Override
 	public void addContainer(String key, NamingService remoteNamingService)
 			throws Exception {
 		log.info("Adding remote container '{}' at {}", key, remoteNamingService);

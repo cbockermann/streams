@@ -88,29 +88,23 @@ public class ProcessContainer {
 	static {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
 		//
+		log.debug("Adding container shutdown-hook");
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
 
-		if (System.getProperty("container.shutdown-hook") != null) {
-			log.info("Adding container shutdown-hook");
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				public void run() {
-
-					if ("disabled".equalsIgnoreCase(System
-							.getProperty("container.shutdown-hook"))) {
-						log.info("Shutdown-hook disabled...");
-						return;
-					}
-
-					log.info("Running shutdown-hook...");
-					for (ProcessContainer pc : container) {
-						log.debug("Sending shutdown signal to {}", pc);
-						pc.shutdown();
-					}
+				if ("disabled".equalsIgnoreCase(System
+						.getProperty("container.shutdown-hook"))) {
+					log.warn("Shutdown-hook disabled...");
+					return;
 				}
-			});
 
-		} else {
-			log.info("Skipping setup of container shutdown-hook");
-		}
+				log.debug("Running shutdown-hook...");
+				for (ProcessContainer pc : container) {
+					log.debug("Sending shutdown signal to {}", pc);
+					pc.shutdown();
+				}
+			}
+		});
 	}
 
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
@@ -308,7 +302,7 @@ public class ProcessContainer {
 			String[] pkgs = root.getAttribute("import").split(",");
 			for (String pkg : pkgs) {
 				if (!pkg.trim().isEmpty())
-					objectFactory.addPackage(pkg);
+					objectFactory.addPackage(pkg.trim());
 			}
 		}
 
@@ -458,6 +452,13 @@ public class ProcessContainer {
 					log.trace("    {} is still running", p);
 				}
 			}
+
+			if ("true".equalsIgnoreCase(System.getProperty("debug.memory"))) {
+				System.out.println("Until now, "
+						+ DataFactory.getDataItemsCreated()
+						+ " data items have been created.");
+			}
+
 			try {
 				Thread.sleep(500);
 			} catch (Exception e) {
@@ -466,6 +467,7 @@ public class ProcessContainer {
 		}
 
 		long end = System.currentTimeMillis();
+		log.info("Running processes: {}", processes);
 		log.info("ProcessContainer finished all processes after about {} ms",
 				(end - start));
 	}

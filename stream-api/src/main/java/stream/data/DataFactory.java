@@ -124,4 +124,8 @@ public class DataFactory {
 		dataItemsCreated++;
 		return defaultDataFactory.createDataItem(data);
 	}
+
+	public static long getDataItemsCreated() {
+		return dataItemsCreated;
+	}
 }

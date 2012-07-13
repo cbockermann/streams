@@ -501,6 +501,10 @@ public class DataInstance extends LinkedHashMap<String, Serializable> implements
 			}
 		}
 
+		Serializable val = this.get(att.name());
+		if (val == null)
+			return 0.0d;
+
 		return new Double(get(att.name()) + "");
 	}
 

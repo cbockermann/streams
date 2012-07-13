@@ -64,7 +64,7 @@ public class MemoryUsage implements Processor, StatisticsService {
 	public Data process(Data input) {
 		Runtime rt = Runtime.getRuntime();
 		Long usedMB = (rt.totalMemory() - rt.freeMemory());
-		memoryUsed.set(usedMB);
+		// memoryUsed.set(usedMB);
 		input.put(key, usedMB);
 		return input;
 	}

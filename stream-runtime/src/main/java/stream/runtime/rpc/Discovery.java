@@ -3,6 +3,9 @@ package stream.runtime.rpc;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +44,15 @@ public class Discovery extends Thread {
 		this.containers.clear();
 		this.alive.clear();
 
+		int timeout = 100;
+		try {
+			timeout = Integer.parseInt(System.getProperty(
+					"stream.container.timeout", "250"));
+		} catch (Exception e) {
+			timeout = 100;
+		}
+		log.info("Using connection timeout of {} ms", timeout);
+
 		DatagramPacket query = new DatagramPacket(
 				ContainerAnnouncement.CONTAINER_QUERY,
 				ContainerAnnouncement.CONTAINER_QUERY.length);
@@ -71,15 +83,43 @@ public class Discovery extends Thread {
 									+ announcement.getHost() + ":"
 									+ announcement.getPort(),
 							announcement.getName());
-					discovered.add(announcement);
-					synchronized (containers) {
-						containers.put(announcement.getName(), announcement);
+
+					try {
+						//
+						// check if there exists a route to the remote
+						// container...
+						//
+						Socket sock = new Socket();
+						log.debug("Creating socket-address...");
+						SocketAddress addr = new InetSocketAddress(
+								announcement.getHost(), announcement.getPort());
+
+						log.debug("Checking connection to {}", addr);
+						sock.connect(addr, timeout);
+
+						if (sock.isConnected()) {
+							log.debug("Test-Connection succeeded.");
+							sock.close();
+							log.debug("Test-connection closed.");
+							discovered.add(announcement);
+							synchronized (containers) {
+								containers.put(announcement.getName(),
+										announcement);
+							}
+
+							synchronized (alive) {
+								alive.put(announcement.toString(),
+										System.currentTimeMillis());
+							}
+
+						}
+					} catch (SocketTimeoutException e) {
+						log.error("Cannot connect to container {}: {}",
+								announcement, e.getMessage());
+						if (log.isTraceEnabled())
+							e.printStackTrace();
 					}
 
-					synchronized (alive) {
-						alive.put(announcement.toString(),
-								System.currentTimeMillis());
-					}
 				} else {
 					log.debug("received data-gram without data... {}", p);
 				}
@@ -149,4 +189,5 @@ public class Discovery extends Thread {
 			return new LinkedHashMap<String, ContainerAnnouncement>(containers);
 		}
 	}
+
 }

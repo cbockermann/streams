@@ -21,11 +21,11 @@
 		 -->
 		
 		<stream.statistics.Sum keys="@error:NB" />
+		<PrintData />
 		
 <!--
-		<PrintData />
 		<stream.flow.Delay time="1s" />
-	-->
+  -->
 
 	</process>
 

@@ -1,6 +1,6 @@
 
 
-<container address="192.168.10.2" port="0">
+<container address="192.168.128.4" port="0">
 <!-- address="192.168.128.116" port="9109"> -->
 
 <!-- 
@@ -21,8 +21,11 @@
     	<stream.logger.Message message="%{data.@id} => %{data.data}" />
     	<PrintData />
      -->
+<!--
 	<stream.flow.Enqueue queue="//nico:storage/twitter" />
-    	<stream.flow.Delay time="10 seconds" />
+  -->
+	<stream.flow.Enqueue queue="//kirmes/input" />
+    	<stream.flow.Delay time="1 seconds" />
     	<!-- 
 		<stream.flow.Enqueue queue="//storage/input" />
     	 -->

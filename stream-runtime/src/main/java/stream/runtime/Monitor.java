@@ -67,7 +67,8 @@ public class Monitor extends AbstractProcess {
 	public Data getNextItem() {
 		if (lastItem == null) {
 			lastItem = DataFactory.create();
-		}
+		} else
+			lastItem.clear();
 		return lastItem;
 	}
 
@@ -91,8 +92,15 @@ public class Monitor extends AbstractProcess {
 		Data data = super.process(item);
 		try {
 			Thread.sleep(interval);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (InterruptedException e) {
+			if (!this.running) {
+				log.debug("Monitor finished.");
+				return data;
+			} else {
+				log.debug("Sleep interrupted.");
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			}
 		}
 		return data;
 	}

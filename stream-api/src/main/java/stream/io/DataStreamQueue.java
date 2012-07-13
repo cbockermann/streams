@@ -41,6 +41,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
 	int size = 1000;
+	boolean closed = false;
 	LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
 
 	public DataStreamQueue() {
@@ -57,6 +58,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	@Override
 	public void close() throws Exception {
 		queue.clear();
+		closed = true;
 	}
 
 	/**
@@ -75,30 +77,26 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 		if (instance == null)
 			return readItem(DataFactory.create());
 
-		while (queue.isEmpty()) {
-			synchronized (this) {
-				this.wait();
+		Data item = null;
+		try {
+			item = queue.take();
+			log.debug("took item from queue: {}", item);
+		} catch (InterruptedException e) {
+			if (closed)
+				return null;
+			else {
+				log.error("Interruped while waiting for data: {}",
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
 			}
 		}
 
-		Data item = queue.take();
-		log.debug("took item from queue: {}", item);
-		while (item == null) {
-			try {
-				log.debug("waiting for item to arrive in queue...");
-				item = queue.take();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (queue.remainingCapacity() > 0) {
-			synchronized (this) {
-				this.notify();
-			}
-		}
 		if (item != null)
 			instance.putAll(item);
+		else
+			return null;
+
 		return instance;
 	}
 
@@ -133,17 +131,8 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	@Override
 	public boolean enqueue(Data item) {
 		try {
-			while (queue.remainingCapacity() < 1) {
-				synchronized (this) {
-					this.wait();
-				}
-			}
-
-			boolean b = queue.add(item);
-			synchronized (this) {
-				this.notify();
-			}
-			return b;
+			queue.put(item);
+			return true;
 		} catch (Exception e) {
 			log.error("Error enqueuing item: {}", e.getMessage());
 			if (log.isDebugEnabled())

@@ -157,6 +157,9 @@ public class LineStream extends AbstractDataStream {
 	@Override
 	public Data readItem(Data instance) throws Exception {
 
+		if (this.limit != null && this.limit > 0 && this.count > this.limit)
+			return null;
+
 		if (instance == null)
 			instance = DataFactory.create();
 

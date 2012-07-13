@@ -29,28 +29,11 @@ package stream.io;
  */
 public class BlockingQueue extends DataStreamQueue {
 
-	Integer size = 10;
-
 	public BlockingQueue() {
 		this(1000);
 	}
 
 	public BlockingQueue(int size) {
-		this.size = size;
-	}
-
-	/**
-	 * @return the size
-	 */
-	public Integer getSize() {
-		return size;
-	}
-
-	/**
-	 * @param size
-	 *            the size to set
-	 */
-	public void setSize(Integer size) {
-		this.size = size;
+		super(size);
 	}
 }

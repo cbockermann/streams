@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.data.Data;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -39,9 +40,15 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 		Processor, QueueService {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamQueue.class);
-	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
+	int size = 1000;
+	LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
 
 	public DataStreamQueue() {
+		setSize(1000);
+	}
+
+	public DataStreamQueue(int size) {
+		setSize(size);
 	}
 
 	/**
@@ -64,18 +71,32 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
+
+		if (instance == null)
+			return readItem(DataFactory.create());
+
+		while (queue.isEmpty()) {
+			synchronized (this) {
+				this.wait();
+			}
+		}
+
 		Data item = queue.take();
 		log.debug("took item from queue: {}", item);
 		while (item == null) {
 			try {
 				log.debug("waiting for item to arrive in queue...");
-				Thread.sleep(100);
 				item = queue.take();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
+		if (queue.remainingCapacity() > 0) {
+			synchronized (this) {
+				this.notify();
+			}
+		}
 		if (item != null)
 			instance.putAll(item);
 		return instance;
@@ -86,18 +107,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		Data item = queue.take();
-		log.debug("took item from queue: {}", item);
-		while (item == null) {
-			try {
-				log.debug("waiting for item to arrive in queue...");
-				Thread.sleep(100);
-				item = queue.take();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return item;
+		return readNext(DataFactory.create());
 	}
 
 	/**
@@ -105,7 +115,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	 */
 	@Override
 	public Data process(Data input) {
-		queue.add(input);
+		enqueue(input);
 		return input;
 	}
 
@@ -123,10 +133,21 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	@Override
 	public boolean enqueue(Data item) {
 		try {
-			boolean b = queue.add(item);
-			return b;
+			while (queue.remainingCapacity() < 1) {
+				synchronized (this) {
+					this.wait();
+				}
+			}
 
+			boolean b = queue.add(item);
+			synchronized (this) {
+				this.notify();
+			}
+			return b;
 		} catch (Exception e) {
+			log.error("Error enqueuing item: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 			return false;
 		}
 	}
@@ -138,6 +159,25 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	public void reset() throws Exception {
 		log.debug("Cleared Queue.");
 		queue.clear();
+	}
 
+	/**
+	 * @return the size
+	 */
+	public int getSize() {
+		return size;
+	}
+
+	/**
+	 * @param size
+	 *            the size to set
+	 */
+	public void setSize(int size) {
+		if (size < 1) {
+			log.error("Invalid queue-size '{}'!", size);
+			return;
+		}
+		this.size = size;
+		this.queue = new LinkedBlockingQueue<Data>(size);
 	}
 }

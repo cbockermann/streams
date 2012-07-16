@@ -65,7 +65,8 @@ public final class ServiceReference implements Serializable {
 	protected final String property;
 	protected final Class<? extends Service> serviceClass;
 
-	public ServiceReference(String ref, Object receiver, String property, Class<? extends Service> serviceClass ) {
+	public ServiceReference(String ref, Object receiver, String property,
+			Class<? extends Service> serviceClass) {
 		this.ref = ref;
 		this.receiver = receiver;
 		this.property = property;
@@ -96,6 +97,13 @@ public final class ServiceReference implements Serializable {
 	public Class<? extends Service> getServiceClass() {
 		return serviceClass;
 	}
-	
-	
+
+	public boolean hasSameComsumer(ServiceReference ref) {
+
+		if (property == null || ref == null)
+			return false;
+
+		return (this.property.equals(ref.property))
+				&& this.receiver == ref.receiver;
+	}
 }

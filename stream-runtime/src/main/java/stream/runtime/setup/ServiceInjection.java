@@ -23,6 +23,7 @@
  */
 package stream.runtime.setup;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
@@ -73,7 +74,49 @@ public class ServiceInjection {
 			String serviceRef = c.expand(ref.getRef());
 			Object consumer = ref.getReceiver();
 
-			Service service = (Service) ctx.lookup(serviceRef, ref.getServiceClass());
+			if (serviceRef.contains(",")) {
+				String[] serviceRefs = serviceRef.split(",");
+				for (int i = 0; i < serviceRefs.length; i++) {
+					serviceRefs[i] = serviceRefs[i].trim();
+				}
+
+				Object services = Array.newInstance(ref.getServiceClass()
+						.getComponentType(), serviceRefs.length);
+
+				for (int i = 0; i < serviceRefs.length; i++) {
+					Service serv = ctx.lookup(serviceRefs[i],
+							ref.getServiceClass());
+					log.info("Found service {}", serv);
+					Class<Service> sc = (Class<Service>) ref.getServiceClass()
+							.getComponentType();
+					log.info("Casting to {}", ref.getServiceClass()
+							.getComponentType());
+
+					Array.set(services, i, serv);
+
+					log.info("Adding service for {}", serviceRefs[i]);
+				}
+
+				Method m = getServiceSetter(consumer, ref.getProperty(), true);
+				if (m != null) {
+					log.debug("Injecting service-array {} into consumer {}",
+							services, consumer);
+					log.info("Invoking method {}", m);
+					Object[] args = new Object[] { services };
+					log.info("arguments: {}", args);
+
+					log.info("Starting invocation on {}", consumer);
+					m.invoke(consumer, args);
+					return;
+				} else {
+					throw new Exception(
+							"No service-setter found for service-array "
+									+ services + " in object" + consumer);
+				}
+			}
+
+			Service service = (Service) ctx.lookup(serviceRef,
+					ref.getServiceClass());
 			if (service == null) {
 				throw new Exception(
 						"No service could be injected for reference '"
@@ -83,7 +126,7 @@ public class ServiceInjection {
 			log.debug("Found service of class {} for reference '{}'",
 					service.getClass(), serviceRef);
 
-			Method m = getServiceSetter(consumer, ref.getProperty());
+			Method m = getServiceSetter(consumer, ref.getProperty(), false);
 			if (m != null) {
 				log.debug("Injecting service {} into consumer {}", service,
 						consumer);
@@ -93,7 +136,8 @@ public class ServiceInjection {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Class<? extends Service> hasServiceSetter(String name, Object o) {
+	public static Class<? extends Service> hasServiceSetter(String name,
+			Object o) {
 		try {
 
 			for (Method m : o.getClass().getMethods()) {
@@ -121,7 +165,35 @@ public class ServiceInjection {
 			String serviceRef = ref.getRef();
 			Object consumer = ref.getReceiver();
 
-			Service service = (Service) ns.lookup(serviceRef, ref.getServiceClass());
+			if (serviceRef.contains(",")) {
+				String[] serviceRefs = serviceRef.split(",");
+				for (int i = 0; i < serviceRefs.length; i++) {
+					serviceRefs[i] = serviceRefs[i].trim();
+				}
+
+				Service[] services = new Service[serviceRefs.length];
+				for (int i = 0; i < serviceRefs.length; i++) {
+					services[i] = (Service) ns.lookup(serviceRefs[i],
+							ref.getServiceClass());
+					log.info("Adding service for {}", services[i],
+							serviceRefs[i]);
+				}
+
+				Method m = getServiceSetter(consumer, ref.getProperty(), true);
+				if (m != null) {
+					log.debug("Injecting service-array {} into consumer {}",
+							services, consumer);
+					m.invoke(consumer, (Object[]) services);
+					return;
+				} else {
+					throw new Exception(
+							"No service-setter found for service-array "
+									+ services + " in object" + consumer);
+				}
+			}
+
+			Service service = (Service) ns.lookup(serviceRef,
+					ref.getServiceClass());
 			if (service == null) {
 				throw new Exception(
 						"No service could be injected for reference '"
@@ -131,7 +203,9 @@ public class ServiceInjection {
 			log.debug("Found service of class {} for reference '{}'",
 					service.getClass(), serviceRef);
 
-			Method m = getServiceSetter(consumer, ref.getProperty());
+			Method m = getServiceSetter(consumer, ref.getProperty(), false);
+			log.info("Found service-setter: {}", m);
+
 			if (m != null) {
 				log.debug("Injecting service {} into consumer {}", service,
 						consumer);
@@ -149,7 +223,8 @@ public class ServiceInjection {
 	 * @param serviceRefName
 	 * @return
 	 */
-	public static Method getServiceSetter(Object o, String serviceRefName) {
+	public static Method getServiceSetter(Object o, String serviceRefName,
+			boolean array) {
 		String serviceName = serviceRefName.replaceAll("-ref$", "");
 
 		for (Method m : o.getClass().getMethods()) {
@@ -169,7 +244,8 @@ public class ServiceInjection {
 
 					Class<?> type = types[0];
 					if (isServiceImplementation(type)) {
-						return m;
+						if (!array || (array && type.isArray()))
+							return m;
 					}
 				}
 			}
@@ -218,9 +294,10 @@ public class ServiceInjection {
 			return true;
 
 		if (clazz.isArray()) {
-			// return isServiceImplementation(clazz.getComponentType());
-			log.debug("Injection of arrays of service references is not yet supported!");
-			return false;
+			log.debug("checking array component-type for service implementation");
+			return isServiceImplementation(clazz.getComponentType());
+			// log.debug("Injection of arrays of service references is not yet supported!");
+			// return false;
 		}
 
 		for (Class<?> intf : clazz.getInterfaces()) {

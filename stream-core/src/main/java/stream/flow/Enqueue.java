@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.data.Data;
+import stream.data.DataFactory;
 import stream.io.QueueService;
 
 /**
@@ -39,10 +40,14 @@ public class Enqueue extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 	String ref = null;
 
-	protected QueueService queue;
+	protected QueueService[] queues;
 
 	public void setQueue(QueueService queue) {
-		this.queue = queue;
+		this.queues = new QueueService[] { queue };
+	}
+
+	public void setQueues(QueueService[] queues) {
+		this.queues = queues;
 	}
 
 	/**
@@ -50,13 +55,27 @@ public class Enqueue extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-
-		if (queue == null) {
-			log.error("No QueueService injected!");
+		if (data == null)
 			return data;
+
+		enqueue(data);
+		return data;
+	}
+
+	protected void enqueue(Data data) {
+
+		if (queues == null) {
+			log.error("No QueueService injected!");
+			return;
 		}
 
-		queue.enqueue(data);
-		return data;
+		for (int i = 0; i < queues.length; i++) {
+
+			if (i < 1)
+				queues[i].enqueue(data);
+			else {
+				queues[i].enqueue(DataFactory.create(data));
+			}
+		}
 	}
 }

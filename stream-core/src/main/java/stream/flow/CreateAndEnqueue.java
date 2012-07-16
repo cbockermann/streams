@@ -72,7 +72,7 @@ public class CreateAndEnqueue extends Enqueue {
 	@Override
 	public Data process(Data data) {
 
-		if (queue == null) {
+		if (queues == null) {
 			log.error("No QueueService injected!");
 			return data;
 		}
@@ -87,8 +87,9 @@ public class CreateAndEnqueue extends Enqueue {
 					result.put(s[1], ser);
 			}
 		}
-		if (!result.isEmpty())
-			queue.enqueue(result);
+		if (!result.isEmpty()) {
+			enqueue(result);
+		}
 		return data;
 	}
 

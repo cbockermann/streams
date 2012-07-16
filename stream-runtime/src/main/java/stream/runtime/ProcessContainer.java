@@ -482,6 +482,7 @@ public class ProcessContainer {
 
 	public void dataArrived(String key, Data item) {
 		if (listeners.containsKey(key)) {
+			log.debug("Adding item {} into queue {}", item, key);
 			listeners.get(key).process(item);
 		} else {
 			log.warn("No listener defined for {}", key);

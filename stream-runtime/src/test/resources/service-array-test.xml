@@ -1,0 +1,20 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container server="true">
+
+
+	<Service id="col1" class="stream.service.GlobalCollector" />
+	<Service id="col2" class="stream.service.GlobalCollector" />
+	
+
+	<Process input="input">
+
+		<stream.test.LogData />
+		
+		<stream.flow.Enqueue queues="col1,col2" />
+		
+	</Process>
+	
+</Container>

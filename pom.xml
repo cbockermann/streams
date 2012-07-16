@@ -17,10 +17,16 @@
 		<module>stream-api</module>
 		<module>stream-core</module>
 		<module>stream-runtime</module>
+<!--
 		<module>stream-runner</module>
+  -->
+<!--
 		<module>stream-analysis</module>
+  -->
 		<module>stream-plotter</module>
+<!--
 		<module>stream-node</module>
+  -->
 	</modules>
 
 	<repositories>

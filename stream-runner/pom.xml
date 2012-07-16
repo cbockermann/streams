@@ -3,7 +3,7 @@
   <parent>
     <artifactId>streams</artifactId>
     <groupId>org.jwall</groupId>
-    <version>0.9.4-SNAPSHOT</version>
+    <version>0.9.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>stream-runner</artifactId>
@@ -100,7 +100,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-node</artifactId>
-			<version>0.9.4-SNAPSHOT</version>
+			<version>0.9.5-SNAPSHOT</version>
 			<type>war</type>
 		</dependency>
 		<dependency>

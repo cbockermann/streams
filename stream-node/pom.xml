@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.4-SNAPSHOT</version>
+		<version>0.9.5-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>stream-node</artifactId>

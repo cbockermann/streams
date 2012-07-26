@@ -23,6 +23,7 @@
  */
 package stream.runtime.setup;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -91,10 +92,18 @@ public class StreamElementHandler implements ElementHandler {
 			if (stream instanceof Service) {
 				container.getContext().register(id, (Service) stream);
 			}
-
+		} catch (FileNotFoundException fnfe) {
+			throw new Exception("Cannot create stream from referenced file: "
+					+ fnfe.getMessage());
 		} catch (Exception e) {
-			log.error("Failed to create object: {}", e.getMessage());
+
+			if (e.getCause() != null)
+				throw new Exception(e.getCause());
+
+			log.error("Failed to create stream-object: {}", e.getMessage());
 			e.printStackTrace();
+			throw new Exception("Failed to create data-stream: "
+					+ e.getMessage());
 		}
 	}
 }

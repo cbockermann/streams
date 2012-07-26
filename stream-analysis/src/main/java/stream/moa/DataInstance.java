@@ -532,4 +532,12 @@ public class DataInstance extends LinkedHashMap<String, Serializable> implements
 		}
 		return null;
 	}
+
+	/**
+	 * @see stream.data.Data#createCopy()
+	 */
+	@Override
+	public Data createCopy() {
+		return new DataInstance(this, this.header);
+	}
 }

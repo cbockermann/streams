@@ -63,4 +63,6 @@ public interface Data extends Map<String, Serializable>, Serializable {
 	 */
 	public final static String PREDICTION_PREFIX = ANNOTATION_PREFIX
 			+ "prediction";
+
+	public Data createCopy();
 }

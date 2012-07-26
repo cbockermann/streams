@@ -33,29 +33,28 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import stream.data.Data;
+
 import com.rapidminer.operator.AbstractIOObject;
 import com.rapidminer.operator.Annotations;
 import com.rapidminer.operator.ResultObject;
 
-
 /**
  * 
- * This class implements a wrapper to wrap simple Data objects into
- * IOObjects to be passed along within RapidMiner.
+ * This class implements a wrapper to wrap simple Data objects into IOObjects to
+ * be passed along within RapidMiner.
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
- *
+ * 
  */
-public class DataObject 
-	extends AbstractIOObject
-	implements stream.data.Data, ResultObject {
-	
+public class DataObject extends AbstractIOObject implements stream.data.Data,
+		ResultObject {
+
 	/** The unique class ID */
 	private static final long serialVersionUID = -358985628975633770L;
 	stream.data.Data data;
-	
-	
-	public DataObject( stream.data.Data data ){
+
+	public DataObject(stream.data.Data data) {
 		this.data = data;
 	}
 
@@ -119,20 +118,19 @@ public class DataObject
 	public Annotations getAnnotations() {
 		return new Annotations();
 	}
-	
-	public stream.data.Data getWrappedDataItem(){
+
+	public stream.data.Data getWrappedDataItem() {
 		return data;
 	}
-	
-	public void setWrappedDataItem( stream.data.Data item ){
+
+	public void setWrappedDataItem(stream.data.Data item) {
 		this.data = item;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return "Data Item[  " + data + "  ]";
 	}
 
-	
 	/**
 	 * @see com.rapidminer.operator.ResultObject#getName()
 	 */
@@ -140,51 +138,51 @@ public class DataObject
 	public String getName() {
 		return "Data Item";
 	}
-	
 
 	/**
 	 * @see com.rapidminer.operator.ResultObject#toResultString()
 	 */
 	@Override
 	public String toResultString() {
-		StringBuffer s = new StringBuffer( "<html><head><style> body, p, div, table, td { font-style: normal; } </style></head><body>" );
-		s.append( "<table>" );
-		for( String key : data.keySet() ){
-			s.append( "<tr>" );
-			s.append( "<td><b>" + key + "</b></td>" );
-			s.append( "<td><code>" );
-			Serializable val = data.get( key );
-			if( val.getClass().isArray() ){
+		StringBuffer s = new StringBuffer(
+				"<html><head><style> body, p, div, table, td { font-style: normal; } </style></head><body>");
+		s.append("<table>");
+		for (String key : data.keySet()) {
+			s.append("<tr>");
+			s.append("<td><b>" + key + "</b></td>");
+			s.append("<td><code>");
+			Serializable val = data.get(key);
+			if (val.getClass().isArray()) {
 				Class<?> type = val.getClass().getComponentType();
-				int len = Array.getLength( val );
-				s.append( type.getName() + "[" + len + "]" );
-				
+				int len = Array.getLength(val);
+				s.append(type.getName() + "[" + len + "]");
+
 				try {
-					s.append( "  (values: " );
-					for( int i = 0; i < len && i < 4; i++ ){
-						Object o = Array.get( val, i );
-						if( o == null )
-							s.append( "null" );
+					s.append("  (values: ");
+					for (int i = 0; i < len && i < 4; i++) {
+						Object o = Array.get(val, i);
+						if (o == null)
+							s.append("null");
 						else
-							s.append( o.toString() );
-						
-						if( i + 1 < len )
-							s.append( ", " );
+							s.append(o.toString());
+
+						if (i + 1 < len)
+							s.append(", ");
 					}
-					s.append( "...)" );
-					
+					s.append("...)");
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 			} else {
-				s.append( val.toString() );
+				s.append(val.toString());
 			}
-			s.append( "</code></td></tr>\n" );
+			s.append("</code></td></tr>\n");
 		}
-		s.append( "</table>" );
-		s.append( "</body></html>" );
-		
+		s.append("</table>");
+		s.append("</body></html>");
+
 		return s.toString();
 	}
 
@@ -203,5 +201,13 @@ public class DataObject
 	@Override
 	public List getActions() {
 		return new ArrayList<Object>();
+	}
+
+	/**
+	 * @see stream.data.Data#createCopy()
+	 */
+	@Override
+	public Data createCopy() {
+		return new DataObject(this.data.createCopy());
 	}
 }

@@ -74,11 +74,15 @@ public class VariableContext {
 		variables.put(key, val);
 	}
 
-	public String expand(String str) {
-		return substitute(str);
+	public String expand(String str, boolean emptyStrings) {
+		return substitute(str, emptyStrings);
 	}
 
-	private String substitute(String str) {
+	public String expand(String str) {
+		return substitute(str, false);
+	}
+
+	private String substitute(String str, boolean emptyStrings) {
 		String content = str;
 		int start = content.indexOf(VAR_PREFIX, 0);
 		while (start >= 0) {
@@ -90,9 +94,16 @@ public class VariableContext {
 				if (containsKey(variable))
 					content = content.substring(0, start) + get(variable)
 							+ content.substring(end + 1);
-				else
-					content = content.substring(0, start) + ""
-							+ content.substring(end + 1);
+				else {
+					if (emptyStrings)
+						content = content.substring(0, start) + ""
+								+ content.substring(end + 1);
+					else {
+						content = content.substring(0, start) + VAR_PREFIX
+								+ variable + VAR_SUFFIX
+								+ content.substring(end + 1);
+					}
+				}
 
 				if (end < content.length())
 					start = content.indexOf(VAR_PREFIX, end);

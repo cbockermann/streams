@@ -156,7 +156,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 
 				log.debug("Types:\n{}", tableSchema);
 			} else {
-				throw new Exception("Cannot determine table-schema!");
+				// throw new Exception("Cannot determine table-schema!");
 			}
 		}
 

@@ -54,6 +54,7 @@ import stream.runtime.setup.ContainerRefElementHandler;
 import stream.runtime.setup.DocumentHandler;
 import stream.runtime.setup.LibrariesElementHandler;
 import stream.runtime.setup.MonitorElementHandler;
+import stream.runtime.setup.ObjectCreator;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessElementHandler;
 import stream.runtime.setup.ProcessorFactory;
@@ -142,6 +143,28 @@ public class ProcessContainer {
 	boolean server = true;
 
 	Long startTime = 0L;
+
+	final static String[] extensions = new String[] {
+			"stream.moa.MoaObjectFactory",
+			"stream.script.JavaScriptProcessorFactory" };
+
+	static {
+
+		for (String ext : extensions) {
+			try {
+				Class<?> clazz = Class.forName(ext);
+				ObjectCreator creator = (ObjectCreator) clazz.newInstance();
+				ObjectFactory.registerObjectCreator(creator);
+				log.debug("Registered extension {}", ext);
+			} catch (Exception e) {
+				log.debug("Failed to register extension '{}': {}", ext,
+						e.getMessage());
+				if (log.isTraceEnabled())
+					e.printStackTrace();
+			}
+		}
+
+	}
 
 	public ProcessContainer(URL url) throws Exception {
 		this(url, null);

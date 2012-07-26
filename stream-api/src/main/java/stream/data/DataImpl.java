@@ -86,4 +86,12 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 
 		return size;
 	}
+
+	/**
+	 * @see stream.data.Data#copy()
+	 */
+	@Override
+	public Data createCopy() {
+		return new DataImpl(this);
+	}
 }

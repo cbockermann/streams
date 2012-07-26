@@ -131,6 +131,9 @@ public class ServiceInjection {
 				log.debug("Injecting service {} into consumer {}", service,
 						consumer);
 				m.invoke(consumer, service);
+			} else {
+				throw new Exception("Failed to lookup service-setter for "
+						+ consumer + " " + ref.getProperty());
 			}
 		}
 	}

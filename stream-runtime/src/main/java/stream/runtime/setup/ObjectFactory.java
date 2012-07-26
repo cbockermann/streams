@@ -240,7 +240,8 @@ public class ObjectFactory extends VariableContext {
 		NamedNodeMap att = node.getAttributes();
 		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);
-			map.put(attr.getNodeName(), attr.getNodeValue());
+			String value = expand(attr.getNodeValue(), false);
+			map.put(attr.getNodeName(), value);
 		}
 
 		//
@@ -251,7 +252,7 @@ public class ObjectFactory extends VariableContext {
 			Element element = (Element) node;
 			String text = element.getTextContent();
 			if (text != null && !"".equals(text.trim())) {
-				map.put(BodyContent.KEY, text);
+				map.put(BodyContent.KEY, expand(text));
 			}
 		}
 

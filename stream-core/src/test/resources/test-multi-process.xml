@@ -1,4 +1,4 @@
-<container>
+<container server="false">
 
 	<stream id="stream-0" class="stream.generator.RandomStream" limit="10" keys="x1,x2" />
 
@@ -8,6 +8,8 @@
 	<process input="stream-${copy.id}" copies="2">
 	
 		<SetValue key="source" value="from-stream:${copy.id}" />
+	
+		<stream.logger.Message message="Processing item from %{data.source}" />
 	
 		<PrintData />
 	</process>

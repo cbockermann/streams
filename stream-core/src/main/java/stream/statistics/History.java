@@ -122,7 +122,8 @@ public class History<T> implements Serializable {
 	 * @see org.jwall.web.audit.console.statistics.History#getSteps()
 	 */
 	public int getSteps() {
-		return new Long(this.getLength() / this.getStepSize()).intValue();
+		Long steps = new Long(this.getLength() / this.getStepSize());
+		return steps.intValue();
 	}
 
 	/**
@@ -146,7 +147,9 @@ public class History<T> implements Serializable {
 	 *      java.lang.Object)
 	 */
 	public void add(Long timestamp, T data) {
-		map.put(adjust(timestamp), data);
+		Long time = adjust(timestamp);
+		map.put(time, data);
+		last = Math.max(last, time);
 	}
 
 	/**
@@ -205,7 +208,7 @@ public class History<T> implements Serializable {
 	 * @param i
 	 * @return
 	 */
-	protected Long map(int i) {
+	public Long map(int i) {
 		long first = last() - this.getLength();
 		long t = first + i * stepSize;
 		return adjust(t);

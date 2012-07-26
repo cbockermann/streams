@@ -52,6 +52,7 @@ public class DataStreamFactory {
 	public static DataStream createStream(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory, Element node) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
+
 		Class<?> clazz = Class.forName(params.get("class"));
 		String urlParam = params.get("url");
 		DataStream stream;

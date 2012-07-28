@@ -24,19 +24,21 @@
 package stream.data;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import stream.Processor;
-import stream.data.Data;
-import stream.data.DataFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.ProcessorList;
+import stream.util.WildcardPattern;
 
 /**
  * @author chris
  * 
  */
-public class SelectKeys implements Processor {
+public class SelectKeys extends ProcessorList {
 
+	static Logger log = LoggerFactory.getLogger(SelectKeys.class);
 	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
@@ -53,10 +55,9 @@ public class SelectKeys implements Processor {
 			selected.add(key);
 	}
 
-	public Processor setKeys(Set<String> keys) {
+	public void setKeys(Set<String> keys) {
 		this.keys = keys.toArray(new String[keys.size()]);
 		selected = keys;
-		return this;
 	}
 
 	public String[] getKeys() {
@@ -79,24 +80,44 @@ public class SelectKeys implements Processor {
 		if (keys == null || keys.length == 0)
 			return data;
 
-		Iterator<String> it = data.keySet().iterator();
-		if (remove) {
-			while (it.hasNext()) {
-				String key = it.next();
-				if (!selected.contains(key)) {
-					it.remove();
-				}
+		Data result = DataFactory.create();
+		for (String key : data.keySet()) {
+			if (isSelected(key)) {
+				result.put(key, data.get(key));
 			}
-			return data;
-		} else {
-			Data result = DataFactory.create();
-			while (it.hasNext()) {
-				String key = it.next();
-				if (selected.contains(key)) {
-					result.put(key, data.get(key));
-				}
-			}
-			return result;
 		}
+
+		Data processed = super.process(result);
+		for (String key : processed.keySet()) {
+			data.put(key, processed.get(key));
+		}
+		return data;
+	}
+
+	public boolean isSelected(String key) {
+
+		if (keys == null || keys.length == 0)
+			return false;
+
+		boolean included = false;
+
+		for (String k : keys) {
+			if (k.startsWith("!")) {
+				k = k.substring(1);
+				if (included && WildcardPattern.matches(k, key))
+					included = false;
+				log.debug("Removing '{}' from selection due to pattern '!{}'",
+						key, k);
+			} else {
+
+				if (!included && WildcardPattern.matches(k, key)) {
+					included = true;
+					log.debug("Adding '{}' to selection due to pattern '{}'",
+							key, k);
+				}
+			}
+		}
+
+		return included;
 	}
 }

@@ -13,12 +13,14 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	static Logger log = LoggerFactory.getLogger(DataRate.class);
 	String clock = null;
 	Long count = 0L;
+	Long start = null;
 
 	Long windowCount = 0L;
 	Long last = 0L;
 	Double elapsed = 0.0d;
-	Double rate = new Double( 0.0 );
+	Double rate = new Double(0.0);
 
+	Integer every = null;
 	String key = "dataRate";
 
 	public String getClock() {
@@ -47,6 +49,8 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	@Override
 	public Data process(Data input) {
 
+		if (start == null)
+			start = System.currentTimeMillis();
 		Long now = System.currentTimeMillis();
 
 		if (clock != null) {
@@ -60,18 +64,24 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		if (now > last) {
 			elapsed += seconds;
 			rate = windowCount / seconds;
-			log.debug("data rate: {}  (overall: {})", rate,
-					count / elapsed);
+			// log.debug("data rate: {}  (overall: {})", rate, count / elapsed);
 			last = now;
 			windowCount = 1L;
 
 			if (key != null) {
 				input.put("time", new Double(elapsed));
-				input.put(key, new Double( rate ) );
+				input.put(key, new Double(rate));
 			}
 
 		} else {
 			windowCount++;
+		}
+
+		if (every != null && count % every.intValue() == 0 && start < now) {
+			Long sec = (now - start) / 1000;
+			if (sec > 0)
+				log.info("{} items processed, data-rate is: {}/second", count,
+						count.doubleValue() / sec.doubleValue());
 		}
 
 		count++;
@@ -88,7 +98,22 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	@Override
 	public Statistics getStatistics() {
 		Statistics st = new Statistics();
-		st.put( "dataRate", rate);
+		st.put("dataRate", rate);
 		return st;
+	}
+
+	/**
+	 * @return the every
+	 */
+	public Integer getEvery() {
+		return every;
+	}
+
+	/**
+	 * @param every
+	 *            the every to set
+	 */
+	public void setEvery(Integer every) {
+		this.every = every;
 	}
 }

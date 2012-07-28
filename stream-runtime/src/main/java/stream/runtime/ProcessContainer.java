@@ -526,10 +526,10 @@ public class ProcessContainer {
 			}
 		}
 
-		log.info("Sending finish() signal to life-cycle objects...");
+		log.debug("Sending finish() signal to life-cycle objects...");
 		for (LifeCycle object : lifeCyleObjects) {
 			try {
-				log.info("   sending finish() to {}", object);
+				log.debug("   sending finish() to {}", object);
 				object.finish();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -543,14 +543,14 @@ public class ProcessContainer {
 				while (it.hasNext()) {
 					AbstractProcess process = it.next();
 					if (!process.isAlive()) {
-						log.info("another process finished...");
+						log.debug("another process finished...");
 						it.remove();
 					}
 				}
 
-				log.info("Waiting for {} processes to finish...",
+				log.debug("Waiting for {} processes to finish...",
 						processes.size());
-				log.info("   processes: {}", processes);
+				log.debug("   processes: {}", processes);
 				try {
 					Thread.sleep(500);
 				} catch (Exception e) {

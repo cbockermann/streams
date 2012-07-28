@@ -178,6 +178,7 @@ public abstract class DatabaseDialect {
 			Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
 
 			stmt = con.createStatement();
+			stmt.setMaxRows(1);
 			rs = stmt.executeQuery("SELECT * FROM " + table);
 
 			ResultSetMetaData meta = rs.getMetaData();

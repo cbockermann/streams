@@ -164,6 +164,10 @@ public class History<T> implements Serializable {
 		return timestamp - rest;
 	}
 
+	public Long mapTimestamp(Long timestamp) {
+		return adjust(timestamp);
+	}
+
 	/**
 	 * This method removes any data that is associated with a timestamp older
 	 * than <code>historyLength</code> milliseconds. Items will only be removed

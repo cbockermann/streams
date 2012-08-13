@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ public class ParseTimestamp extends AbstractProcessor {
 	String key = "@timestamp";
 	String format = null;
 	String from = null;
+	String timezone = null;
 
 	public ParseTimestamp() {
 	}
@@ -62,6 +64,22 @@ public class ParseTimestamp extends AbstractProcessor {
 		setKey(key);
 		setFormat(format);
 		setFrom(from);
+	}
+
+	/**
+	 * @return the timezone
+	 */
+	public String getTimezone() {
+		return timezone;
+	}
+
+	/**
+	 * 
+	 * @param timezone
+	 */
+	@Parameter(required = false, description = "The timezone that the processed data is assumed to refer to.")
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 
 	/**
@@ -147,6 +165,9 @@ public class ParseTimestamp extends AbstractProcessor {
 
 		if (getFormat() != null && getFrom() != null) {
 			dateFormat = new SimpleDateFormat(getFormat(), Locale.ENGLISH);
+		}
+		if (getTimezone() != null && getFrom() != null) {
+			dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
 		}
 	}
 }

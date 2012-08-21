@@ -62,6 +62,7 @@ public class ServiceInjection {
 	 *            The container that holds the processors which are to be wired.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unused")
 	public static void injectServices(Collection<ServiceReference> refs,
 			ContainerContext ctx) throws Exception {
 
@@ -87,6 +88,7 @@ public class ServiceInjection {
 					Service serv = ctx.lookup(serviceRefs[i],
 							ref.getServiceClass());
 					log.info("Found service {}", serv);
+					@SuppressWarnings("unchecked")
 					Class<Service> sc = (Class<Service>) ref.getServiceClass()
 							.getComponentType();
 					log.info("Casting to {}", ref.getServiceClass()

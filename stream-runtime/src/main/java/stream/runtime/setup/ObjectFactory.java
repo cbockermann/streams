@@ -63,7 +63,7 @@ public class ObjectFactory extends VariableContext {
 			"stream.data.mapper.", "stream.data.tree.", "stream.filter.",
 			"stream.data.filter.", "stream.data.stats.", "stream.data.vector.",
 			"stream.data.test.", "stream.logic", "stream.flow",
-			"stream.monitor", "stream.statistics", "stream.scripting" };
+			"stream.monitor", "stream.statistics", "stream.script" };
 
 	// TODO: Extend this with a custom class loader that will search other
 	// places like ${user.home}/lib or ${user.home}/.streams/lib/ or any

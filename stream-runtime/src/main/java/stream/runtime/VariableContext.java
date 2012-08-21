@@ -86,19 +86,23 @@ public class VariableContext {
 		String content = str;
 		int start = content.indexOf(VAR_PREFIX, 0);
 		while (start >= 0) {
-			int end = content.indexOf(VAR_SUFFIX, start);
+			int end = content.indexOf(VAR_SUFFIX, start + 1);
 			if (end >= start + 2) {
 				String variable = content.substring(start + 2, end);
 				log.debug("Found variable: {}", variable);
 				log.trace("   content is: {}", content);
-				if (containsKey(variable))
+				int len = variable.length();
+				if (containsKey(variable)) {
+					String repl = get(variable);
 					content = content.substring(0, start) + get(variable)
 							+ content.substring(end + 1);
-				else {
-					if (emptyStrings)
+					len = repl.length();
+				} else {
+					if (emptyStrings) {
 						content = content.substring(0, start) + ""
 								+ content.substring(end + 1);
-					else {
+						len = 0;
+					} else {
 						content = content.substring(0, start) + VAR_PREFIX
 								+ variable + VAR_SUFFIX
 								+ content.substring(end + 1);
@@ -106,7 +110,7 @@ public class VariableContext {
 				}
 
 				if (end < content.length())
-					start = content.indexOf(VAR_PREFIX, end);
+					start = content.indexOf(VAR_PREFIX, start + len);
 				else
 					start = -1;
 			} else

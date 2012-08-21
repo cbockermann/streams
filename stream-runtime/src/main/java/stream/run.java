@@ -112,6 +112,6 @@ public class run {
 			Map<String, ElementHandler> elementHandler) throws Exception {
 		log.info("Looking for configuration at resource {} in classpath",
 				resource);
-		main(run.class.getResource(resource));
+		main(run.class.getResource(resource), elementHandler);
 	}
 }

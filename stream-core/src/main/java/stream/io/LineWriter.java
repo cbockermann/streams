@@ -28,6 +28,7 @@ public class LineWriter extends AbstractProcessor {
 	boolean append = false;
 	PrintStream out;
 	String format = null;
+	boolean escapeNewlines = true;
 
 	/**
 	 * @return the file
@@ -78,6 +79,22 @@ public class LineWriter extends AbstractProcessor {
 	}
 
 	/**
+	 * @return the escapeNewlines
+	 */
+	public boolean isEscapeNewlines() {
+		return escapeNewlines;
+	}
+
+	/**
+	 * @param escapeNewlines
+	 *            the escapeNewlines to set
+	 */
+	@Parameter(required = false, description = "Whether to escape newlines contained in the attributes or not.")
+	public void setEscapeNewlines(boolean escapeNewlines) {
+		this.escapeNewlines = escapeNewlines;
+	}
+
+	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
 	 */
 	@Override
@@ -96,8 +113,10 @@ public class LineWriter extends AbstractProcessor {
 			return input;
 
 		String line = ExpressionResolver.expand(format, context, input);
-		while (line.indexOf("\n") >= 0) {
-			line = line.replace("\n", "\\n");
+		if (escapeNewlines) {
+			while (line.indexOf("\n") >= 0) {
+				line = line.replace("\n", "\\n");
+			}
 		}
 
 		out.println(line);

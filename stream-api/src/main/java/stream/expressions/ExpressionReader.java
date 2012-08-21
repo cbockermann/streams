@@ -111,7 +111,7 @@ public class ExpressionReader {
 		if (endOfLine())
 			return first;
 
-		log.info("remainder: {}", this.input.substring(pos));
+		log.debug("remainder: {}", this.input.substring(pos));
 
 		List<Expression> exps = new ArrayList<Expression>();
 		List<BooleanOperator> ops = new ArrayList<BooleanOperator>();

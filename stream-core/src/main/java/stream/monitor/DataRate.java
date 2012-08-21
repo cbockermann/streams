@@ -1,5 +1,7 @@
 package stream.monitor;
 
+import java.text.DecimalFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,7 @@ import stream.statistics.StatisticsService;
 
 public class DataRate extends AbstractProcessor implements StatisticsService {
 
+	final DecimalFormat fmt = new DecimalFormat("0.000");
 	static Logger log = LoggerFactory.getLogger(DataRate.class);
 	String clock = null;
 	Long count = 0L;
@@ -81,7 +84,7 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 			Long sec = (now - start) / 1000;
 			if (sec > 0)
 				log.info("{} items processed, data-rate is: {}/second", count,
-						count.doubleValue() / sec.doubleValue());
+						fmt.format(count.doubleValue() / sec.doubleValue()));
 		}
 
 		count++;

@@ -28,6 +28,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Processor;
 import stream.annotations.Description;
 
@@ -38,13 +41,14 @@ import stream.annotations.Description;
 @Description(group = "Data Stream.Processing.Transformations.Data")
 public class NumericalBinning implements Processor {
 
+	static Logger log = LoggerFactory.getLogger(NumericalBinning.class);
 	Double minimum = 0.0d;
 
 	Double maximum = 10.0d;
 
 	Integer bins = 10;
 
-	String include = ".*";
+	String[] keys = null;
 
 	Bucket[] buckets = null;
 
@@ -95,18 +99,28 @@ public class NumericalBinning implements Processor {
 	}
 
 	/**
-	 * @return the include
+	 * @return the keys
 	 */
-	public String getInclude() {
-		return include;
+	public String[] getKeys() {
+		return keys;
 	}
 
 	/**
-	 * @param include
-	 *            the include to set
+	 * @param keys
+	 *            the keys to set
 	 */
-	public void setInclude(String include) {
-		this.include = include;
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
+
+	public void setKey(String key) {
+		if (key != null) {
+			keys = new String[] { key };
+		}
+	}
+
+	public String getKey() {
+		return keys[0];
 	}
 
 	/**
@@ -138,10 +152,24 @@ public class NumericalBinning implements Processor {
 			}
 		}
 
-		for (String key : DataUtils.getKeys(data)) {
-			if ((include == null || key.matches(include))
-					&& data.get(key).getClass() == Double.class)
-				data.put(key, map((Double) data.get(key)));
+		if (keys == null || keys.length < 1)
+			return data;
+
+		for (String key : keys) {
+			Serializable value = data.get(key);
+			if (value instanceof Number) {
+				Number num = (Number) value;
+				data.put(key, map(num.doubleValue()));
+			} else {
+				try {
+					Double val = new Double(value.toString());
+					data.put(key, map(val));
+				} catch (Exception e) {
+					log.debug(
+							"Failed to parse double value from '{}' for attribute '{}'!",
+							value, key);
+				}
+			}
 		}
 
 		return data;
@@ -173,7 +201,7 @@ public class NumericalBinning implements Processor {
 			otherSymbols.setDecimalSeparator('.');
 			DecimalFormat fmt = new DecimalFormat("0.0#####", otherSymbols);
 			asString = "Range[" + fmt.format(lower) + ";" + fmt.format(upper)
-					+ "]";
+					+ ")";
 		}
 
 		public String toString() {

@@ -81,6 +81,8 @@ public class JavaScript extends Script {
 			if (impl != null && (impl instanceof StatefulProcessor)) {
 				try {
 					((StatefulProcessor) impl).init(ctx);
+				} catch (NoSuchMethodException nsm) {
+					log.warn("No init() function defined in JavaScript.");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

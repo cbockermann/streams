@@ -24,9 +24,12 @@
 package stream.util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 
 public class URLUtilities {
@@ -56,5 +59,29 @@ public class URLUtilities {
 		}
 		reader.close();
 		return s.toString();
+	}
+
+	public static void copy(URL url, OutputStream out) throws IOException {
+		if (url == null)
+			return;
+
+		InputStream in = url.openStream();
+		byte[] buf = new byte[1024];
+		int read = in.read(buf);
+		while (read > 0) {
+			out.write(buf, 0, read);
+			read = in.read(buf);
+		}
+		in.close();
+	}
+
+	public static void copy(URL url, File file) throws IOException {
+		if (url == null)
+			return;
+
+		OutputStream fos = new FileOutputStream(file);
+		copy(url, fos);
+		fos.flush();
+		fos.close();
 	}
 }

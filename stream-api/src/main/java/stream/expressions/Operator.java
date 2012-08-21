@@ -213,6 +213,27 @@ public abstract class Operator implements Serializable {
 	};
 
 	/**
+	 * This operator implements a match against a regular expression.
+	 */
+	public final static Operator NRX = new BinaryOperator("@nrx", "!~") {
+		/** The unique class ID */
+		private static final long serialVersionUID = -2886662198464559265L;
+
+		/**
+		 * @see stream.runtime.expressions.jwall.web.audit.rules.Condition#matches(java.lang.String,
+		 *      java.lang.String)
+		 */
+		public boolean eval(Object left, Object right) {
+			if (right != null && right instanceof String) {
+				Pattern pattern = Pattern.compile(right.toString());
+				Matcher m = pattern.matcher(left + "");
+				return !m.matches();
+			}
+			return false;
+		}
+	};
+
+	/**
 	 * This operator implements a simple wildcard-match where wildcards are
 	 * either '*' (matching zero or more) and '?' matching exactly one
 	 * character.
@@ -238,6 +259,7 @@ public abstract class Operator implements Serializable {
 		registerOperator(GE);
 		registerOperator(PM);
 		registerOperator(RX);
+		registerOperator(NRX);
 		registerOperator(SX);
 	}
 

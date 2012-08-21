@@ -27,6 +27,9 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.AbstractProcessor;
 import stream.annotations.Description;
 import stream.data.Data;
@@ -43,10 +46,15 @@ import stream.data.Data;
 @Description(name = "PredictionError", group = "Data Stream.Mining.Evaluation")
 public class PredictionError extends AbstractProcessor {
 
+	static Logger log = LoggerFactory.getLogger(PredictionError.class);
 	LossFunction<Serializable> loss = new ZeroOneLoss<Serializable>();
 	String prefix = "@error";
 	String label = "@label";
 	String[] learner;
+	Integer count = 0;
+	Integer every = 0;
+
+	Map<String, ConfusionMatrix<Serializable>> confusionMatrices = new LinkedHashMap<String, ConfusionMatrix<Serializable>>();
 
 	/**
 	 * @return the prefix
@@ -118,6 +126,15 @@ public class PredictionError extends AbstractProcessor {
 
 				Double error = loss.loss(labelValue, pred);
 				errors.put(prefix + classifier, error);
+
+				ConfusionMatrix<Serializable> matrix = this.confusionMatrices
+						.get(classifier);
+				if (matrix == null) {
+					matrix = new ConfusionMatrix<Serializable>();
+					confusionMatrices.put(classifier, matrix);
+				}
+
+				matrix.add(labelValue, pred);
 			}
 		} else {
 			//
@@ -127,6 +144,7 @@ public class PredictionError extends AbstractProcessor {
 			for (String key : data.keySet()) {
 				if (key.startsWith(Data.PREDICTION_PREFIX)) {
 					Serializable pred = data.get(key);
+
 					String errKey = key.replaceFirst(Data.PREDICTION_PREFIX,
 							prefix);
 					if (pred == null)
@@ -137,9 +155,30 @@ public class PredictionError extends AbstractProcessor {
 			}
 		}
 
-		for (String err : errors.keySet())
+		for (String err : errors.keySet()) {
 			data.put(err, errors.get(err));
+		}
+
+		count++;
+		if (every > 0 && count % every == 0) {
+			for (String learner : confusionMatrices.keySet()) {
+				log.info(confusionMatrices.get(learner).toString());
+			}
+		}
 
 		return data;
+	}
+
+	/**
+	 * @see stream.AbstractProcessor#finish()
+	 */
+	@Override
+	public void finish() throws Exception {
+		super.finish();
+
+		for (String learner : confusionMatrices.keySet()) {
+			log.info(confusionMatrices.get(learner).toString());
+		}
+
 	}
 }

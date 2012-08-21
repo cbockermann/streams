@@ -22,7 +22,7 @@ public class SelectKeysTest {
 	@Test
 	public void test() {
 
-		SelectKeys selector = new SelectKeys();
+		WithKeys selector = new WithKeys();
 		selector.setKeys(new String[] { "x1", "!x2", "user:*", "!user:name" });
 
 		Processor check = new Processor() {

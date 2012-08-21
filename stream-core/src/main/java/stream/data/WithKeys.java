@@ -29,22 +29,22 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
+import stream.ProcessorList;
 import stream.util.WildcardPattern;
 
 /**
  * @author chris
  * 
  */
-public class SelectKeys extends AbstractProcessor {
+public class WithKeys extends ProcessorList {
 
-	static Logger log = LoggerFactory.getLogger(SelectKeys.class);
+	static Logger log = LoggerFactory.getLogger(WithKeys.class);
 	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
 	private Boolean remove;
 
-	public SelectKeys() {
+	public WithKeys() {
 		super();
 		this.remove = true;
 	}
@@ -54,6 +54,11 @@ public class SelectKeys extends AbstractProcessor {
 		for (String key : keys)
 			selected.add(key);
 	}
+
+	/*
+	 * public void setKeys(Set<String> keys) { this.keys = keys.toArray(new
+	 * String[keys.size()]); selected = keys; }
+	 */
 
 	public String[] getKeys() {
 		return keys;
@@ -82,7 +87,11 @@ public class SelectKeys extends AbstractProcessor {
 			}
 		}
 
-		return result;
+		Data processed = super.process(result);
+		for (String key : processed.keySet()) {
+			data.put(key, processed.get(key));
+		}
+		return data;
 	}
 
 	public boolean isSelected(String key) {

@@ -35,8 +35,10 @@ Within the JavaScript environment, the data items are accessible at
 `data`. Below is a simple example of JavaScript code within the file
 `myScript.js`:
 
-       var id = data.get( "@id" );
-       if( id != null ){
-           println( "ID of item is: " + id );
-       }
-
+       function process(data){
+          var id = data.get( "@id" );
+          if( id != null ){
+             println( "ID of item is: " + id );
+          }
+          return data;
+        }

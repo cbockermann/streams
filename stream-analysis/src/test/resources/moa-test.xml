@@ -1,4 +1,4 @@
-<container id="moa-test" address="192.168.128.4" port="9101" server="false" >
+<container id="moa-test" server="false" >
 
 	<stream id="stream" class="stream.io.CsvStream"
 		url="classpath:/multi-golf.csv.gz" limit="100"/>

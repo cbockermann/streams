@@ -127,6 +127,8 @@ public class MoaParameterFinder implements ParameterFinder {
 			if (Option.class.isAssignableFrom(f.getType())) {
 
 				Option opt = (Option) f.get(o);
+				if (opt == null)
+					continue;
 				String name = opt.getName();
 				Object value = params.get(name);
 				if (value == null) {

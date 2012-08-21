@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ProcessContext;
-import stream.Processor;
 import stream.StatefulProcessor;
 import stream.annotations.Description;
 import stream.data.Data;
@@ -58,7 +57,7 @@ public class JavaScript extends Script {
 	transient String theScript = null;
 	String script = null;
 
-	Processor impl;
+	Invocable impl;
 
 	/**
 	 * @param engine
@@ -108,8 +107,14 @@ public class JavaScript extends Script {
 			}
 
 			if (impl != null) {
-				log.debug("Calling JavaScript implementation of processor interface...");
-				return impl.process(data);
+				try {
+					log.debug("Calling JavaScript implementation of processor interface...");
+					data = (Data) impl.invokeFunction("process", data);
+					return data;
+					// return ((Processor) impl).process(data);
+				} catch (NoSuchMethodException nsme) {
+					log.warn("No function 'process(data)' defined, evaluating running script code!");
+				}
 			}
 
 			log.debug("Script loaded is:\n{}", script);
@@ -179,14 +184,13 @@ public class JavaScript extends Script {
 
 		if (scriptEngine instanceof Invocable) {
 			Invocable invocable = (Invocable) scriptEngine;
-
-			impl = invocable.getInterface(StatefulProcessor.class);
+			impl = invocable; // invocable.getInterface(StatefulProcessor.class);
 			if (impl != null) {
 				log.info("JavaScript implements StatefulProcessor interface!!");
 				return;
 			}
 
-			impl = invocable.getInterface(Processor.class);
+			// impl = invocable.getInterface(Processor.class);
 			log.debug("Found JavaScript implementation of processor interface...");
 		}
 	}

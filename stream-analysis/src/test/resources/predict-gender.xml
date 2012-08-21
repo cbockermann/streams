@@ -1,0 +1,35 @@
+<container id="moa-test">
+
+	<stream id="stream" class="stream.io.CsvStream"
+		url="file:///Volumes/RamDisk/user-channel-times.csv" limit="100000"/>
+
+	<process input="stream">
+	
+		<RenameKey from="gender" to="@label" />
+		<RemoveKeys keys="userid" />
+		<stream.parser.ParseDouble />
+		<NormalizeVector />
+		<!-- 
+		 -->
+	
+		<stream.learner.Prediction learner="HT" />
+		<stream.learner.Prediction learner="NB" />
+		<!-- 
+		<stream.learner.Prediction learner="P" />
+		 -->
+
+		<stream.learner.evaluation.PredictionError />
+
+		<!-- 
+		<stream.classifier.Perceptron id="P" label="@label" />
+		 -->
+		<moa.classifiers.bayes.NaiveBayes id="NB"/>
+		<moa.classifiers.trees.HoeffdingTree id="HT" binarySplits="true" />
+		
+		<stream.statistics.Average keys="@error:NB,@error:P,@error:HT" />
+		<stream.flow.Every n="100">
+			<stream.logger.Message message="Error hoeffding-tree: %{data.@error:HT}   error naive-bayes: %{data.@error:NB}" />
+		</stream.flow.Every>
+
+	</process>
+</container>

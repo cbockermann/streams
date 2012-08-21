@@ -1,0 +1,6 @@
+Dear ${data.name},
+
+This is a simple test for template expansion. The ID of
+the current data item is ${data.@id}.
+
+The current time-stamp is ${data.@timestamp}.

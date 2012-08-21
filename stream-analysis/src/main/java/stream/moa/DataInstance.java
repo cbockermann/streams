@@ -540,4 +540,45 @@ public class DataInstance extends LinkedHashMap<String, Serializable> implements
 	public Data createCopy() {
 		return new DataInstance(this, this.header);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see weka.core.Instance#toString(int, int)
+	 */
+	@Override
+	public String toString(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see weka.core.Instance#toString(weka.core.Attribute, int)
+	 */
+	@Override
+	public String toString(Attribute arg0, int arg1) {
+		return this.value(arg0) + "";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see weka.core.Instance#toStringMaxDecimalDigits(int)
+	 */
+	@Override
+	public String toStringMaxDecimalDigits(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see weka.core.Instance#toStringNoWeight(int)
+	 */
+	@Override
+	public String toStringNoWeight(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

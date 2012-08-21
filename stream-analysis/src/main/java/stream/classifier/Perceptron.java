@@ -132,7 +132,8 @@ public class Perceptron extends AbstractClassifier {
 					weight = 0.0d;
 
 				weight += learnRate * direction * attributeValue;
-				weights.put(attribute, weight);
+				if (weight != 0.0)
+					weights.put(attribute, weight);
 			}
 			model.setWeights(weights);
 		}

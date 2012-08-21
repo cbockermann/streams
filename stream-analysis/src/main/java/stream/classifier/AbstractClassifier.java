@@ -33,6 +33,7 @@ public abstract class AbstractClassifier extends AbstractProcessor implements
 	/** The unique class ID */
 	private static final long serialVersionUID = -6260664658067095723L;
 
+	protected String id = null;
 	protected String label = null;
 
 	/**
@@ -52,10 +53,27 @@ public abstract class AbstractClassifier extends AbstractProcessor implements
 	}
 
 	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
 	 * @see stream.learner.PredictionService#getName()
 	 */
 	@Override
 	public String getName() throws RemoteException {
+		if (id != null)
+			return id;
 		return getClass().getCanonicalName();
 	}
 

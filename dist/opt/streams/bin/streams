@@ -1,0 +1,23 @@
+#!/bin/sh
+
+
+STREAMS_HOME=/opt/streams
+
+CP=$CLASSPATH
+for jar in $STREAMS_HOME/lib/*.jar; do
+   CP=$CP:$jar
+done
+
+#echo "Classpath is: ${CP}"
+
+
+if [ -z "${JAVA_HOME}" ]; then
+	echo "No JAVA_HOME defined."
+	exit 1
+fi
+
+echo "Using Java in ${JAVA_HOME}"
+
+JAVA=${JAVA_HOME}/bin/java
+
+$JAVA -cp $CP stream.run $@

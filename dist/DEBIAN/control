@@ -1,0 +1,8 @@
+Package: streams
+Version: 0.9.5-0
+Section: admin
+Priority: optional
+Depends: openjdk-6-jre | openjdk-6-jdk | sun-java6-jdk | sun-java6-jre
+Architecture: all
+Maintainer: Christian Bockermann <christian.bockermann@udo.edu>
+Description: The streams environment is a simple experiment environment for running experiments on data streams.

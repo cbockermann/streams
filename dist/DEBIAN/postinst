@@ -1,0 +1,11 @@
+#!/bin/sh
+
+HOME=/opt/streams
+
+#
+#
+chown -R root.root $HOME
+
+chmod 755 $HOME/bin/*
+
+ln -s /opt/streams/bin/streams /usr/bin/streams

@@ -73,6 +73,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	protected String urlString;
 	protected URL url;
 	protected File file;
+	protected String lastUrlString = null;
 
 	public CsvWriter() {
 		super();
@@ -179,12 +180,14 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			log.error("can't find the file! {}", urlString);
 			return datum;
 		}
-		if (url == null || !expandedUrlString.equals(url.toString())) {
+
+		if (lastUrlString == null || !expandedUrlString.equals(lastUrlString)) {
 			if (p != null) {
 				p.flush();
 				p.close();
 			}
 			try {
+				lastUrlString = expandedUrlString;
 				this.url = new URL(expandedUrlString);
 				file = new File(url.toURI());
 

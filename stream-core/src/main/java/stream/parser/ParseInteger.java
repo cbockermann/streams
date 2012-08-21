@@ -35,7 +35,7 @@ import stream.data.Data;
 @Description(group = "Streams.Processing.Transformations.Data", text = "Parses a double value from a string and replaces the attribute string value with the integer object.")
 public class ParseInteger extends AbstractProcessor {
 
-	String[] keys = new String[0];
+	String[] keys = null;
 	Integer defaultValue = null;
 
 	/**
@@ -76,14 +76,20 @@ public class ParseInteger extends AbstractProcessor {
 	@Override
 	public Data process(Data data) {
 
-		for (String key : keys) {
+		String[] ks = keys;
+		if (ks == null) {
+			ks = data.keySet().toArray(new String[data.keySet().size()]);
+		}
+
+		for (String key : ks) {
 			Integer value = defaultValue;
 			try {
 				value = new Integer(data.get(key) + "");
+				data.put(key, value);
 			} catch (Exception e) {
-				value = defaultValue;
+				if (defaultValue != null)
+					data.put(key, defaultValue);
 			}
-			data.put(key, value);
 		}
 
 		return data;

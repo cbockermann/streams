@@ -181,11 +181,36 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			return datum;
 		}
 
+		// check if this is the first time we write something or the URL has
+		// changed. in
+		// any of these cases, we need to open a new output stream for writing
+		//
 		if (lastUrlString == null || !expandedUrlString.equals(lastUrlString)) {
+
+			// if 'p' exists, this means there has been a previous file and just
+			// the
+			// output URL has changed: we close the old file, first.
+			//
+			// TODO: Maybe we should not immediately close the old file, but
+			// keep a
+			// open handle, i.e. a HashMap of URL-Strings to open output-streams
+			// in case we the URL string is expanded to an existing file...
+			//
 			if (p != null) {
 				p.flush();
 				p.close();
 			}
+
+			// TODO: decide at which times we want to possibly append to
+			// existing
+			// files instead of creating new files. This might make sense when
+			// splitting a stream into multiple files based on URL expansion...
+			//
+			// For now, we append only, if the switch to a new file is caused by
+			// changes of the URL, i.e. initially, we start with new files...
+			//
+			boolean append = (p == null);
+
 			try {
 				lastUrlString = expandedUrlString;
 				this.url = new URL(expandedUrlString);
@@ -193,9 +218,10 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 				OutputStream out;
 				if (file.getAbsolutePath().endsWith(".gz"))
-					out = new GZIPOutputStream(new FileOutputStream(file));
+					out = new GZIPOutputStream(new FileOutputStream(file,
+							append));
 				else
-					out = new FileOutputStream(file);
+					out = new FileOutputStream(file, append);
 
 				p = new PrintStream(out);
 				lastHeader = null;

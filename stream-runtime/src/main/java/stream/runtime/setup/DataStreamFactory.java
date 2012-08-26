@@ -26,6 +26,7 @@ package stream.runtime.setup;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +50,26 @@ public class DataStreamFactory {
 
 	static Logger log = LoggerFactory.getLogger(DataStreamFactory.class);
 
+	final static Map<String, String> streamClassesByExtension = new LinkedHashMap<String, String>();
+
+	static {
+		streamClassesByExtension.put("csv", "stream.io.CsvStream");
+		streamClassesByExtension.put("txt", "stream.io.LineStream");
+		streamClassesByExtension.put("svmlight", "stream.io.SvmLightStream");
+		streamClassesByExtension.put("json", "stream.io.JSONStream");
+		streamClassesByExtension.put("arff", "stream.io.ArffStream");
+	}
+
 	public static DataStream createStream(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory, Element node) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
 		Class<?> clazz = Class.forName(params.get("class"));
 		String urlParam = params.get("url");
+		if (urlParam != null && clazz == null) {
+
+		}
+
 		DataStream stream;
 
 		if (urlParam != null) {
@@ -199,5 +214,29 @@ public class DataStreamFactory {
 		}
 
 		return stream;
+	}
+
+	public Class<?> guessStreamFormat(String url) throws Exception {
+
+		log.info("Trying to derive stream class from URL '{}'", url);
+		String u = url.toLowerCase();
+
+		boolean gz = u.endsWith(".gz");
+		String ext = null;
+
+		if (gz) {
+			u = u.replaceAll("\\.gz$", "");
+		}
+
+		int idx = u.lastIndexOf(".");
+		if (idx > 0) {
+			ext = u.substring(idx + 1);
+			log.info("Extension of URL is '{}'", ext);
+			String className = streamClassesByExtension.get(ext);
+			if (className != null)
+				return Class.forName(className);
+		}
+
+		return null;
 	}
 }

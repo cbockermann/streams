@@ -152,7 +152,7 @@ public class RapidMinerBeans {
 			}
 
 			log.info("   group: {}", group);
-			group = group.replace("Data Stream.", "Streams.");
+			group = group.replace("Data Stream", "Streams");
 			log.info("   renamed group: {}", group);
 
 			GenericOperatorDescription sod = new GenericOperatorDescription(

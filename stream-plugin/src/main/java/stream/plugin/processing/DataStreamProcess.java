@@ -180,15 +180,8 @@ public class DataStreamProcess extends
 				i++;
 
 				try {
-
 					DataObject processed = outputStream
 							.getData(DataObject.class);
-					if (bufferSize > 0 && processed != null
-							&& output.isConnected()) {
-						log.debug("Adding processed data item: {}",
-								processed.getWrappedDataItem());
-						resultBuffer.add(processed);
-					}
 				} catch (Exception e) {
 					log.error(
 							"Failed to retrieve processed data-item from port '{}': {}",

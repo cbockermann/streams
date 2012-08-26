@@ -2,7 +2,7 @@
 #
 #
 NAME=RapidMiner-Streams
-VERSION=0.9.4-SNAPSHOT
+VERSION=0.9.5-SNAPSHOT
 #RAPIDMINER_HOME=../../RapidMiner_Unuk
 STREAMS_HOME=..
 

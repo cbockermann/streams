@@ -77,6 +77,10 @@ public class GenericOperatorDescription extends OperatorDescription {
 			setFullyQualifiedGroupKey(desc.group());
 		}
 
+		if (fullyQualifiedGroupKey != null) {
+			this.setFullyQualifiedGroupKey(fullyQualifiedGroupKey);
+		}
+
 		libClass = clazz;
 
 		getOperatorDocumentation().setSynopsis("");

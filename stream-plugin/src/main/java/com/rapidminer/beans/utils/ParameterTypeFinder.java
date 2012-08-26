@@ -263,7 +263,7 @@ public class ParameterTypeFinder {
 			return pt;
 		}
 
-		if (defaultValue != null)
+		if (pt != null && defaultValue != null)
 			pt.setDefaultValue(defaultValue);
 
 		return pt;

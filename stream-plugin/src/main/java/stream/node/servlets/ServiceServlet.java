@@ -71,6 +71,7 @@ public class ServiceServlet extends AbstractStreamServlet {
 			throws ServletException, IOException {
 
 		Map<String, String> ctx = new HashMap<String, String>();
+		ctx.put("context", req.getContextPath());
 
 		log.info("Processing request for {}", req.getRequestURI());
 		String prefix = req.getContextPath() + req.getServletPath();
@@ -107,7 +108,9 @@ public class ServiceServlet extends AbstractStreamServlet {
 			}
 		} catch (Exception e) {
 			log.error("Failed to lookup service '{}': {}", name, e.getMessage());
-			e.printStackTrace();
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			ctx.put("content", "");
 		}
 
 		String html = template.expand(ctx);

@@ -47,7 +47,7 @@ import stream.data.Data;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-@Description(group = "Streams.Processing.Transformations.Data")
+@Description(group = "Streams.Processing.Transformations.Parsers")
 public class ParseTimestamp extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(ParseTimestamp.class);

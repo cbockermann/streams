@@ -41,7 +41,7 @@ import stream.data.Data;
  * @author chris
  * 
  */
-@Description(group = "Streams.Processing.Transformations.Data", text = "Creates n-grams from a specified string attribute and adds the frequencies of the resulting n-grams to the data item as (key,value) pairs.")
+@Description(group = "Streams.Processing.Transformations.Parsers", text = "Creates n-grams from a specified string attribute and adds the frequencies of the resulting n-grams to the data item as (key,value) pairs.")
 public class NGrams extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(NGrams.class);
 	String key = null;

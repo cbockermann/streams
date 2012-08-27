@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.Data;
-import stream.io.ListDataStream;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
 
@@ -67,9 +66,6 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 	/* The input port should provide a example set */
 	final InputPort input;
 
-	/* The output port where we might deliver some output */
-	final OutputPort output;
-
 	final OutputPort dataStream;
 	final InputPort outputStream;
 
@@ -82,7 +78,6 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 			String title, String portName, Class<D> clazz, String innerPortNames) {
 		super(description, title);
 		input = getInputPorts().createPort(portName);
-		output = getOutputPorts().createPort(portName);
 
 		dataStream = getSubprocess(0).getInnerSources().createPort(
 				innerPortNames);
@@ -142,7 +137,6 @@ public abstract class AbstractDataStreamProcess<D extends DataSourceObject, E ex
 		}
 
 		log.debug("Collected {} data items as result.");
-		output.deliver(new DataSourceObject(new ListDataStream(resultBuffer)));
 		log.debug("doWork() is finished.");
 	}
 

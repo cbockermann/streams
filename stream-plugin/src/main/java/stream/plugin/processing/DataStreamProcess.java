@@ -23,7 +23,6 @@
  */
 package stream.plugin.processing;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,9 +33,8 @@ import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.Condition;
-import stream.io.ListDataStream;
-import stream.plugin.StreamsPlugin;
 import stream.plugin.GenericStreamOperator;
+import stream.plugin.StreamsPlugin;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
 import stream.runtime.ContainerContext;
@@ -72,10 +70,7 @@ public class DataStreamProcess extends
 	final ProcessContext processContext = new ProcessContextImpl(
 			containerContext);
 
-	List<DataObject> resultBuffer = new ArrayList<DataObject>();
-
 	Long limit = -1L;
-	Long bufferSize = 0L;
 	Condition condition;
 
 	/**
@@ -101,22 +96,6 @@ public class DataStreamProcess extends
 	@Parameter(description = "Specifies the maximum number of items read from the stream.", defaultValue = "-1", min = -1.0, max = Long.MAX_VALUE, required = false)
 	public void setLimit(Long limit) {
 		this.limit = limit;
-	}
-
-	/**
-	 * @return the bufferSize
-	 */
-	public Long getBufferSize() {
-		return bufferSize;
-	}
-
-	/**
-	 * @param bufferSize
-	 *            the bufferSize to set
-	 */
-	@Parameter(description = "Specifies the maximum number of items stored for further processing.", defaultValue = "0", min = 0.0, max = Integer.MAX_VALUE, required = false)
-	public void setBufferSize(Long bufferSize) {
-		this.bufferSize = bufferSize;
 	}
 
 	/**
@@ -180,8 +159,8 @@ public class DataStreamProcess extends
 				i++;
 
 				try {
-					DataObject processed = outputStream
-							.getData(DataObject.class);
+
+					outputStream.getData(DataObject.class);
 				} catch (Exception e) {
 					log.error(
 							"Failed to retrieve processed data-item from port '{}': {}",
@@ -190,24 +169,11 @@ public class DataStreamProcess extends
 						e.printStackTrace();
 				}
 
-				if (bufferSize > 0 && resultBuffer.size() >= bufferSize) {
-					log.debug("Maximum buffer-size reached");
-					break;
-				}
-
-				log.debug("resultBuffer.size is {}", resultBuffer.size());
-
 			} else {
 				log.debug("Skipping non-matching data-item: {}", item);
 			}
 
 			item = dataSource.readNext();
-		}
-
-		if (output.isConnected()) {
-			log.debug("Collected {} data items as result.");
-			output.deliver(new DataSourceObject(
-					new ListDataStream(resultBuffer)));
 		}
 
 		log.debug("doWork() is finished.");

@@ -35,6 +35,7 @@ public class MiniBatchProcess extends OperatorChain {
 	static Logger log = LoggerFactory.getLogger(MiniBatchProcess.class);
 	InputPort input = getInputPorts().createPort("stream");
 	OutputPort innerExampleSet;
+
 	ExampleSetFactory exampleSetFactory = ExampleSetFactory.newInstance();
 
 	Integer batchSize = 10;
@@ -44,7 +45,7 @@ public class MiniBatchProcess extends OperatorChain {
 	 * @param description
 	 */
 	public MiniBatchProcess(OperatorDescription description) {
-		super(description, "Process Batch");
+		super(description, "Stream Processing", "Process Batch");
 
 		innerExampleSet = this.getSubprocess(0).getInnerSources()
 				.createPort("example set");

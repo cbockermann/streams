@@ -11,7 +11,7 @@ read from the stream.
  
 The parser format is:
  
-      %{IP} [%{DATE}] "%{URL}"
+      %(IP) [%(DATE)] "%(URL)"
  
 This will create a parser that is able to read line in the format
  

@@ -7,6 +7,10 @@ stream.io.DataStreamLoop
 #stream.learner.Prediction
 #stream.learner.evaluation.PredictionError
 
-
 stream.flow.If
 stream.flow.OnChange
+
+# Disable MiniBatchProcess for now...
+#
+stream.plugin.processing.MiniBatchProcess
+stream.plugin.sources.ReadData

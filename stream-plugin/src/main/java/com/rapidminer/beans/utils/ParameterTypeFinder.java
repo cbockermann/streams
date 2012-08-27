@@ -185,6 +185,17 @@ public class ParameterTypeFinder {
 					&& param.values().length > 0) {
 				log.debug("Found category-parameter!");
 				pt = new ParameterTypeCategory(key, desc, param.values(), 0);
+
+				pt.setDefaultValue(0);
+
+				for (int i = 0; i < param.values().length; i++) {
+					if (param.defaultValue() != null
+							&& param.defaultValue().equals(param.values()[i])) {
+						pt.setDefaultValue(i);
+						return pt;
+					}
+				}
+				return pt;
 			}
 		}
 

@@ -20,6 +20,7 @@
 		<module>stream-analysis</module>
 		<module>stream-plotter</module>
 		<!-- <module>stream-node</module> <module>stream-runner</module> -->
+		<module>stream-storm</module>
 	</modules>
 
 	<!-- <repositories> <repository> <id>jwall</id> <name>jwall.org Maven Repository</name> 

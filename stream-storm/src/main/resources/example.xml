@@ -1,0 +1,10 @@
+<container>
+
+	<stream id="data" class="stream.generator.RandomStream" limit="100000" />
+	
+	<process input="data">
+		<!--  -->
+		<PrintData />
+	</process>
+	
+</container>

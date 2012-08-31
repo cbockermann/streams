@@ -49,7 +49,7 @@ public class ProcessorFactory {
 		this.objectFactory = of;
 	}
 
-	protected List<Processor> createNestedProcessors(Element child)
+	public List<Processor> createNestedProcessors(Element child)
 			throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
@@ -68,7 +68,7 @@ public class ProcessorFactory {
 		return procs;
 	}
 
-	protected Processor createProcessor(Element child) throws Exception {
+	public Processor createProcessor(Element child) throws Exception {
 
 		Object o = objectFactory.create(child);
 		if (o instanceof Processor) {

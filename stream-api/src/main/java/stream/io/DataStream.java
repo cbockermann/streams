@@ -79,6 +79,7 @@ public interface DataStream {
 	 * {@link #readNext()} or {@link #readNext(Data)}.
 	 * 
 	 * @return
+	 * @deprecated Preprocessors in streams should not be used anymore
 	 */
 	public List<Processor> getPreprocessors();
 

@@ -23,9 +23,6 @@ import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.topology.base.BaseRichBolt;
-import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
@@ -33,21 +30,17 @@ import backtype.storm.tuple.Values;
  * @author chris
  * 
  */
-public class ProcessBolt extends BaseRichBolt {
+public class ProcessBolt extends AbstractBolt {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -924312414467186051L;
 
 	static Logger log = LoggerFactory.getLogger(ProcessBolt.class);
 
-	protected OutputCollector output;
 	transient ProcessorList process;
-	protected final String xmlConfig;
-	protected final String uuid;
 
 	public ProcessBolt(String xmlConfig, String uuid) {
-		this.xmlConfig = xmlConfig;
-		this.uuid = uuid;
+		super(xmlConfig, uuid);
 	}
 
 	/**
@@ -71,12 +64,12 @@ public class ProcessBolt extends BaseRichBolt {
 					config.getDocumentElement(), uuid);
 
 			if (element == null) {
-				throw new Exception("Fuck! You screwed the XML!!");
+				throw new Exception("Fuck! You screwed the XML :-)");
 			}
 
 			ObjectFactory obf = ObjectFactory.newInstance();
 			ProcessorFactory pf = new ProcessorFactory(obf);
-			log.info("Creating processor-list from element {}", element);
+			log.debug("Creating processor-list from element {}", element);
 			List<Processor> list = pf.createNestedProcessors(element);
 
 			process = new ProcessorList();
@@ -105,14 +98,5 @@ public class ProcessBolt extends BaseRichBolt {
 			log.debug("ack'ing item {}", input);
 			output.ack(input);
 		}
-	}
-
-	/**
-	 * @see backtype.storm.topology.IComponent#declareOutputFields(backtype.storm.topology.OutputFieldsDeclarer)
-	 */
-	@Override
-	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		log.debug("Declaring Bolt-output field 'stream.Data'");
-		declarer.declare(new Fields("stream.Data"));
 	}
 }

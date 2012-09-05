@@ -1,10 +1,11 @@
-<container address="192.168.128.116" port="9105">
+<container>
 
     <stream id="twitter" class="stream.io.JSONStream"
             url="http://kirmes.cs.uni-dortmund.de/data/twitter.json" />
 
     <process input="twitter">
-	<stream.flow.Delay time="10 second" />
+	<stream.flow.Delay time="10ms" />
+
 	<PrintData />
     </process>
 

@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 
 import stream.storm.ProcessBolt;
 import stream.storm.StreamSpout;
+import stream.util.XMLUtils;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
@@ -39,8 +40,8 @@ import backtype.storm.utils.Utils;
  */
 public class StormRunner {
 
-	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
 	static Logger log = LoggerFactory.getLogger(StormRunner.class);
+	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
 
 	public static void addUUIDAttributes(Element element) {
 
@@ -118,6 +119,9 @@ public class StormRunner {
 				.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(xml.getBytes()));
 
+		doc = XMLUtils.parseDocument(xml);
+		doc = XMLUtils.addUUIDAttributes(doc, UUID_ATTRIBUTE);
+
 		TopologyBuilder builder = new TopologyBuilder();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
@@ -138,8 +142,27 @@ public class StormRunner {
 
 				if (el.getNodeName().equalsIgnoreCase("process")) {
 					String input = el.getAttribute("input");
-					builder.setBolt(uuid, new ProcessBolt(xml, uuid))
+					String copies = el.getAttribute("copies");
+					Integer workers = 1;
+					if (copies != null) {
+						try {
+
+						} catch (Exception e) {
+							workers = 1;
+							throw new RuntimeException(
+									"Invalid number of copies '" + copies
+											+ "' specified!");
+						}
+					}
+
+					builder.setBolt(uuid, new ProcessBolt(xml, uuid), workers)
 							.shuffleGrouping(input);
+				}
+
+				if (el.getNodeName().equalsIgnoreCase("monitor")) {
+
+					String interval = el.getAttribute("interval");
+
 				}
 			}
 		}

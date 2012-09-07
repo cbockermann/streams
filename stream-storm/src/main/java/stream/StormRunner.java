@@ -122,6 +122,16 @@ public class StormRunner {
 		doc = XMLUtils.parseDocument(xml);
 		doc = XMLUtils.addUUIDAttributes(doc, UUID_ATTRIBUTE);
 
+		log.info("Encoding document...");
+		String enc = DocumentEncoder.encodeDocument(doc);
+		log.info("Arg will be:\n{}", enc);
+
+		Document decxml = DocumentEncoder.decodeDocument(enc);
+		log.info("Decoded XML is: {}", XMLUtils.toString(decxml));
+
+		if (enc == null)
+			return;
+
 		TopologyBuilder builder = new TopologyBuilder();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
@@ -179,4 +189,5 @@ public class StormRunner {
 		cluster.killTopology("test");
 		cluster.shutdown();
 	}
+
 }

@@ -14,17 +14,11 @@ import stream.learner.PredictionService;
 /**
  * <p>
  * This class implements an abstract classifier, i.e. an instance that is
- * capable of learning from observations of a specific, generic type
- * <code>D</code> and predicting class values of type <code>C</code>.
+ * capable of learning from observations of type Serializable (may be numbers or
+ * Strings).
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
- * @param <D>
- *            The data type of the input examples used for learning and
- *            prediction.
- * @param <C>
- *            The label type, i.e. the Java class of the predicted outcome.
  * 
  */
 public abstract class AbstractClassifier extends AbstractProcessor implements
@@ -97,6 +91,8 @@ public abstract class AbstractClassifier extends AbstractProcessor implements
 
 		return item;
 	}
+
+	public abstract void reset() throws Exception;
 
 	public abstract void train(Data item);
 }

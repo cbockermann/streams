@@ -1,0 +1,11 @@
+<container>
+
+   <stream id="demo-data" class="stream.io.CsvStream"
+           url="http://kirmes.cs.uni-dortmund.de/data/cluster-stream.csv.gz" />
+
+   <process input="demo-data">
+
+     <PrintData />
+   </process>
+
+</container>

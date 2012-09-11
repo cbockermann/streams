@@ -50,7 +50,7 @@
 								<Implementation-Revision>${pom.version}</Implementation-Revision>
 								<Specification-Title>streams-runtime</Specification-Title>
 								<Specification-Version>1.0</Specification-Version>
-								<main-class>stream.Runner</main-class>
+								<main-class>stream.run</main-class>
 							</manifestEntries>
 						</transformer>
 					</transformers>
@@ -112,30 +112,5 @@
   			<artifactId>slf4j-log4j12</artifactId>
   			<version>[1.6.4,)</version>
   		</dependency>
-  		<!-- 
-  		<dependency>
-  			<groupId>org.eclipse.jetty</groupId>
-  			<artifactId>jetty-server</artifactId>
-  			<version>8.1.4.v20120524</version>
-  		</dependency>
-		<dependency>
-			<groupId>org.jwall</groupId>
-			<artifactId>stream-node</artifactId>
-			<version>0.9.5-SNAPSHOT</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>8.1.4.v20120524</version>
-		</dependency>
-  		 -->
-<!--
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
-			<version>8.1.4.v20120524</version>
-		</dependency>
-  -->
   	</dependencies>
 </project>

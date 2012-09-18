@@ -23,6 +23,10 @@
  */
 package stream.statistics;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
 import stream.AbstractProcessor;
 import stream.data.Data;
 
@@ -34,6 +38,7 @@ public class CountServiceLearner extends AbstractProcessor implements
 		CountService {
 
 	Long count = 0L;
+	Map<String, AtomicLong> counts = new HashMap<String, AtomicLong>();
 
 	/**
 	 * @see stream.Processor#process(stream.data.Data)

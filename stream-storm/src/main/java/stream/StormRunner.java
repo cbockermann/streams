@@ -26,12 +26,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.storm.ProcessBolt;
-import stream.storm.StreamSpout;
 import stream.util.XMLUtils;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
-import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.Utils;
 
 /**
@@ -132,56 +129,11 @@ public class StormRunner {
 		if (enc == null)
 			return;
 
-		TopologyBuilder builder = new TopologyBuilder();
-
-		NodeList list = doc.getDocumentElement().getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-
-			Node node = list.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				log.info(node.getNodeName());
-				Element el = (Element) node;
-				String uuid = el.getAttribute(UUID_ATTRIBUTE);
-
-				if (el.getNodeName().equalsIgnoreCase("stream")) {
-					String id = el.getAttribute("id");
-					log.info("Creating stream-spout for id {}", id);
-					builder.setSpout(id, new StreamSpout(xml, uuid));
-					continue;
-				}
-
-				if (el.getNodeName().equalsIgnoreCase("process")) {
-					String input = el.getAttribute("input");
-					String copies = el.getAttribute("copies");
-					Integer workers = 1;
-					if (copies != null) {
-						try {
-
-						} catch (Exception e) {
-							workers = 1;
-							throw new RuntimeException(
-									"Invalid number of copies '" + copies
-											+ "' specified!");
-						}
-					}
-
-					builder.setBolt(uuid, new ProcessBolt(xml, uuid), workers)
-							.shuffleGrouping(input);
-				}
-
-				if (el.getNodeName().equalsIgnoreCase("monitor")) {
-
-					String interval = el.getAttribute("interval");
-
-				}
-			}
-		}
-
 		Config conf = new Config();
 		conf.setDebug(true);
 
 		LocalCluster cluster = new LocalCluster();
-		cluster.submitTopology("test", conf, builder.createTopology());
+		cluster.submitTopology("test", conf, StreamTopology.createTopology(doc));// builder.createTopology());
 
 		log.info("Topology submitted.");
 		Utils.sleep(10000000);

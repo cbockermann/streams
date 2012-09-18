@@ -105,5 +105,4 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	public void resetState() throws Exception {
 		this.statistics = new Statistics();
 	}
-
 }

@@ -40,6 +40,7 @@ public class ClockSpout extends BaseRichSpout {
 	 *      backtype.storm.task.TopologyContext,
 	 *      backtype.storm.spout.SpoutOutputCollector)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void open(Map conf, TopologyContext context,
 			SpoutOutputCollector collector) {

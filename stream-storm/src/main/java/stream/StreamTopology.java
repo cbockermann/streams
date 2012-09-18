@@ -3,8 +3,7 @@
  */
 package stream;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.w3c.dom.NodeList;
 
 import stream.io.TimeStream;
 import stream.storm.ClockSpout;
+import stream.storm.MonitorBolt;
 import stream.storm.ProcessBolt;
 import stream.storm.StreamSpout;
 import stream.util.XMLUtils;
@@ -40,7 +40,7 @@ public class StreamTopology {
 
 		// a map of pre-defined streams...
 		//
-		Map<String, String> streams = new LinkedHashMap<String, String>();
+		// Map<String, String> streams = new LinkedHashMap<String, String>();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -79,13 +79,16 @@ public class StreamTopology {
 
 				if (el.getNodeName().equalsIgnoreCase("monitor")) {
 
+					String clock = "clock:" + UUID.randomUUID().toString();
 					String interval = el.getAttribute("interval");
 					TimeStream timeStream = new TimeStream();
 					timeStream.setInterval(interval);
 
 					ClockSpout spout = new ClockSpout(
 							TimeParser.parseTime(interval));
-					builder.setSpout("clock:" + "test", spout);
+					builder.setSpout(clock, spout);
+					builder.setBolt(uuid, new MonitorBolt(xml, uuid))
+							.shuffleGrouping(clock);
 				}
 			}
 		}

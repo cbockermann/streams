@@ -102,6 +102,11 @@
   			<artifactId>stream-core</artifactId>
   			<version>${project.version}</version>
   		</dependency>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-plotter</artifactId>
+			<version>${project.version}</version>
+		</dependency>
   		<dependency>
   			<groupId>org.jwall</groupId>
   			<artifactId>stream-runtime</artifactId>

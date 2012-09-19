@@ -19,6 +19,8 @@ import stream.storm.ProcessBolt;
 import stream.storm.StreamSpout;
 import stream.util.XMLUtils;
 import stream.util.parser.TimeParser;
+import backtype.storm.Config;
+import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -94,5 +96,19 @@ public class StreamTopology {
 		}
 
 		return builder.createTopology();
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		if (args.length != 1) {
+			System.err.println("Missing XML definition (base64 encoded)!");
+			return;
+		}
+
+		Document doc = DocumentEncoder.decodeDocument(args[0]);
+		Config conf = new Config();
+		conf.setNumWorkers(20);
+
+		StormSubmitter.submitTopology("test", conf, createTopology(doc));
 	}
 }

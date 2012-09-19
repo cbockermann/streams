@@ -3,6 +3,9 @@
  */
 package stream.statistics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Processor;
 import stream.annotations.Parameter;
 import stream.data.Data;
@@ -16,6 +19,7 @@ import stream.data.Statistics;
 // "Adds statistics from statistic services to the current data item")
 public class AddStatistics implements Processor {
 
+	static Logger log = LoggerFactory.getLogger(AddStatistics.class);
 	StatisticsService service;
 	StatisticsService[] services = new StatisticsService[0];
 
@@ -62,6 +66,8 @@ public class AddStatistics implements Processor {
 			for (String key : stats.keySet()) {
 				input.put(key, stats.get(key));
 			}
+		} else {
+			log.error("No statistics service connected!");
 		}
 
 		if (services != null) {

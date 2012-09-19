@@ -81,6 +81,7 @@ public class Monitor extends AbstractProcess {
 
 		try {
 			interval = TimeParser.parseTime(getInterval());
+			log.debug("Monitor-interval is {} ms", interval);
 		} catch (Exception e) {
 			interval = 1000L;
 			throw new Exception("Failed to initialize Monitor: "

@@ -85,6 +85,10 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 		this.activator.setRun(false);
 	}
 
+	/**
+	 * @see stream.io.DataStream#getPreprocessors()
+	 * @deprecated
+	 */
 	@Override
 	public List<Processor> getPreprocessors() {
 		return stream.getPreprocessors();

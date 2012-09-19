@@ -4,6 +4,7 @@
 package stream.statistics;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import stream.util.parser.TimeParser;
  * @author chris
  * 
  */
-public class Count extends ConditionedProcessor {
+public class Count extends ConditionedProcessor implements StatisticsService {
 
 	static Logger log = LoggerFactory.getLogger(Count.class);
 	String groupBy = null;
@@ -35,6 +36,9 @@ public class Count extends ConditionedProcessor {
 	History<Statistics> historyStats;
 	String file = null;
 	String separator = ",";
+	Long lastTime = 0L;
+
+	Statistics currentStatistics = new Statistics();
 
 	/**
 	 * @see stream.Processor#process(stream.data.Data)
@@ -50,10 +54,12 @@ public class Count extends ConditionedProcessor {
 
 			Long time = System.currentTimeMillis();
 
-			if (input.containsKey(timeKey))
-				time = 1000L * (new Long(input.get(timeKey) + ""));
+			if (timeKey != null && input.containsKey(timeKey))
+				time = (new Long(input.get(timeKey) + ""));
 
+			log.trace("time = {}", time);
 			time = historyStats.mapTimestamp(time);
+			log.debug("mapped time is: {} ({})", new Date(time), time);
 
 			Statistics st = historyStats.get(time);
 			if (st == null) {
@@ -62,6 +68,25 @@ public class Count extends ConditionedProcessor {
 			}
 			st.add(prefix + pivot, 1.0d);
 			historyStats.add(time, st);
+
+			synchronized (currentStatistics) {
+				currentStatistics.add(st);
+			}
+
+			if (lastTime == 0L)
+				lastTime = time;
+
+			if (time != lastTime) {
+				log.debug("new time-index, putting out all statistics {}", st);
+				input.putAll(st);
+				synchronized (currentStatistics) {
+					for (String key : currentStatistics.keySet())
+						currentStatistics.put(key, new Double(0.0));
+				}
+				lastTime = time;
+			} else {
+				log.debug(" lastTime != time  ( {} != {} )", lastTime, time);
+			}
 
 			return input;
 		} catch (Exception e) {
@@ -80,7 +105,8 @@ public class Count extends ConditionedProcessor {
 		timeInterval = TimeParser.parseTime(window);
 
 		// long steps = Math.max(1, timeWindow / timeInterval);
-		log.info("Aggregating in intervals of {} ms, keeping {} ms of history",
+		log.debug(
+				"Aggregating in intervals of {} ms, keeping {} ms of history",
 				timeInterval, timeWindow);
 		historyStats = new History<Statistics>(timeInterval, timeWindow);
 
@@ -177,5 +203,31 @@ public class Count extends ConditionedProcessor {
 	 */
 	public void setFile(String file) {
 		this.file = file;
+	}
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		synchronized (currentStatistics) {
+			currentStatistics.clear();
+		}
+	}
+
+	/**
+	 * @see stream.statistics.StatisticsService#getStatistics()
+	 */
+	@Override
+	public Statistics getStatistics() {
+		synchronized (currentStatistics) {
+			log.debug("Returning copy of statistics {}", currentStatistics);
+			Long time = this.historyStats.mapTimestamp(System
+					.currentTimeMillis());
+			Statistics st = historyStats.get(time);
+			if (st != null)
+				return new Statistics(historyStats.get(time));
+			return new Statistics();
+		}
 	}
 }

@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import stream.util.XMLUtils;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 import backtype.storm.utils.Utils;
 
 /**
@@ -132,14 +133,20 @@ public class StormRunner {
 		Config conf = new Config();
 		conf.setDebug(true);
 
-		LocalCluster cluster = new LocalCluster();
-		cluster.submitTopology("test", conf, StreamTopology.createTopology(doc));// builder.createTopology());
+		if (System.getProperty("local") == null)
+			StormSubmitter.submitTopology("test", conf,
+					StreamTopology.createTopology(doc));
+		else {
+			LocalCluster cluster = new LocalCluster();
+			cluster.submitTopology("test", conf,
+					StreamTopology.createTopology(doc));// builder.createTopology());
 
-		log.info("Topology submitted.");
-		Utils.sleep(10000000);
+			log.info("Topology submitted.");
+			Utils.sleep(10000000);
 
-		cluster.killTopology("test");
-		cluster.shutdown();
+			cluster.killTopology("test");
+			cluster.shutdown();
+		}
 	}
 
 }

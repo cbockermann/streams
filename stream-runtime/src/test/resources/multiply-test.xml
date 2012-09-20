@@ -4,13 +4,13 @@
 
 <Container>
 
-	<Stream id="input" class="stream.test.TestStream" limit = "1000000">
+	<Stream id="input" class="stream.test.TestStream" limit = "100">
 		
 	</Stream>
 
 
-	<Process input="input" multiply="2">
-
+	<Process input="input" copies="a,b">
+		<stream.test.LogData message="process-${copy.id}" />
 	<!-- 
 		<stream.flow.Delay time="10ms" />
 		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />

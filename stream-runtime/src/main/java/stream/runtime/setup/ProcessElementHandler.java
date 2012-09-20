@@ -113,10 +113,20 @@ public class ProcessElementHandler implements ElementHandler {
 					.getProperties());
 			copies = var.expand(copies);
 
-			Integer times = new Integer(copies);
+			String[] ids;
+			if (copies.indexOf(",") >= 0) {
+				ids = copies.split(",");
+			} else {
+				Integer times = new Integer(copies);
+				ids = new String[times];
+				for (int i = 0; i < times; i++) {
+					ids[i] = "" + i;
+				}
+			}
 
-			for (int i = 0; i < times; i++) {
-				String pid = "" + i;
+			// Integer times = new Integer(copies);
+
+			for (String pid : ids) {
 				objectFactory.set("process.id", pid);
 				objectFactory.set("copy.id", pid);
 				Map<String, String> extra = new HashMap<String, String>();

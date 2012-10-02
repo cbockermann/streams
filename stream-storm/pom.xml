@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.5</version>
+		<version>0.9.6-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<name>stream-storm</name>
@@ -29,12 +29,12 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-api</artifactId>
-			<version>0.9.5</version>
+			<version>0.9.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-core</artifactId>
-			<version>0.9.5</version>
+			<version>0.9.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>storm</groupId>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-runtime</artifactId>
-			<version>0.9.5</version>
+			<version>0.9.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

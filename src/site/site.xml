@@ -22,6 +22,7 @@
     
     <menu name="Streams">
       <item name="Home" href="index.html" collapse="true" />
+      <item name="Quickstart" href="quickstart.html" />
     </menu>
     <menu name="Documentation">
       <item name="Overview" href="doc/index.html" collapse="true">

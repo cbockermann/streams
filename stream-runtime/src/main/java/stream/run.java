@@ -25,9 +25,11 @@ package stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import stream.runtime.StreamRuntime;
 public class run {
 
 	static Logger log = LoggerFactory.getLogger(stream.run.class);
+	private static String version;
 
 	public static void setupOutput() throws Exception {
 		if (System.getProperty("container.stdout") != null) {
@@ -55,12 +58,41 @@ public class run {
 					.getProperty("container.stdout"))));
 		}
 	}
+	
+	
+	public static boolean handleArguments( String[] args ){
+		
+		if( args.length == 0 ){
+			System.out.println( "streams, Version " + getVersion());
+			System.out.println();
+			System.out.println( "No container file specified." );
+			System.out.println();
+			System.out.println( "Usage: " );
+			System.out.println( "\tstream.run /path/container-file.xml" );
+			System.out.println();
+			return false;
+		}
+		
+		for( String arg : args ){
+			if( arg.equals( "-v" ) || "--version".equals( args ) ){
+				System.out.println( "streams, Version " + getVersion() );
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
 
+		if( ! handleArguments( args ) ){
+			return;
+		}
+		
 		setupOutput();
 
 		URL url;
@@ -114,4 +146,42 @@ public class run {
 				resource);
 		main(run.class.getResource(resource), elementHandler);
 	}
+	
+	
+	
+	public synchronized static String getVersion() {
+	    if (version != null) {
+	        return version;
+	    }
+
+	    // try to load from maven properties first
+	    try {
+	        Properties p = new Properties();
+	        InputStream is = run.class.getResourceAsStream("/META-INF/maven/org.jwall/stream-api/pom.properties");
+	        if (is != null) {
+	            p.load(is);
+	            version = p.getProperty("version", "");
+	        }
+	    } catch (Exception e) {
+	        // ignore
+	    }
+
+	    // fallback to using Java API
+	    if (version == null) {
+	        Package aPackage = run.class.getPackage();
+	        if (aPackage != null) {
+	            version = aPackage.getImplementationVersion();
+	            if (version == null) {
+	                version = aPackage.getSpecificationVersion();
+	            }
+	        }
+	    }
+
+	    if (version == null) {
+	        // we could not compute the version so use a blank
+	        version = "";
+	    }
+
+	    return version;
+	} 
 }

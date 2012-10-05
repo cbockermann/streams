@@ -3,7 +3,7 @@
   <parent>
     <artifactId>streams</artifactId>
     <groupId>org.jwall</groupId>
-    <version>0.9.5-SNAPSHOT</version>
+    <version>0.9.6-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>stream-runner</artifactId>
@@ -77,7 +77,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.5</version>
         <executions>
           <execution>
             <id>copy-dependencies</id>

@@ -28,3 +28,38 @@ The *stream-runner* can be downloaded from
        <div style="font-size: -2;">1.1 MB, MD5 checksum: <code>93eb978085f62736dffbf6d20fe5a59e</code></div>
      </div>
 </div>
+
+
+Debian/Ubuntu
+-------------
+
+For ease of use we provide a Debian installer package. This package requires a moderate Java Runtime
+environment to be installed (openjdk, Sun Java) of at least version 6 or later.
+
+The package is available at:
+
+<div class="download" style="margin:auto; height: 40px; padding: 10px; margin-left: 20px;">
+     <a href="http://download.jwall.org/streams/streams-0.9.6-SNAPSHOT-0.deb">
+     <img src="./images/download-icon.png" style="float: left; vertical-align: middle;" />
+     </a> 
+     <div style="float: left; margin-left: 10px;">
+       <div>
+        <a href="http://download.jwall.org/streams/streams-0.9.6-SNAPSHOT-0.deb">streams-0.9.6-SNAPSHOT-0.deb</a>,
+        Version 0.9.6-SNAPSHOT
+       </div>
+       <div style="font-size: -2;">5.4 MB, MD5 checksum: <code>89489572cce8c87e85ba8871efb5ffbc</code></div>
+     </div> 
+</div>
+
+
+To install the package simply use the `dpkg` packet management of your Debian/Ubuntu system:
+
+       # sudo dpkg -i streams-0.9.6-SNAPSHOT-0.deb
+
+This will install the complete runtime files onto your system and provides a
+convenient `stream.run` command to run stream processes:
+
+       # stream.run your-process.xml
+
+To extend your stream processes with custom classes, simply place all your
+additional Jar files into `/opt/streams/lib/`.

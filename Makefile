@@ -34,13 +34,16 @@ pre-package:
 	mkdir -p ${BUILD}
 	mkdir -p ${BUILD}/opt/streams/lib
 	cp -a dist/opt ${BUILD}/
-	cp stream-api/target/stream-api-${VERSION}.jar ${BUILD}/opt/streams/lib
-	for mod in ${MODULES} ; do \
-		cd $$mod && mvn -DskipTests=true package ; \
-		cd .. ; \
-		cp $$mod/target/dependency/*.jar ${BUILD}/opt/streams/lib/ ; \
-		cp $$mod/target/$$mod-${VERSION}.jar ${BUILD}/opt/streams/lib/ ; \
-	done
+	cd stream-runner && mvn -DskipTests=true dependency:copy-dependencies && cd ..
+	cp stream-runner/target/dependency/*.jar ${BUILD}/opt/streams/lib/
+#
+#	cp stream-api/target/stream-api-${VERSION}.jar ${BUILD}/opt/streams/lib
+#	for mod in ${MODULES} ; do \
+#		cd $$mod && mvn -DskipTests=true package ; \
+#		cd .. ; \
+#		cp $$mod/target/dependency/*.jar ${BUILD}/opt/streams/lib/ ; \
+#		cp $$mod/target/$$mod-${VERSION}.jar ${BUILD}/opt/streams/lib/ ; \
+#	done
 
 
 deb:	pre-package
@@ -62,4 +65,4 @@ release-deb:
 
 
 unrelease-deb:
-	reprepro --ask-passphrase -b /var/www/download.jwall.org/htdocs/debian remove ${DIST} auditconsole
+	reprepro --ask-passphrase -b /var/www/download.jwall.org/htdocs/debian remove ${DIST} streams

@@ -1,4 +1,4 @@
-VERSION=0.9.5-SNAPSHOT
+VERSION=0.9.6-SNAPSHOT
 REVISION=0
 NAME=streams
 BUILD=.build_tmp
@@ -55,7 +55,7 @@ deb:	pre-package
 	dpkg -b ${BUILD} ${RELEASE_DIR}/${DEB_FILE}
 	md5sum ${RELEASE_DIR}/${DEB_FILE} > ${RELEASE_DIR}/${DEB_FILE}.md5
 	rm -rf ${BUILD}
-#	debsigs --sign=origin --default-key=C5C3953C ${RELEASE_DIR}/${DEB_FILE}
+	debsigs --sign=origin --default-key=C5C3953C ${RELEASE_DIR}/${DEB_FILE}
 
 release-deb:
 	reprepro --ask-passphrase -b /var/www/download.jwall.org/htdocs/debian includedeb ${DIST} ${RELEASE_DIR}/${DEB_FILE}

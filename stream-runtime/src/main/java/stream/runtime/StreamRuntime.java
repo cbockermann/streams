@@ -25,6 +25,8 @@ package stream.runtime;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import stream.runtime.setup.UserSettings;
 
@@ -41,7 +43,14 @@ public class StreamRuntime {
 
 	public static void setupLogging() {
 
-		for (String path : logSearchPath) {
+		List<String> searchPaths = new ArrayList<String>();
+		if( System.getenv( "STREAMS_HOME" ) != null )
+			searchPaths.add( System.getenv( "STREAMS_HOME" ) + File.separator + "conf" );
+		
+		for( String path : logSearchPath )
+			searchPaths.add( path );
+		
+		for (String path : searchPaths ) {
 			String p = path;
 			if (!p.isEmpty())
 				p = path + File.separator + "log4j.properties";

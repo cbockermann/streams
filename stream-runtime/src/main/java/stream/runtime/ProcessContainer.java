@@ -228,18 +228,18 @@ public class ProcessContainer {
 			name = name.substring(0, name.indexOf("."));
 		}
 
-		log.info("Default hostname is: {}", host);
+		log.debug("Default hostname is: {}", host);
 		// String host = "localhost";
 		if (attr.containsKey("address")
 				&& !attr.get("address").trim().isEmpty()) {
 			host = InetAddress.getByName(attr.get("address")).getHostAddress();
-			log.info("Container address will be {}", host);
+			log.debug("Container address will be {}", host);
 		}
 
 		Integer port = 0;
 		if (attr.containsKey("port") && !attr.get("port").trim().isEmpty()) {
 			port = new Integer(attr.get("port"));
-			log.info("Container port will be {}", port);
+			log.debug("Container port will be {}", port);
 		}
 		if (root.hasAttribute("id"))
 			name = root.getAttribute("id");
@@ -252,7 +252,6 @@ public class ProcessContainer {
 		} catch (Exception e) {
 			log.error("Faild to instantiate naming service '{}': {}",
 					root.getAttribute("namingService"), e.getMessage());
-			e.printStackTrace();
 			throw new Exception("Faild to instantiate naming service '"
 					+ root.getAttribute("namingService") + "': "
 					+ e.getMessage());
@@ -267,11 +266,11 @@ public class ProcessContainer {
 		if (namingService == null) {
 
 			if (attr.containsKey("address")) {
-				log.info("Creating RMI naming-service...");
+				log.debug("Creating RMI naming-service...");
 				System.setProperty("java.rmi.server.hostname", host);
 				namingService = new RMINamingService(name, host, port, true);
 			} else {
-				log.info("No address specified, using local naming-service. Container will not be able to reference other containers!");
+				log.debug("No address specified, using local naming-service. Container will not be able to reference other containers!");
 				namingService = new DefaultNamingService();
 			}
 		}
@@ -280,7 +279,7 @@ public class ProcessContainer {
 			lifeCyleObjects.add((LifeCycle) namingService);
 		}
 
-		log.info("Using naming-service {}", namingService);
+		log.debug("Using naming-service {}", namingService);
 		context = new ContainerContext(name, namingService);
 		this.init(doc);
 	}
@@ -341,7 +340,7 @@ public class ProcessContainer {
 		NodeList children = root.getChildNodes();
 
 		if (context.getProperties().get("container.datafactory") != null) {
-			log.info("Using {} as default DataFactory for this container...",
+			log.debug("Using {} as default DataFactory for this container...",
 					context.getProperties().get("container.datafactory"));
 			Class<?> dataFactoryClass = Class.forName(context.getProperties()
 					.get("container.datafactory"));
@@ -419,7 +418,7 @@ public class ProcessContainer {
 
 		startTime = System.currentTimeMillis();
 		ContainerController controller = new ContainerController(this);
-		log.info("Registering container-controller {}", controller);
+		log.debug("Registering container-controller {}", controller);
 		this.namingService.register(".ctrl", controller);
 
 		this.injectServices();
@@ -490,8 +489,8 @@ public class ProcessContainer {
 		}
 
 		long end = System.currentTimeMillis();
-		log.info("Running processes: {}", processes);
-		log.info("ProcessContainer finished all processes after about {} ms",
+		log.trace("Running processes: {}", processes);
+		log.debug("ProcessContainer finished all processes after about {} ms",
 				(end - start));
 	}
 

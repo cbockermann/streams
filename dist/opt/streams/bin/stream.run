@@ -2,22 +2,56 @@
 
 
 STREAMS_HOME=/opt/streams
+LIB_DIRS="lib plugins"
 
+#
+# load defaults (if defined)
+#
+if [ -f /etc/default/streams ]; then
+   source /etc/default/streams
+fi
+
+#
+# load environment settings from the env configuration
+#
+if [ -f $STREAMS_HOME/conf/environment ]; then
+  source $STREAMS_HOME/conf/environment
+fi
+
+
+#
+# construct the classpath
+#
 CP=$CLASSPATH
-for jar in $STREAMS_HOME/lib/*.jar; do
-   CP=$CP:$jar
+for dir in $LIBDIRS; do
+   for jar in $STREAMS_HOME/$dir/*.jar; do
+      CP=$CP:$jar
+   done
 done
 
-#echo "Classpath is: ${CP}"
 
 
 if [ -z "${JAVA_HOME}" ]; then
-	echo "No JAVA_HOME defined."
-	exit 1
+   echo "No JAVA_HOME defined."
+   exit 1
 fi
 
-echo "Using Java in ${JAVA_HOME}"
 
+#
+# output the classpath if the debug property has been set
+#
+if [ ! -z "${DEBUG}" ]; then
+   echo "Classpath is: ${CP}"
+fi
+
+
+#
+# select the java command
+#
 JAVA=${JAVA_HOME}/bin/java
 
+
+#
+# Call the java VM to create and start the container
+#
 $JAVA -cp $CP stream.run $@

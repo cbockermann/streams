@@ -1,5 +1,5 @@
 VERSION=0.9.6-SNAPSHOT
-REVISION=0
+REVISION=1
 NAME=streams
 BUILD=.build_tmp
 DIST=jwall-devel
@@ -33,6 +33,7 @@ pre-package:
 	echo "Preparing packages build in ${BUILD}"
 	mkdir -p ${BUILD}
 	mkdir -p ${BUILD}/opt/streams/lib
+	mkdir -p ${BUILD}/opt/streams/plugins
 	cp -a dist/opt ${BUILD}/
 	cd stream-runner && mvn -DskipTests=true dependency:copy-dependencies && cd ..
 	cp stream-runner/target/dependency/*.jar ${BUILD}/opt/streams/lib/

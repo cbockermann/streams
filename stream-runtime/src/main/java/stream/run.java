@@ -111,7 +111,7 @@ public class run {
 
 		StreamRuntime.setupLogging();
 
-		log.info("Creating process-container from configuration at {}", url);
+		log.debug("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url);
 
 		log.info("Starting process-container...");
@@ -125,7 +125,7 @@ public class run {
 
 		StreamRuntime.setupLogging();
 
-		log.info("Creating process-container from configuration at {}", url);
+		log.debug("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url, elementHandler);
 
 		log.info("Starting process-container...");

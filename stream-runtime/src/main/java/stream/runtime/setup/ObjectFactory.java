@@ -215,7 +215,7 @@ public class ObjectFactory extends VariableContext {
 		//
 		for (ObjectCreator creator : objectCreators) {
 			if (className.startsWith(creator.getNamespace())) {
-				log.info("Found object-creator {} for class {}", creator,
+				log.debug("Found object-creator {} for class {}", creator,
 						className);
 
 				object = creator.create(className, params);

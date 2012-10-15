@@ -48,7 +48,7 @@ public class DependencyResolver {
 		if (System.getenv("STREAMS_REPOSITORY") != null
 				&& !"".equals(System.getenv("STREAMS_REPOSITORY").trim())) {
 			localRepo = System.getenv("STREAMS_REPOSITORY");
-			log.info("Using local repository {}", localRepo);
+			log.debug("Using local repository {}", localRepo);
 		}
 		baseUrls.add(localRepo);
 		baseUrls.add("http://repo.maven.apache.org/maven2/");
@@ -81,7 +81,7 @@ public class DependencyResolver {
 						if (base.startsWith("/"))
 							base = "file:" + base;
 
-						log.info("Checking for {}", cur);
+						log.debug("Checking for {}", cur);
 						Set<Dependency> trans = extractDependenciesFromPom(
 								base, cur);
 
@@ -140,7 +140,7 @@ public class DependencyResolver {
 
 			File file = new File(list.get(urlString));
 			if (file.exists()) {
-				log.info("File {} already exists.", file);
+				log.debug("File {} already exists.", file);
 			} else {
 
 				file.getParentFile().mkdirs();
@@ -148,7 +148,7 @@ public class DependencyResolver {
 				URL url = new URL(urlString);
 				InputStream in = url.openStream();
 
-				log.info("Downloading artifact {} to {}", d.getArtifactId(),
+				log.debug("Downloading artifact {} to {}", d.getArtifactId(),
 						file.getAbsolutePath());
 				FileOutputStream out = new FileOutputStream(file);
 
@@ -161,12 +161,12 @@ public class DependencyResolver {
 					read = in.read(buf);
 					// System.out.println(total + " bytes fetched...");
 				}
-				log.info("{} bytes fetched.", total);
+				log.debug("{} bytes fetched.", total);
 				out.close();
 
 			}
 		}
-		log.info("Returning jar-file {}", jarFile.getAbsolutePath());
+		log.debug("Returning jar-file {}", jarFile.getAbsolutePath());
 		return jarFile;
 	}
 

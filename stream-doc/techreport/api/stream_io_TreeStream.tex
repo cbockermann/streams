@@ -1,0 +1,23 @@
+\subsubsection{TreeStream}
+
+This stream is a line oriented stream that expects each line to provide
+a tree structure in the format
+
+\begin{verbatim}
+  ( ROOT ( A1 ( A1.1 ) ( A1.2 ) ) ( A2 ) )
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+treeAttribute & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily TreeStream}}
+\end{center}
+\end{figure}

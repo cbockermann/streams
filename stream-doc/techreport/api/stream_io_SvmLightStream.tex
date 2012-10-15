@@ -1,0 +1,35 @@
+\subsubsection{SvmLightStream}
+
+This stream implementation provides a data stream for the SVMlight
+format. The SVMlight format is a simple \texttt{key:value} format for
+compact storage of high dimensional sparse labeled data.
+
+It is a line oriented format. The keys are usually indexes, but this
+stream implementation also supports string keys.
+
+The following snippet shows some line of an SVMlight formatted file:
+
+\begin{verbatim}
+-1.0 4:3.3 10:0.342 44:9.834 # some comment
+\end{verbatim}
+In the example line above, the first column \texttt{-1.0} is the label
+attribute, followed by \texttt{key:value} pairs. The \texttt{\#}
+character starts a comment that can be provided to each line.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+sparseKey & String &  & ? \\ \hline
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily SvmLightStream}}
+\end{center}
+\end{figure}

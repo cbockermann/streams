@@ -1,0 +1,52 @@
+
+\begin{figure}[h!]
+  \begin{center}
+{\footnotesize
+    \begin{tikzpicture}[scale=0.8]
+%      \node[cylinder,inner sep=2ex,draw=black!60] at (0,0) {\textsf{Stream}};    
+      \node[fill=red!8,inner sep=1ex,draw=red!40] (a) at (2.5,0) {A};
+      \node[fill=red!8,inner sep=1ex,draw=red!40,right of=a,anchor=east] (b) {C};
+
+      \node at (5,1.3) {\textsf{Process}};
+      \draw[dashed,draw=black!30] (4,-1) -- (14.9,-1) -- (14.9,1) -- (4,1) -- (4,-1);
+      
+      \node[inner sep=0.5ex,draw=black!60,fill=black!10,right of=b,anchor=west] (p1) at (3,0) {
+        \begin{tabular}{c}
+          {\tiny \textsf{Add Prediction}} \\
+          \tiny {\em uses: Pred. Service}
+        \end{tabular}};
+
+      \node[circle,fill=red!8,inner sep=1ex,draw=red!40] (a) at (8.1,0) {a};
+%      \node[circle,fill=green!8,inner sep=1ex,draw=green!40] (b) at (8.5,0) {c};
+      \node[inner sep=0.5ex,draw=black!60,fill=black!10,rectangle split parts=2] (p2) at (10.2,0) {
+        \begin{tabular}{c}
+          \tiny \textsf{Naive Bayes Learner} \\
+          \tiny {\em Prediction Service}
+        \end{tabular} };
+      \node[circle,fill=blue!8,inner sep=1ex,draw=blue!40] (a) at (15.5,0) {a};
+      \node[circle,fill=blue!8,inner sep=1ex,draw=blue!40] (a) at (16.5,0) {c};
+
+      \node[inner sep=0.5ex,draw=black!60,fill=black!10,rectangle split parts=2] (p3) at (13.3,0) {
+        \begin{tabular}{c}
+          \tiny \textsf{Prediction Error} \\
+          \tiny \ % {\em Prediction Service}
+        \end{tabular} };
+
+      \draw[->,draw=blue!40,very thick] (10.2,-1.75) -- (p2.south);
+      \draw[dashed,blue!40,very thick] (p1.south) -- (6.15,-1.5) -- (10.2,-1.5);
+      \node[anchor=west] at (10.2,-1.25) {\color{blue!40}\textsf{Control Flow}};
+
+      \draw[->,draw=black!30,very thick] (3,2) -- (16,2);
+      \node at (10,2.25) { \color{black!40} \textsf{Data Flow}};
+    \end{tikzpicture}
+}
+    \caption{\label{fig:control}{\em The {\em data flow} and {\em
+          control flow} in the use case of the general {\em
+          test-then-train} evaluation scheme. The {\em Naive Bayes}
+        processor provides a {\em Prediction-Service} that is used by
+        the {\em Add Prediction} processor to add a prediction to each
+        data item. The {\em Prediction Error} processor simply
+        computes the error based on the prediction and the true
+        label.}}
+  \end{center}
+\end{figure}

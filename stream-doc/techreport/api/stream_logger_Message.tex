@@ -1,0 +1,33 @@
+\subsubsection{Message}
+
+This processor prints a simple message to standard output. The message
+is printed for each processed item and may contain macros that will be
+evaluated for each item.
+
+The \emph{Message} processor is a conditioned processor, which allows
+for specifying conditions for its execution.
+
+The following example defines a processor that will output a messags
+with the items \texttt{@id} attribute for each item that has an
+\texttt{alert} value higher than 10:
+
+\begin{verbatim}
+ <Message message="Alert for item %{data.@id}!"
+          condition="%{data.alert} @gt 10" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+message & String &  & ? \\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Message}}
+\end{center}
+\end{figure}

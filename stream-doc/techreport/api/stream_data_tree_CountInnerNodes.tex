@@ -1,0 +1,32 @@
+\paragraph{CountInnerNodes}
+
+This processor extracts the number of nodes of trees as new feature for
+the input data item. For each processed item, it will either compute the
+number of inner nodes of all values implementing the \emph{TreeNode}
+interface or the specified attributes if the \texttt{keys} parameter has
+been provided.
+
+For each processed tree, a new attribute \texttt{innerNodeCount(...)}
+will be added to the item. For example, in the following sample, the
+attribute \texttt{innerNodeCount(@sql:tree)} will be added:
+
+\begin{verbatim}
+  &lt;CountInnerNodes keys="@sql:tree" /&gt;
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+id & String &  & ? \\ \hline
+missing & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CountInnerNodes}}
+\end{center}
+\end{figure}

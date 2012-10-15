@@ -1,0 +1,32 @@
+\paragraph{Height}
+
+This processor computes the height of trees implementing the
+\texttt{TreeNode} interface. The height is computed for all attributes
+of type TreeNode or the specified keys, if the \texttt{keys} parameter
+has been set.
+
+The height of each tree is stored as attribute \texttt{height(...)}. For
+example, in the following snippet, the Height processor will create a
+new attribute \texttt{height(@sql:tree)} with the height of the tree
+stored in \texttt{@sql:tree}:
+
+\begin{verbatim}
+  &lt;Height keys="@sql:tree" /&gt;
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+id & String &  & ? \\ \hline
+missing & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Height}}
+\end{center}
+\end{figure}

@@ -1,0 +1,182 @@
+%\documentclass[12pt,parskip=half]{scrartcl}
+\documentclass{TechReport}
+
+% Select Sans serif font "Computer Modern Bright"
+%\usepackage[T1]{fontenc}
+%\usepackage{cmbright}
+
+% ***TODO*** Select the right encoding for your document
+%\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+
+%\usepackage{graphicx}
+
+% Bibtex citation package
+%\usepackage{cite}
+
+%\usepackage{url}
+
+% No page numbers here; these will be added for final Tech Report with
+% all contributions
+%\renewcommand*{\titlepagestyle}{empty}
+%\pagestyle{empty}
+
+%\title{LaTeX-Template for a Technical Report}
+%\author{Christian Bockermann}
+\date{01/2012}  % Serial Number/Year
+\sfbproject{C3} % Your project identifier (two digit version)
+
+\usepackage{amssymb}
+
+
+% ***TODO*** Choose correct title, author, department and email address
+\title{The \textsf{streams} Library for Processing Streaming Data}
+\author{Christian Bockermann\\
+  Lehrstuhl f\"ur k\"unstliche Intelligenz\\
+  Technische Universit\"at Dortmund\\*[1ex]
+  christian.bockermann@udo.edu}
+% Please keep date empty
+\date{}
+
+
+
+
+
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+  linktoc=all
+}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes} 
+\usetikzlibrary{decorations,arrows} 
+\usetikzlibrary{decorations.pathmorphing} 
+\usepgflibrary{decorations.pathreplacing} 
+
+\usepackage{algorithm}
+%\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\usepackage{color}
+\definecolor{rapidi}{RGB}{240,176,0}
+\definecolor{rapidiText}{RGB}{102,51,0}
+\definecolor{darkGreen}{RGB}{67,101,0}
+
+\DeclareRobustCommand{\pointer}[1]{\tikz\node[draw,circle,draw=darkGreen,thick,fill=darkGreen!70,inner sep=1pt] at (0,-0.1) {\scriptsize\color{white}\textsf{#1}};} 
+
+\lstset{language=XML,
+%  otherkeywords={stream,container,process,service},
+  basewidth={0.5em,0.45em},
+  fontadjust=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\ttfamily\color{black!60},       % comment style
+  stringstyle=\color{darkGreen}
+}
+
+
+\newcommand{\todo}[1]{\marginpar{{\bf TODO:}\\#1}}
+%\newcommand{\streams}{{\footnotesize\textsf{streams}\ }}
+\newcommand{\streams}{{\em streams}\ }
+\newcommand{\rapidminer}{{\footnotesize\textsf{RapidMiner}\ }}
+%\newcommand{\plugin}{{\footnotesize\textsf{Streams Plugin}}}
+\newcommand{\plugin}{{\em Streams Plugin}}
+
+\newcommand{\defitem}[1]{\item[{\footnotesize\textbf{\textsf{#1}}}]}
+\newcommand{\bigO}{\cO}
+\newcommand{\barw}{\bar{w}}
+\newcommand{\barbarw}{\bar w_M^\circ}
+\newcommand{\vx}{x}
+
+
+\begin{document}
+
+\makesfbtitlepage
+
+\newpage
+\tableofcontents
+\newpage
+
+\begin{abstract}
+{\normalsize
+  In this report, we present the \streams library, a generic
+  Java-based library for designing data stream processes. The \streams
+  library defines a simple abstraction layer for data processing and
+  provides a small set of online algorithms for counting and
+  classification. Moreover it integrates existing libraries such as
+  MOA. Processes are defined in XML files which follow the
+  semantics and ideas of well established tools like Maven or the
+  Spring Framework.
+
+  The \streams library can be easily embedded into existing software,
+  used as a standalone tool or be integrated into the RapidMiner tool
+  using the \plugin.}
+\end{abstract}
+
+%\begin{document}
+%\maketitle
+
+%\input{introduction}
+
+\section{Introduction\label{sec:intro}}
+Todays applications produce a plethora of data on a continuous basis:
+In the field of astrophysics, telescopes produce raw data that quickly
+exceeds hundreds of gigabytes in a single day \cite{factTelescope}. In
+the area of social networks, Twitter announced recently to have
+observed a peak of 150,000 messages per minute during the TV duell
+between president Obama and his challenger Romney \cite{}. In
+computing farms and large scale networks there is a large pile of log
+data about system state, system activities or working load gathered
+and stored that is far from being analyzed by any human, but may
+embody valuable information about the system
+\cite{googleHDprediction}.
+
+The data we are considering here, is non-stationary, in the sense that
+new data is continously produced. This is fundamentally different to
+the traditional batch-data processing paradigm that has been
+dominating the data-analysis and data-mining world for the past
+decades. That paradigm shift has triggered the evolving area of stream
+or online analysis, which investigates algorithms for analysis of
+continuous data.
+
+Principles in DSM
+
+In order to support the design of processes that allow for online
+analysis we propose the \streams library. It is a Java based
+abstraction layer for defining stream processes by means of simple XML
+definitions. It generally follows the {\em pipes-and-filters} pattern
+for data flow processing and extends this by an orthogonal control
+flow view to support the notion of anytime services within the
+process design.
+
+
+
+
+%\input{intro}
+%
+%\input{relatedwork}
+
+%\input{streamapi}
+
+\input{process-design}
+
+%\input{distributed}
+%
+%\input{streamslibrary}
+
+%\input{stream-plugin}
+
+\input{examples}
+%\input{usecases}
+%\input{appendix}
+
+%\input{outlook}
+
+
+% Bibliography using Bibtex, style plain
+\bibliographystyle{plain}
+\bibliography{literatur,local-refs}
+
+
+\end{document}

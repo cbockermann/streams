@@ -1,0 +1,48 @@
+\subsubsection{SQLWriter}
+
+This processor inserts processed items into a SQL database table. At
+initialization time, it checks for existence of the table and creates
+the table based on the keys of the first item if the table does not
+exist.
+
+If the table exists beforehand, the table schema will be extracted and
+only keys with corresponding table columns will be inserted.
+
+The following example shows the configuration of the SQLWriter to insert
+the keys \texttt{@id} and \texttt{attr1}, \texttt{attr2} into the table
+\texttt{DATA}:
+
+\begin{verbatim}
+<SQLWriter keys="@id,attr1,attr2"
+           url="jdbc:hsqldb:file:/tmp/test.db"
+           username="SA" password=""
+           table="DATA" />
+\end{verbatim}
+The parameters \texttt{url}, \texttt{username} and \texttt{password}
+define the connection to the database, whereas the \texttt{table}
+parameter defines the table into which data is to be inserted.
+
+\subparagraph{Dropping existing Tables}
+
+The \emph{SQLWriter} also allows to drop existing tables at
+initialization time by specifying the parameter \texttt{dropTable} as
+\texttt{true}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+table & String & The database table to insert items into. & true\\ \hline
+keys & String[] & A list of attributes to insert (columns), empty string for all attributes. & false\\ \hline
+dropTable & boolean &  & false\\ \hline
+password & String & The password used to connect to the database. & false\\ \hline
+username & String & The username used to connect to the database. & false\\ \hline
+url & String & The JDBC database url to connect to. & true\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily SQLWriter}}
+\end{center}
+\end{figure}

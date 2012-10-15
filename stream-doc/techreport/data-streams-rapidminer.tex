@@ -1,0 +1,42 @@
+
+\subsection*{Data Streams in RapidMiner}
+The focus of RapidMiner so far has been batch processing. With Radoop,
+this has been extended to (massive) parallel partial batch processing
+on top of the Hadoop clustering software. The \streams library
+proposed in this work aims at providing {\em continuous stream
+  processing} of non-stationary data. Based on this, we provide a
+\plugin\ for RapidMiner to extend its processing capabilities to the
+continuous stream setting. Table \ref{tab:software} summarizes the
+mentioned software libraries with respect to their focused processing
+mode.
+
+%In contrast to existing libraries, we seek to find an abstraction
+%layer to model and develop stream processing algorithms while being
+%able to map these algorithms onto different backend execution
+%engines. 
+The \streams library provides a simple execution runtime by itself
+whereas the \plugin\ implements an execution environment within
+RapidMiner, making the implemented algorithms available in the
+RapidMiner suite. However, the level of abstraction provided by the
+\streams does not limit the execution of stream processes to the
+\streams runtime, but also aims at including large scale distributed
+execution environments (e.g.~\textsf{Storm}).
+
+\begin{table}
+  \begin{center}
+{
+\linespread{1.4}
+\textsf{
+    \begin{tabular}{c|c}
+      \textbf{Processing Model} & \textbf{Supporting Software} (examplary) \\ \hline
+      Batch Processing & WEKA, {\color{blue} RapidMiner} \\ \hline
+      Parallel Batch Processing & Google MapReduce, Hadoop, {\color{blue} Radoop} \\ \hline
+      Continuous Stream Processing & S4, Storm, MOA, {\color{blue} \plugin}
+    \end{tabular}
+}
+}
+    \caption{\label{tab:software}Different software frameworks for
+      different processing models. Packages/libraries marked as blue
+      are related to RapidMiner (extensions, plugins).}
+  \end{center}
+\end{table}

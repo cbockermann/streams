@@ -1,0 +1,105 @@
+\section{\label{sec:intro}Introduction}
+In todays applications, data is continuously produced in various spots
+ranging from network traffic, log file data, monitoring of
+manufacturing processes or scientific experiments. The applications
+typically emit data in non-terminating data streams at a high rate,
+which poses tight challenges on the analysis of such streams.
+
+Several projects within the Collaborative Research Center SFB-876 deal
+with data of large volume. An example is given by the FACT telescope
+that is associated to project C3. This telscope observes cosmic
+showers by tracking light that is produced by these showers in the
+atmosphere with a camera.  These showers last about 20 nanoseconds and
+are recorded with a camera of 1440 pixels at a sampling rate of 2
+GHz. As about 60 of these showers are currently recorded each second,
+a 5-minute recording interval quickly produces several gigabytes of
+raw data.
+
+Other high-volume data is produced in monitoring system behavior, as
+performed in project A1. Here, operating systems are monitored by
+recording fine grained logs of system calls to catch typical usage of
+the system and optimize its resource utilization (e.g. for energy
+saving). System calls occur at a high rate and recording produces a
+plethora of log entries.
+
+The project B3 focuses on monitoring (distributed) sensors in an
+automated manufacturing process. These sensors emit detailed
+information of the oven heat or milling pressure of steel production
+and are recorded at fine grained time intervals. Analysis of this data
+focuses on supervision and optimization of the production process.
+
+\subsection{From Batches to Streams}
+Traditional data analysis methods focus on processing fixed size
+batches of data and often require the data (or large portions of it)
+to be available in main memory. This renders most approaches useless
+for continuously analyzing data that arrives in steady streams. Even
+procedures like preprocessing or feature extraction can quickly become
+challenging for continuous data, especially when only limited
+resources with respect to memory or computing power are available.
+
+To catch up with the reqirements of large scale and continuous data,
+online algorithms have recently received a lot of attention. The focus
+of these algorithms is to provide approximate results while limiting
+the memory and time resources required for computation. The
+constraints for the data stream setting are generally defined by
+allowing only a single pass over the data, and focusing on
+approximation schemes to deal with the inbalance of data volume to
+computing resources. In addition, models computed on streaming data
+are expected to be queriable at any time.
+
+Various algorithms have been proposed dedicated to computational
+problems on data streams. Examples include online quantile computation
+\cite{Greenwald/Khanna/2001a,Arasu/Manku/2004a}, distinct counting of
+elements, frequent itemset mining
+\cite{Charikar02findingfrequent,goethals2007,Cheng06maintainingfrequent},
+clustering \cite{sohler2010,Aggarwal:2003} or training of classifiers
+on a stream \cite{Domingos/Hulten/2000a}.
+
+
+\subsection{Designing Stream Processes}
+In this work we introduce the \streams library, a small software
+framework that provides an abstract modelling of stream processes. The
+objective of this framework is to establish a layer of abstraction
+that allows for defining stream processes at a high level, while
+providing the glue to connect various existing libraries such as MOA
+\cite{moa}, WEKA \cite{weka} or the RapidMiner tool.
+
+The set of existing online algorithms provides a valuable collection
+of algorithms, ideas and techniques to build upon. Based on these core
+elements we seek to design a process environment for implementing
+stream processes by combining implementations of existing online
+algorithms, online feature extraction methods and other preprocessing
+elements.
+%or implement and evaluate custom online algorithms 
+
+Moreover it provides a simple programming API to implement and
+integrate custom data processors into the designed stream processes.
+The level of abstraction of this programming API is intended to
+flawlessly integrate into existing runtime environments like {\em
+  Storm} or the RapidMiner platform \cite{rapidminer}.
+
+Our proposed framework supports
+\begin{enumerate}
+\item Modelling of continuous stream processes, following the {\em
+    single-pass} paradigm,
+\item Anytime access to services that are provided by the modeled
+  processes and the online algorithms deployed in the process setup,
+  and
+\item Processing of large data sets using limited memory resources
+\item A simple environment to implement custom stream processors and
+  integrate these into the modelling
+\item A collection of online algorithms for counting and classification
+\item Incorporation of various existing libraries (e.g. MOA
+  \cite{moa}) into the modeled process.
+\end{enumerate}
+
+The rest of this report is structured as follows: In Section
+\ref{sec:relatedWork} we review the problem setting and give an
+overview of related work and existing frameworks.
+%% introduce some of the main objectives in data
+%stream mining and provide some example use cases. 
+Based on this we derive some basic building blocks for a modeling data
+stream processes (Section \ref{sec:abstraction}). In Section
+\ref{sec:streamsLibrary} we present the \streams API which provides
+implementations to these building blocks. Finally we summarize the
+ideas behind the \streams library and give an outlook on future work.

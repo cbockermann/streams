@@ -1,0 +1,31 @@
+\paragraph{CountNodes}
+
+This processor iterates over all elements of the data items which
+implement the \texttt{TreeNode} interface, i.e.~which represent trees.
+It will create a new attribute for each tree that contains the number of
+nodes of this tree.
+
+The following example shows the \emph{CountNodes} processor:
+
+\begin{verbatim}
+  &lt;CountNodes keys="@sql:tree" /&gt;
+\end{verbatim}
+In this example, the \emph{CountNodes} processor will create a new
+attribute with the key \texttt{nodeCount(@sql:tree)} that will contain
+the number of nodes in the tree stored in attribute \texttt{@sql:tree}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+id & String &  & ? \\ \hline
+missing & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CountNodes}}
+\end{center}
+\end{figure}

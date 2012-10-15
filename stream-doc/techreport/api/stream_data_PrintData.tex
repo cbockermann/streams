@@ -1,0 +1,27 @@
+\subsubsection{PrintData}
+
+This processor will simply print out the processed elements to the
+standard output. As the processor is a conditioned processor, it can
+also be used to print only specific items, matching a given condition.
+
+The following example shows a processor that will only print items with
+no key \texttt{x1}:
+
+\begin{verbatim}
+  <PrintData condition="%{data.x1} == null" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily PrintData}}
+\end{center}
+\end{figure}

@@ -1,0 +1,34 @@
+\subsubsection{Minima}
+
+This processor computes the continuous minimum values for all numeric
+keys found in the processed items or the keys specified in the
+\texttt{keys} parameter. Non-numeric attributes are ignored.
+
+For each processed item, the minimum value of the observed keys are
+computed and the attribute in the item is replaced by the current
+minimum value for each selected keys (or all of parameter \texttt{keys}
+is not set).
+
+\paragraph{Anytime StatisticsService}
+
+By providing an additional \texttt{id} attribute, this processor will be
+registered as anytime \emph{StatisticsService} and can then be queried
+for statistics (minima) of all observed keys.
+
+For more details, see the
+(StatisticsService){[}StatisticsService.html{]} documentation.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+prefix & String & An optional prefix that is prepended to the attribute names, which prevents the original attribute values from being overwritten by the respective sum/average/min/max value & false\\ \hline
+keys & String[] & The keys/attributes this processor should account statistics (sum,average,min/max) for & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Minima}}
+\end{center}
+\end{figure}

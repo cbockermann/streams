@@ -1,0 +1,34 @@
+\subsubsection{CreateID}
+
+This processor simply adds an incremental identifier to each processed
+data item. By default, this identifier is stored as feature
+\texttt{@id}, but can be used with any other name as well.
+
+The following example creates a processor adding IDs with name
+\texttt{@uid}:
+
+\begin{verbatim}
+ <CreateID key="@uid" />
+\end{verbatim}
+IDs are numbered starting from 0, but can also start at arbitrary
+integer values:
+
+\begin{verbatim}
+ <CreateID key="@uid" start="10" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+key & String &  & false\\ \hline
+start & Long &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CreateID}}
+\end{center}
+\end{figure}

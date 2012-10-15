@@ -1,0 +1,121 @@
+\section{Designing Stream Processes}
+The former section introduced the main conceptual elements of the \streams library.
+These basic elements are used to define stream processes that can be deployed and
+executed with the \streams runtime environment.
+
+The definition of stream processes is based on simple XML files that define processes,
+streams and queues by XML elements that directly correspond to the elements presented
+in Section \ref{sec:abstraction}.
+
+
+\subsection{Layout of a Process Environment}
+The \streams library follows the concept of runtime containers, known from Java's
+servlet specification and similar architectures. A single container may contain
+multiple processes, streams and services, which are all executed in parallel. A
+contains is simply providing the abstract environment and a joint namespace for
+these elements to execute.
+
+An example for a container definition is provided in Figure \ref{fig:simpleContainer}.
+This example defines a process environment with namespace {\ttfamily example} which
+contains a single data stream with identifier {\ttfamily D} and a process that will
+be processing that stream.
+
+\begin{figure}[h!]
+	\begin{lstlisting}[showstringspaces=false]
+      <container id="example">
+          <stream id="D" url="file:/test-data.csv" />
+
+          <process input="D">
+               <!--
+                   The following 'PrintData' is a simple processor that outputs each
+                   item to the standard output (console)
+                 -->
+               <stream.data.PrintData />
+          </process>
+      </container>
+	\end{lstlisting}
+	\caption{\label{fig:simpleContainer}A simple container, defining a stream that is created from a CSV file.}
+\end{figure}
+
+The core XML elements used in the simple example of Figure \ref{fig:simpleContainer}
+are {\ttfamily stream} and {\ttfamily process}, which correspond to the same 
+conceptual elements that have previously been defined in Section \ref{sec:abstraction}.
+
+\subsubsection{Defining a Stream Source}
+As you can see in the example above, the {\ttfamily stream} element is used to define
+a stream object that can further be processed by some processes. The {\ttfamily stream}
+element requires an {\ttfamily id} to be specified for referencing that stream as input
+for a process. 
+
+In addition, the {\ttfamily url} attribute is used to specify the location
+from which the data items should be read by the stream. There exists Java implementations
+for a variety of data formats that can be read. Most implementations can also handle 
+non-file protocols like {\ttfamily http}. The class to use is picked by the extension
+of the URL ({\ttfamily .csv}) or by directly specifying the class name to use:
+\begin{figure}[h!]{\footnotesize
+\begin{verbatim}
+    <stream id="D" url="http://download.jwall.org/stuff/test-data.csv"
+                   class="stream.io.CsvStream" />
+\end{verbatim}}
+\end{figure}
+
+Additional stream implementations for Arff files, JSON-formatted files or for reading 
+from SQL databases are also part of the {\em streams} library. These implementation
+also differ in the number of parameters required (e.g. the database driver for SQL
+streams). A list of available stream implemenations can be found in Appendix \ref{sec:apiReference}.
+The default stream implementations also allow for the use of a {\ttfamily limit} parameter
+for stopping the stream after a given amount of data items.
+
+\subsubsection{A Stream Process}
+The {\ttfamily process} element of an XML definition is associated with a data stream
+by its {\ttfamily input} attribute. This references the stream defined with the corresponding
+{\ttfamily id} value. Processes may contain one or more {\em processors}, which are simple
+functions applied to each data item as conceptually shown in \ref{sec:basics}.
+
+A process will be started as a separate thread of work and will read data items from
+the associated stream one-by-one until no more data items can be read (i.e. 
+{\ttfamily null} is returned by the stream). The general behavior of a process is
+shown in the pseudo-code of Algorithm \ref{alg:process}.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Require{ A data stream $S$ and a sequence $P = \langle f_1,\ldots,f_k\rangle$ of processors}
+\Statex
+\Function{ProcessStream}{$S$}
+   \While{ $true$ }
+      \State{$d :=  \textrm{readNext}( S )$}
+      \ForAll{ $f \in P$ }
+         \State{$d' := f(d)$}
+         \If{$d' = null$}
+         	\Return{$null$}
+         \Else
+	         \State{$d := d'$}
+         \EndIf
+      \EndFor
+   \EndWhile
+\EndFunction
+\end{algorithmic}
+\caption{\label{alg:process}Pseudo-code for the behavior of a simple {\ttfamily process} element.}
+\end{algorithm}
+
+\subsubsection{Processing Data Items}
+As mentioned in the previous Section, the elements of a stream are represented by simple
+tuples, which are backed by a plain hashmap of keys to values. These items are the smallest
+units of data within the \streams library. They are read from the stream by the process and 
+handled as shown in Algorithm \ref{alg:process}. 
+
+The smallest unit of work that the \streams library defines is a simple {\em processor}.
+A {\em processor} is essentially a function that acts upon a data item. The processors
+already available in the library are provided by Java classes, which implement the
+simple {\ttfamily stream.Processor} interface. The interface defines a single function as
+shown in Figure \ref{fig:processFunction}.
+\begin{figure}[h!]
+	\begin{lstlisting}[language=Java,showstringspaces=false]
+	public interface Processor {
+	    public Data process( Data item ){
+	    	return item;
+	    }
+	}
+	\end{lstlisting}
+	\caption{\label{fig:processFunction} The {\ttfamily Processor} interface that needs to be implemeted to create new processor elements.}
+	\end{figure}

@@ -1,0 +1,22 @@
+\subsubsection{JSONStream}
+
+This data stream reads JSON objects from the source (file/url) and
+returns the corresponding Data items. The stream implementation expects
+each line of the file/url to provide a single object in JSON format.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily JSONStream}}
+\end{center}
+\end{figure}

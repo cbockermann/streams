@@ -1,0 +1,34 @@
+\subsubsection{OnChange}
+
+The \emph{OnChange} processor is a processor list that executes all
+nested processors if some state has changed. This is similar to the
+\emph{If} processor, but provides support for a process state check.
+
+In the following example, the \emph{Message} processor is only executed
+if the context variable \texttt{status} changes from \texttt{green} to
+\texttt{yellow}:
+
+\begin{verbatim}
+  ...
+  <OnChange from=`green` to=`yellow`>
+     <Message message="Status change detected!" />
+  </OnChange>
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+from & String &  & false\\ \hline
+to & String &  & false\\ \hline
+key & String &  & true\\ \hline
+condition & String &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily OnChange}}
+\end{center}
+\end{figure}

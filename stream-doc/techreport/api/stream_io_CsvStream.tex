@@ -1,0 +1,29 @@
+\subsubsection{CSVStream}
+
+This data stream source reads simple comma separated values from a
+file/url. Each line is split using a separator (regular expression).
+
+Lines starting with a hash character (\texttt{\#}) are regarded to be
+headers which define the names of the columns.
+
+The default split expression is \texttt{(;\textbar{},)}, but this can
+changed to whatever is required using the \texttt{separator} parameter.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+separator & String &  & true\\ \hline
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CsvStream}}
+\end{center}
+\end{figure}

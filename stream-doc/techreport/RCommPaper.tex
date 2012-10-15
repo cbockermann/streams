@@ -1,0 +1,85 @@
+%% PLEASE DON'T CHANGE BELOW
+\documentclass[10pt, twoside]{article}
+\usepackage[paperwidth=17cm,paperheight=24cm,textheight=18cm]{geometry}
+\pagestyle{empty} % Header and footer set by master document
+\date{}           % no date for article, only for proceedings
+%% PLEASE DON'T CHANGE ABOVE
+
+% START EDITING HERE
+
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+
+
+
+\usepackage{color}
+\definecolor{rapidi}{RGB}{240,176,0}
+\definecolor{rapidiText}{RGB}{102,51,0}
+\definecolor{darkGreen}{RGB}{67,101,0}
+
+\DeclareRobustCommand{\pointer}[1]{\tikz\node[draw,circle,draw=darkGreen,thick,fill=darkGreen!70,inner sep=1pt] at (0,-0.1) {\scriptsize\color{white}\textsf{#1}};} 
+
+\lstset{language=Java,
+  basewidth={0.5em,0.45em},
+  fontadjust=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\ttfamily\color{black!60}       % comment style
+%  stringstyle=\color{green}
+}
+
+% your title
+\title{\LARGE \bfseries Processing Data Streams with the RapidMiner Streams Plugin}
+
+% author(s)
+\author{Christian Bockermann and Hendrik Blom\\ Technical University of Dortmund \\ Artificial Intelligence Group \\ \ttfamily{\{christian.bockermann,hendrik.blom\}@udo.edu}}
+
+\newcommand{\todo}[1]{\marginpar{{\bf TODO:}\\#1}}
+\newcommand{\streams}{\textsf{streams}\ }
+\newcommand{\plugin}{\textsf{Streams Plugin}}
+\newcommand{\loremipsum}{{\color{blue}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.}}
+
+\begin{document}
+\maketitle\thispagestyle{empty}
+
+\begin{abstract}
+  In various applications we face a plethora of data that is often
+  growing continuously. Such data arizes in monitoring settings such
+  as server log files, manufacturing processes, sensor networks or
+  high volume news feeds such as twitter. Analysis of such data is
+  different to the traditional batch setting that RapidMiner initially
+  has been designed for.
+
+  In this work we present the \streams library -- a simple and easy to
+  use framework to continuously process streaming data. It comes with
+  the \plugin, integrating its streaming capabilities into the
+  RapidMiner suite.
+  
+  We give an overview of the architecture of the \streams library and
+  its RapidMiner integration and demonstrate its usefulness for
+  processing very large and continuous data in several use cases.
+\end{abstract}
+
+
+\input{introduction}
+
+\input{relatedwork}
+
+\input{streamapi}
+
+\input{streamslibrary}
+
+\input{stream-plugin}
+
+%\input{usecases}
+
+\input{outlook}
+
+\bibliographystyle{ieeetr}
+\bibliography{local-refs,literatur}
+
+\input{appendix}
+
+\end{document}

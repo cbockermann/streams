@@ -1,0 +1,22 @@
+\subsubsection{MemoryUsage}
+
+This processor will determine the current JVM memory usage of the
+complete runtime environment. The usage is computed by the JVM's runtime
+object, based on the current free and maximum memory.
+
+The \texttt{MemoryUsage} processor implements a service that provides
+statistics of the current usage.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+key & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily MemoryUsage}}
+\end{center}
+\end{figure}

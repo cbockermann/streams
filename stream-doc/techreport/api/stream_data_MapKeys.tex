@@ -1,0 +1,41 @@
+\subsubsection{MapKeys}
+
+This processor provides a way to map keys (feature names) to other
+values. This is sometimes required to match special processors that rely
+on specific feature names:
+
+\begin{verbatim}
+  <MapKeys from="labelAttribute" to="@label" />
+\end{verbatim}
+A more complex setting can be used by specifying the map in a
+\texttt{key=value} file, e.g.~stored as \texttt{my-map.txt}. With such a
+file, the processor can be specified as:
+
+\begin{verbatim}
+  <MapKeys map="my-map.txt" />
+\end{verbatim}
+where the \texttt{my-map.txt} file may look like
+
+\begin{verbatim}
+  attr1=sepalLength
+  attr2=sepalWidth
+  ...
+\end{verbatim}
+which will map the keys according to the map.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+from & String &  & ? \\ \hline
+to & String &  & ? \\ \hline
+map & String &  & false\\ \hline
+mapping & Map & A list of key mappings. & true\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily MapKeys}}
+\end{center}
+\end{figure}

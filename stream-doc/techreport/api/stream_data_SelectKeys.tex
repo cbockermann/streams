@@ -1,0 +1,31 @@
+\subsubsection{SelectKeys}
+
+This processor can be used to select a subset of keys from the current
+data item. The result of this will be a data item that has all keys
+removed except for those that have been selected by the \texttt{keys}
+parameter.
+
+The \texttt{keys} parameter also allows for specifying keys with
+wildcards \texttt{*} and \texttt{?}. In the following example all
+attributes that start with \texttt{user:} will be selected, but not
+\texttt{user:gender}:
+
+\begin{verbatim}
+ <SelectKeys keys="user:*,!user:gender" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+remove & Boolean &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily SelectKeys}}
+\end{center}
+\end{figure}

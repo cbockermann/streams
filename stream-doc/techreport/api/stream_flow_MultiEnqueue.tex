@@ -1,0 +1,21 @@
+\subsubsection{MultiEnqueue}
+
+This processor will enqueue data items into the specified queues. This
+\emph{may} also result in loops.
+
+The processor is a conditioned processor, i.e.~it supports the use of
+condition expressions.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+queues & String[] &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily MultiEnqueue}}
+\end{center}
+\end{figure}

@@ -1,0 +1,28 @@
+\subsubsection{RenameKey}
+
+This processor simply renames a single attribute. The attribute value
+will be removed from the data item and added with the new key,
+overwriting any existing entry with that new key.
+
+Example:
+
+\begin{verbatim}
+   <RenameKey key="myKey" to="myNewName" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+from & String & The old name of the key. & true\\ \hline
+to & String & The new name of the key. & true\\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily RenameKey}}
+\end{center}
+\end{figure}

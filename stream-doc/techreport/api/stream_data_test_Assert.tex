@@ -1,0 +1,30 @@
+\paragraph{Assert}
+
+This element checks each processed element against a specific condition.
+If the condition does not hold for that element, an exception is thrown.
+
+The \emph{Assert} processor is intended to ensure that pre-defined
+properties hold for each event that is further processed by the
+experiment.
+
+The following example fires an exception if an element does exceed the
+limit of \emph{1.0} in its \texttt{x1} key:
+
+\begin{verbatim}
+  <Assert condition="%{data.x1} @le 1.0" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Assert}}
+\end{center}
+\end{figure}

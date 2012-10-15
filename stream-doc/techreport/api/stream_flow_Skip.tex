@@ -1,0 +1,36 @@
+\subsubsection{Skip}
+
+This processor will simply skip all events matching a given condition.
+If no condition is specified, the processor will skip all events.
+
+The condition must be a bool expression created from numerical operators
+like \texttt{@eq}, \texttt{@gt}, \texttt{@ge}, \texttt{@lt} or
+\texttt{@le}. In addition to those numerical tests the \texttt{@rx}
+operator followed by a regular expression can be used.
+
+The general syntax is
+
+\begin{verbatim}
+   variable  operator  argument
+\end{verbatim}
+For example, the following expression will check the value of attribute
+\texttt{x1} against the 0.5 threshold:
+
+\begin{verbatim}
+   %{data.x1} @gt 0.5
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Skip}}
+\end{center}
+\end{figure}

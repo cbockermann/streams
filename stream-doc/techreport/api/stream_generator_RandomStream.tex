@@ -1,0 +1,38 @@
+\subsubsection{RandomStream}
+
+This stream is a generator for a random stream source that by default
+provides a single attribute \texttt{att1} of type \emph{Double}. The
+values for that attribute are drawn from a Gaussian distribution with
+mean \emph{0.0} and standard deviation \emph{1.0}.
+
+The \texttt{keys} parameter of the stream allows the specification of a
+set of attributes that will all be Gaussian distributed as described
+above.
+
+The following example defines a random stream with three Gaussian
+distributed attributes:
+
+\begin{verbatim}
+   <Stream class="stream.io.RandomStream" keys="x1,x2,x3" />
+\end{verbatim}
+The random numbers are provided by the \texttt{java.math.Random} class.
+For each key, a different random generator is initialized. The seed for
+the \emph{i}-th key is \texttt{i * 1000}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] & The attribute names to create (comma separated) & false\\ \hline
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily RandomStream}}
+\end{center}
+\end{figure}

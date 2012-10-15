@@ -1,0 +1,29 @@
+\subsubsection{If}
+
+This processor provides conditioned execution of nested processors. By
+specifying a condition, all nested processors are only executed if that
+condition is fulfilled.
+
+As an example, the following will only print data items if the attribute
+\texttt{x} is larger than \texttt{3.1415}:
+
+\begin{verbatim}
+  <If condition="%{data.x} @gt 3.1415">
+     <PrintData />
+  </If>
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+condition & String &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily If}}
+\end{center}
+\end{figure}

@@ -1,0 +1,26 @@
+\subsubsection{SetValue}
+
+This processors allows for setting a feature to a single, constant
+value:
+
+\begin{verbatim}
+  <SetValue key="attribute1" value="abc" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+value & String &  & ? \\ \hline
+key & String &  & ? \\ \hline
+scope & String[] &  & false\\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily SetValue}}
+\end{center}
+\end{figure}

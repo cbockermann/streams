@@ -1,0 +1,38 @@
+\subsubsection{Timestamp}
+
+This processor parses the date time from an attribute using a specified
+format string and stores the parsed time as a long value into the
+\texttt{@timestamp} key by default.
+
+The processor requires at least a \texttt{format} and a \texttt{from}
+parameter. The \texttt{format} specifies a date format to parse the time
+from. The \texttt{from} parameter determines the key attribute from
+which the date is to be parsed.
+
+The following example shows a timestamp parser that parses the
+\texttt{DATE} key using the format \texttt{yyyy-MM-dd-hh:mm:ss}. The
+resulting timestamp (milliseconds UNIX time) is stored under key
+\texttt{@time}:
+
+\begin{verbatim}
+  <Timestamp key="@time" format="yyyy-MM-dd-hh:mm:ss"
+             from="DATE" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+format & String & The date format string used for parsing. & true\\ \hline
+from & String & The key/attribute from which the timestamp should be parsed. & true\\ \hline
+key & String &  & false\\ \hline
+timezone & String & The timezone that the processed data is assumed to refer to. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily ParseTimestamp}}
+\end{center}
+\end{figure}

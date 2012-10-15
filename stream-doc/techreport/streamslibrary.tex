@@ -1,0 +1,151 @@
+\section{\label{sec:streamsLibrary}The \streams Library}
+The \streams library provides a set of classes and interfaces for the
+elements defined in Section \ref{sec:abstraction}, which allows for
+implementing custom streams and processors. In addition it provides
+basic classes for reading, writing and processing data, e.g. from CSV
+files, SVMlight formatted data or by reading streams from an SQL
+database. The library consists of three packages:
+\begin{enumerate}
+\item \textsf{stream-api} -- a small collection of interfaces and classes
+  representing the conceptual elements outlined above.
+\item \textsf{stream-core} -- several implementations of I/O streams,
+  processors, etc. which are of general use.
+\item \textsf{stream-runtime} -- a light-weighted execution environment
+  that allows to define streaming processes in XML.
+\end{enumerate}
+To a large extend we focused on developing the \streams API as simple
+as possible using standard data structures and following design
+patterns and conventions like JavaBeans \cite{javabeans} or techniques
+like dependency injection \cite{dependencyInjection} found in well
+established frameworks such as the Spring Framework
+\cite{springframework} or Google Guice \cite{guice}.
+
+\subsection{Data Items and Processors}
+In the \textsf{stream-api} data items are represented by the
+{\ttfamily stream.Data} interface, which itself is a plain Java
+{\ttfamily Map} with keys of string type and any serializable objects
+as values. Maps support our objective to use versatile data structures
+that are available and well understood in any language
+(e.g. dictionaries in Python or Ruby) and do provide the
+self-contained property. The serialization requirement allows data
+items to be transferred over network connections, required for running
+stream processes in distributed environments.
+
+A data stream is provided by the interface {\ttfamily
+  stream.io.DataStream} and basically provides a single {\ttfamily
+  readNext()} method returning the next data item of the stream. In
+general, the data stream implementations in the \streams library
+require a URL or a Java {\ttfamily InputStream} object to read from.
+This allows creating streams to read from file, network resources or
+from external data generating processes by reading from standard
+input.
+
+The processor elements are defined by a simple interface {\ttfamily
+  stream.Processor} that requires a single method to be implemented as
+shown in Figure \ref{fig:processorInterface}.
+
+\begin{figure}
+{\footnotesize
+  \begin{lstlisting}
+    public interface Processor {
+       /**  Method called for each item to be processed.   */
+       public Data process( Data item );
+    }
+  \end{lstlisting}
+}
+  \caption{\label{fig:processorInterface}Definition of the basic
+    processor interface, required to implement custom processors
+    within the \streams library.}
+\end{figure}
+%\begin{figure}[h!]
+%
+%\begin{verbatim}
+%    public interface Processor {
+%       /**
+%        *  Method called for each item to be processed.
+%        */
+%       public Data process( Data item );
+%    }
+%\end{verbatim}
+%}
+%  \caption{\label{fig:processorInterface}Definition of the basic
+%    processor interface, required to implement custom processors
+%    within the \streams library.}
+%\end{figure}
+
+\subsubsection*{Parameters via JavaBeans}
+Following the JavaBeans convention, processors are required to provide
+a no-args constructor and may use parameters by simply providing
+{\ttfamily get}- and {\ttfamily set}-methods. The example processor
+shown in Figure \ref{fig:alertProcessor} (see Appendix) outputs an
+alert message for every item that does not provide a ({\em key},{\em
+  value}) pair for a user defined key name.  This simple beans
+convention allows for automatically registering RapidMiner operators
+and their corresponding parameter types. This is provided by the {\em
+  RapidMiner-Beans} library.
+
+%\vspace{6cm}
+
+\subsection{Anytime Services}
+For implementing the anytime paradigm, the \streams library provides a
+{\ttfamily Service} interface and a dynamic naming service which
+allows for registering and obtaining services or references to
+services. This works similarly to the standard RMI naming services
+included in Java, but tries to abstract from a specific
+implementation.
+
+The anytime services within the \streams library are implemented by
+extending the {\ttfamily Service} interface and defining any method
+that shall be provided in an anytime manner. As an example, the
+{\ttfamily PredictionService} is implemented by all online learning
+algorithms, which defines a simple {\ttfamily predict} method as shown in
+Figure \ref{fig:predictionService}. As soon as a processor that
+implements a {\ttfamily Service} interface is added to an experiment,
+it is automatically registered within the naming service.
+
+\begin{figure}[h!]
+\footnotesize
+\begin{lstlisting}
+   public interface PredictionService extends Service {
+       /** Returns the prediction for an item based 
+        *  on the current model                      */
+       public Serializable predict( Data item );
+   }
+\end{lstlisting}
+\caption{\label{fig:predictionService}A simple {\ttfamily
+    PredictionService} that as is provided by all online learning
+  algorithms that support classification.}
+\end{figure}
+
+
+%\subsection{Events, Examples and Processors}
+%Within RapidMiner, the most fundamental data structure is provided by
+%an {\ttfamily IOObject}. Any object exchanged between two operators
+%has to implement the {\ttfamily IOObject} interface. From a data
+%analysis perspective, these objects typically are sets of examples,
+%prediction models, preprocessing models or analysis results such as
+%performance vectors.
+%
+%As the stream processing is mostly concerned with the handling of
+%single pieces of data, i.e. single {\em examples} in the RapidMiner
+%sense, we denote with {\em data item} the most atomic element of data
+%obtained and processed within a stream. A data item is a set of ({\em
+%  key},{\em value}) pairs, each of which corresponds to an attribute
+%and its value.
+
+\subsection{A light-weight \streams Runtime}
+For rapid prototyping and development purposes, the \streams library
+implements a small multi-threaded runtime environment, which allows to
+define stream processes using a simple XML document. The
+interpretation and structure of this XML is very similar to the
+notation known from frameworks like Spring \cite{springframework}. A
+sample XML process definition of the {\em test-then-train} use case is
+provided in the Appendix (Figure \ref{fig:exampleContainer}).
+% defines a single stream and a process that
+%implements the test-then-train setup mentioned earlier.
+
+The services defined within the \streams API are exported via a naming
+service. The default naming service uses a local RMI registry, which
+allows for accessing services such as prediction services, or
+processors providing meta-data statistics (average, minimum, maximum,
+top-k elements) while the processes are running.

@@ -1,0 +1,31 @@
+\subsubsection{TimeStream}
+
+This is a very simple stream that emits a single data item upon every
+read. The data item contains a single attribute \texttt{@timestamp} that
+contains the current timestamp (time in milliseconds).
+
+The name of the attribute can be changed with the \texttt{key}
+parameter, e.g.~to obtain the timestamp in attribute \texttt{@clock}:
+
+\begin{verbatim}
+  <Stream class="stream.io.TimeStream" key="@clock" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+interval & String &  & ? \\ \hline
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily TimeStream}}
+\end{center}
+\end{figure}

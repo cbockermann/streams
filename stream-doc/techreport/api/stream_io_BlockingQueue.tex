@@ -1,0 +1,26 @@
+\subsubsection{BlockingQueue}
+
+The \emph{BlockingQueue} provides a simple DataStream that items can be
+enqueued into and read from. This allows inter-process communication
+between multiple active processes to be designed using data items as
+messages.
+
+\emph{TODO:} Write details about the queuing behavior!
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+size & int &  & ? \\ \hline
+password & String & The password for the stream URL (see username parameter) & false\\ \hline
+prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
+username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily BlockingQueue}}
+\end{center}
+\end{figure}

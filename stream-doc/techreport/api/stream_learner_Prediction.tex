@@ -1,0 +1,11 @@
+\subsubsection{Prediction}
+
+This processor references one or more learner elements using the
+\texttt{ref} attribute. All the referenced elements need to provide a
+prediction model, i.e.~need to implement the ModelProvider interface.
+
+The processor will add the prediction of all referenced learners to the
+data item. The prediction is prefixed with the \texttt{@prediction:}
+string, followed by the name of the model (usually the ID of the learner
+element).
+

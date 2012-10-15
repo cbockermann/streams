@@ -1,0 +1,31 @@
+\paragraph{CountLeaves}
+
+Similar to the (CountNodes){[}CountNodes.html{]} processor, this
+processor computes the number of leaves of all trees found in the data
+item. For each tree, it creates a new attribute with key
+\texttt{leafCount(..)} that contains the number of leaves of the tree.
+
+In the following example, the processor will create the attribute
+\texttt{leafCount(@sql:tree)} for the tree stored in the
+\texttt{@sql:tree} attribute:
+
+\begin{verbatim}
+  &lt;CountLeaves keys="@sql:tree" /&gt;
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+id & String &  & ? \\ \hline
+missing & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CountLeaves}}
+\end{center}
+\end{figure}

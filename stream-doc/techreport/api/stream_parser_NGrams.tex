@@ -1,0 +1,33 @@
+\subsubsection{NGrams}
+
+This parser processor will create n-grams from a specified attribute of
+the processed item and will add all the n-grams and their frequency to
+the item. By default the processor creates n-grams of length 3.
+
+To not overwrite any existing keys, the n-gram frequencies can be
+prefixed with a user-defined string using the \texttt{prefix} parameter.
+
+The following example shows an \emph{NGram} processor that will create
+5-grams of the string found in key \texttt{text} and add their frequency
+to the items with a prefix of \texttt{5gram}:
+
+\begin{verbatim}
+  <NGrams n="5" key="text" prefix="5gram" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+prefix & String & An optional prefix that is to be prepended for all n-gram names before these are added to the data item & false\\ \hline
+key & String & The attribute which is to be split into n-grams & true\\ \hline
+n & Integer & The length of the n-grams that are to be created & true\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily NGrams}}
+\end{center}
+\end{figure}

@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.2}
+\contentsline {section}{\numberline {2}Designing Stream Processes}{3}{section.3}
+\contentsline {subsection}{\numberline {2.1}Layout of a Process Environment}{4}{subsection.4}
+\contentsline {subsubsection}{\numberline {2.1.1}Defining a Stream Source}{4}{subsubsection.19}
+\contentsline {subsubsection}{\numberline {2.1.2}A Stream Process}{5}{subsubsection.20}
+\contentsline {subsubsection}{\numberline {2.1.3}Processing Data Items}{5}{subsubsection.22}
+\contentsline {section}{\numberline {3}Example Applications}{7}{section.31}
+\contentsline {subsection}{\numberline {3.1}FACT Data Analysis}{7}{subsection.32}
+\contentsline {subsubsection}{\numberline {3.1.1}Reading FACT Data}{8}{subsubsection.38}
+\contentsline {subsubsection}{\numberline {3.1.2}Processors for FACT Data}{9}{subsubsection.52}

@@ -1,0 +1,25 @@
+\subsubsection{CreateAndMultiEnqueue}
+
+This processor will create a data item from the given keys and enqueue
+the data item into the specified queues. This \emph{may} also result in
+loops.
+
+Macros can be used as keys.
+
+The processor is a conditioned processor, i.e.~it supports the use of
+condition expressions.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+queues & String[] &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CreateAndMultiEnqueue}}
+\end{center}
+\end{figure}

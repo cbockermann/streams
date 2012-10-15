@@ -1,0 +1,40 @@
+\subsubsection{AsJSON}
+
+This processor will serialize the current item into a JSON string and
+add this string to the item under the key specified in the \texttt{key}
+parameter. If no \texttt{key} parameter is provided, the JSON string
+will be added with key \texttt{@json}.
+
+This can for example be useful to store the JSON string of an item in a
+file or database table in connection with the \emph{SQLWriter}
+processor.
+
+The following example shows the serialization into JSON and storage of
+the item in a database using the \emph{AsJSON} and \emph{SQLWriter}
+processor. In Addition, the \emph{CreateID} processor is used to add an
+ID to the item before storing it into the database table
+\texttt{data\_items}:
+
+\begin{verbatim}
+  <AsJSON key="@json" />
+  <CreateID key="@id" />
+
+  <SQLWriter url="jdbc:mysql://localhost:3306/test_db"
+             username="TEST" password="TEST" table="data_items"
+             keys="@id,@json" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+key & String & The attribute into which the JSON string of this item should be stored. Default is '@json'. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily AsJSON}}
+\end{center}
+\end{figure}

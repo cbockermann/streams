@@ -1,0 +1,88 @@
+%%
+%% Introduction
+%%   - Motivation/Use Cases
+%%   - constraints of data stream processing
+%%   - our contributions (list)
+%%
+\section{Introduction}
+More and more applications rely on dynamic data that is produced in
+realtime and at a high volume. Scientific experiments, network
+traffic, sensor networks in manifacturing processes or message
+services are examples of such applications. Often the data in these
+applications is outdated quickly and reactions need to be applied in
+near to realtime. An example is given by Google's news search, which
+uses a dynamic index for searching even more recent news articles. In
+other scenarios an on-time analysis might save resources as irrelevant
+data can quickly be detected and discarded. Analysis in such dynamic
+data settings is different to the traditional batch setting that
+RapidMiner has initially been designed for.
+
+Continuous data poses several challenges for data analysts: The data
+are often produced at large volume and require continuous processing
+to provide up-to-date prediction models or summaries. Such models or
+statistics need to be accessible at anytime. For preprocessing that
+data only limited resources with regard to memory, CPU and I/O is
+available. Recent advances such as Google's Map/Reduce paradigm
+address these by large scale parallelization of batch processes
+\cite{googleMapReduce,radoop}. While this scales well with the large
+amounts of data at hand, it does not tackle the problem of processing
+data {\em continuously}.
+
+%The massive amounts of data continuously produced by scientific
+%experiments or in large scale applications demand for alternative
+%approaches to traditional random-access and in-memory data analysis.
+%As an example, the FACT project\cite{fact} runs a telescope recording
+%up to one terabyte of raw data per night. As analysis of this data
+%just started, it is not yet clear which parts of the data might be
+%useful and which might be subject to being discarded.
+
+To catch up with the reqirements of large scale and continuous data,
+online algorithms have recently received a lot of attention. Various
+algorithms have been proposed for online quantile computation
+\cite{Greenwald/Khanna/2001a,Arasu/Manku/2004a}, frequent itemset
+mining
+\cite{Charikar02findingfrequent,goethals2007,Cheng06maintainingfrequent},
+clustering \cite{sohler2010,Aggarwal:2003} or classification
+\cite{Domingos/Hulten/2000a}.
+
+
+\subsection{Our Contributions}
+In this work we introduce the \streams library, a small software
+framework that focuses on online processing of data and its adaption
+into RapidMiner as the \plugin. The \streams framework provides a
+thin abstraction layer to facilitate online data processing whereas
+the \plugin\ uses a generic wrapper approach\footnote{RapidMiner
+  operators are automatically generated using the \textsf{RapidMiner
+    Beans} library, which allows for the implementation of operators
+  by following the JavaBeans convention and using simple Java
+  annotations.} to build a streaming facade within RapidMiner.
+
+The proposed library supports
+\begin{enumerate}
+\item Modelling of continuous stream processes within RapidMiner,
+  following the {\em single-pass} paradigm,
+\item Anytime access to services that are provided by the continuous
+  processing and the online algorithms deployed in the process setup,
+  and
+\item Processing of large data sets using limited memory resources.
+\end{enumerate}
+
+\subsection{Paper Outline}
+The outline of this work is as follows: In Section
+\ref{sec:relatedWork} we review the problem setting and give an
+overview of related work and existing frameworks.
+%% introduce some of the main objectives in data
+%stream mining and provide some example use cases. 
+Based on this we derive some basic building blocks for a modeling data
+stream processes (Section \ref{sec:abstraction}). In Section
+\ref{sec:streamsLibrary} we present the \streams API which provides
+implementations to these building blocks, and present the \plugin\
+that integrates these into RapidMiner in Section
+\ref{sec:plugin}. Finally we summarize the ideas behind the \streams
+library and give an outlook on future work.
+%  for  main ideas and
+%paradigms inherent to the \streams library.
+% . Based on this we describe the data model and illustrate the
+% architecture of the
+%Finally we provide some use-cases for the RapidMiner \plugin\ in
+%Section \ref{sec:usecases} and give an outlook on future work.

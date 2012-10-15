@@ -1,0 +1,44 @@
+\subsubsection{Sum}
+
+This simple processor computes a continuous sum over all numberic keys
+of all items processed. The result of this processor is to replace the
+values in the processed items by the current some of each key.
+
+If the \texttt{keys} parameter is provided, then only the sum of the
+specified keys is computed (for those that are numeric, i.e.~of type
+Integer, Float, Double or Long).
+
+For example the following setup will first update the sum for
+\texttt{error} and \texttt{memorySize} and will then replace the values
+for these keys with the overall sums:
+
+\begin{verbatim}
+ <Sum keys="error,memorySize" />
+\end{verbatim}
+After the processor, the item contains as \texttt{error} the sum of all
+\texttt{error} values seen so far (the same holds for
+\texttt{memorySize}).
+
+\paragraph{Anytime Statistics Service}
+
+The processor can be registered as service and then provides an anytime
+serice of type \texttt{StatisticsService}. This service implementation
+can then be queried for the sum value of all observed keys/attributes.
+
+For more details, see the
+(StatisticsService){[}StatisticsService.html{]} documentation.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+prefix & String & An optional prefix that is prepended to the attribute names, which prevents the original attribute values from being overwritten by the respective sum/average/min/max value & false\\ \hline
+keys & String[] & The keys/attributes this processor should account statistics (sum,average,min/max) for & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily Sum}}
+\end{center}
+\end{figure}

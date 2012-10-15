@@ -1,0 +1,19 @@
+\subsection{Package stream.parser}
+
+When processing streams of data each single data item may contain
+additional information that needs to be extracted into more detailed
+attributes or into other value types.
+
+The \texttt{stream.parser} package provides a set of parsing processors,
+that usually act upon on or more keys and extract information from the
+attributes denoted by those keys.
+
+For example the \texttt{ParseDouble} processor will parse double values
+from all strings that are denoted in its \texttt{keys} parameter. Other
+parsers in this package are for example the \texttt{ParseJSON},
+\texttt{Timestamp} or the \texttt{NGrams} processor.
+
+
+\input{stream_parser_NGrams}
+\input{stream_parser_ParseDouble}
+\input{stream_parser_ParseTimestamp}

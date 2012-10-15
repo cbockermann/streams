@@ -1,0 +1,27 @@
+\subsubsection{RandomBinaryLabel}
+
+This operator simply adds a random label (either -1.0 or +1.0) to
+processed data items. The labels are distributed normally.
+
+The \texttt{key} parameter allows for specifying the label attribute
+name, which by default is considered to be \texttt{@label}:
+
+\begin{verbatim}
+ <RandomBinaryLabel key="@label" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+seed & Long &  & ? \\ \hline
+key & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily RandomBinaryLabel}}
+\end{center}
+\end{figure}

@@ -1,0 +1,44 @@
+\subsubsection{MapValue}
+
+This processor provides a way to map values of a specific feature onto
+other values. For example, mapping all labels \texttt{0.0} to the value
+\texttt{-1.0} can be done using
+
+\begin{verbatim}
+  <MapValues key="@label" from="0.0" to="-1.0" />
+\end{verbatim}
+This is useful, e.g.~when required to map labels or other categorical
+data to different values.
+
+A more complex setting can be used by specifying the map in a
+\texttt{key=value} file, e.g.~stored as \texttt{my-map.txt}. With such a
+file, the processor can be specified as:
+
+\begin{verbatim}
+  <MapValues key="@label" map="my-map.txt" />
+\end{verbatim}
+where the \texttt{my-map.txt} file may look like
+
+\begin{verbatim}
+  false=-1.0
+  true=1.0
+\end{verbatim}
+which will map the string values \texttt{true} and \texttt{false}
+according to the map.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+from & String &  & ? \\ \hline
+to & String &  & ? \\ \hline
+key & String &  & ? \\ \hline
+map & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily MapValues}}
+\end{center}
+\end{figure}

@@ -1,0 +1,33 @@
+\subsection{Package stream.io}
+
+Reading data is usually the first step in data processing. This package
+provides a set of data stream sources for data files/resources in
+various formats.
+
+Most of the streams provided by this package do read from URLs, which
+allows reading from files as well as from network URLs such as HTTP
+urls.
+
+The streams provide an iterative access to the data and use the default
+\texttt{DataFactory} for creating data. They do usually share some
+common parameters supported by most of the streams such as
+\texttt{limit} or \texttt{username} and \texttt{password}.
+
+
+\input{api/stream_io_ArffStream}
+\input{api/stream_io_BlockingQueue}
+\input{api/stream_io_CsvStream}
+\input{api/stream_io_CsvUpload}
+\input{api/stream_io_CsvWriter}
+\input{api/stream_io_JSONStream}
+\input{api/stream_io_JSONWriter}
+\input{api/stream_io_LineStream}
+\input{api/stream_io_LineWriter}
+\input{api/stream_io_ListDataStream}
+\input{api/stream_io_ProcessStream}
+\input{api/stream_io_SQLStream}
+\input{api/stream_io_SQLWriter}
+\input{api/stream_io_SvmLightStream}
+\input{api/stream_io_SvmLightWriter}
+\input{api/stream_io_TimeStream}
+\input{api/stream_io_TreeStream}

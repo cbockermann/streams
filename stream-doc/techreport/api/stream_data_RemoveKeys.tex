@@ -1,0 +1,30 @@
+\subsubsection{RemoveAttributes}
+
+This processors provides the possibility to remove a set of features
+from each processed data item. The list can be specified by setting the
+\texttt{keys} parameter to the list of features to be removed:
+
+\begin{verbatim}
+  <RemoveAttributes keys="attr1,attr2,attr3" />
+\end{verbatim}
+The key strings will be splitted at each comma and will be trimmed,
+i.e.~the list above will have the same effect as the following:
+
+\begin{verbatim}
+  <RemoveAttributes keys="attr1, attr2 , attr3" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily RemoveKeys}}
+\end{center}
+\end{figure}

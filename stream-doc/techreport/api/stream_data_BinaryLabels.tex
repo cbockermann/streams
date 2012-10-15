@@ -1,0 +1,60 @@
+\subsubsection{BinaryLabels}
+
+This processor transforms items into binary labeled items with labels
+with values \emph{-1.0} or \emph{+1.0}. The processor provides several
+parameters that can be used for adjusting the strategy on how to map
+labels.
+
+By default the label attribute is expected to be in key \texttt{@label}.
+This can be changed to the correct key name using the \texttt{label}
+parameter.
+
+\subparagraph{Mapping String labels}
+
+In the case of labels of string type, the processor needs to be provided
+with the string value of the positive class using the \texttt{positive}
+parameter. Items with the label key set to the specified value for
+\texttt{positive} will be flagged with a label \emph{+1.0}, all other
+will be marked as \emph{-1.0}.
+
+The following example sets up a \emph{BinaryLabels} processor mapping
+all items with a label \texttt{@label} and value \texttt{SPAM} to
+\emph{+1.0}. Items with any other label value are marked as \emph{-1.0}:
+
+\begin{verbatim}
+  &lt;BinaryLabels label="@label" positive="SPAM" /&gt;
+\end{verbatim}
+If no value for \texttt{positive} is specified, the first value for that
+label key is regarded as the positive class value.
+
+\subparagraph{Mapping Numberic Labels}
+
+If the labels are of numberic type, the mapping can be done with a
+simple threshold comparison. For this, the processor provides a
+\texttt{threshold} parameter.
+
+In the following example, items with a \texttt{@label} value higher than
+\emph{0.5} are mapped to class \emph{+1.0}, all others are mapped to
+class \emph{-1.0}:
+
+\begin{verbatim}
+  &lt;BinaryLabels label="@label" threshold="0.5" /&gt;
+\end{verbatim}
+If no threshold is specified, the default threshold of \emph{0.0} is
+used.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+threshold & Double &  & ? \\ \hline
+label & String &  & ? \\ \hline
+positive & String &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily BinaryLabels}}
+\end{center}
+\end{figure}

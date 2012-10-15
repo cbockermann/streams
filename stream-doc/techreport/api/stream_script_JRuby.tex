@@ -1,0 +1,23 @@
+\subsubsection{JRuby}
+
+This processor executes JRuby (Ruby) scripts using the Java
+ScriptingEngine interface. To use this processor, the JRuby
+implementation needs to be available in the classpath.
+
+The script is evaluated for each processed item and will be provided to
+the script as variable \texttt{\$data}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+file & File &  & false\\ \hline
+script & BodyContent &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily JRuby}}
+\end{center}
+\end{figure}

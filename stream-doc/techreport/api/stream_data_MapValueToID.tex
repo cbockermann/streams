@@ -1,0 +1,24 @@
+\subsubsection{MapValue}
+
+This processor provides a way to map values of a specific feature to
+integer IDs, starting with 1 as first ID. The processor will maintain a
+map of value-to-IDs and extend that map for new values.
+
+\begin{verbatim}
+  <MapValueToID key="data" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+key & String &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily MapValueToID}}
+\end{center}
+\end{figure}

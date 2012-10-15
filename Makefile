@@ -54,6 +54,7 @@ deb:	pre-package
 	cp dist/DEBIAN/* ${BUILD}/DEBIAN/
 	cat dist/DEBIAN/control | sed -e 's/Version:.*/Version: ${VERSION}-${REVISION}/' > ${BUILD}/DEBIAN/control
 	chmod 755 ${BUILD}/DEBIAN/p*
+	chown -R root.root ${BUILD}/opt
 	cd ${BUILD} && find opt -type f -exec md5sum {} \; > DEBIAN/md5sums && cd ..
 	dpkg -b ${BUILD} ${RELEASE_DIR}/${DEB_FILE}
 	md5sum ${RELEASE_DIR}/${DEB_FILE} > ${RELEASE_DIR}/${DEB_FILE}.md5

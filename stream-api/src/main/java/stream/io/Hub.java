@@ -48,6 +48,15 @@ public class Hub implements QueueService, HubService {
 	}
 
 	/**
+	 * @see stream.io.QueueService#take()
+	 */
+	@Override
+	public Data take() {
+		return null;
+	}
+
+
+	/**
 	 * @see stream.io.QueueService#enqueue(stream.data.Data)
 	 */
 	@Override

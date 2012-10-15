@@ -40,6 +40,8 @@ public interface QueueService extends Service {
 	 *         queue.
 	 */
 	public Data poll();
+	
+	public Data take();
 
 	/**
 	 * This method will insert the given element into the queue. The method does

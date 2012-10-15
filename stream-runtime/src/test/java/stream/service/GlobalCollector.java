@@ -56,4 +56,17 @@ public class GlobalCollector implements QueueService {
 			return new ArrayList<Data>(globalCollection);
 		}
 	}
+
+	@Override
+	public Data take() {
+		try {
+			while( globalCollection.isEmpty() ){
+				globalCollection.wait();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return globalCollection.get(0);
+	}
 }

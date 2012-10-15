@@ -124,6 +124,18 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	public Data poll() {
 		return queue.poll();
 	}
+	
+	@Override
+	public Data take(){
+		try {
+			return queue.take();
+		} catch (Exception e) {
+			log.error( "Interrupted while reading on queue: {}", e.getMessage() );
+			if( log.isDebugEnabled() )
+				e.printStackTrace();
+			return null;
+		}
+	}
 
 	/**
 	 * @see stream.io.QueueService#enqueue(stream.data.Data)

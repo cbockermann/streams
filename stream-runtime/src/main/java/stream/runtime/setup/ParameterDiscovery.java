@@ -137,7 +137,7 @@ public class ParameterDiscovery {
 			Parameter param = m.getAnnotation(Parameter.class);
 			if (param != null) {
 				log.info("Found @parameter annotated field '{}'", m.getName());
-				log.info("    field.getType() = {}", m.getParameterTypes());
+				log.info("    field.getType() = {}", (Object[]) m.getParameterTypes());
 				parameters.add(param);
 			} else {
 				log.info("Field '{}' is not annotated as parameter",

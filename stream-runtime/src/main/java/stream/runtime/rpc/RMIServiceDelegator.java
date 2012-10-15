@@ -42,7 +42,7 @@ public class RMIServiceDelegator implements InvocationHandler, Serializable {
 			log.trace("received invoke-request, method: {}, args: {}",
 					method.getName(), args);
 			log.trace("   object reference is: {}", proxy);
-			log.trace("   arg-types: {}", method.getParameterTypes());
+			log.trace("   arg-types: {}", (Object[]) method.getParameterTypes());
 
 			if (args != null
 					&& !(args.getClass().getComponentType() instanceof Serializable)) {

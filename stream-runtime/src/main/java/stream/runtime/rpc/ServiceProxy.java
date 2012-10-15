@@ -38,7 +38,7 @@ RemoteEndpoint {
 
 			for (Method m : cl.getMethods()) {
 				log.debug("Method: '{}'", m.getName());
-				log.debug("    Args: {}", m.getParameterTypes());
+				log.debug("    Args: {}", (Object[]) m.getParameterTypes());
 				String sig = RMIServiceDelegator.computeSignature(m);
 				methods.put(sig, m);
 				log.debug("Adding (method,signature) with ({},{})", m, sig);

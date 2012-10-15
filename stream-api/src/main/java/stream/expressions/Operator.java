@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import stream.util.WildcardMatch;
+import stream.util.WildcardPattern;
 
 /**
  * <p>
@@ -244,7 +244,8 @@ public abstract class Operator implements Serializable {
 
 		@Override
 		public boolean eval(Object left, Object right) {
-			return WildcardMatch.matches("" + left, "" + right);
+			WildcardPattern pattern = new WildcardPattern( "" + left );
+			return pattern.matches( "" + right );
 		}
 	};
 

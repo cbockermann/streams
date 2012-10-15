@@ -108,7 +108,7 @@ public class ObjectFactory extends VariableContext {
 			}
 		}
 
-		log.debug("URLs: {}", classLoader.getURLs());
+		log.debug("URLs: {}", (Object[]) classLoader.getURLs());
 	}
 
 	public void addClassPathUrls(Collection<URL> newUrls) {
@@ -126,7 +126,7 @@ public class ObjectFactory extends VariableContext {
 				classLoader.addExtraURLs(url);
 			}
 		}
-		log.debug("URLClassLoader.getURLs(): {}", classLoader.getURLs());
+		log.debug("URLClassLoader.getURLs(): {}", (Object[]) classLoader.getURLs());
 	}
 
 	public void addPackage(String pkg) {

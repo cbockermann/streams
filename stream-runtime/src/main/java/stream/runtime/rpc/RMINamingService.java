@@ -85,7 +85,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			//
 			reg = LocateRegistry.getRegistry(port);
 			names = reg.list();
-			log.debug("Found existing registry, names: {}", names);
+			log.debug("Found existing registry, names: {}", (Object[]) names);
 		} catch (Exception e) {
 			log.debug(
 					"No RMI-registry exists as port {}: a new one will be created.",
@@ -98,7 +98,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 				log.debug("Trying to create new registry at port {}", port);
 				registry = LocateRegistry.createRegistry(port);
 				log.debug("New registry has registered objects: {}",
-						registry.list());
+						(Object[]) registry.list());
 			} else {
 				registry = reg;
 			}
@@ -417,7 +417,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			Serializable... args) throws RemoteException {
 		try {
 			log.debug("calling '{}.{}'", name, method);
-			log.debug("   args: {}", args);
+			log.debug("   args: {}", (Object[]) args);
 
 			List<Serializable> params = new ArrayList<Serializable>();
 			for (int i = 0; i < args.length; i++) {

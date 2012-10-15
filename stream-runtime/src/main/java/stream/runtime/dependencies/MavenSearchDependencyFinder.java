@@ -67,8 +67,10 @@ public class MavenSearchDependencyFinder implements DependencyFinder {
 
 		sep = '&';
 		base.append(qs.toString());
-		base.append("&rows=1");
-		base.append("&wt=xml");
+		base.append( sep );
+		base.append("rows=1");
+		base.append( sep );
+		base.append("wt=xml");
 
 		URL url = new URL(base.toString());
 		String res = URLUtilities.readContent(url);

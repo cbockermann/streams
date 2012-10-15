@@ -136,7 +136,7 @@ public class DataStreamFactory {
 					.createNestedProcessors(node);
 			preProcessors.addAll(procs);
 		}
-
+		
 		for (Processor p : preProcessors) {
 			stream.getPreprocessors().add(p);
 		}
@@ -216,7 +216,7 @@ public class DataStreamFactory {
 		return stream;
 	}
 
-	public Class<?> guessStreamFormat(String url) throws Exception {
+	public static Class<?> guessStreamFormat(String url) throws Exception {
 
 		log.info("Trying to derive stream class from URL '{}'", url);
 		String u = url.toLowerCase();

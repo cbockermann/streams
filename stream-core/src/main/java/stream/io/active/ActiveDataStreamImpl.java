@@ -51,10 +51,21 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 
 	protected DataStream stream;
 	protected StreamActivator activator;
+	protected String id;
 
 	public ActiveDataStreamImpl(DataStream stream) {
 		this.stream = stream;
 		this.queue = new LinkedBlockingQueue<Data>(100);
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override

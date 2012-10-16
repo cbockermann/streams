@@ -36,12 +36,23 @@ import stream.data.DataFactory;
 public class ListDataStream implements DataStream {
 
 	final List<Processor> processors = new ArrayList<Processor>();
-	List<Data> data;
-	int pos = 0;
+	protected List<Data> data;
+	protected int pos = 0;
+	protected String id;
 
 	public ListDataStream(Collection<? extends Data> items) {
 		data = new ArrayList<Data>(items);
 		pos = 0;
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override

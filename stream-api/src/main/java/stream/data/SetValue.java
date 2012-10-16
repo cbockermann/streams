@@ -64,11 +64,20 @@ public class SetValue extends ConditionedProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 		if (key != null && value != null) {
-			String val = String.valueOf(ExpressionResolver.resolve(value,
-					context, data));
+			String val = "";
+			if (value == "null") {
+				if (scope.contains(Context.DATA_CONTEXT_NAME)
+						|| scope.isEmpty())
+					data.remove(key);
+				else if (scope.contains(Context.PROCESS_CONTEXT_NAME))
+					context.set(key, null);
+			} else
+				val = String.valueOf(ExpressionResolver.resolve(value, context,
+						data));
+
 			if (scope.contains(Context.DATA_CONTEXT_NAME) || scope.isEmpty())
 				data.put(key, val);
-			if (scope.contains(Context.PROCESS_CONTEXT_NAME))
+			else if (scope.contains(Context.PROCESS_CONTEXT_NAME))
 				context.set(key, val);
 
 		}

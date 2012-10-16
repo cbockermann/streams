@@ -62,12 +62,23 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	protected List<String> additionOrder;
 
 	protected ActiveDataStream activeWrapper;
+	protected String id;
 
 	public AbstractMultiDataStream() {
 		this.attributes = new LinkedHashMap<String, Class<?>>();
 		this.preprocessors = new ArrayList<Processor>();
 		this.streams = new HashMap<String, DataStream>();
 		this.additionOrder = new ArrayList<String>();
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override

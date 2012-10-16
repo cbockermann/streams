@@ -127,8 +127,6 @@ public class ProcessElementHandler implements ElementHandler {
 			// Integer times = new Integer(copies);
 
 			for (String pid : ids) {
-				objectFactory.set("process.id", pid);
-				objectFactory.set("copy.id", pid);
 				Map<String, String> extra = new HashMap<String, String>();
 				extra.put("process.id", pid);
 				extra.put("copy.id", pid);

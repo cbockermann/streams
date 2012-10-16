@@ -32,6 +32,17 @@ import stream.io.DataStream;
 public abstract class GeneratorDataStream implements DataStream {
 
 	final List<Processor> processors = new ArrayList<Processor>();
+	protected String id;
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	@Override
 	public List<Processor> getPreprocessors() {

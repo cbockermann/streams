@@ -1,5 +1,5 @@
 VERSION=0.9.6-SNAPSHOT
-REVISION=1
+REVISION=6
 NAME=streams
 BUILD=.build_tmp
 DIST=jwall-devel
@@ -35,6 +35,7 @@ pre-package:
 	mkdir -p ${BUILD}/opt/streams/lib
 	mkdir -p ${BUILD}/opt/streams/plugins
 	cp -a dist/opt ${BUILD}/
+	rm -rf stream-runner/target/dependency/*
 	cd stream-runner && mvn -DskipTests=true dependency:copy-dependencies && cd ..
 	cp stream-runner/target/dependency/*.jar ${BUILD}/opt/streams/lib/
 #
@@ -55,7 +56,6 @@ deb:	pre-package
 	cp dist/DEBIAN/* ${BUILD}/DEBIAN/
 	cat dist/DEBIAN/control | sed -e 's/Version:.*/Version: ${VERSION}-${REVISION}/' > ${BUILD}/DEBIAN/control
 	chmod 755 ${BUILD}/DEBIAN/p*
-	chown -R root.root ${BUILD}/opt
 	cd ${BUILD} && find opt -type f -exec md5sum {} \; > DEBIAN/md5sums && cd ..
 	dpkg -b ${BUILD} ${RELEASE_DIR}/${DEB_FILE}
 	md5sum ${RELEASE_DIR}/${DEB_FILE} > ${RELEASE_DIR}/${DEB_FILE}.md5

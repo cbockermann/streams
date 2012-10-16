@@ -23,7 +23,7 @@ fi
 # construct the classpath
 #
 CP=$CLASSPATH
-for dir in $LIBDIRS; do
+for dir in $LIB_DIRS; do
    for jar in $STREAMS_HOME/$dir/*.jar; do
       CP=$CP:$jar
    done

@@ -1,12 +1,11 @@
 VERSION=0.9.6-SNAPSHOT
-REVISION=7
+REVISION=8
 NAME=streams
 BUILD=.build_tmp
 DIST=jwall-devel
-WAR_FILE=AuditConsole-${VERSION}.war
-WAR_REV_FILE=AuditConsole-${VERSION}-${REVISION}.war
-DEB_FILE=streams-${VERSION}-${REVISION}.deb
-RPM_FILE=streams-${VERSION}-${REVISION}.noarch.rpm
+ZIP_FILE=${NAME}-${VERSION}-${REVISION}.zip
+DEB_FILE=${NAME}-${VERSION}-${REVISION}.deb
+RPM_FILE=${NAME}-${VERSION}-${REVISION}.noarch.rpm
 RELEASE_DIR=releases
 RPMBUILD=$(PWD)/.rpmbuild
 ARCH=noarch
@@ -35,6 +34,7 @@ pre-package:
 	mkdir -p ${BUILD}/opt/streams/lib
 	mkdir -p ${BUILD}/opt/streams/plugins
 	cp -a dist/opt ${BUILD}/
+	mvn -DskipTests=true clean install
 	rm -rf stream-runner/target/dependency/*
 	cd stream-runner && mvn -DskipTests=true dependency:copy-dependencies && cd ..
 	cp stream-runner/target/dependency/*.jar ${BUILD}/opt/streams/lib/
@@ -47,12 +47,14 @@ pre-package:
 #		cp $$mod/target/$$mod-${VERSION}.jar ${BUILD}/opt/streams/lib/ ; \
 #	done
 
+zip:	pre-package
+	cd ${BUILD} && zip -r ../${RELEASE_DIR}/${NAME}-${VERSION}-${REVISION}.zip . && cd ..
+	md5sum ${RELEASE_DIR}/${ZIP_FILE} > ${RELEASE_DIR}/${ZIP_FILE}.md5
 
 deb:	pre-package
 	rm -rf ${RELEASE_DIR}
 	mkdir -p ${RELEASE_DIR}
 	mkdir -p ${BUILD}/DEBIAN
-	mkdir -p ${BUILD}/opt/streams/lib
 	cp dist/DEBIAN/* ${BUILD}/DEBIAN/
 	cat dist/DEBIAN/control | sed -e 's/Version:.*/Version: ${VERSION}-${REVISION}/' > ${BUILD}/DEBIAN/control
 	chmod 755 ${BUILD}/DEBIAN/p*

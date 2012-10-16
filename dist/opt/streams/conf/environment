@@ -1,0 +1,38 @@
+#!/bin/sh
+#
+# This file defines the environment for running the stream
+# commands. It is generally sourced into the appropriate scripts
+# at the very beginning.
+#
+# @author Christian Bockermann <christian.bockermann@udo.edu>
+#
+#
+
+STREAMS_HOME=/opt/streams
+LIB_DIRS="lib plugins"
+
+#
+# load defaults (if defined)
+#
+if [ -f /etc/default/streams ]; then
+   source /etc/default/streams
+fi
+
+#
+#
+#
+CP=$CLASSPATH
+for dir in $LIB_DIRS; do
+   for jar in $STREAMS_HOME/$dir/*.jar; do
+      CP=$CP:$jar
+   done
+done
+
+
+#
+# We require the JAVA_HOME variable to be set for all scripts
+#
+if [ -z "${JAVA_HOME}" ]; then
+   echo "No JAVA_HOME defined."
+   exit 1
+fi

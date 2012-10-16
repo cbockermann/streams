@@ -1,39 +1,16 @@
 #!/bin/sh
-
-
+#
+# This script calls the stream.run entry point which creates
+# a container from a provided XML definition and starts this
+# container in foreground mode.
+#
 STREAMS_HOME=/opt/streams
-LIB_DIRS="lib plugins"
-
-#
-# load defaults (if defined)
-#
-if [ -f /etc/default/streams ]; then
-   source /etc/default/streams
-fi
 
 #
 # load environment settings from the env configuration
 #
 if [ -f $STREAMS_HOME/conf/environment ]; then
   source $STREAMS_HOME/conf/environment
-fi
-
-
-#
-# construct the classpath
-#
-CP=$CLASSPATH
-for dir in $LIB_DIRS; do
-   for jar in $STREAMS_HOME/$dir/*.jar; do
-      CP=$CP:$jar
-   done
-done
-
-
-
-if [ -z "${JAVA_HOME}" ]; then
-   echo "No JAVA_HOME defined."
-   exit 1
 fi
 
 

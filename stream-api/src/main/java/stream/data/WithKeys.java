@@ -43,10 +43,12 @@ public class WithKeys extends ProcessorList {
 
 	Set<String> selected = new HashSet<String>();
 	private Boolean remove;
+	private Boolean join;
 
 	public WithKeys() {
 		super();
 		this.remove = true;
+		this.join = true;
 	}
 
 	public void setKeys(String[] keys) {
@@ -72,6 +74,14 @@ public class WithKeys extends ProcessorList {
 		return this.remove;
 	}
 
+	public Boolean getJoin() {
+		return join;
+	}
+
+	public void setJoin(Boolean join) {
+		this.join = join;
+	}
+
 	/**
 	 * @see stream.DataProcessor#process(stream.data.Data)
 	 */
@@ -86,10 +96,16 @@ public class WithKeys extends ProcessorList {
 				result.put(key, data.get(key));
 			}
 		}
+		for (String key : keys) {
+			if (!result.containsKey(key))
+				result.put(key, null);
+		}
 
 		Data processed = super.process(result);
-		for (String key : processed.keySet()) {
-			data.put(key, processed.get(key));
+		if (join && processed != null) {
+			for (String key : processed.keySet()) {
+				data.put(key, processed.get(key));
+			}
 		}
 		return data;
 	}

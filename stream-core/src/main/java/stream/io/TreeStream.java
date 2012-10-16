@@ -54,16 +54,27 @@ import stream.parser.DefaultTreeParser;
 public class TreeStream implements DataStream {
 
 	static Logger log = LoggerFactory.getLogger(TreeStream.class);
-	String treeAttribute = "tree";
-	BufferedReader reader;
-	DefaultTreeParser treeParser;
-	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
-	final List<Processor> processors = new ArrayList<Processor>();
+	protected String treeAttribute = "tree";
+	protected BufferedReader reader;
+	protected DefaultTreeParser treeParser;
+	protected Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+	protected final List<Processor> processors = new ArrayList<Processor>();
+	protected String id;
 
 	public TreeStream(URL url) throws Exception {
 		reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		treeParser = new DefaultTreeParser();
 		attributes.put("tree", TreeNode.class);
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getTreeAttribute() {

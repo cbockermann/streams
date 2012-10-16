@@ -50,16 +50,17 @@ import stream.data.DataFactory;
 public abstract class AbstractDataStream implements DataStream {
 	static Logger log = LoggerFactory.getLogger(AbstractDataStream.class);
 
-	URL url;
-	String username;
-	String password;
-	LinkedHashMap<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
-	BufferedReader reader;
-	Long limit = -1L;
-	Long count = 0L;
-	String prefix = null;
+	protected URL url;
+	protected String username;
+	protected String password;
+	protected LinkedHashMap<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+	protected BufferedReader reader;
+	protected Long limit = -1L;
+	protected Long count = 0L;
+	protected String prefix = null;
+	protected String id;
 
-	ArrayList<Processor> preprocessors = new ArrayList<Processor>();
+	protected ArrayList<Processor> preprocessors = new ArrayList<Processor>();
 
 	protected AbstractDataStream() {
 	}
@@ -75,6 +76,11 @@ public abstract class AbstractDataStream implements DataStream {
 		this.username = username;
 		this.password = password;
 		this.initReader();
+	}
+
+	public AbstractDataStream(InputStream in) throws Exception {
+		reader = new BufferedReader(new InputStreamReader(in));
+		// readHeader();
 	}
 
 	protected void initReader() throws Exception {
@@ -97,9 +103,12 @@ public abstract class AbstractDataStream implements DataStream {
 		readHeader();
 	}
 
-	public AbstractDataStream(InputStream in) throws Exception {
-		reader = new BufferedReader(new InputStreamReader(in));
-		// readHeader();
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Map<String, Class<?>> getAttributes() {
@@ -213,6 +222,7 @@ public abstract class AbstractDataStream implements DataStream {
 			// cannot continue, so we leave by returning null
 			//
 			datum = readItem(item);
+			datum.put("@stream", this.id);
 			if (datum == null) {
 				log.debug("End-of-stream reached!");
 				return null;

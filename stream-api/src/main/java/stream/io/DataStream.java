@@ -40,6 +40,17 @@ import stream.data.Data;
 public interface DataStream {
 
 	/**
+	 * @return the id of this stream
+	 */
+	public String getId();
+
+	/**
+	 * @param id
+	 *            the id of the stream
+	 */
+	public void setId(String id);
+
+	/**
 	 * This method returns a mapping of attributes to types. This method may
 	 * return <code>null</code> if a list of attributes can not be provided by
 	 * the stream implementation.

@@ -30,6 +30,7 @@ import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.Data;
 import stream.expressions.ExpressionResolver;
+import stream.service.Service;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ import stream.expressions.ExpressionResolver;
  * 
  */
 @Description(group = "Data Stream.Flow")
-public class OnChange extends If {
+public class OnChange extends If implements Service {
 
 	static Logger log = LoggerFactory.getLogger(OnChange.class);
 
@@ -50,6 +51,14 @@ public class OnChange extends If {
 
 	private String from;
 	private String to;
+
+	public OnChange() {
+		try {
+			reset();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public String getFrom() {
 		return from;
@@ -67,10 +76,6 @@ public class OnChange extends If {
 	@Parameter(required = false, defaultValue = "")
 	public void setTo(String to) {
 		this.to = to;
-	}
-
-	public OnChange() {
-		oldValue = null;
 	}
 
 	@Parameter(required = true, defaultValue = "")
@@ -145,6 +150,14 @@ public class OnChange extends If {
 				oldValue = value;
 				return false;
 			}
+			if (from.equals("!null")) {
+				if (oldValue != null && !oldValue.equals(value)) {
+					oldValue = value;
+					return true;
+				}
+				if (oldValue == null)
+					return false;
+			}
 			if (from.equals(oldValue) && (value == null || !from.equals(value))) {
 				oldValue = value;
 				return true;
@@ -165,5 +178,10 @@ public class OnChange extends If {
 		}
 		oldValue = value;
 		return false;
+	}
+
+	@Override
+	public void reset() throws Exception {
+		oldValue = null;
 	}
 }

@@ -26,19 +26,30 @@ import stream.io.DataStream;
 public class UDPStream implements DataStream, Runnable {
 
 	static Logger log = LoggerFactory.getLogger(UDPStream.class);
-	String protocol = "udp";
-	String address = "0.0.0.0";
-	Integer port;
-	DatagramSocket socket;
+	private String protocol = "udp";
+	protected String address = "0.0.0.0";
+	protected Integer port;
+	protected DatagramSocket socket;
 
-	boolean running = false;
+	protected boolean running = false;
 
-	Integer packetSize = 1024;
-	Integer backlog = 100;
-	final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
-	final List<Processor> processors = new ArrayList<Processor>();
+	protected Integer packetSize = 1024;
+	protected Integer backlog = 100;
+	protected final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
+	protected final List<Processor> processors = new ArrayList<Processor>();
 
-	Thread t;
+	protected Thread t;
+	protected String id;
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	/**
 	 * @see stream.io.DataStream#getAttributes()

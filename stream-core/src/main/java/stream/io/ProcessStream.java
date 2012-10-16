@@ -46,12 +46,23 @@ public class ProcessStream implements DataStream {
 
 	static Logger log = LoggerFactory.getLogger(ProcessStream.class);
 	final ProcessorList processors = new ProcessorList();
-	Process process;
-	DataStream dataStream;
-	Class<? extends DataStream> dataStreamClass = stream.io.CsvStream.class;
+	protected Process process;
+	protected DataStream dataStream;
+	protected Class<? extends DataStream> dataStreamClass = stream.io.CsvStream.class;
 
-	String format;
-	String command;
+	protected String format;
+	protected String command;
+	protected String id;
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	/**
 	 * @see stream.io.DataStream#getAttributes()

@@ -164,8 +164,12 @@ public class ObjectFactory extends VariableContext {
 		globalObjectNumbers.put(obj, cur + 1);
 		return obj + cur;
 	}
-
+	
 	public Object create(Element node) throws Exception {
+		return create( node, new HashMap<String,String>() );
+	}
+
+	public Object create(Element node, Map<String,String> variables ) throws Exception {
 		Map<String, String> params = getAttributes(node);
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
@@ -177,19 +181,26 @@ public class ObjectFactory extends VariableContext {
 			}
 		}
 
-		Object obj = create(this.findClassForElement(node), params);
+		Object obj = create(this.findClassForElement(node), params, variables );
 		return obj;
 	}
 
-	public Object create(String className, Map<String, String> parameter)
+	public Object create( String className, Map<String,String> parameter) throws Exception {
+		return create( className, parameter, new HashMap<String,String>() );
+	}
+	
+	public Object create(String className, Map<String, String> parameter, Map<String,String> extraVariables )
 			throws Exception {
 
 		Map<String, String> params = new HashMap<String, String>();
 		params.putAll(variables);
 		params.putAll(parameter);
+		
+		VariableContext ctx = new VariableContext( this );
+		ctx.addVariables( extraVariables );
 
 		log.debug("Parameters for new class: {}", params);
-		log.debug("object-factory.variables: {}", this.variables);
+		log.debug("extra.variables: {}", ctx.getVariables() );
 
 		Map<String, String> p = new HashMap<String, String>();
 		for (String key : parameter.keySet()) {
@@ -198,12 +209,12 @@ public class ObjectFactory extends VariableContext {
 			//
 			if (parameter.get(key).indexOf("%{container") >= 0) {
 				String orig = parameter.get(key);
-				String expanded = expand(orig);
+				String expanded = ctx.expand(orig);
 				p.put(key, expanded);
 				log.debug("Expanded {} to {}", orig, expanded);
 			} else {
 				String orig = parameter.get(key);
-				String expanded = expand(orig);
+				String expanded = ctx.expand(orig);
 				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);
 			}

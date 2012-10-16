@@ -132,4 +132,8 @@ public class VariableContext {
 
 		return val;
 	}
+	
+	public Map<String,String> getVariables(){
+		return variables;
+	}
 }

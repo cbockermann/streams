@@ -225,6 +225,7 @@ public class ObjectFactory extends VariableContext {
 
 		// create an instance of this class using the "default way"
 		//
+		log.debug( "Looking for class '{}'", className );
 		Class<?> clazz = Class.forName(className, false, classLoader);
 		object = clazz.newInstance();
 

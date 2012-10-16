@@ -59,6 +59,7 @@ import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessElementHandler;
 import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.PropertiesHandler;
+import stream.runtime.setup.QueueElementHandler;
 import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
@@ -187,6 +188,7 @@ public class ProcessContainer {
 
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
+		elementHandler.put( "Queue", new QueueElementHandler() );
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
@@ -401,6 +403,14 @@ public class ProcessContainer {
 		}
 	}
 
+	
+	public void registerQueue( String id, DataStreamQueue queue ) throws Exception {
+		log.debug( "A new queue '{}' is registered for id '{}'", queue, id );
+		listeners.put( id, queue );
+		setStream( id, queue );
+		context.register( id, queue );
+	}
+	
 	protected void injectServices() throws Exception {
 		ServiceInjection.injectServices(this.getServiceRefs(),
 				this.getContext());

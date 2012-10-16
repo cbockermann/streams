@@ -132,6 +132,7 @@ public class ServiceInjection {
 			if (m != null) {
 				log.debug("Injecting service {} into consumer {}", service,
 						consumer);
+				log.debug( "Method for injection is {}", m );
 				m.invoke(consumer, service);
 			} else {
 				throw new Exception("Failed to lookup service-setter for "

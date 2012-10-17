@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -60,7 +62,7 @@ public class run {
 	}
 	
 	
-	public static boolean handleArguments( String[] args ){
+	public static List<String> handleArguments( String[] args ){
 		
 		if( args.length == 0 ){
 			System.out.println( "streams, Version " + getVersion());
@@ -70,17 +72,38 @@ public class run {
 			System.out.println( "Usage: " );
 			System.out.println( "\tstream.run /path/container-file.xml" );
 			System.out.println();
-			return false;
+			return null;
 		}
 		
 		for( String arg : args ){
 			if( arg.equals( "-v" ) || "--version".equals( args ) ){
 				System.out.println( "streams, Version " + getVersion() );
-				return false;
+				return null;
 			}
 		}
 		
-		return true;
+		List<String> list = new ArrayList<String>();
+		for( String arg : args ){
+			if( arg.startsWith( "-D" ) ){
+				int idx = arg.indexOf( "=" );
+				String key = null;
+				String value = "";
+				if( idx > 2 ){
+					key = arg.substring( 2, idx );
+					value = arg.substring( idx + 1 );
+				} else {
+					key = arg.substring( 2 );
+				}
+				
+				log.info( "Setting property '{}' = '{}'", key, value );
+				System.setProperty( key, value );
+			} else {
+				log.info( "Adding argument '{}'", arg );
+				list.add( arg );
+			}
+		}
+		
+		return list;
 	}
 	
 
@@ -89,7 +112,8 @@ public class run {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		if( ! handleArguments( args ) ){
+		List<String> params = handleArguments(args);
+		if( params == null || params.isEmpty() ){
 			return;
 		}
 		
@@ -97,9 +121,9 @@ public class run {
 
 		URL url;
 		try {
-			url = new URL(args[0]);
+			url = new URL(params.get(0));
 		} catch (Exception e) {
-			File f = new File(args[0]);
+			File f = new File(params.get(0));
 			url = f.toURI().toURL();
 		}
 		main(url);

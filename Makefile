@@ -1,14 +1,14 @@
-VERSION=0.9.6-SNAPSHOT
-REVISION=11
+VERSION=0.9.6
+REVISION=1
 NAME=streams
 BUILD=.build_tmp
-DIST=jwall-devel
+DIST=jwall
+ARCH=noarch
 ZIP_FILE=${NAME}-${VERSION}-${REVISION}.zip
 DEB_FILE=${NAME}-${VERSION}-${REVISION}.deb
-RPM_FILE=${NAME}-${VERSION}-${REVISION}.noarch.rpm
+RPM_FILE=${NAME}-${VERSION}-${REVISION}.${ARCH}.rpm
 RELEASE_DIR=releases
 RPMBUILD=$(PWD)/.rpmbuild
-ARCH=noarch
 MODULES = stream-api stream-core stream-runtime
 
 update-license:
@@ -70,3 +70,33 @@ release-deb:
 
 unrelease-deb:
 	reprepro --ask-passphrase -b /var/www/download.jwall.org/htdocs/debian remove ${DIST} streams
+
+
+
+rpm:
+	mkdir -p ${RELEASE_DIR}
+	mkdir -p ${RPMBUILD}
+	mkdir -p ${RPMBUILD}/tmp
+	mkdir -p ${RPMBUILD}/RPMS
+	mkdir -p ${RPMBUILD}/RPMS/${ARCH}
+	mkdir -p ${RPMBUILD}/BUILD
+	mkdir -p ${RPMBUILD}/SRPMS
+	rm -rf ${RPMBUILD}/BUILD
+	mkdir -p ${RPMBUILD}/BUILD
+	mkdir -p ${RPMBUILD}/SPECS
+	cp dist/streams.spec ${RPMBUILD}/SPECS
+	cp -a dist/opt ${RPMBUILD}/BUILD
+	mkdir -p ${RPMBUILD}/BUILD/opt/streams/lib
+	mvn -DskipTests=true clean install
+	rm -rf stream-runner/target/dependency/*
+	cd stream-runner && mvn -DskipTests=true dependency:copy-dependencies && cd ..
+	cp stream-runner/target/dependency/*.jar ${RPMBUILD}/BUILD/opt/streams/lib/
+	find .rpmbuild/BUILD -type f | sed -e s/^\.rpmbuild\\/BUILD// | grep -v DEBIAN > ${RPMBUILD}/BUILD/rpmfiles.list
+	rpmbuild --target noarch --sign --define '_topdir ${RPMBUILD}' --define '_version ${VERSION}' --define '_revision ${REVISION}' -bb ${RPMBUILD}/SPECS/streams.spec --buildroot ${RPMBUILD}/BUILD/
+	cp ${RPMBUILD}/RPMS/${ARCH}/${RPM_FILE} ${RELEASE_DIR}
+	md5sum ${RELEASE_DIR}/${RPM_FILE} > ${RELEASE_DIR}/${RPM_FILE}.md5
+
+release-rpm:
+	mkdir -p /var/www/download.jwall.org/htdocs/yum/${DIST}/noarch
+	cp ${RELEASE_DIR}/${RPM_FILE} /var/www/download.jwall.org/htdocs/yum/${DIST}/noarch/
+	createrepo /var/www/download.jwall.org/htdocs/yum/${DIST}/

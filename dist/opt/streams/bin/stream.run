@@ -10,7 +10,7 @@ STREAMS_HOME=/opt/streams
 # load environment settings from the env configuration
 #
 if [ -f $STREAMS_HOME/conf/environment ]; then
-  source $STREAMS_HOME/conf/environment
+   . $STREAMS_HOME/conf/environment
 fi
 
 

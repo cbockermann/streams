@@ -14,3 +14,4 @@ stream-mapred/stream-mapred.jar
 stream-plugin/src/generated-sources
 /releases
 .build_tmp
+.rpmbuild

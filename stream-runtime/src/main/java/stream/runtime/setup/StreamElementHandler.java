@@ -86,6 +86,7 @@ public class StreamElementHandler implements ElementHandler {
 			if (stream != null) {
 				if (id == null)
 					id = "" + stream;
+				stream.setId(id);
 				container.setStream(id, stream);
 			}
 

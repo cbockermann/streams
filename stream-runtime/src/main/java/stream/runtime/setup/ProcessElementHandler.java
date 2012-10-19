@@ -246,19 +246,6 @@ public class ProcessElementHandler implements ElementHandler {
 					container.getServiceRefs().add(serviceRef);
 					continue;
 				}
-
-				/*
-				 * if (key.endsWith("-ref")) { String ref = params.get(key); ref
-				 * = vctx.expand(ref);
-				 * 
-				 * if (serviceClass == null) throw new Exception(
-				 * "Service interface of referenced service '" + key +
-				 * "' cannot be determined!");
-				 * 
-				 * ServiceReference serviceRef = new ServiceReference(ref, o,
-				 * key, serviceClass);
-				 * container.getServiceRefs().add(serviceRef); }
-				 */
 			}
 
 			return (Processor) o;

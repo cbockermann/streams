@@ -1,39 +1,39 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.2}
-\contentsline {subsection}{\numberline {1.1}From Batches to Streams}{3}{subsection.3}
-\contentsline {subsection}{\numberline {1.2}Designing Stream Processes}{4}{subsection.4}
-\contentsline {section}{\numberline {2}Problem and Related Work}{5}{section.11}
-\contentsline {subsection}{\numberline {2.1}Processing Masses of Data}{5}{subsection.12}
-\contentsline {subsection}{\numberline {2.2}The Problem of Continuous Data}{5}{subsection.13}
-\contentsline {section}{\numberline {3}An Abstract Stream Processing Model}{7}{section.15}
-\contentsline {subsection}{\numberline {3.1}Data Streams and Items}{7}{subsection.16}
-\contentsline {subsection}{\numberline {3.2}Stream Processes and Processors}{8}{subsection.17}
-\contentsline {subsection}{\numberline {3.3}Data Flow and Control Flow}{9}{subsection.24}
-\contentsline {section}{\numberline {4}Designing Stream Processes}{10}{section.28}
-\contentsline {subsection}{\numberline {4.1}Layout of a Process Environment}{11}{subsection.29}
-\contentsline {subsubsection}{\numberline {4.1.1}Defining a Stream Source}{11}{subsubsection.44}
-\contentsline {subsubsection}{\numberline {4.1.2}A Stream Process}{12}{subsubsection.45}
-\contentsline {subsubsection}{\numberline {4.1.3}Processing Data Items}{12}{subsubsection.47}
-\contentsline {section}{\numberline {5}Example Applications}{14}{section.56}
-\contentsline {subsection}{\numberline {5.1}FACT Data Analysis}{14}{subsection.57}
-\contentsline {subsubsection}{\numberline {5.1.1}Reading FACT Data}{15}{subsubsection.63}
-\contentsline {subsubsection}{\numberline {5.1.2}Processors for FACT Data}{16}{subsubsection.77}
-\contentsline {section}{\numberline {A}API Reference}{17}{appendix.80}
-\contentsline {subsection}{\numberline {A.1}Package stream.io}{17}{subsection.81}
-\contentsline {subsubsection}{\numberline {A.1.1}ArffStream}{17}{subsubsection.82}
-\contentsline {subsubsection}{\numberline {A.1.2}BlockingQueue}{17}{subsubsection.85}
-\contentsline {subsubsection}{\numberline {A.1.3}CSVStream}{17}{subsubsection.88}
-\contentsline {subsubsection}{\numberline {A.1.4}CsvUpload}{18}{subsubsection.91}
-\contentsline {subsubsection}{\numberline {A.1.5}CsvWriter}{19}{subsubsection.92}
-\contentsline {subsubsection}{\numberline {A.1.6}JSONStream}{19}{subsubsection.95}
-\contentsline {subsubsection}{\numberline {A.1.7}JSONWriter}{19}{subsubsection.98}
-\contentsline {subsubsection}{\numberline {A.1.8}LineStream}{20}{subsubsection.101}
-\contentsline {subsubsection}{\numberline {A.1.9}LineWriter}{21}{subsubsection.104}
-\contentsline {subsubsection}{\numberline {A.1.10}ListDataStream}{21}{subsubsection.107}
-\contentsline {subsubsection}{\numberline {A.1.11}ProcessStream}{22}{subsubsection.108}
-\contentsline {subsubsection}{\numberline {A.1.12}SQLStream}{22}{subsubsection.111}
-\contentsline {subsubsection}{\numberline {A.1.13}SQLWriter}{23}{subsubsection.114}
-\contentsline {subparagraph}{Dropping existing Tables}{24}{section*.115}
-\contentsline {subsubsection}{\numberline {A.1.14}SvmLightStream}{24}{subsubsection.118}
-\contentsline {subsubsection}{\numberline {A.1.15}SvmLightWriter}{24}{subsubsection.121}
-\contentsline {subsubsection}{\numberline {A.1.16}TimeStream}{25}{subsubsection.124}
-\contentsline {subsubsection}{\numberline {A.1.17}TreeStream}{26}{subsubsection.127}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.2}
+\contentsline {subsection}{\numberline {1.1}From Batches to Streams}{2}{subsection.3}
+\contentsline {subsection}{\numberline {1.2}Designing Stream Processes}{3}{subsection.4}
+\contentsline {section}{\numberline {2}Problem and Related Work}{4}{section.11}
+\contentsline {subsection}{\numberline {2.1}Processing Masses of Data}{4}{subsection.12}
+\contentsline {subsection}{\numberline {2.2}The Problem of Continuous Data}{4}{subsection.13}
+\contentsline {section}{\numberline {3}An Abstract Stream Processing Model}{6}{section.15}
+\contentsline {subsection}{\numberline {3.1}Data Streams and Items}{6}{subsection.16}
+\contentsline {subsection}{\numberline {3.2}Stream Processes and Processors}{7}{subsection.17}
+\contentsline {subsection}{\numberline {3.3}Data Flow and Control Flow}{8}{subsection.24}
+\contentsline {section}{\numberline {4}Designing Stream Processes}{9}{section.28}
+\contentsline {subsection}{\numberline {4.1}Layout of a Process Environment}{10}{subsection.29}
+\contentsline {subsubsection}{\numberline {4.1.1}Defining a Stream Source}{10}{subsubsection.44}
+\contentsline {subsubsection}{\numberline {4.1.2}A Stream Process}{11}{subsubsection.45}
+\contentsline {subsubsection}{\numberline {4.1.3}Processing Data Items}{11}{subsubsection.47}
+\contentsline {section}{\numberline {5}Example Applications}{13}{section.56}
+\contentsline {subsection}{\numberline {5.1}FACT Data Analysis}{13}{subsection.57}
+\contentsline {subsubsection}{\numberline {5.1.1}Reading FACT Data}{14}{subsubsection.63}
+\contentsline {subsubsection}{\numberline {5.1.2}Processors for FACT Data}{15}{subsubsection.77}
+\contentsline {section}{\numberline {A}API Reference}{16}{appendix.80}
+\contentsline {subsection}{\numberline {A.1}Package stream.io}{16}{subsection.81}
+\contentsline {subsubsection}{\numberline {A.1.1}ArffStream}{16}{subsubsection.82}
+\contentsline {subsubsection}{\numberline {A.1.2}BlockingQueue}{16}{subsubsection.85}
+\contentsline {subsubsection}{\numberline {A.1.3}CSVStream}{16}{subsubsection.88}
+\contentsline {subsubsection}{\numberline {A.1.4}CsvUpload}{17}{subsubsection.91}
+\contentsline {subsubsection}{\numberline {A.1.5}CsvWriter}{18}{subsubsection.92}
+\contentsline {subsubsection}{\numberline {A.1.6}JSONStream}{18}{subsubsection.95}
+\contentsline {subsubsection}{\numberline {A.1.7}JSONWriter}{18}{subsubsection.98}
+\contentsline {subsubsection}{\numberline {A.1.8}LineStream}{19}{subsubsection.101}
+\contentsline {subsubsection}{\numberline {A.1.9}LineWriter}{20}{subsubsection.104}
+\contentsline {subsubsection}{\numberline {A.1.10}ListDataStream}{20}{subsubsection.107}
+\contentsline {subsubsection}{\numberline {A.1.11}ProcessStream}{21}{subsubsection.108}
+\contentsline {subsubsection}{\numberline {A.1.12}SQLStream}{21}{subsubsection.111}
+\contentsline {subsubsection}{\numberline {A.1.13}SQLWriter}{22}{subsubsection.114}
+\contentsline {subparagraph}{Dropping existing Tables}{23}{section*.115}
+\contentsline {subsubsection}{\numberline {A.1.14}SvmLightStream}{23}{subsubsection.118}
+\contentsline {subsubsection}{\numberline {A.1.15}SvmLightWriter}{23}{subsubsection.121}
+\contentsline {subsubsection}{\numberline {A.1.16}TimeStream}{24}{subsubsection.124}
+\contentsline {subsubsection}{\numberline {A.1.17}TreeStream}{25}{subsubsection.127}

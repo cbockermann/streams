@@ -176,4 +176,10 @@ public class MultiSet<T> implements Set<T> {
 
 		return arg0;
 	}
+	
+	public int count( T arg0 ){
+		if( countMap.containsKey( arg0 ) )
+			return countMap.get( arg0 ).intValue();
+		return 0;
+	}
 }

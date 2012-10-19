@@ -1,0 +1,38 @@
+\BOOKMARK [1][-]{section.2}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.3}{From Batches to Streams}{section.2}% 2
+\BOOKMARK [2][-]{subsection.4}{Designing Stream Processes}{section.2}% 3
+\BOOKMARK [1][-]{section.11}{Problem and Related Work}{}% 4
+\BOOKMARK [2][-]{subsection.12}{Processing Masses of Data}{section.11}% 5
+\BOOKMARK [2][-]{subsection.13}{The Problem of Continuous Data}{section.11}% 6
+\BOOKMARK [1][-]{section.15}{An Abstract Stream Processing Model}{}% 7
+\BOOKMARK [2][-]{subsection.16}{Data Streams and Items}{section.15}% 8
+\BOOKMARK [2][-]{subsection.17}{Stream Processes and Processors}{section.15}% 9
+\BOOKMARK [2][-]{subsection.24}{Data Flow and Control Flow}{section.15}% 10
+\BOOKMARK [1][-]{section.28}{Designing Stream Processes}{}% 11
+\BOOKMARK [2][-]{subsection.29}{Layout of a Process Environment}{section.28}% 12
+\BOOKMARK [3][-]{subsubsection.44}{Defining a Stream Source}{subsection.29}% 13
+\BOOKMARK [3][-]{subsubsection.45}{A Stream Process}{subsection.29}% 14
+\BOOKMARK [3][-]{subsubsection.47}{Processing Data Items}{subsection.29}% 15
+\BOOKMARK [1][-]{section.56}{Example Applications}{}% 16
+\BOOKMARK [2][-]{subsection.57}{FACT Data Analysis}{section.56}% 17
+\BOOKMARK [3][-]{subsubsection.63}{Reading FACT Data}{subsection.57}% 18
+\BOOKMARK [3][-]{subsubsection.77}{Processors for FACT Data}{subsection.57}% 19
+\BOOKMARK [1][-]{appendix.80}{API Reference}{}% 20
+\BOOKMARK [2][-]{subsection.81}{Package stream.io}{appendix.80}% 21
+\BOOKMARK [3][-]{subsubsection.82}{ArffStream}{subsection.81}% 22
+\BOOKMARK [3][-]{subsubsection.85}{BlockingQueue}{subsection.81}% 23
+\BOOKMARK [3][-]{subsubsection.88}{CSVStream}{subsection.81}% 24
+\BOOKMARK [3][-]{subsubsection.91}{CsvUpload}{subsection.81}% 25
+\BOOKMARK [3][-]{subsubsection.92}{CsvWriter}{subsection.81}% 26
+\BOOKMARK [3][-]{subsubsection.95}{JSONStream}{subsection.81}% 27
+\BOOKMARK [3][-]{subsubsection.98}{JSONWriter}{subsection.81}% 28
+\BOOKMARK [3][-]{subsubsection.101}{LineStream}{subsection.81}% 29
+\BOOKMARK [3][-]{subsubsection.104}{LineWriter}{subsection.81}% 30
+\BOOKMARK [3][-]{subsubsection.107}{ListDataStream}{subsection.81}% 31
+\BOOKMARK [3][-]{subsubsection.108}{ProcessStream}{subsection.81}% 32
+\BOOKMARK [3][-]{subsubsection.111}{SQLStream}{subsection.81}% 33
+\BOOKMARK [3][-]{subsubsection.114}{SQLWriter}{subsection.81}% 34
+\BOOKMARK [3][-]{subsubsection.118}{SvmLightStream}{subsection.81}% 35
+\BOOKMARK [3][-]{subsubsection.121}{SvmLightWriter}{subsection.81}% 36
+\BOOKMARK [3][-]{subsubsection.124}{TimeStream}{subsection.81}% 37
+\BOOKMARK [3][-]{subsubsection.127}{TreeStream}{subsection.81}% 38

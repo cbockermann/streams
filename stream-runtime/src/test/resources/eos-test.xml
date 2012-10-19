@@ -1,0 +1,22 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+	<Process input="input">
+	
+		<stream.test.LogData />
+		
+		<stream.flow.Enqueue queue="queue"/>
+		
+		<stream.flow.Delay time="500 ms" />
+		
+	</Process>
+	
+	<process input="queue">
+		<stream.test.LogData />
+	</process>	
+</Container>

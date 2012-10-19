@@ -125,7 +125,7 @@ public class ProcessContainer {
 
 	/** The set of data streams (sources) */
 	protected final Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
-	
+
 	/** A multi set counting the references to a stream */
 	protected final MultiSet<DataStream> streamRefs = new MultiSet<DataStream>();
 
@@ -144,14 +144,14 @@ public class ProcessContainer {
 	protected NamingService namingService = null;
 
 	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();	
-	
+
 	boolean server = true;
 
 	Long startTime = 0L;
 
 	final static String[] extensions = new String[] {
-			"stream.moa.MoaObjectFactory",
-			"stream.script.JavaScriptProcessorFactory" };
+		"stream.moa.MoaObjectFactory",
+	"stream.script.JavaScriptProcessorFactory" };
 
 	static {
 
@@ -409,14 +409,14 @@ public class ProcessContainer {
 		}
 	}
 
-	
+
 	public void registerQueue( String id, DataStreamQueue queue ) throws Exception {
 		log.debug( "A new queue '{}' is registered for id '{}'", queue, id );
 		listeners.put( id, queue );
 		setStream( id, queue );
 		context.register( id, queue );
 	}
-	
+
 	protected void injectServices() throws Exception {
 		ServiceInjection.injectServices(this.getServiceRefs(),
 				this.getContext());
@@ -486,8 +486,43 @@ public class ProcessContainer {
 					log.debug("Process '{}' is finished.", p);
 					log.debug("Removing finished process {}", p);
 					it.remove();
+
+					if( p instanceof Process){
+						Process proc = (Process) p;
+						if( streamRefs.contains( proc.getDataStream() ) ){
+							DataStream stream = proc.getDataStream();
+							streamRefs.remove( stream );
+							if( streamRefs.count(stream) == 0 ){
+								log.debug( "ref-count for stream {} is 0!", stream );
+								try {
+									log.info( "Closing stream {}", stream );
+									stream.close();
+								} catch (Exception e) {
+									log.error( "Faild to properly close stream {}: {}", stream, e.getMessage() );
+									if( log.isDebugEnabled() )
+										e.printStackTrace();
+								}
+							}
+						}
+					}
+
 				} else {
 					log.trace("    {} is still running", p);
+				}
+			}
+
+			//
+			// At this point, only processes listening on queues
+			// should be active, i.e. all streams have been completely
+			// processed.
+			//
+			for( String qn : listeners.keySet() ){
+				try {
+					DataStreamQueue queue = listeners.get(qn);
+					log.info( "Closing queue '{}' ({})", qn, queue );
+					queue.close();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -567,10 +602,11 @@ public class ProcessContainer {
 							if( streamRefs.contains( stream ) ){
 								log.info( "Process {} finished, decrementing ref-count for stream '{}'", p, stream);
 								streamRefs.remove( stream );
-								
+
 								log.info( "Ref-count for stream {} is {}", stream, streamRefs.count(stream) );
 								if( streamRefs.count( stream ) == 0 ){
 									try {
+										log.info( "Closing stream {}", stream );
 										stream.close();
 									} catch (Exception e) {
 										log.error( "Failed to close stream '{}': {}", stream, e.getMessage() );

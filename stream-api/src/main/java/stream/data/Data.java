@@ -36,6 +36,8 @@ import java.util.Map;
  */
 public interface Data extends Map<String, Serializable>, Serializable {
 
+	public final static Data END_OF_STREAM = DataFactory.create();
+	
 	/**
 	 * attributes starting with this prefix are considered special and will not
 	 * be regarded for training classifiers

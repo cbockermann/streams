@@ -236,7 +236,7 @@ public class ServiceInjection {
 		for (Method m : o.getClass().getMethods()) {
 
 			if (m.getName().toLowerCase()
-					.startsWith("set" + serviceName.toLowerCase())) {
+					.equals("set" + serviceName.toLowerCase())) {
 
 				log.debug("Found setter  {}(..)  for serviceRefName {}",
 						m.getName(), serviceRefName);

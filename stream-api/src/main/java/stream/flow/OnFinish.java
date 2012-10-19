@@ -18,5 +18,6 @@ public class OnFinish extends ProcessorList {
 	@Override
 	public void finish() throws Exception {
 		super.process(DataFactory.create());
+		super.finish();
 	}
 }

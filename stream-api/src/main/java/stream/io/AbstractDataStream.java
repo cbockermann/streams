@@ -222,11 +222,11 @@ public abstract class AbstractDataStream implements DataStream {
 			// cannot continue, so we leave by returning null
 			//
 			datum = readItem(item);
-			datum.put("@stream", this.id);
 			if (datum == null) {
 				log.debug("End-of-stream reached!");
 				return null;
 			}
+			datum.put("@stream", this.id);
 
 			if (prefix != null && !prefix.trim().isEmpty()) {
 				Data prefixed = DataFactory.create();

@@ -49,4 +49,11 @@ public interface DataStreamConsumer {
 	 * @param stream
 	 */
 	public void setDataStream(DataStream stream);
+	
+	/**
+	 * Returns the data-stream assigned to this consumer.
+	 * 
+	 * @return
+	 */
+	public DataStream getDataStream();
 }

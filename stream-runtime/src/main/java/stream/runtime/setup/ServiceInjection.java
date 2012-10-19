@@ -309,8 +309,8 @@ public class ServiceInjection {
 		
 		// TODO: Is 'isAssignableFrom(..)' the better way here?
 		//
-		//if( Service.class.isAssignableFrom( clazz ) )
-		//	return true;
+		if( Service.class.isAssignableFrom( clazz ) )
+			return true;
 		
 		for (Class<?> intf : clazz.getInterfaces()) {
 			log.trace("Checking if {} = {}", intf, Service.class);

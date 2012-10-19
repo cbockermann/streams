@@ -66,6 +66,14 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 	public void setDataStream(DataStream ds) {
 		dataStream = ds;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public DataStream getDataStream(){
+		return dataStream;
+	}
 
 	/**
 	 * @see stream.runtime.AbstractProcess#getNextItem()

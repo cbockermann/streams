@@ -65,6 +65,7 @@ import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.StreamElementHandler;
 import stream.service.NamingService;
+import stream.util.MultiSet;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -124,6 +125,9 @@ public class ProcessContainer {
 
 	/** The set of data streams (sources) */
 	protected final Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
+	
+	/** A multi set counting the references to a stream */
+	protected final MultiSet<DataStream> streamRefs = new MultiSet<DataStream>();
 
 	/** The list of data-stream-queues, that can be fed from external instances */
 	protected final Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
@@ -139,8 +143,8 @@ public class ProcessContainer {
 
 	protected NamingService namingService = null;
 
-	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
-
+	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();	
+	
 	boolean server = true;
 
 	Long startTime = 0L;
@@ -392,10 +396,12 @@ public class ProcessContainer {
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
 					DataStreamQueue q = new BlockingQueue();
-					listeners.put(input, q);
-					setStream(input, q);
-					context.register(input, q);
+					registerQueue( input, q );
 					stream = q;
+				} else {
+					log.info( "Connecting stream '{}' to proces {}", input, process );
+					streamRefs.add( stream );
+					log.info( "   ref-count for stream '{}' is: {}", input, streamRefs.count(stream) );
 				}
 
 				process.setDataStream(stream);
@@ -554,6 +560,26 @@ public class ProcessContainer {
 					if (!process.isAlive()) {
 						log.debug("another process finished...");
 						it.remove();
+
+						if( process instanceof Process){
+							Process p = (Process) process;
+							DataStream stream = p.getDataStream();
+							if( streamRefs.contains( stream ) ){
+								log.info( "Process {} finished, decrementing ref-count for stream '{}'", p, stream);
+								streamRefs.remove( stream );
+								
+								log.info( "Ref-count for stream {} is {}", stream, streamRefs.count(stream) );
+								if( streamRefs.count( stream ) == 0 ){
+									try {
+										stream.close();
+									} catch (Exception e) {
+										log.error( "Failed to close stream '{}': {}", stream, e.getMessage() );
+										if( log.isDebugEnabled() )
+											e.printStackTrace();
+									}
+								}
+							}
+						}
 					}
 				}
 

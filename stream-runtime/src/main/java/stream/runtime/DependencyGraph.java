@@ -142,7 +142,8 @@ public class DependencyGraph {
 		log.debug("[dep-graph] Isolated objects:");
 		log.debug("[dep-graph]");
 		for (Object node : this.getIsolated()) {
-			log.debug("[dep-graph]   * {}", node);
+			log.debug("[dep-graph]   * {}  referenced by: {}", node,
+					getSourcesFor(node));
 		}
 	}
 

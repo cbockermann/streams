@@ -78,9 +78,7 @@ public class ShutdownCondition {
 				log.debug(
 						"Found referenced node '{}' with {} references -> shutdown condition not met.",
 						node, graph.getSourcesFor(node).size());
-
-				graph.print();
-
+				log.debug("   references are: {}", graph.getSourcesFor(node));
 				return false;
 			}
 		}

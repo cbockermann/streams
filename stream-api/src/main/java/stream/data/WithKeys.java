@@ -24,6 +24,7 @@
 package stream.data;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -42,12 +43,10 @@ public class WithKeys extends ProcessorList {
 	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
-	private Boolean remove;
 	private Boolean join;
 
 	public WithKeys() {
 		super();
-		this.remove = true;
 		this.join = true;
 	}
 
@@ -64,14 +63,6 @@ public class WithKeys extends ProcessorList {
 
 	public String[] getKeys() {
 		return keys;
-	}
-
-	public void setRemove(Boolean remove) {
-		this.remove = remove;
-	}
-
-	public Boolean getRemove() {
-		return this.remove;
 	}
 
 	public Boolean getJoin() {
@@ -98,13 +89,22 @@ public class WithKeys extends ProcessorList {
 		}
 		for (String key : keys) {
 			if (!result.containsKey(key))
-				result.put(key, null);
+				result.remove(key);
 		}
 
 		Data processed = super.process(result);
 		if (join && processed != null) {
 			for (String key : processed.keySet()) {
 				data.put(key, processed.get(key));
+			}
+
+			Set<String> k = data.keySet();
+			Iterator<String> it = k.iterator();
+			while (it.hasNext()) {
+				String str = it.next();
+				if (!processed.containsKey(str) && isSelected(str)) {
+					it.remove();
+				}
 			}
 		}
 		return data;

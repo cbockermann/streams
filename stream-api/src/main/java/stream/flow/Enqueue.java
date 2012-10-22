@@ -78,4 +78,14 @@ public class Enqueue extends AbstractProcessor {
 			}
 		}
 	}
+
+	/**
+	 * @see stream.AbstractProcessor#finish()
+	 */
+	@Override
+	public void finish() throws Exception {
+		super.finish();
+		log.debug("Sending EndOfStream item to all queues...");
+		enqueue(Data.END_OF_STREAM);
+	}
 }

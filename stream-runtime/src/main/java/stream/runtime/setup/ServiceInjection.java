@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.ContainerContext;
+import stream.runtime.DependencyGraph;
 import stream.runtime.VariableContext;
 import stream.service.NamingService;
 import stream.service.Service;
@@ -64,7 +65,7 @@ public class ServiceInjection {
 	 */
 	@SuppressWarnings("unused")
 	public static void injectServices(Collection<ServiceReference> refs,
-			ContainerContext ctx) throws Exception {
+			ContainerContext ctx, DependencyGraph graph) throws Exception {
 
 		Iterator<ServiceReference> it = refs.iterator();
 		while (it.hasNext()) {
@@ -95,7 +96,7 @@ public class ServiceInjection {
 							.getComponentType());
 
 					Array.set(services, i, serv);
-
+					graph.add(consumer, serv);
 					log.info("Adding service for {}", serviceRefs[i]);
 				}
 
@@ -132,7 +133,8 @@ public class ServiceInjection {
 			if (m != null) {
 				log.debug("Injecting service {} into consumer {}", service,
 						consumer);
-				log.debug( "Method for injection is {}", m );
+				log.debug("Method for injection is {}", m);
+				graph.add(consumer, service);
 				m.invoke(consumer, service);
 			} else {
 				throw new Exception("Failed to lookup service-setter for "
@@ -160,7 +162,7 @@ public class ServiceInjection {
 		}
 	}
 
-	public static void injectServices(Collection<ServiceReference> refs,
+	private static void injectServices(Collection<ServiceReference> refs,
 			NamingService ns) throws Exception {
 
 		Iterator<ServiceReference> it = refs.iterator();
@@ -306,12 +308,11 @@ public class ServiceInjection {
 			// return false;
 		}
 
-		
 		// TODO: Is 'isAssignableFrom(..)' the better way here?
 		//
-		if( Service.class.isAssignableFrom( clazz ) )
+		if (Service.class.isAssignableFrom(clazz))
 			return true;
-		
+
 		for (Class<?> intf : clazz.getInterfaces()) {
 			log.trace("Checking if {} = {}", intf, Service.class);
 			if (intf.equals(Service.class) || intf == Service.class) {

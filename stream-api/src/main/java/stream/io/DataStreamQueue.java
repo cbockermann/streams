@@ -58,8 +58,8 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	@Override
 	public void close() throws Exception {
 		queue.clear();
+		queue.add(Data.END_OF_STREAM);
 		closed = true;
-		queue.add( Data.END_OF_STREAM );
 	}
 
 	/**
@@ -98,9 +98,12 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 		else
 			return null;
 
-		if( item == Data.END_OF_STREAM )
+		if (item == Data.END_OF_STREAM) {
+			log.debug("Next data-item is end-of-stream event!");
+			closed = true;
 			return null;
-		
+		}
+
 		return instance;
 	}
 
@@ -128,17 +131,17 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	public Data poll() {
 		return queue.poll();
 	}
-	
+
 	@Override
-	public Data take(){
+	public Data take() {
 		try {
 			Data item = queue.take();
-			if( item == Data.END_OF_STREAM )
+			if (item == Data.END_OF_STREAM)
 				return null;
 			return item;
 		} catch (Exception e) {
-			log.error( "Interrupted while reading on queue: {}", e.getMessage() );
-			if( log.isDebugEnabled() )
+			log.error("Interrupted while reading on queue: {}", e.getMessage());
+			if (log.isDebugEnabled())
 				e.printStackTrace();
 			return null;
 		}

@@ -105,4 +105,8 @@ public class Monitor extends AbstractProcess {
 		}
 		return data;
 	}
+
+	public String toString() {
+		return "Monitor[" + super.toString() + "]";
+	}
 }

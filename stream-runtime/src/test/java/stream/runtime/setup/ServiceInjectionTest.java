@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
+import stream.runtime.DependencyGraph;
 import stream.runtime.ProcessContainer;
 
 /**
@@ -82,9 +83,10 @@ public class ServiceInjectionTest {
 		URL url = ServiceInjectionTest.class.getResource("/service-test.xml");
 		ProcessContainer container = new ProcessContainer(url);
 
+		DependencyGraph graph = new DependencyGraph();
 		Collection<ServiceReference> refs = container.getServiceRefs();
 
-		ServiceInjection.injectServices(refs, container.getContext());
+		ServiceInjection.injectServices(refs, container.getContext(), graph);
 
 		container.run();
 	}

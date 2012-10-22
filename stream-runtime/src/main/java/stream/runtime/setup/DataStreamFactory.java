@@ -60,6 +60,7 @@ public class DataStreamFactory {
 		streamClassesByExtension.put("arff", "stream.io.ArffStream");
 	}
 
+	@SuppressWarnings("deprecation")
 	public static DataStream createStream(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory, Element node) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
@@ -136,7 +137,7 @@ public class DataStreamFactory {
 					.createNestedProcessors(node);
 			preProcessors.addAll(procs);
 		}
-		
+
 		for (Processor p : preProcessors) {
 			stream.getPreprocessors().add(p);
 		}

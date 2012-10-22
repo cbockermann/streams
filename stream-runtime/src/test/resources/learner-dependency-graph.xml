@@ -7,19 +7,17 @@
 	<Stream id="input" class="stream.test.TestStream" limit = "10" />
 
 	<Process input="input">
-	<!-- 
-		<stream.test.LogData />
-	 -->
 		
-		<stream.flow.Enqueue queue="queue"/>
-		
+		<PrintData />
+		<stream.data.Counter id="learner" />
 		<stream.flow.Delay time="100 ms" />
-		
 	</Process>
 	
 	<process input="queue">
-	<!-- 
-		<stream.test.LogData />
-	 -->
+
+		<stream.data.PrintCounter counter="learner" />	
+		<stream.data.stats.CountCheck />
+		<PrintData />
+		
 	</process>	
 </Container>

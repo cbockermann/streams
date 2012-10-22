@@ -143,8 +143,8 @@ public class ProcessElementHandler implements ElementHandler {
 
 		} else {
 			objectFactory.set("process.id", id);
-			Map<String,String> extra = new HashMap<String,String>();
-			extra.put( "process.id", id );
+			Map<String, String> extra = new HashMap<String, String>();
+			extra.put("process.id", id);
 			Process process = createProcess(processClass, attr, container,
 					element, extra);
 			log.debug("Created Process object: {}", process);
@@ -156,13 +156,15 @@ public class ProcessElementHandler implements ElementHandler {
 			Map<String, String> attr, ProcessContainer container,
 			Element element, Map<String, String> extraVariables)
 			throws Exception {
-		Process process = (Process) objectFactory.create(processClass, attr, extraVariables );
+		Process process = (Process) objectFactory.create(processClass, attr,
+				extraVariables);
 		log.debug("Created Process object: {}", process);
 
 		List<Processor> procs = createNestedProcessors(container, element,
 				extraVariables);
 		for (Processor p : procs) {
 			process.addProcessor(p);
+			container.getDependencyGraph().add(process, p);
 		}
 		return process;
 	}

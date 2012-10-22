@@ -49,6 +49,8 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	protected ProcessContext context;
 	Long interval = 1000L;
 	String intervalString = "1000ms";
+	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
+
 	protected final List<Processor> processors = new ArrayList<Processor>();
 
 	protected Long count = 0L;
@@ -71,7 +73,7 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	public Data process(Data input) {
 
 		Data data = input;
-
+		log.debug("processing data {}", input);
 		for (Processor proc : processors) {
 			data = proc.process(data);
 			if (data == null) {
@@ -101,16 +103,30 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	 */
 	public void finish() throws Exception {
 
+		log.debug("Finishing process...");
 		running = false;
 
-		for (Processor proc : processors) {
-			if (proc instanceof StatefulProcessor) {
-				((StatefulProcessor) proc).finish();
+		try {
+
+			for (Processor proc : processors) {
+				if (proc instanceof StatefulProcessor) {
+					try {
+						log.debug("Finishing processor {}", proc);
+						((StatefulProcessor) proc).finish();
+					} catch (Exception e) {
+						log.error("Failed to finish processor '{}': {}", proc,
+								e.getMessage());
+						if (log.isDebugEnabled())
+							e.printStackTrace();
+					}
+
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		this.interrupt();
-		// Thread.currentThread().interrupt();
 	}
 
 	/**
@@ -118,6 +134,10 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	 */
 	@Override
 	public void run() {
+
+		for (ProcessListener l : this.processListener) {
+			l.processStarted(this);
+		}
 
 		try {
 			while (running) {
@@ -138,8 +158,8 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 			}
 		} catch (Exception e) {
 			log.error("Aborting process due to errors: {}", e.getMessage());
-			// if (log.isDebugEnabled())
-			e.printStackTrace();
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 			running = false;
 		}
 
@@ -149,6 +169,10 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 			log.warn("Error while finishing process: {}", e.getMessage());
 			if (log.isDebugEnabled())
 				e.printStackTrace();
+		}
+
+		for (ProcessListener l : processListener) {
+			l.processFinished(this);
 		}
 	}
 
@@ -177,5 +201,18 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	public String toString() {
+		return this.getClass().getCanonicalName() + "[" + super.toString()
+				+ "]";
+	}
+
+	public void addListener(ProcessListener l) {
+		this.processListener.add(l);
+	}
+
+	public void removeListener(ProcessListener l) {
+		this.processListener.remove(l);
 	}
 }

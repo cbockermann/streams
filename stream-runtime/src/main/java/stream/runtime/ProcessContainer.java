@@ -65,7 +65,6 @@ import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.StreamElementHandler;
 import stream.service.NamingService;
-import stream.util.MultiSet;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -88,12 +87,18 @@ public class ProcessContainer {
 
 	final static List<ProcessContainer> container = new ArrayList<ProcessContainer>();
 
+	private static boolean runShutdownHook = true;
+
 	static {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
 		//
 		log.debug("Adding container shutdown-hook");
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
+
+				if (!runShutdownHook) {
+					return;
+				}
 
 				if ("disabled".equalsIgnoreCase(System
 						.getProperty("container.shutdown-hook"))) {
@@ -109,6 +114,8 @@ public class ProcessContainer {
 			}
 		});
 	}
+
+	protected final DependencyGraph depGraph = new DependencyGraph();
 
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
 	protected final ProcessorFactory processorFactory = new ProcessorFactory(
@@ -126,9 +133,6 @@ public class ProcessContainer {
 	/** The set of data streams (sources) */
 	protected final Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
 
-	/** A multi set counting the references to a stream */
-	protected final MultiSet<DataStream> streamRefs = new MultiSet<DataStream>();
-
 	/** The list of data-stream-queues, that can be fed from external instances */
 	protected final Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
 
@@ -143,15 +147,15 @@ public class ProcessContainer {
 
 	protected NamingService namingService = null;
 
-	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();	
+	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
 
 	boolean server = true;
 
 	Long startTime = 0L;
 
 	final static String[] extensions = new String[] {
-		"stream.moa.MoaObjectFactory",
-	"stream.script.JavaScriptProcessorFactory" };
+			"stream.moa.MoaObjectFactory",
+			"stream.script.JavaScriptProcessorFactory" };
 
 	static {
 
@@ -192,7 +196,7 @@ public class ProcessContainer {
 
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
-		elementHandler.put( "Queue", new QueueElementHandler() );
+		elementHandler.put("Queue", new QueueElementHandler());
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
@@ -288,6 +292,10 @@ public class ProcessContainer {
 		log.debug("Using naming-service {}", namingService);
 		context = new ContainerContext(name, namingService);
 		this.init(doc);
+	}
+
+	public DependencyGraph getDependencyGraph() {
+		return depGraph;
 	}
 
 	/**
@@ -396,30 +404,27 @@ public class ProcessContainer {
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
 					DataStreamQueue q = new BlockingQueue();
-					registerQueue( input, q );
+					registerQueue(input, q);
 					stream = q;
-				} else {
-					log.info( "Connecting stream '{}' to proces {}", input, process );
-					streamRefs.add( stream );
-					log.info( "   ref-count for stream '{}' is: {}", input, streamRefs.count(stream) );
 				}
 
+				depGraph.add(process, stream);
 				process.setDataStream(stream);
 			}
 		}
 	}
 
-
-	public void registerQueue( String id, DataStreamQueue queue ) throws Exception {
-		log.debug( "A new queue '{}' is registered for id '{}'", queue, id );
-		listeners.put( id, queue );
-		setStream( id, queue );
-		context.register( id, queue );
+	public void registerQueue(String id, DataStreamQueue queue)
+			throws Exception {
+		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
+		listeners.put(id, queue);
+		setStream(id, queue);
+		context.register(id, queue);
 	}
 
 	protected void injectServices() throws Exception {
 		ServiceInjection.injectServices(this.getServiceRefs(),
-				this.getContext());
+				this.getContext(), depGraph);
 	}
 
 	public void setStream(String id, DataStream stream) {
@@ -463,85 +468,51 @@ public class ProcessContainer {
 			log.debug("Initializing process with process-context...");
 			spu.init(ctx);
 
+			spu.addListener(new ProcessListener() {
+
+				@Override
+				public void processStarted(AbstractProcess p) {
+					log.info("Starting process {}", p);
+				}
+
+				@Override
+				public void processFinished(AbstractProcess p) {
+					log.debug(
+							"Process {} finished, removing from dependency-graph.",
+							p);
+					depGraph.remove(p);
+
+					List<LifeCycle> endOfLife = depGraph.remove(p);
+					log.debug("End-of-life for: {}", endOfLife);
+					for (LifeCycle lc : endOfLife) {
+						try {
+							log.debug(
+									"Calling finish() for LifeCycle object {}",
+									lc);
+							lc.finish();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+
 			log.debug("Starting stream-process [{}]", spu);
 			spu.start();
 			log.debug("Stream-process started.");
 		}
 
-		Thread.sleep(1000);
+		log.debug("Waiting for container to finish...");
+		ShutdownCondition con = new ShutdownCondition();
+		con.waitForCondition(depGraph);
 
-		log.debug("waiting for processes to finish...");
-		while (!processes.isEmpty()) {
-			log.trace("{} processes running", processes.size());
-			Iterator<AbstractProcess> it = processes.iterator();
-			while (it.hasNext()) {
-				AbstractProcess p = it.next();
-
-				if (!server && p instanceof Monitor) {
-					it.remove();
-					continue;
-				}
-
-				if (!p.isRunning()) {
-					log.debug("Process '{}' is finished.", p);
-					log.debug("Removing finished process {}", p);
-					it.remove();
-
-					if( p instanceof Process){
-						Process proc = (Process) p;
-						if( streamRefs.contains( proc.getDataStream() ) ){
-							DataStream stream = proc.getDataStream();
-							streamRefs.remove( stream );
-							if( streamRefs.count(stream) == 0 ){
-								log.debug( "ref-count for stream {} is 0!", stream );
-								try {
-									log.info( "Closing stream {}", stream );
-									stream.close();
-								} catch (Exception e) {
-									log.error( "Faild to properly close stream {}: {}", stream, e.getMessage() );
-									if( log.isDebugEnabled() )
-										e.printStackTrace();
-								}
-							}
-						}
-					}
-
-				} else {
-					log.trace("    {} is still running", p);
-				}
-			}
-
-			//
-			// At this point, only processes listening on queues
-			// should be active, i.e. all streams have been completely
-			// processed.
-			//
-			for( String qn : listeners.keySet() ){
-				try {
-					DataStreamQueue queue = listeners.get(qn);
-					log.info( "Closing queue '{}' ({})", qn, queue );
-					queue.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			if ("true".equalsIgnoreCase(System.getProperty("debug.memory"))) {
-				System.out.println("Until now, "
-						+ DataFactory.getDataItemsCreated()
-						+ " data items have been created.");
-			}
-
-			try {
-				Thread.sleep(500);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		// if the shutdown condition has properly been reached (no Ctrl+C), then
+		// we do not require the shutdown hook to be run...
+		ProcessContainer.runShutdownHook = false;
 
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);
-		log.debug("ProcessContainer finished all processes after about {} ms",
+		log.info("ProcessContainer finished all processes after {} ms",
 				(end - start));
 	}
 
@@ -563,6 +534,9 @@ public class ProcessContainer {
 	}
 
 	public void shutdown() {
+
+		if (!runShutdownHook)
+			return;
 
 		synchronized (processes) {
 			for (AbstractProcess process : processes) {
@@ -595,25 +569,15 @@ public class ProcessContainer {
 					if (!process.isAlive()) {
 						log.debug("another process finished...");
 						it.remove();
-
-						if( process instanceof Process){
-							Process p = (Process) process;
-							DataStream stream = p.getDataStream();
-							if( streamRefs.contains( stream ) ){
-								log.info( "Process {} finished, decrementing ref-count for stream '{}'", p, stream);
-								streamRefs.remove( stream );
-
-								log.info( "Ref-count for stream {} is {}", stream, streamRefs.count(stream) );
-								if( streamRefs.count( stream ) == 0 ){
-									try {
-										log.info( "Closing stream {}", stream );
-										stream.close();
-									} catch (Exception e) {
-										log.error( "Failed to close stream '{}': {}", stream, e.getMessage() );
-										if( log.isDebugEnabled() )
-											e.printStackTrace();
-									}
-								}
+						List<LifeCycle> eol = depGraph.remove(process);
+						for (LifeCycle lc : eol) {
+							try {
+								log.info(
+										"Calling finish() for LifeCycle object {}",
+										lc);
+								lc.finish();
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
 						}
 					}

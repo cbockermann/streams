@@ -26,7 +26,6 @@ import stream.io.DataStream;
 public class UDPStream implements DataStream, Runnable {
 
 	static Logger log = LoggerFactory.getLogger(UDPStream.class);
-	private String protocol = "udp";
 	protected String address = "0.0.0.0";
 	protected Integer port;
 	protected DatagramSocket socket;

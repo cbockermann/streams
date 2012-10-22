@@ -1,0 +1,27 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input1" class="stream.test.TestStream" limit = "10" />
+	<Process input="input1">
+		<PrintData />
+	</Process>
+	
+	<Stream id="input2" class="stream.test.TestStream" limit = "10" />
+	<Process input="input2">
+		<PrintData />
+	</Process>
+	
+	<Stream id="input3" class="stream.test.TestStream" limit = "10" />
+	<Process input="input3">
+		<PrintData />
+	</Process>
+	
+	<Stream id="input4" class="stream.test.TestStream" limit = "10" />
+	<Process input="input4">
+		<PrintData />
+	</Process>
+	
+</Container>

@@ -1,0 +1,49 @@
+
+{\footnotesize
+    \begin{tikzpicture}[scale=0.8]
+      \node[cylinder,inner sep=2ex,draw=black!60] at (-1,0) {\textsf{Stream} $D$};
+
+      \node at (3,1.1) {\textsf{Process} $P_1$};
+      \draw[dashed,draw=black!40] (1.75,-0.75) -- (7.25,-0.75) -- (7.25,0.75) -- (1.75,0.75) -- (1.75,-0.75);
+
+      \node[fill=red!8,inner sep=0.75ex,circle,draw=red!40] (a) at (1.5,0) { $d$ };
+      
+      \node[inner sep=1ex,draw=black!60,fill=black!10] (proc) at (2.5,0) { $f_1$ };
+
+      \node (crc) at (3.25,0) { $\circ$ };
+
+      \node[inner sep=1ex,draw=black!60,fill=black!10] (fe) at (4.0,0) { $f_i$ };
+
+      \node (crc) at (4.75,0) { $\circ$ };
+
+      \node at (5.25,0) { $\cdots$ };     
+
+      \node (crc) at (5.75,0) { $\circ$ };
+
+      \node[inner sep=1ex,draw=black!60,fill=black!10] (proc) at (6.5,0) { $f_k$ };
+
+      \node[cylinder, inner sep=1.5ex, draw=black!60] (q) at (4.0,-2.5) {\textsf{Queue} $Q$};
+
+      \draw[draw=black,->] (fe.south) -- (q.north);
+
+
+      \node at (8,-1.4) {\textsf{Process} $P_2$};
+      \draw[dashed,draw=black!40] (6.75,-3.25) -- (10.75,-3.25) -- (10.75,-1.75) -- (6.75,-1.75) -- (6.75,-3.25);
+
+      \node[fill=red!8,inner sep=0.65ex,circle,draw=red!40] (a) at (4.0,-1.25) { $d'$ };
+
+      \node[fill=red!8,inner sep=0.65ex,circle,draw=red!40] (a) at (6.4,-2.5) { $d'$ };
+
+      
+      \node[inner sep=1ex,draw=black!60,fill=black!10] (proc) at (7.5,-2.5) { $h_1$ };
+
+      \node (crc) at (8.25,-2.5) { $\circ$ };
+
+      \node at (8.75,-2.5) { $\cdots$ };      
+
+      \node (crc) at (9.25,-2.5) { $\circ$ };
+
+      \node[inner sep=1ex,draw=black!60,fill=black!10] (proc) at (10,-2.5) { $h_n$ };
+
+    \end{tikzpicture}
+}

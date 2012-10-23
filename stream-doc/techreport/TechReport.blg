@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.4)
+The top-level auxiliary file: TechReport.aux
+A level-1 auxiliary file: api/reference.aux
+The style file: plain.bst
+Database file #1: literatur.bib
+Database file #2: local-refs.bib
+Warning--I didn't find a database entry for "rapidminer"
+Warning--empty booktitle in Charikar02findingfrequent
+You've used 14 entries,
+            2118 wiz_defined-function locations,
+            602 strings with 6815 characters,
+and the built_in function-call counts, 5708 in all, are:
+= -- 574
+> -- 263
+< -- 8
++ -- 104
+- -- 88
+* -- 368
+:= -- 886
+add.period$ -- 48
+call.type$ -- 14
+change.case$ -- 84
+chr.to.int$ -- 0
+cite$ -- 15
+duplicate$ -- 237
+empty$ -- 454
+format.name$ -- 88
+if$ -- 1260
+int.to.chr$ -- 0
+int.to.str$ -- 14
+missing$ -- 13
+newline$ -- 73
+num.names$ -- 30
+pop$ -- 114
+preamble$ -- 1
+purify$ -- 71
+quote$ -- 0
+skip$ -- 185
+stack$ -- 0
+substring$ -- 336
+swap$ -- 82
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 54
+warning$ -- 1
+while$ -- 56
+width$ -- 16
+write$ -- 163
+(There were 2 warnings)

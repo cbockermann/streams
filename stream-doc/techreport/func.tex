@@ -1,0 +1,78 @@
+
+
+A stream provides access to single {\em data item} (also referred to
+as instances, events or examples) which are sequentially processed by
+one or more processing units. As noted above, each data item
+represents a tuple, i.e. a set of ({\em key}, {\em value}) pairs and
+is required to be an atomic, self contained element. Data items from a
+stream may vary in their structure, i.e. may contain different numbers
+of ({\em key}, {\em value}) pairs (e.g. for sparse elements).
+
+%A data item {\em may} correspond to the notion of an example known
+%from RapidMiner, but this is not always the case as we will show in
+%the use case of the FACT telescope data in Section \ref{sec:usecases}.
+
+
+\begin{figure}[h!]
+
+  \begin{center}
+{\footnotesize
+    \begin{tikzpicture}[scale=0.8]
+      \node[cylinder,inner sep=2ex,draw=black!60] at (0,0) {\textsf{Data Stream}};
+      
+      \node[fill=red!8,inner sep=1ex,draw=red!40] (a) at (2.5,0) {A};
+      \node[fill=red!8,inner sep=1ex,draw=red!40] (b) at (3.5,0) {C};
+
+      \node at (5,1.3) {\textsf{Process}};
+      \draw[dashed] (4,-1) -- (11,-1) -- (11,1) -- (4,1) -- (4,-1);
+      
+      \node[inner sep=2ex,draw=black!60,fill=black!10] (proc) at (5.5,0) {\textsf{Processor}};
+
+      \node[circle,fill=red!8,inner sep=1ex,draw=red!40] (a) at (7.5,0) {a};
+%      \node[circle,fill=green!8,inner sep=1ex,draw=green!40] (b) at (8.5,0) {c};
+
+      \node[inner sep=2ex,draw=black!60,fill=black!10] (proc) at (9.5,0) {\textsf{Processor}};
+      \node[circle,fill=blue!8,inner sep=1ex,draw=blue!40] (a) at (11.5,0) {a};
+      \node[circle,fill=blue!8,inner sep=1ex,draw=blue!40] (a) at (12.5,0) {c};
+
+      \draw[->,draw=black!40,very thick] (0,-1.25) -- (12,-1.25);
+    \end{tikzpicture}
+}
+    \caption{\label{fig:pipeline}The general pipeline model for data processing.}
+  \end{center}
+\end{figure}
+
+A {\em data stream} is essentially a possibly unbounded sequence of
+data items. In the pipeline model, a {\em processor} is some
+processing unit that applies a function or filter to a data item. This
+can be the addition/removal/modification of ({\em key}, {\em value})
+pairs to the current item or an update of some model/state internal to
+the processor. Then the outcome is delegated to the subsequent
+processor for further computation. Figure \ref{fig:pipeline}
+illustrates an abstract data process flow following the widely
+accepted pipes-and-filters pattern.
+
+\subsubsection*{Functional Representation of Processes}
+
+As a more abstract concept, each processor is a function $f: M^p\times
+C \rightarrow M^{p'}\times C'$, where $C$ is some (global) state. This
+state $C$ exhibits the fact, that processors may make use of a state,
+e.g. a learnt model. A list of processors $f_1,\ldots,f_m$ can now be modeled as a
+sequence of function applications
+\begin{displaymath}
+  f = f_m \circ \ldots\circ f_1.
+\end{displaymath}
+%Note here, that the $f_i$ {\em may} maintain an internal state or
+%produce side effects, so the term {\em function} does not refer to
+%pure functions in the mathematical or functional programming sense.
+
+Processors are applied to single data items. A list of processors is
+wrapped into a {\em process}, which handles a stream of data
+(sequence). A process $P$ can be defined as a function on sequences,
+built upon a list of processors
+\begin{eqnarray*}
+  P &=& f_m \circ\ldots\circ f_1 \\
+  \langle d_0,d_1,\ldots \rangle &\mapsto& \langle P(d_0,C_0),P(d_1,C_1),\ldots \rangle
+\end{eqnarray*}
+for an initial state $C_0$ of the process. The implicit sequence of
+states $C_0,C_1,\ldots$ represents the evolving state of the process.

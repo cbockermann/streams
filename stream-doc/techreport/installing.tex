@@ -1,0 +1,102 @@
+\section{The \streams Runtime}
+Along with the \streams API, that is provided for implementing custom
+streams or processors, the \streams framework provides a runtime
+environment for running stream containers.
+
+\subsection{Installing the \streams Runtime on Debian/RedHat}
+For Debian and RPM based systems, there exists a package repository,
+that provides Debian and RPM packages that can easily be installed
+using the system's package managers. A step-by-step guide for setting
+up the package manager on Debian and Ubuntu systems is provided in
+Section \ref{sec:installDeb}. Instructions for RedHat based systems
+such as RedHat, CentOS or Scientific Linux are provided in
+\ref{sec:installRPM}.
+
+
+\subsubsection{\label{sec:gpgKey}Signatures for Packages}
+The repositories and all packages within the repository are
+cryptographically signed with a GPG key with ID {\ttfamily 0x13443F4A}
+to ensure their consistency. The key is available at
+
+\sample{http://download.jwall.org/software.gpg}
+
+The key is associated with the following information:
+\sample{User ID: jwall.org Software Repository <software@jwall.org>\newline
+Fingerprint: 175C 915F 51CA 8AA2 387B  E3E8 48E6 B98D 1344 3F4A}
+
+This key needs to be added to the package management key ring of the
+system (e.g. {\em apt} on Debian or {\em yum} on RedHat systems).
+
+\subsubsection{\label{sec:installDeb}Installing on Debian/Ubuntu}
+There exists a Debian/Ubuntu repository at {\ttfamily
+  jwall.org}\footnote{The site \url{http://www.jwall.org/streams/} is
+  the base web-site of the \streams framework.} which provides access
+to the latest release versions of the \streams library.
+
+To access this repository from within your Debian system, you'll need
+create a new file {\ttfamily /etc/apt/sources.list.d/jwall.list} with
+the following content:
+
+\sample{ deb http://download.jwall.org/debian/ jwall main } 
+
+The repositories and all packages within the repository are
+cryptographically signed with a GPG key. Please see Section
+\ref{sec:gpgKey} above for details on how to verify the correctness of
+this key.
+
+This key needs to be added to the APT key ring of the Debian/Ubuntu
+system by running the following commands (the {\ttfamily \#} denotes
+the shell prompt):
+
+\sample{\# sudo wget http://download.jwall.org/debian/software.gpg\newline
+\# sudo apt-key add software.gpg 
+}
+
+After the key and the repository have been added to the APT package
+management, all that is left is to update the package list and install
+the \streams environment with the following commands:
+
+\sample{\# sudo apt-get update\newline
+\# sudo apt-get install streams
+}
+
+The first command will update the package lists, the second will install
+the lastest version of the {\ttfamily streams} package. After installation,
+the system should be equipped with a new {\ttfamily stream.run} command
+to run XML stream processes:
+
+\sample{\# stream.run my-process.xml}
+
+\subsubsection{\label{sec:installRPM}Installing on RedHat/CentOS/Fedora}
+There exists a YUM repository at the {\ttfamily jwall.org} site, which
+provides access to the latest release versions of the \streams framework
+for RedHat based systems.
+
+To access this repository from within your CentOS/RedHat system,
+you'll need to create a file {\ttfamily /etc/yum.repos.d/jwall.repo}
+with the following contents:
+
+\sample{[jwall]\newline
+name=CentOS-jwall - jwall.org packages for noarch\newline
+baseurl=http://download.jwall.org/yum/jwall\newline
+enabled=1\newline
+gpgcheck=1\newline
+protect=1}
+
+The RPM packages are signed with a GPG key, please see Section
+\ref{sec:gpgKey} for information how to validate this key.
+
+To import the GPG key into your system's key ring, run the
+following command as super user:
+
+\sample{\# rpm --import http://download.jwall.org/software.gpg}
+
+After the key has been imported your system is ready to install
+the \streams package using the system's package manager, e.g.
+by running
+
+\sample{\# yum install streams}
+
+This will download the required packages and set up the system
+to provide the {\ttfamily stream.run} command to execute XML
+stream processes.

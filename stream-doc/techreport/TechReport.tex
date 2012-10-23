@@ -89,6 +89,17 @@
 \newcommand{\barbarw}{\bar w_M^\circ}
 \newcommand{\vx}{x}
 
+\newcommand{\sample}[1]{
+\begin{center}
+\begin{tikzpicture}[
+  auto, every node/.style= { text width=0.8\textwidth},
+  block/.style = {rectangle, draw=black!40, thick, fill=black!8, inner sep=1ex, minimum width=0.9\textwidth,
+                  rounded corners=1.25pt}]
+\node [block,anchor=west] (titel) at (0,0) {\ttfamily #1 \hfill};
+\end{tikzpicture}
+\end{center}
+}
+
 
 \begin{document}
 

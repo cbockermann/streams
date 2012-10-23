@@ -5,35 +5,26 @@
 \contentsline {subsection}{\numberline {2.1}Processing Masses of Data}{5}{subsection.12}
 \contentsline {subsection}{\numberline {2.2}The Problem of Continuous Data}{5}{subsection.13}
 \contentsline {section}{\numberline {3}An Abstract Stream Processing Model}{7}{section.15}
-\contentsline {subsection}{\numberline {3.1}Data Streams and Items}{7}{subsection.16}
-\contentsline {subsection}{\numberline {3.2}Stream Processes and Processors}{8}{subsection.17}
-\contentsline {subsection}{\numberline {3.3}Data Flow and Control Flow}{9}{subsection.24}
-\contentsline {section}{\numberline {4}Designing Stream Processes}{10}{section.28}
-\contentsline {subsection}{\numberline {4.1}Layout of a Process Environment}{11}{subsection.29}
-\contentsline {subsubsection}{\numberline {4.1.1}Defining a Stream Source}{11}{subsubsection.44}
-\contentsline {subsubsection}{\numberline {4.1.2}A Stream Process}{12}{subsubsection.45}
-\contentsline {subsubsection}{\numberline {4.1.3}Processing Data Items}{12}{subsubsection.47}
-\contentsline {section}{\numberline {5}Example Applications}{14}{section.56}
-\contentsline {subsection}{\numberline {5.1}FACT Data Analysis}{14}{subsection.57}
-\contentsline {subsubsection}{\numberline {5.1.1}Reading FACT Data}{15}{subsubsection.63}
-\contentsline {subsubsection}{\numberline {5.1.2}Processors for FACT Data}{16}{subsubsection.77}
-\contentsline {section}{\numberline {A}API Reference}{17}{appendix.80}
-\contentsline {subsection}{\numberline {A.1}Package stream.io}{17}{subsection.81}
-\contentsline {subsubsection}{\numberline {A.1.1}ArffStream}{17}{subsubsection.82}
-\contentsline {subsubsection}{\numberline {A.1.2}BlockingQueue}{17}{subsubsection.85}
-\contentsline {subsubsection}{\numberline {A.1.3}CSVStream}{17}{subsubsection.88}
-\contentsline {subsubsection}{\numberline {A.1.4}CsvUpload}{18}{subsubsection.91}
-\contentsline {subsubsection}{\numberline {A.1.5}CsvWriter}{19}{subsubsection.92}
-\contentsline {subsubsection}{\numberline {A.1.6}JSONStream}{19}{subsubsection.95}
-\contentsline {subsubsection}{\numberline {A.1.7}JSONWriter}{19}{subsubsection.98}
-\contentsline {subsubsection}{\numberline {A.1.8}LineStream}{20}{subsubsection.101}
-\contentsline {subsubsection}{\numberline {A.1.9}LineWriter}{21}{subsubsection.104}
-\contentsline {subsubsection}{\numberline {A.1.10}ListDataStream}{21}{subsubsection.107}
-\contentsline {subsubsection}{\numberline {A.1.11}ProcessStream}{22}{subsubsection.108}
-\contentsline {subsubsection}{\numberline {A.1.12}SQLStream}{22}{subsubsection.111}
-\contentsline {subsubsection}{\numberline {A.1.13}SQLWriter}{23}{subsubsection.114}
-\contentsline {subparagraph}{Dropping existing Tables}{24}{section*.115}
-\contentsline {subsubsection}{\numberline {A.1.14}SvmLightStream}{24}{subsubsection.118}
-\contentsline {subsubsection}{\numberline {A.1.15}SvmLightWriter}{24}{subsubsection.121}
-\contentsline {subsubsection}{\numberline {A.1.16}TimeStream}{25}{subsubsection.124}
-\contentsline {subsubsection}{\numberline {A.1.17}TreeStream}{26}{subsubsection.127}
+\contentsline {subsection}{\numberline {3.1}Data Representation and Streams}{7}{subsection.19}
+\contentsline {subsection}{\numberline {3.2}Processes and Processors}{9}{subsection.25}
+\contentsline {subsection}{\numberline {3.3}Data Flow and Control Flow}{10}{subsection.32}
+\contentsline {section}{\numberline {4}Designing Stream Processes}{11}{section.36}
+\contentsline {subsection}{\numberline {4.1}Layout of a Process Environment}{12}{subsection.37}
+\contentsline {subsubsection}{\numberline {4.1.1}Defining a Stream Source}{12}{subsubsection.52}
+\contentsline {subsubsection}{\numberline {4.1.2}A Stream Process}{13}{subsubsection.53}
+\contentsline {subsubsection}{\numberline {4.1.3}Processing Data Items}{13}{subsubsection.55}
+\contentsline {section}{\numberline {5}Example Applications}{15}{section.64}
+\contentsline {subsection}{\numberline {5.1}FACT Data Analysis}{15}{subsection.65}
+\contentsline {subsubsection}{\numberline {5.1.1}Reading FACT Data}{16}{subsubsection.71}
+\contentsline {subsubsection}{\numberline {5.1.2}Processors for FACT Data}{17}{subsubsection.85}
+\contentsline {section}{\numberline {A}The {\em streams}\ Core Classes}{18}{appendix.88}
+\contentsline {subsection}{\numberline {A.1}Data Streams}{18}{subsection.89}
+\contentsline {subsection}{\numberline {A.2}Data Processors}{18}{subsection.90}
+\contentsline {subsubsection}{\numberline {A.2.1}Processors in {\ttfamily stream.flow}}{18}{subsubsection.91}
+\contentsline {subsubsection}{\numberline {A.2.2}Processors in {\ttfamily stream.data}}{18}{subsubsection.92}
+\contentsline {subsubsection}{\numberline {A.2.3}Processors in {\ttfamily stream.parser}}{18}{subsubsection.93}
+\contentsline {section}{\numberline {B}The {\em streams}\ Runtime}{19}{appendix.94}
+\contentsline {subsection}{\numberline {B.1}Installing the {\em streams}\ Runtime on Debian/RedHat}{19}{subsection.95}
+\contentsline {subsubsection}{\numberline {B.1.1}Signatures for Packages}{19}{subsubsection.96}
+\contentsline {subsubsection}{\numberline {B.1.2}Installing on Debian/Ubuntu}{19}{subsubsection.97}
+\contentsline {subsubsection}{\numberline {B.1.3}Installing on RedHat/CentOS/Fedora}{20}{subsubsection.99}

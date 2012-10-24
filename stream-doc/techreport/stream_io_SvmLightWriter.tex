@@ -1,0 +1,26 @@
+\paragraph{SvmLightWriter}
+
+The SvmLightWriter is a simple processor implementation that writes all
+processed items to a file or URL using the SVMlight format. The format
+supports sparse vectors and a single label attribute.
+
+The format is described in (SvmLightStream){[}SvmLightStream.html{]}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+includeAnnotations & boolean &  & ? \\ \hline
+keys & String[] & The attributes to write out, leave blank to write out all attributes. & false\\ \hline
+url & String & The url to write to. & true\\ \hline
+separator & String & The separator to separate columns, usually ',' & false\\ \hline
+attributeFilter & String &  & ? \\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily SvmLightWriter}}
+\end{center}
+\end{figure}

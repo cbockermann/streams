@@ -1,0 +1,46 @@
+\paragraph{CsvWriter}
+
+This processor appends all processed data items to a file in CSV format.
+The processor either adds all keys of the items or only a set of
+previous defined keys.
+
+As first line, the writer emits a header line with a comma separated
+list of column names. This line is prepended with a \texttt{\#}
+character.
+
+The processor supports the creation of files with varying numbers of
+keys/attributes. If an item is processed with a different (larger)
+number of keys and the set of keys has not been defined in the
+\texttt{keys} parameter, a new header will be inserted into the file,
+signaling the header for the next items to be written.
+
+By default the writer uses \texttt{,} as separator, which can be changed
+by the \texttt{separator} parameter.
+
+The following example shows a \emph{CsvWriter} writing to
+\texttt{/tmp/test.csv} using the \texttt{;} as separator. Only keys
+\texttt{@id} and \texttt{name} will be written:
+
+\begin{verbatim}
+  <CsvWriter url="file:/tmp/test.csv" keys="@id,name"
+             separator=";" />
+\end{verbatim}
+
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] & The attributes to write out, leave blank to write out all attributes. & false\\ \hline
+url & String & The url to write to. & true\\ \hline
+separator & String & The separator to separate columns, usually ',' & false\\ \hline
+attributeFilter & String &  & ? \\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily CsvWriter}}
+\end{center}
+\end{figure}

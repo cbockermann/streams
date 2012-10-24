@@ -36,7 +36,7 @@ import stream.expressions.ExpressionResolver;
  * @author Hendrik Blom
  * 
  */
-public class CreateAndMultiEnqueue extends MultiEnqueue {
+public class CreateAndMultiEnqueue extends Enqueue {
 
 	static Logger log = LoggerFactory.getLogger(CreateAndMultiEnqueue.class);
 	String ref = null;

@@ -95,8 +95,8 @@ public class MarkdownToTexConverter implements DocConverter {
 			return;
 
 		out.println("\\begin{figure}[h]");
-		out.println("\\begin{center}");
-		out.println("{\\renewcommand{\\arraystretch}{1.2}");
+		out.println("\\begin{center}{\\footnotesize");
+		out.println("{\\renewcommand{\\arraystretch}{1.4}");
 		out.println("\\textsf{");
 		out.println("\\begin{tabular}{|c|c|p{9cm}|c|} \\hline");
 		out.println("\\textbf{Parameter} & \\textbf{Type} & \\textbf{Description} & \\textbf{Required} \\\\ \\hline  ");
@@ -113,12 +113,12 @@ public class MarkdownToTexConverter implements DocConverter {
 				String name = key;
 				if (p.name() != null && !p.name().trim().isEmpty())
 					name = p.name();
-				out.print(name);
+				out.print("{\\ttfamily " + name + " }");
 				out.print(" & " + typeName);
 				out.print(" & " + p.description().replaceAll("%", "\\%"));
 				out.print(" & " + p.required());
 			} else {
-				out.print(key);
+				out.print("{\\ttfamily " + key + " }");
 				out.print(" & " + typeName);
 				out.print(" & ");
 				out.print(" & ? ");
@@ -128,8 +128,9 @@ public class MarkdownToTexConverter implements DocConverter {
 		out.println("\\end{tabular}");
 		out.println(" } ");
 		out.println(" } ");
-		out.println("\\caption{Parameters of processor {\\ttfamily "
-				+ clazz.getSimpleName() + "}}");
+		out.println(" } ");
+		out.println("\\caption{Parameters of class {\\ttfamily "
+				+ clazz.getCanonicalName() + "}}");
 		out.println("\\end{center}");
 		out.println("\\end{figure}");
 	}

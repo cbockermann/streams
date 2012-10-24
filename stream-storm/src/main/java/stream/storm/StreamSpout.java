@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import stream.Data;
 import stream.StormRunner;
-import stream.data.Data;
 import stream.io.DataStream;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;

@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import stream.Data;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.StormRunner;
-import stream.data.Data;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import backtype.storm.task.OutputCollector;

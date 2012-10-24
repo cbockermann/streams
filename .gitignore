@@ -15,3 +15,5 @@ stream-plugin/src/generated-sources
 /releases
 .build_tmp
 .rpmbuild
+*.aux
+*.toc

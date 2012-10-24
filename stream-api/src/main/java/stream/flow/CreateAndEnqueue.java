@@ -87,9 +87,8 @@ public class CreateAndEnqueue extends Enqueue {
 					result.put(s[1], ser);
 			}
 		}
-		if (!result.isEmpty()) {
+		if (!result.isEmpty())
 			enqueue(result);
-		}
 		return data;
 	}
 
@@ -100,14 +99,10 @@ public class CreateAndEnqueue extends Enqueue {
 	}
 
 	public boolean isNumeric(Object val) {
-
-		if (val instanceof Double) {
-			return true;
-		}
-
 		if (val == null)
 			return false;
-
+		if (val instanceof Double)
+			return true;
 		try {
 			new Double(val.toString());
 			return true;

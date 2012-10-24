@@ -28,8 +28,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.DataFactory;
 
 /**
@@ -70,7 +70,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {
@@ -116,7 +116,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {
@@ -148,7 +148,7 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 	}
 
 	/**
-	 * @see stream.io.QueueService#enqueue(stream.data.Data)
+	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
 	@Override
 	public boolean enqueue(Data item) {

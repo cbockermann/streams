@@ -23,9 +23,9 @@
  */
 package stream.data;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each

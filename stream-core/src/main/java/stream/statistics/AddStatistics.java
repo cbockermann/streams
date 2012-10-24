@@ -6,9 +6,9 @@ package stream.statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.data.Statistics;
 
 /**
@@ -56,7 +56,7 @@ public class AddStatistics implements Processor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

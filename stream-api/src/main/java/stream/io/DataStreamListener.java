@@ -23,7 +23,7 @@
  */
 package stream.io;
 
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author chris

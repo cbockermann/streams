@@ -1,7 +1,7 @@
 package stream.flow;
 
+import stream.Data;
 import stream.ProcessorList;
-import stream.data.Data;
 import stream.data.DataFactory;
 
 /**

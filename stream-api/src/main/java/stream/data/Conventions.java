@@ -25,6 +25,8 @@ package stream.data;
 
 import java.io.Serializable;
 
+import stream.Data;
+
 /**
  * <p>
  * This class implements utility functions for dealing with Key conventions. The

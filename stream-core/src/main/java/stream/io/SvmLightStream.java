@@ -32,8 +32,8 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.data.DataUtils;
 import stream.data.vector.InputVector;
@@ -96,7 +96,7 @@ public class SvmLightStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readNext(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readNext(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data item) throws Exception {

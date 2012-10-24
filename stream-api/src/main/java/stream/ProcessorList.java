@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stream.annotations.Internal;
-import stream.data.Data;
 
 /**
  * <p>
@@ -50,7 +49,7 @@ public class ProcessorList extends AbstractProcessor {
 	protected final List<Processor> processors = new ArrayList<Processor>();
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

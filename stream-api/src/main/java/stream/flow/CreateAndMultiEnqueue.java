@@ -28,7 +28,7 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.expressions.ExpressionResolver;
 
@@ -57,7 +57,7 @@ public class CreateAndMultiEnqueue extends MultiEnqueue {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

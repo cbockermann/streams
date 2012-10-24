@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 
 /**
@@ -57,7 +57,7 @@ public class Hub implements QueueService, HubService {
 
 
 	/**
-	 * @see stream.io.QueueService#enqueue(stream.data.Data)
+	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
 	@Override
 	public boolean enqueue(Data item) {

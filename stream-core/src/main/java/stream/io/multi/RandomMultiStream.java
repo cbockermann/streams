@@ -2,7 +2,7 @@ package stream.io.multi;
 
 import java.util.Map;
 
-import stream.data.Data;
+import stream.Data;
 import stream.io.DataStream;
 
 public class RandomMultiStream extends AbstractMultiDataStream {

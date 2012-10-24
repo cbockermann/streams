@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.ProcessContext;
-import stream.data.Data;
 import stream.io.QueueService;
 
 /**
@@ -43,10 +43,26 @@ public class MultiEnqueue extends AbstractProcessor {
 	protected String[] queuesNames;
 	protected QueueService[] queues;
 
-	public void setQueues(String[] queues) {
-		this.queuesNames = queues;
+	/**
+	 * @return the queues
+	 */
+	public QueueService[] getQueues() {
+		return queues;
 	}
 
+	/**
+	 * @param queues
+	 *            the queues to set
+	 */
+	public void setQueues(QueueService[] queues) {
+		this.queues = queues;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @deprecated
+	 */
 	public String[] getKeys() {
 		return queuesNames;
 	}
@@ -54,20 +70,21 @@ public class MultiEnqueue extends AbstractProcessor {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
-		queues = new QueueService[queuesNames.length];
-		for (int i = 0; i < queuesNames.length; i++) {
-			queues[i] = context.lookup(queuesNames[i], QueueService.class );
-		}
+		/*
+		 * queues = new QueueService[queuesNames.length]; for (int i = 0; i <
+		 * queuesNames.length; i++) { queues[i] = context.lookup(queuesNames[i],
+		 * QueueService.class); }
+		 */
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {
 
 		if (queues == null || queues.length == 0) {
-			log.error("No QueueService injected!");
+			log.error("No QueueServices injected!");
 			return data;
 		}
 
@@ -77,7 +94,7 @@ public class MultiEnqueue extends AbstractProcessor {
 
 	protected void enqueue(Data data) {
 		for (QueueService qs : queues) {
-			qs.enqueue(data);
+			qs.enqueue(data.createCopy());
 		}
 	}
 }

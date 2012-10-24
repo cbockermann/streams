@@ -30,9 +30,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.sql.DatabaseDialect;
 import stream.io.sql.HsqlDialect;
@@ -114,7 +114,7 @@ public class SQLStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {

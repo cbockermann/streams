@@ -1,8 +1,8 @@
 package stream.mock;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.StatefulProcessor;
-import stream.data.Data;
 
 public class SimpleMockProcessor implements StatefulProcessor {
 

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.data.Statistics;
 import stream.learner.MetaDataService;
 
@@ -47,7 +47,7 @@ public class MetaDataPrinter extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data input) {

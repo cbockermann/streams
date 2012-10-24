@@ -25,7 +25,7 @@ package stream.learner;
 
 import java.io.Serializable;
 
-import stream.data.Data;
+import stream.Data;
 
 /**
  * <p>

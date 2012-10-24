@@ -27,7 +27,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author chris
@@ -42,7 +42,7 @@ public class CsvUpload extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.io.CsvWriter#dataArrived(stream.data.Data)
+	 * @see stream.io.CsvWriter#dataArrived(stream.Data)
 	 */
 	@Override
 	public Data process(Data datum) {

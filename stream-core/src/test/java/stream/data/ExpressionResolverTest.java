@@ -27,6 +27,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.expressions.ExpressionResolver;
 import stream.runtime.ContainerContext;
@@ -71,7 +72,7 @@ public class ExpressionResolverTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.expressions.ExpressionResolver#resolve(java.lang.String, stream.runtime.Context, stream.data.Data)}
+	 * {@link stream.expressions.ExpressionResolver#resolve(java.lang.String, stream.runtime.Context, stream.Data)}
 	 * .
 	 */
 	@Test

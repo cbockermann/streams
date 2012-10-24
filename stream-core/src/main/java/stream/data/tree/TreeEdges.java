@@ -26,13 +26,13 @@ package stream.data.tree;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.TreeNode;
 
 public class TreeEdges extends TreeFeatures {
 
 	/**
-	 * @see stream.data.tree.TreeFeatures#processTree(java.lang.String, stream.data.Data)
+	 * @see stream.data.tree.TreeFeatures#processTree(java.lang.String, stream.Data)
 	 */
 	@Override
 	public void processTree(String treeKey, Data data) {

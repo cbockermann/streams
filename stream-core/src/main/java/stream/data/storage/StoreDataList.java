@@ -2,7 +2,7 @@ package stream.data.storage;
 
 import java.util.ArrayList;
 
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author Hendrik Blom

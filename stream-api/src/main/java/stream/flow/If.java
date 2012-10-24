@@ -26,10 +26,10 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.ProcessorList;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 
@@ -76,7 +76,7 @@ public class If extends ProcessorList {
 	}
 
 	/**
-	 * @see stream.ProcessorList#process(stream.data.Data)
+	 * @see stream.ProcessorList#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

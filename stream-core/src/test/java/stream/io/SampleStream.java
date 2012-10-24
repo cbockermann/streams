@@ -1,6 +1,6 @@
 package stream.io;
 
-import stream.data.Data;
+import stream.Data;
 
 public class SampleStream extends AbstractDataStream {
 

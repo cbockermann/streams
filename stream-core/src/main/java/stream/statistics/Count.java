@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.ProcessContext;
-import stream.data.Data;
 import stream.data.Statistics;
 import stream.expressions.ExpressionResolver;
 import stream.util.parser.TimeParser;
@@ -41,7 +41,7 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 	Statistics currentStatistics = new Statistics();
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data input) {

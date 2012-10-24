@@ -98,7 +98,7 @@ public @interface Parameter {
 	/**
 	 * The setting allows to specify runtime-expansion of parameters. This will
 	 * result in the XML value for the attribute to be cached and the setter to
-	 * be called with the evaluated string for each {@link stream.data.Data}
+	 * be called with the evaluated string for each {@link stream.Data}
 	 * item.
 	 * 
 	 * <b>Important: </b> This feature is not supported, yet!

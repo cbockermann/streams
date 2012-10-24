@@ -4,7 +4,7 @@
 
 <Container>
 
-	<property name="database.url" value="jdbc:mysql://192.168.128.100:3306/storage" />
+	<property name="database.url" value="jdbc:mysql://127.0.0.1:3306/storage" />
 
 	<Stream id="input" class="stream.test.TestStream" limit="10000" keys="attr1,attr2,attr2" /> 
 

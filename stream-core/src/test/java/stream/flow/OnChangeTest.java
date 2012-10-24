@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.data.SetValue;
 

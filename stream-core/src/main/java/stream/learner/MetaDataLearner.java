@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.data.Statistics;
 
 /**
@@ -72,7 +72,7 @@ public class MetaDataLearner extends AbstractProcessor implements
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

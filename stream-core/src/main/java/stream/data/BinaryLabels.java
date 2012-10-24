@@ -26,6 +26,7 @@ package stream.data;
 import java.io.Serializable;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Description;
 
 /**

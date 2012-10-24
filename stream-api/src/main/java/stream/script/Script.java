@@ -37,9 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.BodyContent;
 import stream.annotations.Parameter;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -100,7 +100,7 @@ public abstract class Script extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

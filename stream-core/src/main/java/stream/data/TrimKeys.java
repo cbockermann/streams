@@ -24,8 +24,8 @@
 package stream.data;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.data.DataFactory;
 
 /**

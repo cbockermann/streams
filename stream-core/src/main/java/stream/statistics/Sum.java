@@ -23,8 +23,8 @@
  */
 package stream.statistics;
 
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -34,7 +34,7 @@ import stream.data.Data;
 public class Sum extends StatisticsLearner {
 
 	/**
-	 * @see stream.statistics.StatisticsLearner#updateStatistics(stream.data.Data)
+	 * @see stream.statistics.StatisticsLearner#updateStatistics(stream.Data)
 	 */
 	@Override
 	public void updateStatistics(Data item) {

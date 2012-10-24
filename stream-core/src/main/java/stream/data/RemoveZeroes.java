@@ -26,9 +26,9 @@ package stream.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.data.DataUtils;
 
 /**
@@ -39,7 +39,7 @@ import stream.data.DataUtils;
 public class RemoveZeroes implements Processor {
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

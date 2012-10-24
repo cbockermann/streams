@@ -29,10 +29,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
-import stream.data.Data;
 
 /**
  * This class implements the basic active component, ie. a thread executing
@@ -67,7 +67,7 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	public abstract Data getNextItem();
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

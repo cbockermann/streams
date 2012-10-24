@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.data.TreeNode;
 import stream.util.parser.ParseException;
 import stream.util.parser.Parser;

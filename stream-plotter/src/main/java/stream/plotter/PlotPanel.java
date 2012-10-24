@@ -60,7 +60,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.Statistics;
 
 /**
@@ -237,7 +237,7 @@ public class PlotPanel extends JPanel {
 	}
 
 	/**
-	 * @see stream.data.DataListener#dataArrived(stream.data.Data)
+	 * @see stream.data.DataListener#dataArrived(stream.Data)
 	 */
 	public void dataArrived(Data item) {
 

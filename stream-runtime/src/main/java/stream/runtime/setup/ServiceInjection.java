@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import stream.runtime.ContainerContext;
 import stream.runtime.DependencyGraph;
 import stream.runtime.VariableContext;
-import stream.service.NamingService;
 import stream.service.Service;
 
 /**
@@ -159,66 +158,6 @@ public class ServiceInjection {
 		} catch (Exception e) {
 			log.error("Failed to determine service-setter: {}", e.getMessage());
 			return null;
-		}
-	}
-
-	private static void injectServices(Collection<ServiceReference> refs,
-			NamingService ns) throws Exception {
-
-		Iterator<ServiceReference> it = refs.iterator();
-		while (it.hasNext()) {
-			ServiceReference ref = it.next();
-			log.debug("Checking service-reference {}", ref);
-
-			String serviceRef = ref.getRef();
-			Object consumer = ref.getReceiver();
-
-			if (serviceRef.contains(",")) {
-				String[] serviceRefs = serviceRef.split(",");
-				for (int i = 0; i < serviceRefs.length; i++) {
-					serviceRefs[i] = serviceRefs[i].trim();
-				}
-
-				Service[] services = new Service[serviceRefs.length];
-				for (int i = 0; i < serviceRefs.length; i++) {
-					services[i] = (Service) ns.lookup(serviceRefs[i],
-							ref.getServiceClass());
-					log.info("Adding service for {}", services[i],
-							serviceRefs[i]);
-				}
-
-				Method m = getServiceSetter(consumer, ref.getProperty(), true);
-				if (m != null) {
-					log.debug("Injecting service-array {} into consumer {}",
-							services, consumer);
-					m.invoke(consumer, (Object[]) services);
-					return;
-				} else {
-					throw new Exception(
-							"No service-setter found for service-array "
-									+ services + " in object" + consumer);
-				}
-			}
-
-			Service service = (Service) ns.lookup(serviceRef,
-					ref.getServiceClass());
-			if (service == null) {
-				throw new Exception(
-						"No service could be injected for reference '"
-								+ serviceRef
-								+ "' - no service registered for that id?!");
-			}
-			log.debug("Found service of class {} for reference '{}'",
-					service.getClass(), serviceRef);
-
-			Method m = getServiceSetter(consumer, ref.getProperty(), false);
-			log.info("Found service-setter: {}", m);
-
-			if (m != null) {
-				log.debug("Injecting service {} into consumer {}", service,
-						consumer);
-				m.invoke(consumer, service);
-			}
 		}
 	}
 

@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractDataStream;
 

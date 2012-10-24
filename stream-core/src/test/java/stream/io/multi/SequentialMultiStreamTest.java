@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.generator.Gaussian;
 import stream.generator.GaussianStream;
 

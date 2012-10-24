@@ -26,8 +26,8 @@ package stream.io;
 import java.util.List;
 import java.util.Map;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 
 /**
  * <p>

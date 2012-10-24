@@ -32,8 +32,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.DataStream;
 import stream.io.active.ActiveDataStream;

@@ -26,7 +26,7 @@ package stream.expressions;
 import java.io.Serializable;
 
 import stream.Context;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * <p>

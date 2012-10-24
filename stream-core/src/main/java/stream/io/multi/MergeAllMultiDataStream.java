@@ -25,7 +25,7 @@ package stream.io.multi;
 
 import java.util.Map;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.io.DataStream;
 
@@ -42,7 +42,7 @@ import stream.io.DataStream;
 public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 
 	/**
-	 * @see stream.io.multi.AbstractMultiDataStream#readItem(stream.data.Data)
+	 * @see stream.io.multi.AbstractMultiDataStream#readItem(stream.Data)
 	 */
 	@Override
 	protected Data readNext(Data item, Map<String, DataStream> streams)

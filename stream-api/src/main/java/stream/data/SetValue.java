@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
 import stream.Context;
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.expressions.ExpressionResolver;

@@ -25,7 +25,7 @@ package stream.data.vector;
 
 import java.io.Serializable;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataUtils;
 
 /**

@@ -30,7 +30,7 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 
 /**
@@ -161,7 +161,7 @@ public class GaussianStream extends GeneratorDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readNext(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readNext(stream.Data)
 	 */
 	@Override
 	public Data readNext(Data item) throws Exception {

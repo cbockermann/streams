@@ -24,8 +24,8 @@
 package stream.data.test;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.ProcessorException;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -34,7 +34,7 @@ import stream.data.Data;
 public class Assert extends ConditionedProcessor {
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {
@@ -42,7 +42,7 @@ public class Assert extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.ConditionedProcessor#process(stream.data.Data)
+	 * @see stream.ConditionedProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

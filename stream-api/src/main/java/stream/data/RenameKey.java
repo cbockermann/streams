@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 
@@ -90,7 +91,7 @@ public class RenameKey extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data input) {

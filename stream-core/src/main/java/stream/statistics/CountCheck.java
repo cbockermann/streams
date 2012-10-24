@@ -24,7 +24,7 @@
 package stream.statistics;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author chris
@@ -52,7 +52,7 @@ public class CountCheck extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

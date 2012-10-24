@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
-import stream.data.Data;
 
 @Description(text = "", group = "Data Stream.Processing.Transformations.Data")
 public class MapValues implements Processor {

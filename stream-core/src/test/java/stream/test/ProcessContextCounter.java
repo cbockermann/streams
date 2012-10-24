@@ -26,9 +26,9 @@ package stream.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.StatefulProcessor;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -40,7 +40,7 @@ public class ProcessContextCounter implements StatefulProcessor {
 	ProcessContext context;
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

@@ -3,6 +3,7 @@
  */
 package stream.data;
 
+import stream.Data;
 import stream.Processor;
 
 /**
@@ -22,7 +23,7 @@ public class Counter implements CounterService, Processor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

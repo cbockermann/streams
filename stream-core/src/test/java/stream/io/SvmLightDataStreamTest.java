@@ -31,7 +31,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 
 public class SvmLightDataStreamTest {
 

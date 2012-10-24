@@ -23,8 +23,8 @@
  */
 package stream.statistics;
 
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -36,7 +36,7 @@ public class Average extends Sum {
 	Double count = 0.0d;
 
 	/**
-	 * @see stream.statistics.Sum#updateStatistics(stream.data.Data)
+	 * @see stream.statistics.Sum#updateStatistics(stream.Data)
 	 */
 	@Override
 	public void updateStatistics(Data item) {

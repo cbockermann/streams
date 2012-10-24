@@ -31,6 +31,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
 
@@ -138,7 +139,7 @@ public class NumericalBinning implements Processor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

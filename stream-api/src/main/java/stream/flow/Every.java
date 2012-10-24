@@ -3,8 +3,8 @@
  */
 package stream.flow;
 
+import stream.Data;
 import stream.ProcessorList;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -16,7 +16,7 @@ public class Every extends ProcessorList {
 	Long count = 0L;
 
 	/**
-	 * @see stream.ProcessorList#process(stream.data.Data)
+	 * @see stream.ProcessorList#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

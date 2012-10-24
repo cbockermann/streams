@@ -32,7 +32,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import stream.data.Data;
+import stream.Data;
 import stream.plotter.utils.Utils;
 
 public class LabeledTextFieldGroup extends JPanel {

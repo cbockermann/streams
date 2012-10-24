@@ -27,7 +27,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.data.MapValueToID;
 
@@ -39,7 +39,7 @@ public class MapValueToIDTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.data.MapValueToID#process(stream.data.Data)}.
+	 * {@link stream.data.MapValueToID#process(stream.Data)}.
 	 */
 	@Test
 	public void testProcess() {

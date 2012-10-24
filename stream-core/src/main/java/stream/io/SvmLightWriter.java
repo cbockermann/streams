@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataUtils;
 
 public class SvmLightWriter extends CsvWriter {

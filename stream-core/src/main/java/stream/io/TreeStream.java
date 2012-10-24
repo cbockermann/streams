@@ -34,8 +34,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.data.TreeNode;
 import stream.parser.DefaultTreeParser;
@@ -102,7 +102,7 @@ public class TreeStream implements DataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext(stream.data.Data)
+	 * @see stream.io.DataStream#readNext(stream.Data)
 	 */
 	@Override
 	public Data readNext(Data datum) throws Exception {

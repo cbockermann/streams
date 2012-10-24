@@ -4,7 +4,7 @@
 package stream.expressions;
 
 import stream.Context;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ public final class Condition implements Expression {
 
 	/**
 	 * @see stream.expressions.Expression#matches(stream.Context,
-	 *      stream.data.Data)
+	 *      stream.Data)
 	 */
 	@Override
 	public boolean matches(Context ctx, Data item) {

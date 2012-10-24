@@ -7,7 +7,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 import stream.io.CsvWriter;
 
 public class MultiGaussStreamTest {

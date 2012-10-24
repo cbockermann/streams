@@ -5,9 +5,9 @@ package stream.monitor;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import stream.Data;
 import stream.ProcessorList;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.data.Statistics;
 import stream.statistics.StatisticsService;
 
@@ -23,7 +23,7 @@ public class AverageThroughput extends ProcessorList implements
 	AtomicLong itemsProcessed = new AtomicLong(0L);
 
 	/**
-	 * @see stream.ProcessorList#process(stream.data.Data)
+	 * @see stream.ProcessorList#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

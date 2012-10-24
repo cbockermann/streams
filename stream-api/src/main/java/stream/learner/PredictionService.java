@@ -26,7 +26,7 @@ package stream.learner;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import stream.data.Data;
+import stream.Data;
 import stream.service.Service;
 
 /**

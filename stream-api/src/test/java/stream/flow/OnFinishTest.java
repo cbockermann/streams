@@ -3,8 +3,8 @@ package stream.flow;
 import org.junit.Assert;
 import org.junit.Test;
 
+import stream.Data;
 import stream.ProcessorList;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.mock.SimpleMockProcessor;
 

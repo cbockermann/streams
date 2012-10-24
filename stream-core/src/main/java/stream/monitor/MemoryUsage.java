@@ -5,8 +5,8 @@ package stream.monitor;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.Statistics;
 import stream.statistics.StatisticsService;
 
@@ -58,7 +58,7 @@ public class MemoryUsage implements Processor, StatisticsService {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

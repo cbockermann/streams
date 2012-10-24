@@ -8,10 +8,10 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.ExpressionResolver;
 
 /**
@@ -104,7 +104,7 @@ public class LineWriter extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.service.Service;
 import stream.util.SizeOf;
 
@@ -41,19 +41,14 @@ public class MemorySize extends AbstractProcessor {
 	String ref = null;
 	String prefix = "@memory";
 
-	/**
-	 * @return the ref
-	 */
-	public String getRef() {
-		return ref;
-	}
+	Service service;
 
 	/**
 	 * @param ref
 	 *            the ref to set
 	 */
-	public void setRef(String ref) {
-		this.ref = ref;
+	public void setService(Service ref) {
+		this.service = ref;
 	}
 
 	/**
@@ -72,16 +67,16 @@ public class MemorySize extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {
 
 		try {
-			Service p = context.lookup(getRef(), Service.class );
+			Service p = service;
 			log.debug("checking memory of processor {}", p);
 			Double size = SizeOf.sizeOf(p);
-			input.put(prefix + ":" + getRef(), size);
+			input.put(prefix + ":" + p, size);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

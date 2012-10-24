@@ -23,6 +23,8 @@
  */
 package stream.data;
 
+import stream.Data;
+
 /**
  * @author chris
  * @deprecated

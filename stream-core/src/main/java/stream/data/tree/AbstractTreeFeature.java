@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.data.TreeNode;
 
 public abstract class AbstractTreeFeature extends AbstractProcessor implements
@@ -41,7 +41,7 @@ public abstract class AbstractTreeFeature extends AbstractProcessor implements
 	String[] keys = null;
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

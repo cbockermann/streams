@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import stream.Data;
 import stream.Measurable;
-import stream.data.Data;
 import stream.data.DataUtils;
 
 /**

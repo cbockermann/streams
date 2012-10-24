@@ -24,8 +24,8 @@
 package stream.data;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ import stream.data.Data;
 public class PrintData extends ConditionedProcessor {
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

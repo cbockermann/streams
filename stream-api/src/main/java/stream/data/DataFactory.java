@@ -29,6 +29,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
+
 /**
  * <p>
  * This factory class is used to create instances of the data item class.

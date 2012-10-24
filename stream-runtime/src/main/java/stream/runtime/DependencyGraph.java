@@ -24,37 +24,14 @@ public class DependencyGraph {
 	final Set<Object> nodes = new LinkedHashSet<Object>();
 	final List<Edge> edges = new ArrayList<Edge>();
 
-	final Object lock = new Object();
-
-	public DependencyGraph() {
-		Thread t = new Thread() {
-			public void run() {
-				while (true) {
-					synchronized (lock) {
-						log.info("Triggering shutdown-condition-check");
-						lock.notify();
-					}
-					try {
-						Thread.sleep(1000);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		// t.start();
-	}
-
-	public void add(Object from, Object to) {
+	public synchronized void add(Object from, Object to) {
 		nodes.add(from);
 		nodes.add(to);
 		edges.add(new Edge(from, to));
-		synchronized (lock) {
-			lock.notify();
-		}
+		this.notify();
 	}
 
-	public Set<Object> getSources() {
+	public synchronized Set<Object> getSources() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
 			nodes.add(edge.getFrom());
@@ -62,7 +39,7 @@ public class DependencyGraph {
 		return nodes;
 	}
 
-	public Set<Object> getTargets(Object from) {
+	public synchronized Set<Object> getTargets(Object from) {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
 			if (edge.getFrom() == from)
@@ -71,7 +48,7 @@ public class DependencyGraph {
 		return nodes;
 	}
 
-	public Set<Object> getReferencedObjects() {
+	public synchronized Set<Object> getReferencedObjects() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
 			nodes.add(edge.getTo());
@@ -79,7 +56,7 @@ public class DependencyGraph {
 		return nodes;
 	}
 
-	public Set<Object> getSourcesFor(Object target) {
+	public synchronized Set<Object> getSourcesFor(Object target) {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
 			if (edge.getTo() == target)
@@ -88,16 +65,7 @@ public class DependencyGraph {
 		return nodes;
 	}
 
-	public Set<Object> getRoots() {
-		Set<Object> nodes = new LinkedHashSet<Object>();
-		for (Object node : this.nodes) {
-			if (getTargets(node).isEmpty())
-				nodes.add(node);
-		}
-		return nodes;
-	}
-
-	public Set<Object> getIsolated() {
+	public synchronized Set<Object> getIsolated() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Object node : this.nodes) {
 			if (getSourcesFor(node).isEmpty())
@@ -106,60 +74,23 @@ public class DependencyGraph {
 		return nodes;
 	}
 
-	public void clear() {
+	public synchronized void clear() {
 		nodes.clear();
 		edges.clear();
-		synchronized (lock) {
-			lock.notify();
-		}
+		this.notify();
 	}
 
-	public void print() {
-
-		for (Object node : nodes) {
-			StringBuffer sb = new StringBuffer();
-			sb.append(node + "  references: ");
-			Set<Object> targets = getTargets(node);
-			Iterator<Object> it = targets.iterator();
-			while (it.hasNext()) {
-				sb.append(it.next() + "");
-				if (it.hasNext())
-					sb.append(", ");
-			}
-			log.debug("[dep-graph]    {}", sb);
-		}
-		log.debug("[dep-graph]");
-		log.debug("[dep-graph]  Finishing nodes: {}", getRoots());
-		log.debug("[dep-graph]");
-		log.debug("[dep-graph]");
-		log.debug("[dep-graph]  Reference counts: ");
-		for (Object node : this.nodes) {
-			log.debug("[dep-graph]     * {}  is referenced by {} objects",
-					node, this.getSourcesFor(node).size());
-		}
-
-		log.debug("[dep-graph]");
-		log.debug("[dep-graph] Isolated objects:");
-		log.debug("[dep-graph]");
-		for (Object node : this.getIsolated()) {
-			log.debug("[dep-graph]   * {}  referenced by: {}", node,
-					getSourcesFor(node));
-		}
-	}
-
-	public List<LifeCycle> remove(Object o) {
+	public synchronized List<LifeCycle> remove(Object o) {
 		if (!nodes.contains(o)) {
 			return new ArrayList<LifeCycle>();
 		}
 
 		List<LifeCycle> objs = remove(o, false);
-		synchronized (lock) {
-			lock.notify();
-		}
+		this.notify();
 		return objs;
 	}
 
-	private List<LifeCycle> remove(Object o, boolean notify) {
+	private synchronized List<LifeCycle> remove(Object o, boolean notify) {
 		log.debug("Removing {} from dependency-graph...", o);
 		List<LifeCycle> lifeObjects = new ArrayList<LifeCycle>();
 		if (!nodes.contains(o)) {

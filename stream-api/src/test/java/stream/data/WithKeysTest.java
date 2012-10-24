@@ -5,6 +5,7 @@ package stream.data;
 
 import org.junit.Test;
 
+import stream.Data;
 import stream.Processor;
 
 /**

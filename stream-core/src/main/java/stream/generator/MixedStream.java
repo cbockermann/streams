@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.io.DataStream;
 
@@ -83,7 +83,7 @@ public class MixedStream extends GeneratorDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext(stream.data.Data)
+	 * @see stream.io.DataStream#readNext(stream.Data)
 	 */
 	@Override
 	public Data readNext(Data datum) throws Exception {

@@ -76,6 +76,7 @@ public interface Context {
 	 * @param ref
 	 * @return
 	 * @throws Exception
+	 * @deprecated
 	 */
 	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
 			throws Exception;

@@ -23,7 +23,7 @@
  */
 package stream.io;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.util.parser.TimeParser;
 
@@ -75,7 +75,7 @@ public class TimeStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {

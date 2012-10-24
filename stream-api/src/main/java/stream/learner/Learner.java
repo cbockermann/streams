@@ -25,8 +25,8 @@ package stream.learner;
 
 import java.io.Serializable;
 
+import stream.Data;
 import stream.StatefulProcessor;
-import stream.data.Data;
 
 /**
  * This interface defines the learning step of a machine learning algorithm. All

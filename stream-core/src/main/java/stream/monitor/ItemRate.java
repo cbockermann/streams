@@ -5,8 +5,8 @@ package stream.monitor;
 
 import java.text.DecimalFormat;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 
 /**
  * @author chris
@@ -35,7 +35,7 @@ public class ItemRate implements Processor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

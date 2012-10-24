@@ -35,10 +35,10 @@ import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.StatefulProcessor;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.util.URLUtilities;
 
 /**
@@ -95,7 +95,7 @@ public class JavaScript extends Script {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

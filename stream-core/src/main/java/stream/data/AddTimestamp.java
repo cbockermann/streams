@@ -3,6 +3,7 @@
  */
 package stream.data;
 
+import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
@@ -33,7 +34,7 @@ public class AddTimestamp implements Processor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

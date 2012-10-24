@@ -24,8 +24,8 @@
 package stream.plotter;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.util.parser.TimeParser;
 
 /**
@@ -95,7 +95,7 @@ public abstract class DataVisualizer extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.data.ConditionedDataProcessor#processMatchingData(stream.data.Data)
+	 * @see stream.data.ConditionedDataProcessor#processMatchingData(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

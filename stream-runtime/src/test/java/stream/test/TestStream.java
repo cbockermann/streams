@@ -27,7 +27,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractDataStream;
 
@@ -63,7 +63,7 @@ public class TestStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {

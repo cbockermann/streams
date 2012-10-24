@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * <p>
@@ -102,7 +102,7 @@ public class PredictionError extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

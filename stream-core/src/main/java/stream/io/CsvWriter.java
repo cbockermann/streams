@@ -44,10 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.ExpressionResolver;
 import stream.service.Service;
 

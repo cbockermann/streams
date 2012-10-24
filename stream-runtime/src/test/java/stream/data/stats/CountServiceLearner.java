@@ -24,7 +24,7 @@
 package stream.data.stats;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author chris
@@ -36,7 +36,7 @@ public class CountServiceLearner extends AbstractProcessor implements
 	Long count = 0L;
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

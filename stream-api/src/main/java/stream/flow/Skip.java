@@ -24,8 +24,8 @@
 package stream.flow;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import stream.data.Data;
 public class Skip extends ConditionedProcessor {
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {
@@ -51,7 +51,7 @@ public class Skip extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.ConditionedProcessor#processMatchingData(stream.data.Data)
+	 * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

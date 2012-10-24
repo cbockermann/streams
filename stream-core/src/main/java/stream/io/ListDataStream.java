@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.DataFactory;
 
 public class ListDataStream implements DataStream {

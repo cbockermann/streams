@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author chris
@@ -41,7 +41,7 @@ public class CountServiceLearner extends AbstractProcessor implements
 	Map<String, AtomicLong> counts = new HashMap<String, AtomicLong>();
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

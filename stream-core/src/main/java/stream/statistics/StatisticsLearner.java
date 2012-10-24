@@ -24,8 +24,8 @@
 package stream.statistics;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.data.Statistics;
 
 /**
@@ -72,7 +72,7 @@ public abstract class StatisticsLearner extends AbstractProcessor implements
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

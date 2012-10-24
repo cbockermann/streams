@@ -23,7 +23,7 @@
  */
 package stream.service;
 
-import stream.data.Data;
+import stream.Data;
 
 /**
  * @author Hendrik Blom

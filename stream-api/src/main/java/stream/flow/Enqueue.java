@@ -27,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
-import stream.data.DataFactory;
+import stream.Data;
 import stream.io.QueueService;
 
 /**
@@ -51,7 +50,7 @@ public class Enqueue extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {
@@ -70,12 +69,7 @@ public class Enqueue extends AbstractProcessor {
 		}
 
 		for (int i = 0; i < queues.length; i++) {
-
-			if (i < 1)
-				queues[i].enqueue(data);
-			else {
-				queues[i].enqueue(DataFactory.create(data));
-			}
+			queues[i].enqueue(data.createCopy());
 		}
 	}
 

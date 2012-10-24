@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stream.AbstractProcessor;
-import stream.data.Data;
+import stream.Data;
 import stream.data.TreeNode;
 
 public class TreeFeatures extends AbstractProcessor {
@@ -36,7 +36,7 @@ public class TreeFeatures extends AbstractProcessor {
 	List<TreeFeature> features = new ArrayList<TreeFeature>();
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

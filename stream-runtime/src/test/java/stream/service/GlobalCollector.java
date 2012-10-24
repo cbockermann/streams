@@ -6,7 +6,7 @@ package stream.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import stream.data.Data;
+import stream.Data;
 import stream.io.QueueService;
 
 /**
@@ -42,7 +42,7 @@ public class GlobalCollector implements QueueService {
 	}
 
 	/**
-	 * @see stream.io.QueueService#enqueue(stream.data.Data)
+	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
 	@Override
 	public boolean enqueue(Data item) {

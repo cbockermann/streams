@@ -24,6 +24,7 @@
 package stream.data;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.service.Service;
@@ -43,7 +44,7 @@ public class CreateID extends AbstractProcessor implements Service {
 	String key = "@id";
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

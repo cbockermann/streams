@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.ConditionedProcessor;
+import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionResolver;
 
@@ -66,7 +66,7 @@ public class Message extends ConditionedProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {

@@ -7,8 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import stream.Data;
 import stream.ProcessContext;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.data.ProcessContextMock;
 
@@ -29,7 +29,7 @@ public class ConditionTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.expressions.Condition#matches(stream.Context, stream.data.Data)}
+	 * {@link stream.expressions.Condition#matches(stream.Context, stream.Data)}
 	 * .
 	 */
 	@Test

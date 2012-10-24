@@ -7,8 +7,8 @@ import java.io.File;
 import java.net.URL;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.ProcessContext;
-import stream.data.Data;
 import stream.util.URLUtilities;
 
 /**
@@ -96,7 +96,7 @@ public class AddText extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.data.Data)
+	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data input) {

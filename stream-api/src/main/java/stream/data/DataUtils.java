@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import stream.Data;
+
 /**
  * <p>
  * This class provides some static convenience methods for accessing data items.

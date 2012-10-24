@@ -24,7 +24,7 @@
 package stream.expressions;
 
 import stream.Context;
-import stream.data.Data;
+import stream.Data;
 
 /**
  * <p>

@@ -21,69 +21,52 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.io;
+package stream;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
+import java.io.Serializable;
+import java.util.Map;
 
-import net.minidev.json.JSONObject;
-import stream.Data;
 import stream.data.DataFactory;
 
 /**
  * <p>
- * This is a simple JSON writer that will write all data items into JSON strings
- * (one line for each item).
+ * This interface defines a single data item.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class JSONWriter extends CsvWriter {
+public interface Data extends Map<String, Serializable>, Serializable {
 
-	public JSONWriter() {
-		super();
-	}
-
-	public JSONWriter(File file) throws IOException {
-		super(file);
-	}
-
-	public JSONWriter(URL url) throws Exception {
-		super(url);
-	}
-
-	public JSONWriter(OutputStream out) throws Exception {
-		super(out);
-	}
+	public final static Data END_OF_STREAM = DataFactory.create();
+	
+	/**
+	 * attributes starting with this prefix are considered special and will not
+	 * be regarded for training classifiers
+	 */
+	public final static String SPECIAL_PREFIX = "_";
 
 	/**
-	 * @see stream.io.CsvWriter#writeHeader(stream.Data)
+	 * attributes starting with this prefix are considered as hidden and must
+	 * not be processed (neither removed nor modified) by data mappers.
+	 * 
+	 * @deprecated
 	 */
-	@Override
-	public void writeHeader(Data datum) {
-		//
-		// we overwrite this method to ensure no data-header is
-		// written by the super-class
-		//
-	}
+	public final static String HIDDEN_PREFIX = "._";
 
 	/**
-	 * @see stream.io.CsvWriter#write(stream.Data)
+	 * Attributes starting with an '@' character are regarded as annotations,
+	 * i.e. referring to data transformation parameters (normalization,...)
 	 */
-	@Override
-	public void write(Data datum) {
+	public final static String ANNOTATION_PREFIX = "@";
 
-		if (this.keys != null) {
-			Data item = DataFactory.create();
-			for (String key : keys) {
-				if (datum.containsKey(key))
-					item.put(key, datum.get(key));
-			}
-			p.println(JSONObject.toJSONString(item));
-		} else
-			p.println(JSONObject.toJSONString(datum));
-	}
+	/**
+	 * Attributes that refer to predicted values, i.e. the class of an instance
+	 * predicted by some learning/prediction-model are prefixed with this
+	 * string.
+	 */
+	public final static String PREDICTION_PREFIX = ANNOTATION_PREFIX
+			+ "prediction";
+
+	public Data createCopy();
 }

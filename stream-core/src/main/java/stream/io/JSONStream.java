@@ -33,8 +33,8 @@ import net.minidev.json.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.data.DataFactory;
 
 /**
@@ -78,7 +78,7 @@ public class JSONStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.data.Data)
+	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
 	 */
 	@Override
 	public Data readItem(Data instance) throws Exception {

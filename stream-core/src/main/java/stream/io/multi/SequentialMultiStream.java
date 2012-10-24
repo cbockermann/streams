@@ -5,7 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
+import stream.Data;
 import stream.io.DataStream;
 
 public class SequentialMultiStream extends AbstractMultiDataStream {
@@ -28,7 +28,7 @@ public class SequentialMultiStream extends AbstractMultiDataStream {
 
 
 	/**
-	 * @see stream.io.multi.AbstractMultiDataStream#readNext(stream.data.Data, java.util.Map)
+	 * @see stream.io.multi.AbstractMultiDataStream#readNext(stream.Data, java.util.Map)
 	 */
 	@Override
 	protected Data readNext(Data item, Map<String, DataStream> streams)

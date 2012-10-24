@@ -23,10 +23,15 @@
  */
 package stream.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import stream.Data;
 import stream.Measurable;
 import stream.util.SizeOf;
 
@@ -88,10 +93,24 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	}
 
 	/**
-	 * @see stream.data.Data#copy()
+	 * @see stream.Data#copy()
 	 */
 	@Override
 	public Data createCopy() {
-		return new DataImpl(this);
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(this);
+			oos.close();
+			ObjectInputStream ois = new ObjectInputStream(
+					new ByteArrayInputStream(baos.toByteArray()));
+			Data copy = (Data) ois.readObject();
+			ois.close();
+			return copy;
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Failed to create-copy of item due to: '" + e.getMessage()
+							+ "'");
+		}
 	}
 }

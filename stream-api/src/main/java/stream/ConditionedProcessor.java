@@ -24,7 +24,6 @@
 package stream;
 
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;
 
@@ -76,7 +75,7 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.data.Data)
+	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

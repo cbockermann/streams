@@ -43,8 +43,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.Data;
 import stream.ProcessContext;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.DataStream;

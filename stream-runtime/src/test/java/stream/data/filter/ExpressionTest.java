@@ -29,7 +29,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.expressions.Expression;
 import stream.expressions.ExpressionCompiler;

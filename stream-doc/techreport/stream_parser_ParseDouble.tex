@@ -11,19 +11,18 @@ should be transformed into double values.
 The following example shows a \emph{ParseDouble} processor that converts
 the attributes \texttt{x1} and \texttt{x2} into double values:
 
-\begin{verbatim}
-  <ParseDouble keys="x1,x2" />
-\end{verbatim}
-\subparagraph{Different Default Value}
+\begin{lstlisting}{lang=xml}
+      <stream.parser.ParseDouble keys="x1,x2" />
+\end{lstlisting}
 
 The \texttt{default} parameter allows for specifying a different value
 than the default \emph{Double.NaN} value. The following example converts
 all values to their double representation and defaults to 0.0 if parsing
 as double fails:
 
-\begin{verbatim}
-  <ParseDouble default="0.0" />
-\end{verbatim}
+\begin{lstlisting}{lang=xml}
+      <stream.parser.ParseDouble default="0.0" />
+\end{lstlisting}
 
 
 \begin{table}[h]

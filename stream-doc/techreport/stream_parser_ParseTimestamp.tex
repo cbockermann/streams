@@ -1,4 +1,4 @@
-\Processor{Timestamp}
+\Processor{ParseTimestamp}
 
 This processor parses the date time from an attribute using a specified
 format string and stores the parsed time as a long value into the
@@ -14,10 +14,12 @@ The following example shows a timestamp parser that parses the
 resulting timestamp (milliseconds UNIX time) is stored under key
 \texttt{@time}:
 
-\begin{verbatim}
-  <Timestamp key="@time" format="yyyy-MM-dd-hh:mm:ss"
-             from="DATE" />
-\end{verbatim}
+\begin{figure}[h!]
+  \begin{lstlisting}{lang=xml}
+  <stream.parser.ParseTimestamp  key="@time" format="yyyy-MM-dd-hh:mm:ss"
+                                from="DATE" />
+  \end{lstlisting}
+\end{figure}
 
 
 \begin{table}[h]

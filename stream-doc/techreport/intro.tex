@@ -163,15 +163,37 @@ online learning algorithms with a focus on evaluation and
 benchmarking.
 
 Aiming at processing high-volume data streams two environments have
-been proposed by Yahoo! and Twitter. Yahoo!'s {\em S4} \cite{s4io}
-as well as Twitter's {\em Storm} \cite{storm} framework do provide
-online processing and storage on large cluster infrastructures, but
-these do not include any online learning.
+been proposed by Yahoo! and Twitter. Yahoo!'s {\em S4} \cite{s4io} as
+well as Twitter's {\em Storm} \cite{storm} framework do provide online
+processing and storage by building on large cluster infrastructures such
+as Apache's Zookeeper infrastructure.
+
+The {\em Storm} engine relies on executing a computing graph, called a
+{\em topology} in Storm. The nodes (refered to as {\em Bolts}) in this
+graph are user written programs defining the data processing
+steps. The topology is then provided by the user by implementing a
+Java program that creates the desired topology (a {\em toplogy
+  builder}). To start the topology, the custom topology builder
+implemented by the user is given to the storm engine, which creating
+the bolts and distributing it along the cluster infrastructure.
+
+While the {\em Storm} engine is known to be fast and scalable, it
+requires an in-depth knowledge of the user on how to create a topology
+that matches a particular task. Looking from the perspective of a {\em
+  data analysist}, this does not match the higher-level
+rapid-prototyping needs as is adequate for domain experts e.g. in
+projects like telescope data analysis mentioned above.
+
+
+\TODO{More about User/Developer roles, abstraction levels and toolkit
+  building blocks.}
 
 In contrast to these frameworks, the \streams library focuses on
 defining a simple abstraction layer that allows for the definition of
-stream processes which can be mapped to different backend
-infrastructures (such as {\em S4} or {\em Storm}).
+stream processes by means of only a few basic conceptual elements.
+The resulting processes can be then be easily executed by the \streams
+runtime or mapped to different runtime environments such as {\em S4}
+or {\em Storm}.
 
 \subsubsection*{Our Contributions}
 In this work we introduce the \streams library, a small software
@@ -193,7 +215,7 @@ Moreover it provides a simple programming API to implement and
 integrate custom data processors into the designed stream processes.
 The level of abstraction of this programming API is intended to
 flawlessly integrate into existing runtime environments like {\em
-  Storm} or the RapidMiner platform \cite{rapidminer}.
+  Storm} or the RapidMiner platform \cite{rapidminerStreams}.
 
 Our proposed framework supports
 \begin{enumerate}
@@ -211,18 +233,14 @@ Our proposed framework supports
 \end{enumerate}
 
 The rest of this report is structured as follows: In Section
-\ref{sec:relatedWork} we review the problem setting and give an
-overview of related work and existing frameworks.
-%% introduce some of the main objectives in data
-%stream mining and provide some example use cases. 
-Based on this we derive some basic building blocks for a modeling data
-stream processes (Section \ref{sec:abstraction}). In Section
+\ref{sec:abstraction} we derive a set of basic building blocks for the
+abstract modeling data stream processes. In Section
 \ref{sec:processDesign} we present the XML based definition language
 and several addition concepts that allow for designing stream
 processes within the framework. Based on this we outline two example
 use-cases for processing and analyzing streaming data with the
 \streams library. Finally we summarize the ideas behind the \streams
-library and give an outlook on future work. A comprehensive
-description of the implementations and guides for setting up a
-standalone processing environment provided by our framework is given
-in the appendix.
+library and give an outlook on future work in Section
+\ref{sec:summary}. A comprehensive description of the implementations
+and guides for setting up a standalone processing environment provided
+by our framework is given in the appendix.

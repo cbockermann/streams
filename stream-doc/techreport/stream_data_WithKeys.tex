@@ -1,4 +1,4 @@
-\ProcessorSection{stream.data.SelectKeys}
+\Processor{WithKeys}
 
 This processor is a process-list. It creates a copy of the current data
 item with all attributes matching the list of specified keys. Then all
@@ -10,17 +10,23 @@ also return \emph{null}.
 
 The \texttt{keys} parameter of this processor allows for specifying a
 comma separated list of keys and key-patterns using simple wildcards
-\texttt{\textbackslash{}*} and \texttt{?}.
+\texttt{*} and \texttt{?} as shown in Figure \ref{fig:withKeys}. If
+the {\ttfamily keys} parameter is not provided, then the inner
+processors will be provided with an empty item.
 
-As an example, the following definition prints data items containing
-only the attribute \texttt{x1}, \texttt{x2} and any attributes that
-start with \texttt{user:}:
-
-\begin{verbatim}
-  &lt;SelectKeys keys="x1,x2,user:*"&gt; 
-      &lt;PrintData /&gt;
-  &lt;/SelectKeys&gt;
-\end{verbatim}
+\begin{figure}[h!]
+\begin{lstlisting}{lang=xml}
+      <process ...>
+          <WithKeys keys="x1,user:*,!user:id">
+             <PrintData />
+          </WithKeys>
+      </process>
+\end{lstlisting}
+\caption{\label{fig:withKeys}Selects only attribute {\ttfamily x1},
+  all attributes starting with {\ttfamily user:} but not attribute
+  {\ttfamily user:id} and executes the {\ttfamily PrintData} processor
+  for this selection of attributes.}
+\end{figure}
 
 
 \begin{table}[h]
@@ -29,8 +35,8 @@ start with \texttt{user:}:
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-{\ttfamily keys } & String[] &  & ? \\ \hline
-{\ttfamily join } & Boolean &  & ? \\ \hline
+{\ttfamily keys } & String[] & A simple filter list of attribute names.  & true \\ \hline
+{\ttfamily join } & Boolean & Signals whether the changes made to the data item within the {\ttfamily WithKeys} processor should be merged into the originating item. Defaults to {\em true}. & false \\ \hline
 \end{tabular}
  } 
  } 

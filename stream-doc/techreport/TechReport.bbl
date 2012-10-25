@@ -25,6 +25,12 @@ Albert Bifet, Geoff Holmes, Richard Kirkby, and Bernhard Pfahringer.
 \newblock Moa massive online analysis, 2010.
 \newblock \url{http://mloss.org/software/view/258/}.
 
+\bibitem{rapidminerStreams}
+Christian Bockermann and Hendrik Blom.
+\newblock Processing data streams with the rapidminer streams plugin.
+\newblock In {\em RCOMM 2012: RapidMiner Community Meeting And Conference}.
+  Rapid-I, 2012.
+
 \bibitem{goethals2007}
 Toon Calders, Nele Dexters, and Bart Goethals.
 \newblock Mining frequent itemsets in a stream.

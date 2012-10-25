@@ -1,0 +1,39 @@
+\subsubsection{JavaScript}
+
+This processor can be used to execute simple JavaScript snippets using
+the Java-6 ECMA scripting engine.
+
+The processor binds the data item as \texttt{data} object to the script
+context to allow for accessing the item. The following snippet prints
+out the message ``Test'' and stores the string \texttt{test} with key
+\texttt{@tag} in the data object:
+
+\begin{verbatim}
+  println( "Test" );
+  data.put( "@tag", "Test" );
+\end{verbatim}
+\paragraph{External Scripts}
+
+The processor can also be used to run JavaScript snippets from external
+files, by simply specifying the \texttt{file} attribute:
+
+\begin{verbatim}
+<JavaScript file="/path/to/script.js" />
+\end{verbatim}
+
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily file } & File &  & false\\ \hline
+{\ttfamily script } & BodyContent &  & false\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.script.JavaScript}.}
+\end{center}
+\end{table}

@@ -12,8 +12,49 @@ domains.
 
 \subsection{The {\em stream-core} Processor Classes}
 
+The core packages of the \streams framework provide a set of processor
+implementations that cover a lot of general stream processing
+tasks. These processors serve as basic building blocks to design a
+stream process. A processor can simply be added to a process by adding
+an XML element with the name of the processor to the process element
+as shown in Figure \ref{fig:exampleProcessor}.
+
+\begin{figure}[h!]
+\centering
+\begin{lstlisting}{lang=xml}
+     <process input="my-stream">
+         <!--  convert the string of attribute x1 to a double value -->
+         <stream.parser.ParseDouble key="x1" />
+     </process>
+\end{lstlisting}
+\caption{\label{fig:exampleProcessor}The processor {\ttfamily stream.parser.ParseDouble} added to a process.}
+\end{figure}
+
+Based on their purpose, the processors are organized into packages. To
+shorten the XML declaration, several packages are automatically
+checked for when resolve a processor. For example the {\ttfamily stream.parser} package is among the default base packages. This allows for leaving out the package name, when adding the processor. Thus, the XML from Figure \ref{fig:exampleProcessor} is equivalent to the following XML snippet:
+\begin{figure}[h!]
+\centering
+\begin{lstlisting}{lang=xml}
+     <process input="my-stream">
+         <!--  convert the string of attribute x1 to a double value -->
+         <ParseDouble key="x1" />
+     </process>
+\end{lstlisting}
+\end{figure}
+
+The default packages that are automatically checked for when resolving processor names are:
+\begin{itemize}
+  \item {\ttfamily stream.data}
+  \item {\ttfamily stream.flow}
+  \item {\ttfamily stream.parser}
+  \item {\ttfamily stream.script}.
+\end{itemize}
+
 \input{stream_flow_index}
 
 \input{stream_data_index}
 
 \input{stream_parser_index}
+
+\input{stream_script_index}

@@ -1,11 +1,18 @@
-\subsection{FACT Data Analysis}
-The first use-case we focus on is data pre-processing in the
-domain of scientific data obtained from a radio telescope. The
-FACT project maintains a telescope for recording cosmic showers
-in a fine grained resolution. The telescope consists of a mirror
-area which has a 1440-pixel camera mounted on top. This camera
-is recording electric energy-impulses which in turn is measured
-by sampling each pixel at a rate of 2 GHz.
+\subsection{\label{sec:fact}FACT Data Analysis}
+The first use-case we focus on is data pre-processing in the domain of
+scientific data obtained from a radio telescope. The FACT project
+maintains a telescope for recording cosmic showers in a fine grained
+resolution. The telescope consists of a mirror area which has a
+1440-pixel camera mounted on top as shown in Figure
+\ref{fig:factTelescope}. This camera is recording electric
+energy-impulses which in turn is measured by sampling each pixel at a
+rate of 2 GHz.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.2]{graphics/fact-telescope.jpg}
+\caption{\label{fig:factTelescope}The FACT telescope on La Palma.}
+\end{figure}
 
 Based on trigger-signals, small sequences (a few
 nanoseconds) of these energy-impulses are recorded and stored into 
@@ -73,6 +80,7 @@ data into correct values based upon previously recorded calibration parameters.
     <container>
         <stream id="factData" url="file:/data/2011-09-13-004.fits.gz"
              class="fact.io.FACTEventStream" />
+
         <process input="factData">
              <fact.io.DrsCalibration file="/data/2011-09-13-001.fits.drs.gz" />
              <!--  add further processors here  -->

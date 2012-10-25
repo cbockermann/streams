@@ -1,25 +1,25 @@
-\subsubsection{ArffStream}
+\subsubsection{\label{api:stream:io.ArffStream}Class {\ttfamily stream.io.ArffStream}}
 
-This stream provides access to reading ARFF files and processing them in
-a stream based fashion. ARFF is a standard format for data in the
-machine learning community with its root in the
-(WEKA){[}http://en.wikipedia.org/wiki/Weka\_(machine\_learning){]}
-project.
+This stream implementation provides access to reading ARFF files and
+processing them in a stream based fashion. ARFF is a standard format
+for data in the machine learning community which has its root in the
+WEKA project \cite{weka}.
 
-\begin{figure}[h]
-\begin{center}
-{\renewcommand{\arraystretch}{1.2}
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-id & String &  & ? \\ \hline
-password & String & The password for the stream URL (see username parameter) & false\\ \hline
-prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
-limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
-username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+{\ttfamily id } & String & The identifier to reference this stream in the container  & true \\ \hline
+{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
+{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+{\ttfamily limit } & Long & The maximum number of items that this stream should deliver & false\\ \hline
+{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
 \end{tabular}
  } 
  } 
-\caption{Parameters of processor {\ttfamily ArffStream}}
+ } 
+\caption{Parameters of class {\ttfamily stream.io.ArffStream}}
 \end{center}
-\end{figure}
+\end{table}

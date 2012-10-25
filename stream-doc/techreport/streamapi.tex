@@ -88,7 +88,7 @@ essentially provides a method to obtain the next item of a stream.
 The core \streams library contains several implementations for data
 streams that reveal data items from numerous formats such as CSV data,
 SQL databases, JSON or XML formatted data. A list of the available
-data stream implementations is available in the appendix \ref{app:streamImplementations}.
+data stream implementations is available in the appendix \ref{app:dataStreams}.
 
 In addition, application specific implementations for data streams can
 easily be provided by custom Java classes, as is the case in the FACT
@@ -145,10 +145,9 @@ and {\em process} elements form the basic data flow elements whereas
 the processors are those that do the work.
 
 \begin{figure}[h!]
-  \begin{center}
-    \includegraphics[scale=0.5]{graphics/inside-process.png}
-  \end{center}
-  \caption{\label{fig:process}A process reading from a stream and applying processors.}
+\centering
+\includegraphics[scale=0.5]{graphics/inside-process.png}
+\caption{\label{fig:process}A process reading from a stream and applying processors.}
 \end{figure}
 
 The simple setup in Figure \ref{fig:process} shows the general role of

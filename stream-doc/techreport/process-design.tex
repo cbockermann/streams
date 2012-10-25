@@ -1,4 +1,4 @@
-\section{Designing Stream Processes}
+\section{\label{sec:processDesign}Designing Stream Processes}
 The former section introduced the main conceptual elements of the \streams library.
 These basic elements are used to define stream processes that can be deployed and
 executed with the \streams runtime environment.
@@ -53,16 +53,19 @@ for a variety of data formats that can be read. Most implementations can also ha
 non-file protocols like {\ttfamily http}. The class to use is picked by the extension
 of the URL ({\ttfamily .csv}) or by directly specifying the class name to use:
 \begin{figure}[h!]{\footnotesize
-\begin{verbatim}
-    <stream id="D" url="http://download.jwall.org/stuff/test-data.csv"
-                   class="stream.io.CsvStream" />
-\end{verbatim}}
+    \centering
+    \begin{lstlisting}{lang=xml}
+       <stream  id="D" class="stream.io.CsvStream"
+               url="http://download.jwall.org/stuff/test-data.csv" />
+    \end{lstlisting}
+    \caption{\label{fig:defStream}Defining a stream that reads from a HTTP resource.}
+}
 \end{figure}
 
 Additional stream implementations for Arff files, JSON-formatted files or for reading 
 from SQL databases are also part of the {\em streams} library. These implementation
 also differ in the number of parameters required (e.g. the database driver for SQL
-streams). A list of available stream implemenations can be found in Appendix \ref{sec:apiReference}.
+streams). A list of available stream implemenations can be found in Appendix \ref{api:stream:io}.
 The default stream implementations also allow for the use of a {\ttfamily limit} parameter
 for stopping the stream after a given amount of data items.
 

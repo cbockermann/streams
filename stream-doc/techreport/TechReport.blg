@@ -1,6 +1,8 @@
 This is BibTeX, Version 0.99c (Web2C 7.5.4)
 The top-level auxiliary file: TechReport.aux
-A level-1 auxiliary file: api/reference.aux
+A level-1 auxiliary file: core-api.aux
+A level-1 auxiliary file: fact-api.aux
+A level-1 auxiliary file: installing.aux
 The style file: plain.bst
 Database file #1: literatur.bib
 Database file #2: local-refs.bib
@@ -8,7 +10,7 @@ Warning--I didn't find a database entry for "rapidminer"
 Warning--empty booktitle in Charikar02findingfrequent
 You've used 14 entries,
             2118 wiz_defined-function locations,
-            602 strings with 6815 characters,
+            604 strings with 6836 characters,
 and the built_in function-call counts, 5708 in all, are:
 = -- 574
 > -- 263

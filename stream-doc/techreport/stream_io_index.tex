@@ -1,4 +1,5 @@
 %\subsubsection{Package {\ttfamily stream.io}}
+\subsection{\label{app:dataStreams}\label{api:stream:io}Data Streams}
 
 Reading data is usually the first step in data processing. The package
 {\ttfamily stream.io} provides a set of data stream implementations
@@ -14,26 +15,70 @@ common parameters supported by most of the streams such as
 \texttt{limit} or \texttt{username} and \texttt{password}.
 
 \subsubsection*{Defining a Stream}
-As previously discussed in Section \ref{sec:definingProcesses}, a
-stream is defined within a container using the XML {\ttfamily stream}
-element, providing a {\ttfamily url} and {\ttfamily class} attribute
-which determines the source to read from and the class that should
-be used for reading from that source.
+As discussed in Section \ref{sec:designingProcesses}, a stream is
+defined within a container using the XML {\ttfamily stream} element,
+providing a {\ttfamily url} and {\ttfamily class} attribute which
+determines the source to read from and the class that should be used
+for reading from that source. In addition, the definition requires a
+third attribute {\ttfamily id}, which assigns the stream with a
+(unique) identifier. This identifier is then used to reference the
+stream as input to a process.
 
 As a simple example, the following XML snippet defines a data stream
 that reads data items in CSV format from some file URL:
 \begin{figure}[h!]
-\begin{center}
-\begin{lstlisting}{lang=xml}
-    <stream  id="csv-data" class="stream.io.CsvStream"
-            url="file:/tmp/example.csv" />
-\end{lstlisting}
-\end{center}
-\caption{Defining a CSV stream from a file.}
+        \centering
+        \begin{lstlisting}{lang=xml}
+           <stream  id="csv-data" class="stream.io.CsvStream"
+                   url="file:/tmp/example.csv" />
+        \end{lstlisting}
+        \caption{Defining a CSV stream from a file.}
 \end{figure}
 
+\subsubsection*{Streaming Data from various URLs}
+The \streams runtime supports a list of different URL schemes which
+are provided by all Java virtual machines, e.g. {\ttfamily http} URLs
+or {\ttfamily file} URLs. Custom URL schemes can also be registered
+within the Java VM. As of this, the \streams runtime additionally
+offers a {\ttfamily classpath:} and a {\ttfamily system:} URL scheme.
+
+The {\ttfamily classpath:} URLs can be used to create data streams
+that read from resources which are available on the classpath. This is
+useful for providing example sources within custom JAR files or the
+like. The following example shows how to create a stream that reads
+data in JSON format from a resource {\ttfamily example.json} that is
+searched for in the default classpath:
+\begin{figure}[h!]
+        \centering
+        \begin{lstlisting}{lang=xml}
+           <stream  id="json-stream"  class="stream.io.JSONStream"
+                   url="classpath:/example.json" />
+        \end{lstlisting}
+        \caption{\label{fig:jsonStreamClasspath}Defining a JSON stream from a classpath resource.}
+\end{figure}
+
+To support streams that read data from standard input or standard
+error, the library provides the {\ttfamily system:} URL schema. This
+schema provides access to the system input and error streams and are
+useful when piping data to a stream via the command line, e.g. by
+running a command like:
+\sample{\# cat data.csv | stream.run my-process.xml}
+To define a stream that reads from standard input, simply specify
+{\ttfamily system:input} as the streams URL as shown in figure
+\begin{figure}[h1]
+        \centering
+        \begin{lstlisting}{lang=xml}
+           <stream  id="example"  class="stream.io.CsvStream"
+                   url="system:input" />
+        \end{lstlisting}
+        \caption{\label{fig:csvStreamStdin}Defining a CSV stream that reads data from the system's standard input.}
+\end{figure}
+
+\newpage
 \input{stream_io_ArffStream}
+
 \input{stream_io_CsvStream}
+
 \input{stream_io_JSONStream}
 \input{stream_io_LineStream}
 \input{stream_io_ProcessStream}

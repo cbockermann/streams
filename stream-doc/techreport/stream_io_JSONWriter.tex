@@ -1,0 +1,26 @@
+\paragraph{JSONWriter}
+
+This processor writes the processed items to a file/url. The output is
+written in JSON format, where a single line of JSON output is produced
+for each processed item.
+
+The result can be parsed/read using the
+(JSONStream){[}JSONStream.html{]}.
+
+\begin{figure}[h]
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+keys & String[] & The attributes to write out, leave blank to write out all attributes. & false\\ \hline
+url & String & The url to write to. & true\\ \hline
+separator & String & The separator to separate columns, usually ',' & false\\ \hline
+attributeFilter & String &  & ? \\ \hline
+condition & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+\caption{Parameters of processor {\ttfamily JSONWriter}}
+\end{center}
+\end{figure}

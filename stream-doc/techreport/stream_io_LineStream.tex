@@ -1,0 +1,56 @@
+\subsubsection{\label{api:stream:io:LineStream}Class {\ttfamily stream.io.LineStream}}
+
+This class provides a very flexible stream implementations that
+essentially reads from a URL line-by-line. The content of the complete
+line is stored in the attribute determined by the \texttt{key}
+parameter. By default the key \texttt{LINE} is used.
+
+It also supports the specification of a simple format/grammar string
+that can be used to create a generic parser to populate additional
+fields of the data item read from the stream.
+
+The grammar is a string containing {\ttfamily \%(name)} elements,
+where {\ttfamily name} is the name of the attribute that should be
+created at that specific portion of the line. An example, for such
+a simple grammar is given as follows:
+\begin{verbatim}
+  %(IP) [%(DATE)] "%(URL)"
+\end{verbatim}
+The {\ttfamily \%(name)} elements are extracted from the grammar and
+all remaining elements in between are regarded as boundary strings that
+separate the elements.
+
+The simple grammar above will create a parser that is able to read
+lines in the format of the following:
+\begin{verbatim}
+  127.0.0.1 [2012/03/14 12:03:48 +0100] "http://example.com/index.html"
+\end{verbatim}
+
+
+The outcoming data item will have four attributes {\ttfamily LINE},
+{\ttfamily IP}, {\ttfamily DATE} and {\ttfamily URL}. The attribute
+\texttt{IP} set to \texttt{127.0.0.1} and the \texttt{DATE} attribute
+set to \texttt{2012/03/14 12:03:48 +0100}. The \texttt{URL} attribute
+will be set to \texttt{http://example.com/index.html}. The
+\texttt{LINE} attribute will contain the complete line string.
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily key } & String &  & false\\ \hline
+{\ttfamily format } & String & The format how to parse each line. Elements like {\ttfamily \%(KEY)} will be detected and automatically populated in the resulting items. & false\\ \hline
+{\ttfamily id } & String &  & ? \\ \hline
+{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
+{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+{\ttfamily limit } & Long & The maximum number of items that this stream should deliver & false\\ \hline
+{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.io.LineStream}}
+\end{center}
+\end{table}

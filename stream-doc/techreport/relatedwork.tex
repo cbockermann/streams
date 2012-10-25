@@ -16,101 +16,6 @@
 %% (  - outline the differences of the streams library to this solutions )
 %%
 \section{\label{sec:relatedWork}Problem and Related Work}
-The traditional batch data processing aims at computations on fixed
-chunks of data in one or more passes. The results of these
-computations again form a fixed outcome that can further be used as
-input. A simple example is given by the computation of a prediction
-model based on some fixed training set. After the determination of a
-final model, the learning step is finished and the model is applied to
-deliver predictions based on the learning phase. Similar situations
-arise for the computation of statistics, creation of histograms, plots
-and the like. From a machine learning perspective, this has been the
-predominant approach of the last years.
-
-Two aspects have been changed in the data we are facing today, which
-requires a paradigm shift: The size of data sets has grown to amounts
-intractable by existing batch approaches, and the rate at which data
-changes demands for short-term reactions to data drifts and updates of
-the models.
-
-\subsection{Processing Masses of Data}
-The former problem has been addressed by massive parallelism. With the
-drop of hardware prizes and evolving use of large cloud setups,
-computing farms are deployed to handle data at a large scale. Though
-parallelism and concepts for cluster computing have been studied for
-long, their applicability was mostly limited to specific use
-cases. 
-
-One of the most influential works to use computing clusters in data
-analysis is probably Google's revival of the {\em map-and-reduce}
-paradigm \cite{googleMapReduce}. The concept has been around in
-functional programming for years and has now been transported to
-large-scale cluster systems consisting of thousands of compute
-nodes. Apache's open-source {\em Hadoop} implementation of a
-map-and-reduce platform nowadays builds a foundation for various
-large-scale systems.
-
-With the revival of map-and-reduce, various machine learning algorithms
-have been proven to be adjustable to this new (old) way of computing.
-
-%In the massive parallel settings, we are given a large set of examples
-%$\mathbf{X} \subseteq \mathbb{R}^p$. Models on this data are typically
-%computed by partitioning the data, computing intermediate results
-%({\em map} phase) and merging these results to a final output ({\em
-%  reduce} phase) as shown in Figure \ref{fig:mapReduce}.
-%
-%\begin{figure}[ht!]
-%  \begin{center}
-%    \input{MapReduceFigure}
-%    \caption{\label{fig:mapReduce}The map-and-reduce paradigm.}
-%  \end{center}
-%\end{figure}
-
-
-%%
-%% Beispiele fuer Lerner die Map&Reduce fähig sind
-%%  - Ensemble,...
-%%  -
-%% Software: Mahout,... andere?
-%%
-
-\subsection{The Problem of Continuous Data}
-Whereas the massive parallelism addresses the batch computation of
-large volumes of data, it still requires substantial processing time
-to re-compute prediction models, statistics or indexes once data has
-been changed. Therefore it does not fully reflect the demands for
-reacting to short-term drifts of data.
-
-Within this work we will refer to this as the setting of {\em
-  continuous data}, i.e. we consider an unbound source $D$ of data
-that continuously emits data items $d_i$. In the following, we model
-that data stream as a sequence
-$$D = \langle d_0,d_1,\ldots,d_i,\ldots \rangle$$
-with $i\rightarrow\infty$. At any time $t$ we want to provide some
-model that reflects the analysis of the items $d_i$ with $i\le t$.
-Typical tasks to compute on $S$ are
-\begin{itemize}
-\item Given $d_i \in \mathbb{N}$ - finding the top-$k$ most frequent
-  values observed until $t$.
-\item For $d_i \in \mathbb{N}^p$ - find the item sets $I \subset
-  \mathbb{N}^p$ which most frequently occurred in the $d_i$.
-\item With $d_i \subset X$, provide a classifier $c:X \rightarrow Y$,
-  that best approximates the real distribution of labeled data $X
-  \times Y$ (classification).
-\item Provide a clustering $C$ for the data item $d_i$ observed so far (clustering).
-\item Find indications on when the overall distribution of the $d_i$
-  changes within the stream (concept drift detection).
-\end{itemize}
-Often, these tasks are further refined to models that focus on a
-recent sliding window of the last $w$ data items observed, e.g. we are
-interested in the top-$k$ elments of the last 5 minutes. 
-
-Algorithms for solving these tasks on static data sets
-exists. However, the challenging requirements in the continuous data
-setting are the tight limits on the resources available for
-computation. This can for example be realtime constraints, such as a
-fixed limit on the time available for processing a data item, or a
-bound on the memory available for computation.
 
 %
 %. The {\em data items} $s_i$ are tuples of
@@ -125,14 +30,6 @@ bound on the memory available for computation.
 %The data processing model of streaming approaches share common
 %criteria.
 % induced by the continuous nature of the problem. 
-The framing to operate on streaming data is generally given by the
-following constraints/requirements:
-\begin{itemize}
-  \defitem{C1} continuously processing {\em single items} or {\em small batches} of data,
-  \defitem{C2} using only a {\em single pass} over the data,
-  \defitem{C3} using {\em limited resources} (memory, time),
-  \defitem{C4} provide {\em anytime services} (models, statistics).
-\end{itemize}
 
 Several algorithms to the task mentioned above with respect to these
 requirements have been proposed. Regarding the counting of elements

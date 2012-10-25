@@ -1,5 +1,5 @@
 %\subsubsection{Package {\ttfamily stream.io}}
-\subsection{\label{app:dataStreams}\label{api:stream:io}Data Streams}
+\subsection{\label{app:dataStreams}\label{api:stream:io}Data Stream Implementations}
 
 Reading data is usually the first step in data processing. The package
 {\ttfamily stream.io} provides a set of data stream implementations
@@ -62,7 +62,9 @@ error, the library provides the {\ttfamily system:} URL schema. This
 schema provides access to the system input and error streams and are
 useful when piping data to a stream via the command line, e.g. by
 running a command like:
+\begin{figure}[h!]
 \sample{\# cat data.csv | stream.run my-process.xml}
+\end{figure}
 To define a stream that reads from standard input, simply specify
 {\ttfamily system:input} as the streams URL as shown in figure
 \begin{figure}[h1]
@@ -86,8 +88,18 @@ To define a stream that reads from standard input, simply specify
 \input{stream_io_SvmLightStream}
 \input{stream_io_TimeStream}
 
+\newpage
+\subsection{\label{api:stream:queues}Queue Implementations}
+The notion of queues is similar to the definition of streams within
+the \streams framework. Queues provide can be attached as sources to
+processes while also allowing to be fed with data items from other
+places. This allows for simple inter-process communication by
+forwarding data items from one process to the queue that is read by
+another different process.
 
-%\input{stream_io_BlockingQueue}
+
+
+\input{stream_io_BlockingQueue}
 %\input{stream_io_CsvUpload}
 %\input{stream_io_CsvWriter}
 %\input{stream_io_JSONWriter}

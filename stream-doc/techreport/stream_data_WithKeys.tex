@@ -1,0 +1,40 @@
+\ProcessorSection{stream.data.SelectKeys}
+
+This processor is a process-list. It creates a copy of the current data
+item with all attributes matching the list of specified keys. Then all
+nested processors are applied to that copy and the copy is merged back
+into the original data item.
+
+If any of the nested data items returns \emph{null}, this processor will
+also return \emph{null}.
+
+The \texttt{keys} parameter of this processor allows for specifying a
+comma separated list of keys and key-patterns using simple wildcards
+\texttt{\textbackslash{}*} and \texttt{?}.
+
+As an example, the following definition prints data items containing
+only the attribute \texttt{x1}, \texttt{x2} and any attributes that
+start with \texttt{user:}:
+
+\begin{verbatim}
+  &lt;SelectKeys keys="x1,x2,user:*"&gt; 
+      &lt;PrintData /&gt;
+  &lt;/SelectKeys&gt;
+\end{verbatim}
+
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily keys } & String[] &  & ? \\ \hline
+{\ttfamily join } & Boolean &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.data.WithKeys}.}
+\end{center}
+\end{table}

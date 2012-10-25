@@ -1,4 +1,4 @@
-\paragraph{SQLStream}
+\StreamSection{SQLStream}
 
 This class implements a DataStream that reads items from a SQL database
 table. The class requires a \texttt{jdbc} URL string, a username and
@@ -7,13 +7,15 @@ data from the database.
 
 The following XML snippet demonstrates the definition of a SQL stream
 from a database table called \texttt{TEST\_TABLE}:
-
-\begin{verbatim}
- <Stream class="stream.io.SQLStream"
-         url="jdbc:mysql://localhost:3306/TestDB"
-         username="SA" password=""
-         select="SELECT * FROM TEST_TABLE" />
-\end{verbatim}
+\begin{figure}[h!]
+     \begin{lstlisting}{lang=xml}
+         <stream class="stream.io.SQLStream"
+                   url="jdbc:mysql://localhost:3306/TestDB"
+              username="SA" password=""
+                select="SELECT * FROM TEST_TABLE" />
+     \end{lstlisting}
+     \caption{\label{fig:exampleSQLStream}Example SQL streams, reading from a database.}
+\end{figure}
 The database connection is established using the user \texttt{SA} and no
 password (empty string). The above example connects to a MySQL database.
 
@@ -21,22 +23,23 @@ As the SQL database drivers are not part of the streams library, you
 will need to provide the database driver library for your database on
 the class path.
 
-\begin{figure}[h]
-\begin{center}
-{\renewcommand{\arraystretch}{1.2}
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-url & String & The JDBC database url to connect to. & true\\ \hline
-select & String & The select statement to select items from the database. & true\\ \hline
-id & String &  & ? \\ \hline
-password & String & The password for the stream URL (see username parameter) & false\\ \hline
-prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
-limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
-username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+{\ttfamily url } & String & The JDBC database url to connect to. & true\\ \hline
+{\ttfamily select } & String & The select statement to select items from the database. & true\\ \hline
+{\ttfamily id } & String & The ID of this string for associating it with processes. & true\\ \hline
+{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
+{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names. & false\\ \hline
+{\ttfamily limit } & Long & The maximum number of items that this stream should deliver. & false\\ \hline
+{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
 \end{tabular}
  } 
  } 
-\caption{Parameters of processor {\ttfamily SQLStream}}
+ } 
+\caption{Parameters of class {\ttfamily stream.io.SQLStream}.}
 \end{center}
-\end{figure}
+\end{table}

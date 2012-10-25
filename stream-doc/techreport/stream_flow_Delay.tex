@@ -1,0 +1,26 @@
+\Processor{stream.flow.Delay}
+
+This simple processor puts a delay into the data processing. The delay
+can be specified in various units with the simple time format being
+specified like ``{\ttfamily 40ms}'' for specifying a delay of 40
+milliseconds. Other units for \texttt{day}, \texttt{hour},
+\texttt{minute} and so on work as well.
+
+The units can also be combined as in \texttt{1 second 30ms}.
+
+\TODO{Fix table of parameters.}
+%\begin{table}[h]
+%\centering
+%{\footnotesize
+%{\renewcommand{\arraystretch}{1.4}
+%\textsf{
+%\begin{tabular}{|c|c|p{9cm}|c|} \hline
+%\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+%{\ttfamily time } & String &  & true\\ \hline
+%{\ttfamily condition } & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+%\end{tabular}
+% } 
+% }
+%}
+%\caption{Parameters of class {\ttfamily stream.flow.Delay}.}
+%\end{table}

@@ -1,4 +1,4 @@
-\paragraph{TimeStream}
+\StreamSection{TimeStream}
 
 This is a very simple stream that emits a single data item upon every
 read. The data item contains a single attribute \texttt{@timestamp} that
@@ -12,21 +12,22 @@ parameter, e.g.~to obtain the timestamp in attribute \texttt{@clock}:
 \end{verbatim}
 
 
-\begin{figure}[h]
-\begin{center}
-{\renewcommand{\arraystretch}{1.2}
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-interval & String &  & ? \\ \hline
-id & String &  & ? \\ \hline
-password & String & The password for the stream URL (see username parameter) & false\\ \hline
-prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
-limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
-username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+{\ttfamily id } & String & The ID of this string for associating it with processes. & true\\ \hline
+{\ttfamily key } & String & The name of the attribute that should hold the timestamp, defaults to {\ttfamily @timestamp} & false\\ \hline
+{\ttfamily interval } & String & The time gap/rate at which this stream should provide items. & true\\ \hline
+{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names. & false\\ \hline
+{\ttfamily limit } & Long & The maximum number of items that this stream should deliver. & false\\ \hline
 \end{tabular}
  } 
  } 
-\caption{Parameters of processor {\ttfamily TimeStream}}
+ } 
+\caption{Parameters of class {\ttfamily stream.io.TimeStream}.}
 \end{center}
-\end{figure}
+\end{table}
+\afterpage{\clearpage}

@@ -1,27 +1,36 @@
-\paragraph{BlockingQueue}
+\StreamSection{BlockingQueue}
 
-The \emph{BlockingQueue} provides a simple DataStream that items can be
-enqueued into and read from. This allows inter-process communication
-between multiple active processes to be designed using data items as
-messages.
+The class {\ttfamily stream.io.BlockingQueue} provides a simple
+DataStream that items can be enqueued into and read from. This allows
+inter-process communication between multiple active processes to be
+designed using data items as messages.
 
-\emph{TODO:} Write details about the queuing behavior!
+As the name already suggests, this queue is a blocking queue,
+resulting in any process that reads from this queue to block if the
+queue is empty. Likewise, any processor that adds items to the
+queue (e.g. {\ttfamily stream.flow.Enqueue}) will be blocking if
+the queue is full.
 
-\begin{figure}[h]
-\begin{center}
-{\renewcommand{\arraystretch}{1.2}
+By default the size of the queue is unbounded (i.e. bound by the
+available memory only), but can be fixed by using the {\ttfamily size}
+parameter.
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-size & int &  & ? \\ \hline
-id & String &  & ? \\ \hline
-password & String & The password for the stream URL (see username parameter) & false\\ \hline
-prefix & String & An optional prefix string to prepend to all attribute names & false\\ \hline
-limit & Long & The maximum number of items that this stream should deliver & false\\ \hline
-username & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+{\ttfamily size } & int &  & ? \\ \hline
+{\ttfamily id } & String & The ID of this string for associating it with processes. & true\\ \hline
+{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
+{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names. & false\\ \hline
+{\ttfamily limit } & Long & The maximum number of items that this stream should deliver. & false\\ \hline
+{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
 \end{tabular}
  } 
  } 
-\caption{Parameters of processor {\ttfamily BlockingQueue}}
+ } 
+\caption{Parameters of class {\ttfamily stream.io.BlockingQueue}.}
 \end{center}
-\end{figure}
+\end{table}

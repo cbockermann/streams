@@ -1,24 +1,26 @@
-\subsubsection{\label{api:stream:io:JSONStream}Class {\ttfamily stream.io.JSONStream}}
+\StreamSection{JSONStream}
 
 This data stream reads JSON objects from the source (file/url) and
 returns the corresponding Data items. The stream implementation expects
 each line of the file/url to provide a single object in JSON format.
 
-\begin{figure}[h]
-\begin{center}{\footnotesize
-{\renewcommand{\arraystretch}{1.4}
-\textsf{
-\begin{tabular}{|c|c|p{9cm}|c|} \hline
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-{\ttfamily id } & String &  & ? \\ \hline
-{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
-{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names & false\\ \hline
-{\ttfamily limit } & Long & The maximum number of items that this stream should deliver & false\\ \hline
-{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
-\end{tabular}
- } 
- } 
- } 
-\caption{Parameters of class {\ttfamily stream.io.JSONStream}}
-\end{center}
-\end{figure}
+\TODO{Add table for parameters of JSONStream}
+%\begin{figure}[h]
+%\begin{center}{\footnotesize
+%{\renewcommand{\arraystretch}{1.4}
+%\textsf{
+%\begin{tabular}{|c|c|p{9cm}|c|} \hline
+%\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+%{\ttfamily id } & String &  & ? \\ \hline
+%{\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
+%{\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names & false\\ \hline
+%{\ttfamily limit } & Long & The maximum number of items that this stream should deliver & false\\ \hline
+%{\ttfamily username } & String & The username required to connect to the stream URL (e.g web-user, database user) & false\\ \hline
+%\end{tabular}
+% } 
+% } 
+% } 
+%\caption{Parameters of class {\ttfamily stream.io.JSONStream}}
+%\end{center}
+%\end{figure}
+\afterpage{\clearpage}

@@ -27,6 +27,7 @@
 \sfbproject{C3} % Your project identifier (two digit version)
 
 \usepackage{amssymb}
+\usepackage{afterpage}
 
 
 % ***TODO*** Choose correct title, author, department and email address
@@ -57,7 +58,7 @@
 \usepackage{algorithm}
 %\usepackage{algorithmicx}
 \usepackage{algpseudocode}
-
+\usepackage{tocvsec2}
 \usepackage{color}
 \definecolor{rapidi}{RGB}{240,176,0}
 \definecolor{rapidiText}{RGB}{102,51,0}
@@ -90,16 +91,40 @@
 \newcommand{\vx}{x}
 
 \newcommand{\sample}[1]{
-\begin{center}
+{\centering
 \begin{tikzpicture}[
   auto, every node/.style= { text width=0.8\textwidth},
   block/.style = {rectangle, draw=black!40, thick, fill=black!8, inner sep=1ex, minimum width=0.9\textwidth,
                   rounded corners=1.25pt}]
 \node [block,anchor=west] (titel) at (0,0) {\ttfamily #1 \hfill};
-\end{tikzpicture}
-\end{center}
+\end{tikzpicture}}
 }
 
+\newenvironment{xml}{\begin{figure}[h!]
+   \begin{lstlisting}{lang=xml}}{\end{lstlisting}
+\end{figure}
+}
+
+\newcommand{\TODO}[1]{{\centering {\bf #1}}}
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+            {-2.5ex\@plus -1ex \@minus -.25ex}%
+            {1.25ex \@plus .25ex}%
+            {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\newcommand{\StreamSection}[1]{\subsubsection{\label{api:#1}#1}}
+\newcommand{\PackageSection}[1]{\subsubsection*{#1}}
+
+\newcommand{\ProcessorSection}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}
+
+\newcommand{\Package}[1]{\subsubsection{\label{api:#1}Processors in Package {\ttfamily #1}}}
+\newcommand{\Processor}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}
+%\newcomnmand{\Processor}[1]{\subsubsubsection{\label{api:#1}Processor {\ttfamily #1}}
+
+\setcounter{tocdepth}{4} %to make it appears in TOC
+\setcounter{secnumdepth}{4} %to make it numbered
 
 \begin{document}
 
@@ -135,7 +160,15 @@
 \newpage
 \input{streamapi}
 
+%%
+%% Section 4
+%%
 \input{process-design}
+
+%%
+%% Section 5 Online Learning Design
+%%
+\input{machine-learning}
 
 %\input{distributed}
 %
@@ -143,7 +176,12 @@
 
 %\input{stream-plugin}
 
+%%
+%% Section 5 Example Use-Cases
+%%
 \input{examples}
+
+\input{summary}
 %\input{usecases}
 \input{appendix}
 

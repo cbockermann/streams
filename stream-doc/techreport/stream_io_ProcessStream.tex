@@ -1,35 +1,39 @@
-\paragraph{ProcessStream}
-
+\newpage
+\StreamSection{ProcessStream}
 This processor executes an external process (programm/script) that
 produces data and writes that data to standard output. This can be used
 to use external programs that can read files and stream those files in
 any of the formats provided by the stream API.
 
 The default format for external processes is expected to be CSV.
-
 In the following example, the Unix command \texttt{cat} is used as an
 example, producing lines of some CSV file:
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}{lang=xml}
+     <stream   class="stream.io.ProcessStream"
+             command="/bin/cat /tmp/test.csv"
+              format="stream.io.CsvStream" />
+  \end{lstlisting}
+\end{figure}
 
-\begin{verbatim}
-   <Stream class="stream.io.ProcessStream"
-           command="/bin/cat /tmp/test.csv"
-           format="stream.io.CsvStream" />
-\end{verbatim}
 The process is started at initialization time and the output will be
 read from standard input.
 
-\begin{figure}[h]
-\begin{center}
-{\renewcommand{\arraystretch}{1.2}
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-id & String &  & ? \\ \hline
-format & String & The format of the input (standard input), defaults to CSV & true\\ \hline
-command & String & The command to execute. This command will be spawned and is assumed to output data to standard output. & true\\ \hline
+{\ttfamily id } & String &  & ? \\ \hline
+{\ttfamily format } & String & The format of the input (standard input), defaults to CSV & true\\ \hline
+{\ttfamily command } & String & The command to execute. This command will be spawned and is assumed to output data to standard output. & true\\ \hline
 \end{tabular}
  } 
  } 
-\caption{Parameters of processor {\ttfamily ProcessStream}}
+ } 
+\caption{Parameters of class {\ttfamily stream.io.ProcessStream}.}
 \end{center}
-\end{figure}
+\end{table}
+\afterpage{\clearpage}

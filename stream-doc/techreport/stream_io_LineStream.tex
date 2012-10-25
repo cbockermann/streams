@@ -1,4 +1,4 @@
-\subsubsection{\label{api:stream:io:LineStream}Class {\ttfamily stream.io.LineStream}}
+\StreamSection{LineStream}
 
 This class provides a very flexible stream implementations that
 essentially reads from a URL line-by-line. The content of the complete
@@ -40,9 +40,9 @@ will be set to \texttt{http://example.com/index.html}. The
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-{\ttfamily key } & String &  & false\\ \hline
+{\ttfamily id } & String & The ID of the stream with which it is assicated to proceses.  & true \\ \hline
+{\ttfamily key } & String & The name of the attribute holding the complete line, defaults to {\ttfamily LINE}. & false\\ \hline
 {\ttfamily format } & String & The format how to parse each line. Elements like {\ttfamily \%(KEY)} will be detected and automatically populated in the resulting items. & false\\ \hline
-{\ttfamily id } & String &  & ? \\ \hline
 {\ttfamily password } & String & The password for the stream URL (see username parameter) & false\\ \hline
 {\ttfamily prefix } & String & An optional prefix string to prepend to all attribute names & false\\ \hline
 {\ttfamily limit } & Long & The maximum number of items that this stream should deliver & false\\ \hline
@@ -54,3 +54,4 @@ will be set to \texttt{http://example.com/index.html}. The
 \caption{Parameters of class {\ttfamily stream.io.LineStream}}
 \end{center}
 \end{table}
+\afterpage{\clearpage}

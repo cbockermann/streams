@@ -1,0 +1,22 @@
+\Processor{Every}
+
+This processor requires a parameter \texttt{n} and will then execute all
+inner processors every \texttt{n} data items, i.e.~if the number of
+observed items modulo \texttt{n} equals 0.
+
+In all other cases, the inner processors will simply be skipped.
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily n } & Long &  & ? \\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.flow.Every}.}
+\end{center}
+\end{table}

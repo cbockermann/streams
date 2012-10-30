@@ -1,8 +1,37 @@
 \Processor{Enqueue}
 
-This processor will enqueue data items into a specified queue. This
-\emph{may} also result in loops.
+This processor will enqueue data items into specified queues. To
+ensure mutual access to the data, the items are copied and copies are
+sent to the queues. This may lead to a multiplication of data.
 
 The processor is a conditioned processor, i.e.~it supports the use of
-condition expressions.
+condition expressions. As an example, the XML snippet in Figure
+\ref{fig:ex:Enqueue} will enqueue all events with a {\ttfamily color}
+value equal to {\ttfamily blue} into the queue {\ttfamily blue-items}.
 
+\begin{figure}[h!]
+        \centering
+        \begin{lstlisting}{lang=xml}
+           <process ...>
+               <Enqueue queues="blue-items" condition="%{data.color} == blue" />
+           </process>
+        \end{lstlisting}
+        \caption{\label{fig:ex:Enqueue}The {\ttfamily Enqueue} processor combined with a condition.}
+\end{figure}
+
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily queues} & ServiceRef[] & A list of names that reference the target queues. & true\\ \hline
+{\ttfamily condition} & Condition & A condition that is required to evaluate to {\em true} for this processor to be executed. If no condition is specified, then the processor is executed for every data item. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.data.Enqueue}.}
+\end{center}
+\end{table}

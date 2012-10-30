@@ -24,6 +24,7 @@
 package stream.io;
 
 import stream.Data;
+import stream.annotations.Parameter;
 import stream.data.DataFactory;
 import stream.util.parser.TimeParser;
 
@@ -49,6 +50,7 @@ public class TimeStream extends AbstractDataStream {
 	 * @param interval
 	 *            the interval to set
 	 */
+	@Parameter(description = "The time gap/rate at which this stream should provide items.", required = true)
 	public void setInterval(String interval) {
 		this.interval = interval;
 		try {
@@ -58,6 +60,22 @@ public class TimeStream extends AbstractDataStream {
 			throw new RuntimeException("Invalid time string '" + interval
 					+ "': " + e.getMessage());
 		}
+	}
+
+	/**
+	 * @return the key
+	 */
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 * @param key
+	 *            the key to set
+	 */
+	@Parameter(description = "The name of the attribute that should hold the timestamp, defaults to `@timestamp`", required = false)
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	/**

@@ -107,6 +107,7 @@ public abstract class AbstractDataStream implements DataStream {
 		return id;
 	}
 
+	@Parameter(required = true, description = "The ID of this stream for associating it with processes.")
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -126,7 +127,7 @@ public abstract class AbstractDataStream implements DataStream {
 	 * @param prefix
 	 *            the prefix to set
 	 */
-	@Parameter(required = false, description = "An optional prefix string to prepend to all attribute names", defaultValue = "")
+	@Parameter(required = false, description = "An optional prefix string to prepend to all attribute names.", defaultValue = "")
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -135,7 +136,7 @@ public abstract class AbstractDataStream implements DataStream {
 		return limit;
 	}
 
-	@Parameter(required = false, description = "The maximum number of items that this stream should deliver", defaultValue = "-1", max = Long.MAX_VALUE)
+	@Parameter(required = false, description = "The maximum number of items that this stream should deliver.", defaultValue = "-1", max = Long.MAX_VALUE)
 	public void setLimit(Long limit) {
 		this.limit = limit;
 	}

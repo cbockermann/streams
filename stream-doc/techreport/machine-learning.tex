@@ -1,6 +1,55 @@
 \section{\label{sec:machineLearning}Machine Learning with Continuous Data}
+As the large volumes of data are merely handable with automatic
+processing of that data, they are far away from being inspected
+manually. On the other hand gaining insight from that data is the key
+problem in various application domains.
+
+Machine learning and data mining has put forth a plethora of
+techniques and algorithms for pattern recognition, learning of
+prediction model or clustering that all aim at exactly that key
+problem: knowledge discover from data.
+
+For the setting of continuous data, various algorithms have been
+proposed which solve basic tasks inherent to the knowledge discovery
+process as well as complex methods that allow for training classifiers
+or finding clusters on steady streams of data. In this section we will
+give an overview of the machine learning algorithms that have been
+implemented within the \streams framework as well as the integration
+of an existing library, namely the MOA \cite{MOA}, which provides a
+rich set of state of the art online learning algorithms. 
+
+After that overview in Section \ref{sec:onlineLearning}, we discuss
+the problem of the {\em online application} of machine learning models
+which have either been trained online of offline, and then are used to
+make real-life predictions on streaming data. This will be covered in
+Section \ref{sec:onlineApplication}.
 
 
-\subsection{Online Learning from Data Streams}
+\subsection{\label{sec:onlineLearning}Online Learning from Data Streams}
 
-\subsection{Model Application on Data Streams}
+
+%%
+%% How are classifiers embedded into the streams framework?
+%% How can they be used?
+%%
+\subsubsection{Embedding Classifiers in \streams}
+
+
+%%
+%% Which classifiers/clusterers/etc. are available?
+%%
+\subsubsection{Available Online Learning Algorithms}
+
+\subsubsection*{Online Statistics (Counting, Quantiles)}
+
+\subsubsection*{Online Classifier}
+
+\subsubsection{}
+
+
+
+%%
+%% What is online model application? When is it required?
+%% What methods are provided? RapidMiner-Models?
+%%
+\subsection{\label{sec:onlineApplication}Model Application on Data Streams}

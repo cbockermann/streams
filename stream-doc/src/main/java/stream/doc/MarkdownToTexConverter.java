@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import stream.annotations.Parameter;
 import stream.runtime.setup.ParameterDiscovery;
@@ -94,7 +96,7 @@ public class MarkdownToTexConverter implements DocConverter {
 		if (tmp.isEmpty())
 			return;
 
-		out.println("\\begin{figure}[h]");
+		out.println("\\begin{table}[h]");
 		out.println("\\begin{center}{\\footnotesize");
 		out.println("{\\renewcommand{\\arraystretch}{1.4}");
 		out.println("\\textsf{");
@@ -115,7 +117,7 @@ public class MarkdownToTexConverter implements DocConverter {
 					name = p.name();
 				out.print("{\\ttfamily " + name + " }");
 				out.print(" & " + typeName);
-				out.print(" & " + p.description().replaceAll("%", "\\%"));
+				out.print(" & " + toTex(p.description().replaceAll("%", "\\%")));
 				out.print(" & " + p.required());
 			} else {
 				out.print("{\\ttfamily " + key + " }");
@@ -130,9 +132,26 @@ public class MarkdownToTexConverter implements DocConverter {
 		out.println(" } ");
 		out.println(" } ");
 		out.println("\\caption{Parameters of class {\\ttfamily "
-				+ clazz.getCanonicalName() + "}}");
+				+ clazz.getCanonicalName() + "}.}");
 		out.println("\\end{center}");
-		out.println("\\end{figure}");
+		out.println("\\end{table}");
+	}
+
+	public static String toTex(String str) {
+		String s = str;
+
+		Pattern p = Pattern.compile("`(.*)`");
+		Matcher m = p.matcher(s);
+		if (m.find()) {
+
+			String val = m.group();
+			val = val.substring(1, val.length() - 1);
+
+			s = s.substring(0, m.start()) + "{\\ttfamily " + val + "}"
+					+ s.substring(m.end());
+		}
+
+		return s;
 	}
 
 	/**
@@ -149,5 +168,12 @@ public class MarkdownToTexConverter implements DocConverter {
 	@Override
 	public void sectionUp() {
 		this.level--;
+	}
+
+	public static void main(String[] args) {
+		String in = "This is `@timestamp` a test";
+		System.out.println("Original: " + in);
+		String tex = toTex(in);
+		System.out.println("Converted: " + tex);
 	}
 }

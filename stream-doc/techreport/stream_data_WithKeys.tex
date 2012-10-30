@@ -1,9 +1,10 @@
 \Processor{WithKeys}
 
-This processor is a process-list. It creates a copy of the current data
-item with all attributes matching the list of specified keys. Then all
-nested processors are applied to that copy and the copy is merged back
-into the original data item.
+This processor is a processor list that executes one or more inner
+processors. It creates a copy of the current data item with all
+attributes matching the list of specified keys. Then all nested
+processors are applied to that copy and the copy is merged back into
+the original data item.
 
 If any of the nested data items returns \emph{null}, this processor will
 also return \emph{null}.
@@ -12,7 +13,8 @@ The \texttt{keys} parameter of this processor allows for specifying a
 comma separated list of keys and key-patterns using simple wildcards
 \texttt{*} and \texttt{?} as shown in Figure \ref{fig:withKeys}. If
 the {\ttfamily keys} parameter is not provided, then the inner
-processors will be provided with an empty item.
+processors will be provided with a complete copy of the current data
+item.
 
 \begin{figure}[h!]
 \begin{lstlisting}{lang=xml}
@@ -35,8 +37,8 @@ processors will be provided with an empty item.
 \textsf{
 \begin{tabular}{|c|c|p{9cm}|c|} \hline
 \textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-{\ttfamily keys } & String[] & A simple filter list of attribute names.  & true \\ \hline
-{\ttfamily join } & Boolean & Signals whether the changes made to the data item within the {\ttfamily WithKeys} processor should be merged into the originating item. Defaults to {\em true}. & false \\ \hline
+{\ttfamily keys } & String[] & A list of filter keys selecting the attributes that should be provided to the inner processors. & false\\ \hline
+{\ttfamily merge } & Boolean & Indicates whether the outcome of the inner processors should be merged into the input data item, defaults to true. & false\\ \hline
 \end{tabular}
  } 
  } 

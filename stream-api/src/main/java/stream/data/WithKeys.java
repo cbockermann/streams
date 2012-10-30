@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.ProcessorList;
+import stream.annotations.Parameter;
 import stream.util.WildcardPattern;
 
 /**
@@ -44,34 +45,31 @@ public class WithKeys extends ProcessorList {
 	String[] keys = null;
 
 	Set<String> selected = new HashSet<String>();
-	private Boolean join;
+	private Boolean merge = true;
 
 	public WithKeys() {
 		super();
-		this.join = true;
+		this.merge = true;
 	}
 
+	@Parameter(description = "A list of filter keys selecting the attributes that should be provided to the inner processors.")
 	public void setKeys(String[] keys) {
 		this.keys = keys;
 		for (String key : keys)
 			selected.add(key);
 	}
 
-	/*
-	 * public void setKeys(Set<String> keys) { this.keys = keys.toArray(new
-	 * String[keys.size()]); selected = keys; }
-	 */
-
 	public String[] getKeys() {
 		return keys;
 	}
 
-	public Boolean getJoin() {
-		return join;
+	public Boolean getMerge() {
+		return merge;
 	}
 
-	public void setJoin(Boolean join) {
-		this.join = join;
+	@Parameter(description = "Indicates whether the outcome of the inner processors should be merged into the input data item, defaults to true.")
+	public void setMerge(Boolean join) {
+		this.merge = join;
 	}
 
 	/**
@@ -79,22 +77,31 @@ public class WithKeys extends ProcessorList {
 	 */
 	@Override
 	public Data process(Data data) {
-		if (keys == null || keys.length == 0)
-			return data;
 
-		Data result = DataFactory.create();
-		for (String key : data.keySet()) {
-			if (isSelected(key)) {
-				result.put(key, data.get(key));
+		Data innerItem = null;
+
+		if (keys == null || keys.length == 0) {
+			innerItem = DataFactory.create();
+		} else {
+			innerItem = DataFactory.create();
+
+			for (String key : data.keySet()) {
+				if (isSelected(key)) {
+					innerItem.put(key, data.get(key));
+				}
+			}
+			for (String key : keys) {
+				if (!innerItem.containsKey(key))
+					innerItem.remove(key);
 			}
 		}
-		for (String key : keys) {
-			if (!result.containsKey(key))
-				result.remove(key);
+
+		Data processed = super.process(innerItem);
+		if (merge != null || !merge) {
+			return processed;
 		}
 
-		Data processed = super.process(result);
-		if (join && processed != null) {
+		if (merge == null || (merge && processed != null)) {
 			for (String key : processed.keySet()) {
 				data.put(key, processed.get(key));
 			}
@@ -111,7 +118,7 @@ public class WithKeys extends ProcessorList {
 		return data;
 	}
 
-	public boolean isSelected(String key) {
+	private boolean isSelected(String key) {
 
 		if (keys == null || keys.length == 0)
 			return false;

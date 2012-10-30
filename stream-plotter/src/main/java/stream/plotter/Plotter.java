@@ -153,6 +153,7 @@ public class Plotter extends DataVisualizer {
 		frame.getContentPane().add(plotPanel, BorderLayout.CENTER);
 		frame.setSize(width, height);
 		frame.setVisible(true);
+		plotPanel.setSteps(history);
 	}
 
 	/**

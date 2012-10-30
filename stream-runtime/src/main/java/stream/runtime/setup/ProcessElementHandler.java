@@ -34,11 +34,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.runtime.ElementHandler;
 import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
+import stream.runtime.ProcessContextImpl;
 import stream.runtime.VariableContext;
 import stream.service.Service;
 
@@ -159,6 +161,16 @@ public class ProcessElementHandler implements ElementHandler {
 		Process process = (Process) objectFactory.create(processClass, attr,
 				extraVariables);
 		log.debug("Created Process object: {}", process);
+
+		ProcessContext ctx = new ProcessContextImpl(container.getContext());
+		for (String key : attr.keySet()) {
+			ctx.set(key, attr.get(key));
+		}
+
+		for (String key : extraVariables.keySet()) {
+			ctx.set(key, extraVariables.get(key));
+		}
+		container.setProcessContext(process, ctx);
 
 		List<Processor> procs = createNestedProcessors(container, element,
 				extraVariables);

@@ -1,5 +1,10 @@
 This is BibTeX, Version 0.99c (Web2C 7.5.4)
 The top-level auxiliary file: TechReport.aux
+Case mismatch error between cite keys MOA and moa
+---line 75 of file TechReport.aux
+ : \citation{MOA
+ :              }
+I'm skipping whatever remains of this command
 A level-1 auxiliary file: core-api.aux
 A level-1 auxiliary file: fact-api.aux
 A level-1 auxiliary file: installing.aux
@@ -48,4 +53,4 @@ warning$ -- 1
 while$ -- 58
 width$ -- 17
 write$ -- 174
-(There was 1 warning)
+(There was 1 error message)

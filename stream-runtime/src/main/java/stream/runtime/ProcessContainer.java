@@ -139,6 +139,8 @@ public class ProcessContainer {
 	/** The list of processes running in this container */
 	protected final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
 
+	protected final Map<AbstractProcess, ProcessContext> processContexts = new LinkedHashMap<AbstractProcess, ProcessContext>();
+
 	protected final List<ServiceReference> serviceRefs = new ArrayList<ServiceReference>();
 
 	protected final Map<String, ElementHandler> elementHandler = new HashMap<String, ElementHandler>();
@@ -464,7 +466,11 @@ public class ProcessContainer {
 		for (AbstractProcess spu : processes) {
 			spu.setDaemon(true);
 
-			ProcessContext ctx = new ProcessContextImpl(context);
+			ProcessContext ctx = this.processContexts.get(spu);
+			if (ctx == null) {
+				ctx = new ProcessContextImpl(context);
+				processContexts.put(spu, ctx);
+			}
 			log.debug("Initializing process with process-context...");
 			spu.init(ctx);
 
@@ -596,5 +602,13 @@ public class ProcessContainer {
 		}
 
 		log.info("Container shut down.");
+	}
+
+	/**
+	 * @param process
+	 * @param ctx
+	 */
+	public void setProcessContext(Process process, ProcessContext ctx) {
+		processContexts.put(process, ctx);
 	}
 }

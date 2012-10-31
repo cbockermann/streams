@@ -1,0 +1,48 @@
+%%
+%% What is online model application? When is it required?
+%% What methods are provided? RapidMiner-Models?
+%%
+\subsection{\label{sec:onlineApplication}Model Application on Data Streams}
+
+As previously outlined in Section \ref{sec:onlineLearning}, each
+classifier provides a service that can be used to access or use its
+model. Such services can for example be a {\em PredictionService},
+which provides a prediction function for a data item. The former
+section mainly focused on the online training of such classifiers,
+whereas in this part, we deal with the application of such
+classifier/learning output to online data streams.
+
+There are two key aspects we want to discuss here, namely the use of
+classifier models for the evaluation of online learning algorithms in
+Section \ref{sec:evalOnline} and the general benefit of applying
+models that may even have been trained offline in the setting of
+continuous data streams in Section \ref{sec:applyOnline}.
+
+
+%%
+%% Raise some questions on "why" and "when" online model application
+%% is required, touch "concept drift" problems,...
+%%
+%% keywords: monitoring, static models, expert knowledge?
+%%
+
+%%
+%% A simple but important use of online model application is the 
+%% evaluation of classifiers on online data streams.
+%%
+%% This section should give an example walk-through for test-then-train
+%% and demonstrate an example container that evaluates a classifier (MOA?)
+%% on a data stream.
+%%
+\subsubsection{\label{sec:evalOnline}Evaluating Classifiers on a Stream}
+
+
+
+
+%%
+%% Section about the need to create a model on offline data and
+%% using that model on dynamic continuous data streams
+%%
+\subsubsection{\label{sec:applyOnline}Learning Offline, Predicting Online}
+
+

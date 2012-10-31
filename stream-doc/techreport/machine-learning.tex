@@ -29,7 +29,9 @@ Section \ref{sec:onlineApplication}.
 Within this section, we will denote each data item $d_i$ obtained from
 a stream as a tuple $d_i = (d_{i,1},\ldots,d_{i,k}) \subset
 M_1\times\ldots\times M_k$, where each $M_i$ might refer to some
-domain, e.g. $M_i \subseteq \mathbb{R}$ or an arbitrary set. Further we will refer to the index $i$ as the index of the item $d_i$ in a data stream $D$, i.e.
+domain, e.g. $M_i \subseteq \mathbb{R}$ or an arbitrary set. Further
+we will refer to the index $i$ as the index of the item $d_i$ in a
+data stream $D$, i.e.
 \begin{displaymath}
   D = \langle d_0,d_1,\ldots \rangle.
 \end{displaymath}
@@ -39,6 +41,10 @@ domain, e.g. $M_i \subseteq \mathbb{R}$ or an arbitrary set. Further we will ref
 %%
 %%
 \subsection{\label{sec:onlineLearning}Online Learning from Data Streams}
+The general learning tasks in online learning do not differ from the
+traditional objectives. Supervised learning such as classification or
+regression tasks need...
+
 Learning from unbounded and continuous data poses tight challenges to
 the designer of machine learning algorithms. Even simple basic
 building blocks like the computation of a median or minima/maxima
@@ -57,14 +63,14 @@ given in equation (\ref{eqn:naiveBayes}):
   P(c | f_1,\ldots,f_n ) = \frac{P(c)\cdot P(f_1,\ldots,f_n|c)}{P(f_1,\ldots,f_n)}.\label{eqn:naiveBayes}
 \end{eqnarray}
 
-Assuming a fixed set $C = {c_1,\ldots,c_l}$ of observable classes, we
+Assuming a fixed set $C = \{c_1,\ldots,c_l\}$ of observable classes, we
 can easily approximate $P(c)$ by counting the occurences for each
 $c_i$ in the observed stream. For pure numerical attributes $f_i$,
 generally a gaussian normal distribution is assumed, such that the
 factors $P(f_1,\ldots,f_n|c)$ and $P(f_1,\ldots,f_n)$ can be derived
 by estimating the mean and average for each attribute $f_i$.
 
-The settings gets a bit more interesting if the $f_i$ are nominal
+The setting gets a bit more complicated if the $f_i$ are nominal
 values, such as variable strings from an unbounded domain such as
 URLs, i.e. $M_i \cong \mathbb{N}$. In this case we cannot simply
 derive a probability for each instance of an attribute as this would
@@ -90,37 +96,4 @@ the stream processing contraints mentioned in Section
 
 
 
-
-%%
-%% What is online model application? When is it required?
-%% What methods are provided? RapidMiner-Models?
-%%
-\subsection{\label{sec:onlineApplication}Model Application on Data Streams}
-
-%%
-%% Raise some questions on "why" and "when" online model application
-%% is required, touch "concept drift" problems,...
-%%
-%% keywords: monitoring, static models, expert knowledge?
-%%
-
-%%
-%% A simple but important use of online model application is the 
-%% evaluation of classifiers on online data streams.
-%%
-%% This section should give an example walk-through for test-then-train
-%% and demonstrate an example container that evaluates a classifier (MOA?)
-%% on a data stream.
-%%
-\subsubsection{Evaluating Classifiers on a Stream}
-
-
-
-
-%%
-%% Section about the need to create a model on offline data and
-%% using that model on dynamic continuous data streams
-%%
-\subsubsection{Learning Offline, Predicting Online}
-
-
+\include{online-model-application}

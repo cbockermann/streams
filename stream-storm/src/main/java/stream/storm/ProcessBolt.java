@@ -64,7 +64,7 @@ public class ProcessBolt extends AbstractBolt {
 					config.getDocumentElement(), uuid);
 
 			if (element == null) {
-				throw new Exception("Fuck! You screwed the XML :-)");
+				throw new Exception("Damn! You screwed the XML :-)");
 			}
 
 			ObjectFactory obf = ObjectFactory.newInstance();

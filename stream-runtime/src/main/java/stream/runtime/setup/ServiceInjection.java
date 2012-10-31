@@ -109,7 +109,7 @@ public class ServiceInjection {
 
 					log.info("Starting invocation on {}", consumer);
 					m.invoke(consumer, args);
-					return;
+					continue;
 				} else {
 					throw new Exception(
 							"No service-setter found for service-array "

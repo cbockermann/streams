@@ -44,7 +44,7 @@ public class StreamSpout extends BaseRichSpout {
 	protected final String uuid;
 
 	public StreamSpout(String xmlConfig, String uuid) {
-		log.info("Creating spout for stream {}", uuid);
+		log.debug("Creating spout for stream {}", uuid);
 		this.xmlConfig = xmlConfig;
 		this.uuid = uuid;
 	}
@@ -70,12 +70,12 @@ public class StreamSpout extends BaseRichSpout {
 					config.getDocumentElement(), uuid);
 
 			if (element == null) {
-				throw new Exception("Fuck! You screwed the XML!!");
+				throw new Exception("Damn! You screwed the XML!!");
 			}
 
 			ObjectFactory obf = ObjectFactory.newInstance();
 			ProcessorFactory pf = new ProcessorFactory(obf);
-			log.info("Creating stream from element {}", element);
+			log.debug("Creating stream from element {}", element);
 			stream = DataStreamFactory.createStream(obf, pf, element);
 			stream.init();
 		} catch (Exception e) {

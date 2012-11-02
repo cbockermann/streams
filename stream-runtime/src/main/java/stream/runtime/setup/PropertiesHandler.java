@@ -3,6 +3,11 @@
  */
 package stream.runtime.setup;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -80,6 +85,44 @@ public class PropertiesHandler extends VariableContext implements
 
 					container.getContext().setProperty(key, value);
 					set(key, value);
+				}
+			}
+
+			if (prop.hasAttribute("url")) {
+				try {
+					URL propUrl;
+					String purl = prop.getAttribute("url");
+					if (purl.toLowerCase().startsWith("classpath:")) {
+						propUrl = PropertiesHandler.class.getResource(purl
+								.substring("classpath:".length()));
+					} else {
+						propUrl = new URL(prop.getAttribute("url"));
+					}
+
+					Properties p = new Properties();
+					p.load(propUrl.openStream());
+					for (Object k : p.keySet()) {
+						container.getContext().setProperty(k.toString(),
+								p.getProperty(k.toString()));
+					}
+
+				} catch (Exception e) {
+					log.error("Failed to read properties: {}", e.getMessage());
+				}
+			}
+
+			if (prop.hasAttribute("file")) {
+				File file = new File(prop.getAttribute("file"));
+				try {
+					Properties p = new Properties();
+					p.load(new FileInputStream(file));
+					for (Object k : p.keySet()) {
+						container.getContext().setProperty(k.toString(),
+								p.getProperty(k.toString()));
+					}
+				} catch (Exception e) {
+					log.error("Failed to read properties from file {}: {}",
+							file, e.getMessage());
 				}
 			}
 		}

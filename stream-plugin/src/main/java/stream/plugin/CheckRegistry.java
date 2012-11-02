@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.learner.PredictionService;
 

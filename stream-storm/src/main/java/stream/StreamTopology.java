@@ -3,6 +3,8 @@
  */
 package stream;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -33,16 +35,18 @@ public class StreamTopology {
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
 	static Logger log = LoggerFactory.getLogger(StreamTopology.class);
 
-	public static StormTopology createTopology(Document doc) throws Exception {
+	public static TopologyBuilder build(Document doc, TopologyBuilder builder)
+			throws Exception {
 
 		doc = XMLUtils.addUUIDAttributes(doc, UUID_ATTRIBUTE);
 
 		String xml = XMLUtils.toString(doc);
-		TopologyBuilder builder = new TopologyBuilder();
 
-		// a map of pre-defined streams...
+		// a map of pre-defined inputs, i.e. input-names => uuids
+		// to catch the case when processes read from queues that have
+		// not been explicitly defined (i.e. 'linking bolts')
 		//
-		// Map<String, String> streams = new LinkedHashMap<String, String>();
+		Map<String, String> streams = new LinkedHashMap<String, String>();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -75,6 +79,7 @@ public class StreamTopology {
 						}
 					}
 
+					log.info("Adding bolt {}, subscribing to {}", uuid, input);
 					builder.setBolt(uuid, new ProcessBolt(xml, uuid), workers)
 							.shuffleGrouping(input);
 				}
@@ -95,7 +100,13 @@ public class StreamTopology {
 			}
 		}
 
-		return builder.createTopology();
+		return builder;
+	}
+
+	public static StormTopology createTopology(Document doc) throws Exception {
+		TopologyBuilder builder = build(doc, new TopologyBuilder());
+		StormTopology topology = builder.createTopology();
+		return topology;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -109,6 +120,9 @@ public class StreamTopology {
 		Config conf = new Config();
 		conf.setNumWorkers(20);
 
-		StormSubmitter.submitTopology("test", conf, createTopology(doc));
+		TopologyBuilder builder = build(doc, new TopologyBuilder());
+		StormTopology topology = builder.createTopology();
+
+		StormSubmitter.submitTopology("test", conf, topology);
 	}
 }

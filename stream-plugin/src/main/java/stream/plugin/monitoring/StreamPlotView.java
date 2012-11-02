@@ -27,7 +27,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.border.EmptyBorder;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.Statistics;
 import stream.plotter.PlotPanel;
 

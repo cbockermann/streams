@@ -33,7 +33,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
-import stream.data.Data;
+import stream.Data;
 
 import com.rapidminer.operator.AbstractIOObject;
 import com.rapidminer.operator.Annotations;
@@ -47,14 +47,14 @@ import com.rapidminer.operator.ResultObject;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class DataObject extends AbstractIOObject implements stream.data.Data,
+public class DataObject extends AbstractIOObject implements stream.Data,
 		ResultObject {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -358985628975633770L;
-	stream.data.Data data;
+	stream.Data data;
 
-	public DataObject(stream.data.Data data) {
+	public DataObject(stream.Data data) {
 		this.data = data;
 	}
 
@@ -119,11 +119,11 @@ public class DataObject extends AbstractIOObject implements stream.data.Data,
 		return new Annotations();
 	}
 
-	public stream.data.Data getWrappedDataItem() {
+	public stream.Data getWrappedDataItem() {
 		return data;
 	}
 
-	public void setWrappedDataItem(stream.data.Data item) {
+	public void setWrappedDataItem(stream.Data item) {
 		this.data = item;
 	}
 

@@ -38,6 +38,7 @@ public class ProcessBolt extends AbstractBolt {
 	static Logger log = LoggerFactory.getLogger(ProcessBolt.class);
 
 	transient ProcessorList process;
+	String[] outputs;
 
 	public ProcessBolt(String xmlConfig, String uuid) {
 		super(xmlConfig, uuid);
@@ -76,6 +77,16 @@ public class ProcessBolt extends AbstractBolt {
 			for (Processor p : list) {
 				process.getProcessors().add(p);
 			}
+
+			if (element.hasAttribute("output")) {
+				String out = element.getAttribute("output");
+				if (out.indexOf(",") > 0) {
+					outputs = out.split(",");
+				} else {
+					outputs = new String[] { out };
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,10 +104,16 @@ public class ProcessBolt extends AbstractBolt {
 		if (data != null) {
 			Data item = (Data) data;
 			item = process.process(item);
-			log.debug("Emitting result item: {}", item);
-			output.emit(new Values(item));
-			log.debug("ack'ing item {}", input);
-			output.ack(input);
+
+			if (outputs != null) {
+				for (String out : outputs) {
+					log.debug("Emitting result item to {}: {}", out, item);
+					output.emit(out, new Values(item));
+				}
+			} else {
+				log.debug("Emitting item {}", item);
+				output.emit(new Values(item));
+			}
 		}
 	}
 }

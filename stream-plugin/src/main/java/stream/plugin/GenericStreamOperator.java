@@ -29,11 +29,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.Measurable;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
-import stream.data.Data;
 import stream.plugin.data.DataObject;
 import stream.runtime.VariableContext;
 import stream.runtime.setup.ParameterInjection;

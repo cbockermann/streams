@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.plugin.GenericStreamOperator;
 import stream.plugin.OperatorNamingService;
+import stream.runtime.ContainerContext;
+import stream.runtime.DependencyGraph;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.service.Service;
@@ -66,9 +68,9 @@ public class ServiceBinding {
 		}
 
 		try {
+			ContainerContext ctx = new ContainerContext();
 			log.info("Found {} service references: {}", refs.size(), refs);
-			ServiceInjection.injectServices(refs,
-					OperatorNamingService.getInstance());
+			ServiceInjection.injectServices(refs, ctx, new DependencyGraph());
 		} catch (Exception e) {
 			log.error("Failed to inject services: {}", e.getMessage());
 		}

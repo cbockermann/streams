@@ -33,6 +33,7 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
+import stream.io.QueueService;
 
 /**
  * This class implements the basic active component, ie. a thread executing
@@ -56,6 +57,8 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	protected Long count = 0L;
 
 	protected Data lastItem = null;
+
+	protected QueueService outputQueue;
 
 	/**
 	 * This method will obtain the next item from the "input stream" that this
@@ -154,6 +157,14 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 				// process the item
 				//
 				item = process(item);
+
+				if (outputQueue != null) {
+					log.debug(
+							"Sending process output to connected output-queue {}",
+							outputQueue);
+					outputQueue.enqueue(item);
+				}
+
 				count++;
 			}
 		} catch (Exception e) {

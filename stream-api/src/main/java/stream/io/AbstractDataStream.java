@@ -210,7 +210,7 @@ public abstract class AbstractDataStream implements DataStream {
 	/**
 	 * @see stream.io.DataStream#readNext()
 	 */
-	public final Data readNext(Data item) throws Exception {
+	public Data readNext(Data item) throws Exception {
 
 		if (limit > 0 && count >= limit)
 			return null;

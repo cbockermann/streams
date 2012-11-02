@@ -6,8 +6,8 @@ package stream.plugin.sources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.annotations.Description;
-import stream.data.Data;
 import stream.plugin.data.DataObject;
 import stream.plugin.data.DataSourceObject;
 

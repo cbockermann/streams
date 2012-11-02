@@ -30,8 +30,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import stream.Data;
 import stream.Processor;
-import stream.data.Data;
 import stream.data.DataFactory;
 import stream.io.DataStream;
 
@@ -54,6 +54,7 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 	ArrayList<Integer> list;
 	int repeat = 1;
 	boolean shuffle = false;
+	String id;
 
 	public ExampleSetDataStreamWrapper(ExampleSet exampleSet, boolean shuffled,
 			int repeatitions) {
@@ -182,5 +183,21 @@ public class ExampleSetDataStreamWrapper implements DataStream {
 	@Override
 	public void init() throws Exception {
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @see stream.io.DataStream#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @see stream.io.DataStream#setId(java.lang.String)
+	 */
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 }

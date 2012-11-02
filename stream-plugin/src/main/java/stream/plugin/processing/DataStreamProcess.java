@@ -28,10 +28,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.expressions.Condition;
 import stream.plugin.GenericStreamOperator;
 import stream.plugin.StreamsPlugin;

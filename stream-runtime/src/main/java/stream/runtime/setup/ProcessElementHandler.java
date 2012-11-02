@@ -89,6 +89,8 @@ public class ProcessElementHandler implements ElementHandler {
 		if (src == null)
 			src = attr.get("input");
 
+		String out = attr.get("output");
+
 		// Create the default data-stream process
 		//
 		String processClass = "stream.runtime.Process";
@@ -140,6 +142,16 @@ public class ProcessElementHandler implements ElementHandler {
 				String input = var.expand(src);
 				log.info("Setting source for process {} to {}", process, input);
 				process.setInput(input);
+
+				if (out != null) {
+					String processOut = var.expand(out);
+					log.info("Setting process output for process {} to {}",
+							process, processOut);
+					process.setOutput(processOut);
+				} else {
+					log.info("Process has no output connection...");
+				}
+
 				container.getProcesses().add(process);
 			}
 

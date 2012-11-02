@@ -93,6 +93,9 @@ public class XMLUtils {
 	 */
 	public static void addUUIDAttributes(Element element, String attributeName) {
 
+		if (element.hasAttribute(UUID_ATTRIBUTE)) {
+			return;
+		}
 		UUID id = UUID.randomUUID();
 		element.setAttribute(UUID_ATTRIBUTE, id.toString());
 

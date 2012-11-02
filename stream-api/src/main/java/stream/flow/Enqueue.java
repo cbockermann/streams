@@ -26,7 +26,7 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
+import stream.ConditionedProcessor;
 import stream.Data;
 import stream.io.QueueService;
 
@@ -34,7 +34,7 @@ import stream.io.QueueService;
  * @author chris
  * 
  */
-public class Enqueue extends AbstractProcessor {
+public class Enqueue extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 	String ref = null;
@@ -53,7 +53,7 @@ public class Enqueue extends AbstractProcessor {
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
-	public Data process(Data data) {
+	public Data processMatchingData(Data data) {
 		if (data == null)
 			return data;
 

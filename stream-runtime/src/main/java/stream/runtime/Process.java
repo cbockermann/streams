@@ -40,6 +40,7 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 	DataStream dataStream;
 	Long limit = -1L;
 	String input;
+	String output;
 
 	public Process() {
 		this.interval = 0L;
@@ -58,6 +59,21 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 	 */
 	public String getInput() {
 		return input;
+	}
+
+	/**
+	 * @return the output
+	 */
+	public String getOutput() {
+		return output;
+	}
+
+	/**
+	 * @param output
+	 *            the output to set
+	 */
+	public void setOutput(String output) {
+		this.output = output;
 	}
 
 	/**

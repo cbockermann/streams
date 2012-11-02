@@ -26,7 +26,7 @@ package stream.plugin.processing.convert;
 import java.util.Iterator;
 import java.util.List;
 
-import stream.data.Data;
+import stream.Data;
 import stream.data.DataFactory;
 import stream.plugin.data.DataObject;
 

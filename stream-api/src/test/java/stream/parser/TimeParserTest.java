@@ -29,7 +29,7 @@ public class TimeParserTest {
 		try {
 			Long time = TimeParser.parseTime(in);
 			System.out.println("'" + in + "' parses to milliseconds: " + time);
-			Assert.assertEquals(1000 * 10L, time.longValue());
+			Assert.assertEquals(10L, time.longValue());
 		} catch (Exception e) {
 			Assert.fail("Test failed: " + e.getMessage());
 		}

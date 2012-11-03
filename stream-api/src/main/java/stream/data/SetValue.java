@@ -97,6 +97,7 @@ public class SetValue extends ConditionedProcessor {
 	 * @param key
 	 *            the key to set
 	 */
+	@Parameter(description = "The key/name of the variable to set.")
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -112,6 +113,7 @@ public class SetValue extends ConditionedProcessor {
 	 * @param value
 	 *            the value to set
 	 */
+	@Parameter(description = "The value to set. This can also be a runtime expression, which will be evaluated at processing time. If this value is not set, the processor has no effect.", required = true)
 	public void setValue(String value) {
 		this.value = value;
 	}
@@ -127,7 +129,7 @@ public class SetValue extends ConditionedProcessor {
 	 * @param scope
 	 *            scope=data and scope=process
 	 */
-	@Parameter(defaultValue = Context.DATA_CONTEXT_NAME, required = false)
+	@Parameter(defaultValue = Context.DATA_CONTEXT_NAME, description = "The scope determines where the variable will be set. Valid scopes are `process`, `data`. The default scope is `data`.", required = false)
 	public void setScope(String[] scope) {
 		this.scope = Arrays.asList(scope);
 	}

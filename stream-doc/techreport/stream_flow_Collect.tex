@@ -1,0 +1,31 @@
+\Processor{Collect}
+
+This processor requires a \texttt{count} parameter and a \texttt{key} to
+be specified. The implementation will wait for a number of
+\texttt{count} data items and collect these in a list. As soon as
+\texttt{count} items have been collected, a new, empty item will be
+created which holds an array of the collected items in the attribute
+specified by \texttt{key}.
+
+While waiting for \texttt{count} items to arrive, the processor will
+return \texttt{null} for each collected data item, such that no
+subsequent processors will be executed in a process.
+
+After emitting the collected data items, the counter is reset and the
+processor starts collecting the next \texttt{count} items.
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily key } & String & The key (name) of the attribute into which the collection (array) of items will be put, defaults to '@items' & false\\ \hline
+{\ttfamily count } & Integer & The number of items that should be collected before the processing continues. & true\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.flow.Collect}.}
+\end{center}
+\end{table}

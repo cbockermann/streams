@@ -1,0 +1,28 @@
+\Processor{AddTimestamp}
+
+This processor simply adds the current time as a UNIX timestamp to the
+current data item. The default attribute/key to add is
+\texttt{@timestamp}.
+
+The value is the number of milliseconds since the epoch date, usually
+1.1.1970. Using the \texttt{key} parameter, the name of the attribute to
+add can be changed:
+\begin{lstlisting}{lang=xml}
+    <stream.data.AddTimestamp key="@current-time" />
+\end{lstlisting}
+
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily key } & String & The key of the timestamp attribute to add & false\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.data.AddTimestamp}.}
+\end{center}
+\end{table}

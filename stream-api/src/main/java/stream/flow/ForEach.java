@@ -14,9 +14,17 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.ProcessorList;
+import stream.annotations.Parameter;
 
 /**
- * @author chris
+ * <p>
+ * This processor applies a list of nested processors to each item found in a
+ * collection of data items in some attribute of the current item. This
+ * processor is generally used in combination with the {@link Collect}
+ * processor, which creates a collection of data items of a given number.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public class ForEach extends ProcessorList {
@@ -35,6 +43,7 @@ public class ForEach extends ProcessorList {
 	 * @param key
 	 *            the key to set
 	 */
+	@Parameter(description = "The name of the attribute containing the collection of items that should be processed.")
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -69,7 +78,8 @@ public class ForEach extends ProcessorList {
 					}
 				}
 			} else {
-				log.debug("Collection {} not supported!");
+				log.debug("Collection of type {} not supported!",
+						value.getClass());
 			}
 		}
 

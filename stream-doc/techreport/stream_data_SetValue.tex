@@ -1,0 +1,28 @@
+\Processor{SetValue}
+
+This processors allows for setting a feature to a single, constant
+value:
+\begin{figure}[h!]
+\centering
+\begin{lstlisting}{lang=xml}
+  <SetValue key="attribute1" value="abc" />
+\end{lstlisting}
+\end{figure}
+
+\begin{table}[h]
+\begin{center}{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily value } & String &  & ? \\ \hline
+{\ttfamily key } & String & The name of the attribute to set. & true \\ \hline
+{\ttfamily scope } & String[] & The scope determines where the variable will be set. Valid scopes are {\ttfamily process}, {\ttfamily data}. The default scope is {\ttfamily data}. & false\\ \hline
+{\ttfamily condition } & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ } 
+ } 
+\caption{Parameters of class {\ttfamily stream.data.SetValue}.}
+\end{center}
+\end{table}

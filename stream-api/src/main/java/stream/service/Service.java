@@ -23,7 +23,6 @@
  */
 package stream.service;
 
-import java.rmi.Remote;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ import java.rmi.Remote;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public interface Service extends Remote {
+public interface Service {
 
 	public void reset() throws Exception;
 }

@@ -64,6 +64,10 @@ import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.StreamElementHandler;
+import stream.runtime.shutdown.DependencyGraph;
+import stream.runtime.shutdown.LocalShutdownCondition;
+import stream.runtime.shutdown.ServerShutdownCondition;
+import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
 
 /**
@@ -446,7 +450,7 @@ public class ProcessContainer {
 
 		this.injectServices();
 
-		if (streams.isEmpty() && listeners.isEmpty())
+		if (!server && streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");
 
 		log.debug("Need to handle {} sources: {}", streams.size(),
@@ -509,7 +513,14 @@ public class ProcessContainer {
 		}
 
 		log.debug("Waiting for container to finish...");
-		ShutdownCondition con = new ShutdownCondition();
+
+		ShutdownCondition con = null;
+
+		if (server)
+			con = new ServerShutdownCondition();
+		else
+			con = new LocalShutdownCondition();
+
 		con.waitForCondition(depGraph);
 
 		// if the shutdown condition has properly been reached (no Ctrl+C), then

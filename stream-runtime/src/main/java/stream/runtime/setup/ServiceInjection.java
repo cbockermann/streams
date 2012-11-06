@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.ContainerContext;
-import stream.runtime.DependencyGraph;
 import stream.runtime.VariableContext;
+import stream.runtime.shutdown.DependencyGraph;
 import stream.service.Service;
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.runtime;
+package stream.runtime.shutdown;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +10,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.io.DataStream;
+import stream.runtime.Monitor;
+import stream.runtime.Process;
 
 /**
  * @author chris
  * 
  */
-public class ShutdownCondition {
+public class LocalShutdownCondition extends AbstractShutdownCondition {
 
-	static Logger log = LoggerFactory.getLogger(ShutdownCondition.class);
+	static Logger log = LoggerFactory.getLogger(LocalShutdownCondition.class);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
+	 */
+	@Override
 	public boolean isMet(DependencyGraph graph) {
 
 		if (graph.nodes.isEmpty())
@@ -90,19 +99,4 @@ public class ShutdownCondition {
 		}
 	}
 
-	public void waitForCondition(DependencyGraph graph) {
-		while (!isMet(graph)) {
-			try {
-				log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
-				synchronized (graph) {
-					graph.wait();
-				}
-			} catch (Exception e) {
-				log.error("Error while waiting for shutdown-condition: {}",
-						e.getMessage());
-				if (log.isDebugEnabled())
-					e.printStackTrace();
-			}
-		}
-	}
 }

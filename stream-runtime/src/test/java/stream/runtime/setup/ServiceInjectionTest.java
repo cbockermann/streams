@@ -32,8 +32,8 @@ import org.junit.Test;
 
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
-import stream.runtime.DependencyGraph;
 import stream.runtime.ProcessContainer;
+import stream.runtime.shutdown.DependencyGraph;
 
 /**
  * @author chris

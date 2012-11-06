@@ -30,13 +30,13 @@
   	<dependency>
   		<groupId>org.jwall</groupId>
   		<artifactId>stream-runtime</artifactId>
-  		<version>0.9.7-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.jwall</groupId>
   		<artifactId>stream-api</artifactId>
-  		<version>0.9.7-SNAPSHOT</version>
+  		<version>${project.version}</version>
   	</dependency>
   </dependencies>
 </project>

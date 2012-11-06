@@ -17,12 +17,8 @@
 		<module>stream-core</module>
 		<module>stream-runtime</module>
 		<module>stream-plotter</module>
-		<!-- <module>stream-node</module> <module>stream-runner</module> -->
 		<module>stream-storm</module>
 	</modules>
-
-	<!-- <repositories> <repository> <id>jwall</id> <name>jwall.org Maven Repository</name> 
-		<url>http://secure.jwall.org/maven/repository/jwall</url> </repository> </repositories> -->
 
 	<distributionManagement>
 		<repository>
@@ -100,14 +96,13 @@
 						<artifactId>doxia-module-markdown</artifactId>
 						<version>1.1.4</version>
 					</dependency>
-					<dependency><!-- add support for ssh/scp -->
+					<dependency>
 						<groupId>org.apache.maven.wagon</groupId>
 						<artifactId>wagon-ssh</artifactId>
 						<version>1.0</version>
 					</dependency>
 				</dependencies>
 				<configuration>
-					<!-- <templateFile>src/site/site.vm</templateFile> -->
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>

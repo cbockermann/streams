@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import stream.plugin.GenericStreamOperator;
 import stream.plugin.OperatorNamingService;
 import stream.runtime.ContainerContext;
-import stream.runtime.DependencyGraph;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
+import stream.runtime.shutdown.DependencyGraph;
 import stream.service.Service;
 
 import com.rapidminer.parameter.ParameterType;

@@ -509,6 +509,37 @@ public class ProcessContainer {
 		}
 
 		log.debug("Waiting for container to finish...");
+
+		Thread t = new Thread() {
+			final Logger log = LoggerFactory.getLogger("ShutdownWatcher");
+
+			public void run() {
+				ShutdownCondition con = new ShutdownCondition();
+				while (!con.isMet(depGraph)) {
+					log.info("Shutdown condition not yet met.");
+					log.info("Dependency graph: {}", depGraph);
+					depGraph.printShutdownStrategy();
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e) {
+						log.error(
+								"Error while waiting for shutdown-condition: {}",
+								e.getMessage());
+					}
+				}
+
+				log.info("###");
+				log.info("###");
+				log.info("###");
+				log.info("### Shutdown condition met, watcher exiting...");
+				log.info("###");
+				log.info("###");
+				log.info("###");
+			}
+		};
+		t.setDaemon(true);
+		// t.start();
+
 		ShutdownCondition con = new ShutdownCondition();
 		con.waitForCondition(depGraph);
 

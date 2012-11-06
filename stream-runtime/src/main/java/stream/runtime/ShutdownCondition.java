@@ -21,9 +21,11 @@ public class ShutdownCondition {
 
 	public boolean isMet(DependencyGraph graph) {
 
-		if (graph.nodes.isEmpty())
-			return true;
 		synchronized (graph) {
+
+			if (graph.nodes.isEmpty())
+				return true;
+
 			List<Monitor> monitors = new ArrayList<Monitor>();
 			int processes = 0;
 			int monitorCount = 0;
@@ -91,17 +93,17 @@ public class ShutdownCondition {
 	}
 
 	public void waitForCondition(DependencyGraph graph) {
-		while (!isMet(graph)) {
-			try {
-				log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
-				synchronized (graph) {
+		synchronized (graph) {
+			while (!isMet(graph)) {
+				try {
+					log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
 					graph.wait();
+				} catch (Exception e) {
+					log.error("Error while waiting for shutdown-condition: {}",
+							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
 				}
-			} catch (Exception e) {
-				log.error("Error while waiting for shutdown-condition: {}",
-						e.getMessage());
-				if (log.isDebugEnabled())
-					e.printStackTrace();
 			}
 		}
 	}

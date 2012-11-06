@@ -86,7 +86,7 @@ public class DependencyGraph {
 		}
 
 		List<LifeCycle> objs = remove(o, false);
-		this.notify();
+		this.notifyAll();
 		return objs;
 	}
 
@@ -127,7 +127,11 @@ public class DependencyGraph {
 		return lifeObjects;
 	}
 
-	public void printShutdownStrategy() {
+	public synchronized void printShutdownStrategy() {
+
+		List<Object> all = new ArrayList<Object>();
+		all.addAll(this.nodes);
+
 		Set<Object> finished = new LinkedHashSet<Object>();
 		Queue<Object> waiting = new LinkedBlockingQueue<Object>();
 		waiting.addAll(getIsolated());
@@ -136,7 +140,7 @@ public class DependencyGraph {
 			Object next = waiting.poll();
 			log.trace("[graph-shutdown]   Shutting down {}", next);
 			finished.add(next);
-			remove(next);
+			all.remove(next);
 		}
 		log.trace("[dep-graph]  Reference counts: ");
 		for (Object node : this.nodes) {

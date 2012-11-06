@@ -97,7 +97,7 @@ public class WithKeys extends ProcessorList {
 		}
 
 		Data processed = super.process(innerItem);
-		if (merge != null || !merge) {
+		if (merge != null && !merge) {
 			return processed;
 		}
 

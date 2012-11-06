@@ -35,23 +35,23 @@ import stream.runtime.ProcessContainer;
 
 /**
  * @author chris
- *
+ * 
  */
 public class ScriptTest {
 
-	static Logger log = LoggerFactory.getLogger( ScriptTest.class );
+	static Logger log = LoggerFactory.getLogger(ScriptTest.class);
 
 	@Test
 	public void test() {
 
 		try {
-			URL url = ProcessContainer.class.getResource( "/script-example.xml" );
-			log.info( "Running experiment from {}", url );
-			ProcessContainer runner = new ProcessContainer( url );
+			URL url = ProcessContainer.class.getResource("/script-example.xml");
+			log.info("Running experiment from {}", url);
+			ProcessContainer runner = new ProcessContainer(url);
 			runner.run();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Not yet implemented");
+			fail("Error: " + e.getMessage());
 		}
 	}
 }

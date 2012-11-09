@@ -10,12 +10,13 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.annotations.Description;
 import stream.Data;
+import stream.annotations.Description;
 
 /**
- * This stream reads the filenames from the given directory. The provided dataItem includes
- * the full qualified filename (@url), the directory (@directory) and the filename(@filename).
+ * This stream reads the filenames from the given directory. The provided
+ * dataItem includes the full qualified filename (@url), the directory
+ * (@directory) and the filename(@filename).
  * 
  * @author Hendrik Blom
  * 
@@ -30,7 +31,7 @@ public class DirectoryStream extends AbstractDataStream {
 	private String dirPath;
 	private int counter;
 
-	public DirectoryStream(URL url) throws Exception {
+	public DirectoryStream(SourceURL url) throws Exception {
 		super(url);
 		this.initReader();
 
@@ -45,7 +46,6 @@ public class DirectoryStream extends AbstractDataStream {
 		files = dir.list();
 		counter = 0;
 	}
-
 
 	@Override
 	public void readHeader() throws Exception {
@@ -66,7 +66,7 @@ public class DirectoryStream extends AbstractDataStream {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void close() {
 	}

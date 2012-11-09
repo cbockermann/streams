@@ -23,8 +23,6 @@
  */
 package stream.io;
 
-import java.net.URL;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +47,7 @@ public class ArffStream extends AbstractDataStream {
 	 * @param url
 	 * @throws Exception
 	 */
-	public ArffStream(URL url) throws Exception {
+	public ArffStream(SourceURL url) throws Exception {
 		super(url);
 	}
 

@@ -38,6 +38,7 @@ import org.w3c.dom.NodeList;
 
 import stream.Processor;
 import stream.io.DataStream;
+import stream.io.SourceURL;
 import stream.io.multi.MultiDataStream;
 import stream.runtime.ProcessContainer;
 import stream.runtime.VariableContext;
@@ -74,8 +75,8 @@ public class DataStreamFactory {
 		DataStream stream;
 
 		if (urlParam != null) {
-			Constructor<?> constr = clazz.getConstructor(URL.class);
-			URL url = null;
+			Constructor<?> constr = clazz.getConstructor(SourceURL.class);
+			SourceURL url = null;
 
 			String urlString = params.get("url");
 			urlString = objectFactory.expand(urlString);
@@ -83,14 +84,15 @@ public class DataStreamFactory {
 			if (urlString.startsWith("classpath:")) {
 				String resource = urlParam.substring("classpath:".length());
 				log.debug("Looking up resource '{}'", resource);
-				url = ProcessContainer.class.getResource(resource);
-				if (url == null) {
+				URL u = ProcessContainer.class.getResource(resource);
+				if (u == null) {
 					throw new Exception(
 							"Classpath url does not exist! Resource '"
 									+ resource + "' not found!");
 				}
+				url = new SourceURL(u);
 			} else {
-				url = new URL(urlString);
+				url = new SourceURL(urlString);
 			}
 
 			stream = (DataStream) constr.newInstance(url);

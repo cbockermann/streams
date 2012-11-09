@@ -133,13 +133,13 @@ public class StormRunner {
 		Config conf = new Config();
 		conf.setDebug(true);
 
+		StreamTopology st = StreamTopology.create(doc);
+
 		if (System.getProperty("local") == null)
-			StormSubmitter.submitTopology("test", conf,
-					StreamTopology.createTopology(doc));
+			StormSubmitter.submitTopology("test", conf, st.createTopology());
 		else {
 			LocalCluster cluster = new LocalCluster();
-			cluster.submitTopology("test", conf,
-					StreamTopology.createTopology(doc));// builder.createTopology());
+			cluster.submitTopology("test", conf, st.createTopology());
 
 			log.info("Topology submitted.");
 			Utils.sleep(10000000);

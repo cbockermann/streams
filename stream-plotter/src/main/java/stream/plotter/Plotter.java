@@ -178,11 +178,9 @@ public class Plotter extends DataVisualizer {
 	public Data processMatchingData(Data data) {
 
 		processed++;
-
 		if (keys == null) {
 			plotPanel.dataArrived(data);
 		} else {
-
 			Data stats = DataFactory.create();
 			for (String key : keys) {
 				if (data.containsKey(key)) {

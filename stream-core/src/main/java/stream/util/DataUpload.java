@@ -30,9 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.io.CsvStream;
-import stream.io.DataStream;
 import stream.io.CsvUpload;
+import stream.io.DataStream;
 import stream.io.JSONStream;
+import stream.io.SourceURL;
 
 public class DataUpload {
 
@@ -57,11 +58,11 @@ public class DataUpload {
 		DataStream stream = null;
 		String fmt = url.toString();
 		if (fmt.endsWith(".csv") || fmt.endsWith(".csv.gz")) {
-			stream = new CsvStream(url);
+			stream = new CsvStream(new SourceURL(url));
 		}
 
 		if (fmt.endsWith(".json") || fmt.endsWith(".json.gz")) {
-			stream = new JSONStream(url);
+			stream = new JSONStream(new SourceURL(url));
 		}
 
 		if (stream == null) {

@@ -1,0 +1,12 @@
+<container>
+    
+    <stream id="tcp" class="stream.io.LineStream"
+        url="tcp://${server.address}:${server.port}/" />
+    
+    <process input="tcp">
+        <PrintData />
+        
+        <stream.io.CsvWriter url="file:/tmp/random.csv" />
+    </process>
+    
+</container>

@@ -3,6 +3,7 @@
  */
 package stream;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,6 +25,8 @@ import stream.util.parser.TimeParser;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 
 /**
@@ -35,8 +38,69 @@ public class StreamTopology {
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
 	static Logger log = LoggerFactory.getLogger(StreamTopology.class);
 
-	public static TopologyBuilder build(Document doc, TopologyBuilder builder)
+	final TopologyBuilder builder;
+	final Map<String, BoltDeclarer> bolts = new LinkedHashMap<String, BoltDeclarer>();
+	final Map<String, SpoutDeclarer> spouts = new LinkedHashMap<String, SpoutDeclarer>();
+
+	/**
+	 * 
+	 * @param builder
+	 */
+	private StreamTopology(TopologyBuilder builder) {
+		this.builder = builder;
+	}
+
+	public TopologyBuilder getTopologyBuilder() {
+		return builder;
+	}
+
+	/**
+	 * This method returns an unmodifiable map of bolts. The keys of this map
+	 * are the bolts' identifiers.
+	 * 
+	 * @return
+	 */
+	public Map<String, BoltDeclarer> getBolts() {
+		return Collections.unmodifiableMap(bolts);
+	}
+
+	/**
+	 * This method returns an unmodifiable map of spouts. The keys of this map
+	 * are the spouts' identifiers.
+	 * 
+	 * @return
+	 */
+	public Map<String, SpoutDeclarer> getSpouts() {
+		return Collections.unmodifiableMap(spouts);
+	}
+
+	/**
+	 * Creates a new instance of a StreamTopology based on the given document.
+	 * This also creates a standard TopologyBuilder to build the associated
+	 * Storm Topology.
+	 * 
+	 * @param doc
+	 *            The DOM document that defines the topology.
+	 * @return
+	 * @throws Exception
+	 */
+	public static StreamTopology create(Document doc) throws Exception {
+		return build(doc, new TopologyBuilder());
+	}
+
+	/**
+	 * Creates a new instance of a StreamTopology based on the given document
+	 * and using the specified TopologyBuilder.
+	 * 
+	 * @param doc
+	 * @param builder
+	 * @return
+	 * @throws Exception
+	 */
+	public static StreamTopology build(Document doc, TopologyBuilder builder)
 			throws Exception {
+
+		final StreamTopology st = new StreamTopology(builder);
 
 		doc = XMLUtils.addUUIDAttributes(doc, UUID_ATTRIBUTE);
 
@@ -46,7 +110,7 @@ public class StreamTopology {
 		// to catch the case when processes read from queues that have
 		// not been explicitly defined (i.e. 'linking bolts')
 		//
-		Map<String, String> streams = new LinkedHashMap<String, String>();
+		// Map<String, String> streams = new LinkedHashMap<String, String>();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -60,7 +124,10 @@ public class StreamTopology {
 				if (el.getNodeName().equalsIgnoreCase("stream")) {
 					String id = el.getAttribute("id");
 					log.info("Creating stream-spout for id {}", id);
-					builder.setSpout(id, new StreamSpout(xml, uuid));
+
+					StreamSpout spout = new StreamSpout(xml, uuid);
+					SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);
+					st.spouts.put(id, spoutDeclarer);
 					continue;
 				}
 
@@ -80,8 +147,13 @@ public class StreamTopology {
 					}
 
 					log.info("Adding bolt {}, subscribing to {}", uuid, input);
-					builder.setBolt(uuid, new ProcessBolt(xml, uuid), workers)
-							.shuffleGrouping(input);
+
+					ProcessBolt bolt = new ProcessBolt(xml, uuid);
+					BoltDeclarer boltDeclarer = builder.setBolt(uuid, bolt,
+							workers).shuffleGrouping(input);
+					st.bolts.put(uuid, boltDeclarer);
+
+					continue;
 				}
 
 				if (el.getNodeName().equalsIgnoreCase("monitor")) {
@@ -100,13 +172,17 @@ public class StreamTopology {
 			}
 		}
 
-		return builder;
+		return st;
 	}
 
-	public static StormTopology createTopology(Document doc) throws Exception {
-		TopologyBuilder builder = build(doc, new TopologyBuilder());
-		StormTopology topology = builder.createTopology();
-		return topology;
+	/**
+	 * This method creates a new instance of type StormTopology based on the
+	 * topology that has been created from the DOM document.
+	 * 
+	 * @return
+	 */
+	public StormTopology createTopology() {
+		return builder.createTopology();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -120,8 +196,9 @@ public class StreamTopology {
 		Config conf = new Config();
 		conf.setNumWorkers(20);
 
-		TopologyBuilder builder = build(doc, new TopologyBuilder());
-		StormTopology topology = builder.createTopology();
+		StreamTopology streamTop = build(doc, new TopologyBuilder());
+		StormTopology topology = streamTop.getTopologyBuilder()
+				.createTopology();
 
 		StormSubmitter.submitTopology("test", conf, topology);
 	}

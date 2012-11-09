@@ -39,21 +39,23 @@ public class SvmLightDataStreamTest {
 	public void testReadNextData() throws Exception {
 
 		try {
-			URL url = SvmLightDataStreamTest.class.getResource( "/test-data.svm_light" );
-			DataStream stream = new SvmLightStream( url );
+			URL url = SvmLightDataStreamTest.class
+					.getResource("/test-data.svm_light");
+			DataStream stream = new SvmLightStream(new SourceURL(url));
 
 			Data item = stream.readNext();
-			while( item != null ){
+			while (item != null) {
 				Double expTarget = -1.0d;
-				Assert.assertEquals( expTarget.doubleValue(), ((Double) item.get( "@label" )).doubleValue(), 0.0001 );
-				Assert.assertEquals( new Double( "0.43" ), item.get( "1" ) );
-				Assert.assertEquals( new Double( "0.12" ), item.get( "3" ) );
-				Assert.assertEquals( new Double( "0.2" ), item.get( "9284" ) );
-				item = stream.readNext( item );
-			} 
+				Assert.assertEquals(expTarget.doubleValue(),
+						((Double) item.get("@label")).doubleValue(), 0.0001);
+				Assert.assertEquals(new Double("0.43"), item.get("1"));
+				Assert.assertEquals(new Double("0.12"), item.get("3"));
+				Assert.assertEquals(new Double("0.2"), item.get("9284"));
+				item = stream.readNext(item);
+			}
 
 		} catch (Exception e) {
-			fail("Error: " + e.getMessage() );
+			fail("Error: " + e.getMessage());
 		}
 	}
 }

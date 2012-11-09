@@ -26,7 +26,6 @@ package stream.io;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 
@@ -54,7 +53,7 @@ public class CsvStream extends AbstractDataStream {
 	 * @param url
 	 * @throws Exception
 	 */
-	public CsvStream(URL url) throws Exception {
+	public CsvStream(SourceURL url) throws Exception {
 		super(url);
 	}
 
@@ -78,7 +77,7 @@ public class CsvStream extends AbstractDataStream {
 		reader = new BufferedReader(new InputStreamReader(in, charset));
 	}
 
-	public CsvStream(URL url, String splitExp) throws Exception {
+	public CsvStream(SourceURL url, String splitExp) throws Exception {
 		super(url);
 		this.url = url;
 		this.splitExpression = splitExp;

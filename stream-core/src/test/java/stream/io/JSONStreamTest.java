@@ -47,7 +47,7 @@ public class JSONStreamTest {
 	public void test() throws Exception {
 
 		URL url = JSONStreamTest.class.getResource("/test.json");
-		JSONStream stream = new JSONStream(url);
+		JSONStream stream = new JSONStream(new SourceURL(url));
 
 		List<Data> items = new ArrayList<Data>();
 

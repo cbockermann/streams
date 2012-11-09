@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +49,7 @@ import stream.data.DataFactory;
 public abstract class AbstractDataStream implements DataStream {
 	static Logger log = LoggerFactory.getLogger(AbstractDataStream.class);
 
-	protected URL url;
+	protected SourceURL url;
 	protected String username;
 	protected String password;
 	protected LinkedHashMap<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
@@ -65,12 +64,12 @@ public abstract class AbstractDataStream implements DataStream {
 	protected AbstractDataStream() {
 	}
 
-	public AbstractDataStream(URL url) throws Exception {
+	public AbstractDataStream(SourceURL url) throws Exception {
 		this.url = url;
 		// initReader();
 	}
 
-	public AbstractDataStream(URL url, String username, String password)
+	public AbstractDataStream(SourceURL url, String username, String password)
 			throws Exception {
 		this.url = url;
 		this.username = username;

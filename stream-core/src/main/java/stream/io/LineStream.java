@@ -24,7 +24,6 @@
 package stream.io;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -77,12 +76,12 @@ public class LineStream extends AbstractDataStream {
 	String format = null;
 	Parser<Map<String, String>> parser = null;
 
-	public LineStream(URL url) throws Exception {
+	public LineStream(SourceURL url) throws Exception {
 		super(url);
 		this.initReader();
 	}
 
-	public LineStream(URL url, String username, String password)
+	public LineStream(SourceURL url, String username, String password)
 			throws Exception {
 		super(url, username, password);
 	}

@@ -1,0 +1,11 @@
+<container>
+    
+    <stream id="http" class="stream.io.LineStream"
+        format="%(data),%(source)"
+        url="http://download.jwall.org/stuff/random.csv" />
+    
+    <process input="http">
+        <PrintData />
+    </process>
+    
+</container>

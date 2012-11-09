@@ -131,6 +131,8 @@ public class ClassFinder {
 
 					log.trace("Found class {}", clazz);
 					classes.add(clazz);
+				} catch (VerifyError ve) {
+
 				} catch (NoClassDefFoundError ncdfe) {
 
 				} catch (ClassNotFoundException cnfe) {

@@ -25,7 +25,9 @@ package stream.data;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -105,14 +107,33 @@ public class MapKeys implements Processor {
 	@Parameter(name = "map", required = false)
 	public void setMap(String map) {
 		try {
-			if (map == null || map.trim().isEmpty())
+			if (map == null || map.trim().isEmpty()) {
+				log.debug("No valid value '{}' for 'map' parameter.", map);
 				return;
+			}
 
-			File file = new File(map);
+			InputStream input = null;
+			if (map.startsWith("classpath:")) {
+				URL url = MapKeys.class.getResource(map.substring("classpath:"
+						.length()));
+				log.debug("Reading mapping from {}", url);
+				input = url.openStream();
+			} else {
+				File file;
+				if (map.startsWith("file:"))
+					file = new File(map.substring("file:".length()));
+				else
+					file = new File(map);
+				log.debug("Reading mappings from file {}", file);
+				input = new FileInputStream(file);
+			}
+
 			Properties p = new Properties();
-			p.load(new FileInputStream(file));
+			p.load(input);
 
 			for (Object key : p.keySet()) {
+				log.debug("  adding mapping '{}' => '{}'", key,
+						p.getProperty(key.toString()));
 				mapping.put(key.toString(), p.getProperty(key.toString()));
 			}
 

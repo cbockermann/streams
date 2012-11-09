@@ -25,7 +25,6 @@ package stream.io;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -53,15 +52,16 @@ public class SvmLightStream extends AbstractDataStream {
 	String sparseKey = null;
 
 	public SvmLightStream(String url) throws Exception {
-		this(new URL(url), "@sparse-vector");
+		this(new SourceURL(url), "@sparse-vector");
 	}
 
-	public SvmLightStream(URL url) throws Exception {
+	public SvmLightStream(SourceURL url) throws Exception {
 		super(url);
 		initReader();
 	}
 
-	public SvmLightStream(URL url, String sparseVectorKey) throws Exception {
+	public SvmLightStream(SourceURL url, String sparseVectorKey)
+			throws Exception {
 		this(url);
 		this.setSparseKey(sparseVectorKey);
 	}

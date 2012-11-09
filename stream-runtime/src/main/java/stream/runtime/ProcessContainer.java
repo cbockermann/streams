@@ -482,7 +482,7 @@ public class ProcessContainer {
 
 				@Override
 				public void processStarted(AbstractProcess p) {
-					log.info("Starting process {}", p);
+					log.debug("Starting process {}", p);
 				}
 
 				@Override
@@ -578,7 +578,7 @@ public class ProcessContainer {
 		}
 
 		while (!processes.isEmpty()) {
-			log.info("Waiting for {} processes to finish...", processes.size());
+			log.debug("Waiting for {} processes to finish...", processes.size());
 			try {
 				Iterator<AbstractProcess> it = processes.iterator();
 				while (it.hasNext()) {

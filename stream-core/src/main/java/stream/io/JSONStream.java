@@ -25,7 +25,6 @@ package stream.io;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
 
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -55,11 +54,12 @@ public class JSONStream extends AbstractDataStream {
 		super(in);
 	}
 
-	public JSONStream(URL url) throws Exception {
+	public JSONStream(SourceURL url) throws Exception {
 		super(url);
 	}
 
-	public JSONStream(URL url, String user, String password) throws Exception {
+	public JSONStream(SourceURL url, String user, String password)
+			throws Exception {
 		super(url, user, password);
 	}
 

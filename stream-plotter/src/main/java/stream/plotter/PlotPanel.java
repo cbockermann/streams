@@ -240,7 +240,7 @@ public class PlotPanel extends JPanel {
 	 * @see stream.data.DataListener#dataArrived(stream.Data)
 	 */
 	public void dataArrived(Data item) {
-
+		log.debug("Data arrived: {}", item);
 		Statistics stats = new Statistics("");
 		for (String key : item.keySet()) {
 			try {
@@ -252,6 +252,7 @@ public class PlotPanel extends JPanel {
 				// Double val = new Double("" + item.get(key));
 				// stats.add(key, val);
 			} catch (Exception e) {
+				log.error("Error: {}", e.getMessage());
 			}
 		}
 
@@ -262,7 +263,7 @@ public class PlotPanel extends JPanel {
 	 * @see stream.data.stats.StatisticsListener#dataArrived(stream.data.Statistics)
 	 */
 	public void dataArrived(Statistics item) {
-
+		log.debug("Plotting {}", item);
 		if (pivotKey == null)
 			pivotValue += 1.0d;
 		else {
@@ -271,6 +272,7 @@ public class PlotPanel extends JPanel {
 				Double xval = new Double("" + pv);
 				pivotValue = xval;
 			} catch (Exception e) {
+				log.error("Error: {}", e.getMessage());
 				pivotValue += 1.0d;
 			}
 		}

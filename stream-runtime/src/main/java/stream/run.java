@@ -141,7 +141,6 @@ public class run {
 		log.info("Starting process-container...");
 		container.run();
 		log.info("Container finished.");
-		System.exit(0);
 	}
 
 	public static void main(URL url, Map<String, ElementHandler> elementHandler)
@@ -155,7 +154,6 @@ public class run {
 		log.info("Starting process-container...");
 		container.run();
 		log.info("Container finished.");
-		System.exit(0);
 	}
 
 	public static void main(String resource) throws Exception {

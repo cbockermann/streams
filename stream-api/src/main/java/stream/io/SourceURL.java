@@ -18,7 +18,16 @@ import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
 
 /**
- * @author chris
+ * <p>
+ * This URL encapsulates the definition of URLs for resources. It introduces a
+ * thin layer of abstraction for providing support for more than the existing
+ * protocol types in Java. The reason for introducing this SourceURL class is
+ * that we do not want to register a custom protocol handler, which might
+ * destroy some existing applications that also require a custom protocol
+ * handler. Java only allows to register a single custom protocol handler.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public final class SourceURL implements Serializable {

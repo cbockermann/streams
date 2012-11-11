@@ -410,7 +410,7 @@ public class ProcessContainer {
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
 					DataStreamQueue q = new BlockingQueue();
-					registerQueue(input, q);
+					registerQueue(input, q, false);
 					stream = q;
 				}
 
@@ -420,10 +420,12 @@ public class ProcessContainer {
 		}
 	}
 
-	public void registerQueue(String id, DataStreamQueue queue)
-			throws Exception {
+	public void registerQueue(String id, DataStreamQueue queue,
+			boolean externalListener) throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
-		listeners.put(id, queue);
+		if (externalListener) {
+			listeners.put(id, queue);
+		}
 		setStream(id, queue);
 		context.register(id, queue);
 	}

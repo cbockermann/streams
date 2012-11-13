@@ -104,7 +104,7 @@ public class DataTap extends AbstractProcessor {
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
-	public Data process(Data input) {
+	public Data process(final Data input) {
 		int clients = server.getNumberOfClients();
 		if (clients > 0) {
 			log.debug("Copying item to {} clients", clients);
@@ -115,13 +115,13 @@ public class DataTap extends AbstractProcessor {
 		return input;
 	}
 
-	public static class ServerThread extends Thread {
+	public final static class ServerThread extends Thread {
 
 		static Logger log = LoggerFactory.getLogger(ServerThread.class);
 		boolean running = true;
-		ServerSocket server;
+		final ServerSocket server;
 		final List<ClientHandler> clients = new ArrayList<ClientHandler>();
-		boolean gzip = false;
+		final boolean gzip;
 
 		public ServerThread(String address, int port, boolean gz)
 				throws Exception {
@@ -136,9 +136,9 @@ public class DataTap extends AbstractProcessor {
 			try {
 				while (running) {
 					try {
-						Socket socket = server.accept();
-						ClientHandler handler = new ClientHandler(this, socket,
-								gzip);
+						final Socket socket = server.accept();
+						final ClientHandler handler = new ClientHandler(this,
+								socket, gzip);
 						log.info("New client connection accepted: {}", socket);
 						synchronized (clients) {
 							clients.add(handler);
@@ -190,13 +190,13 @@ public class DataTap extends AbstractProcessor {
 		}
 	}
 
-	public static class ClientHandler extends Thread {
+	public final static class ClientHandler extends Thread {
 
-		static Logger log = LoggerFactory.getLogger(ClientHandler.class);
-		Socket socket;
-		LinkedBlockingQueue<Data> chunks = new LinkedBlockingQueue<Data>();
-		ObjectOutputStream out;
-		ServerThread server;
+		final static Logger log = LoggerFactory.getLogger(ClientHandler.class);
+		final Socket socket;
+		final LinkedBlockingQueue<Data> chunks = new LinkedBlockingQueue<Data>();
+		final ObjectOutputStream out;
+		final ServerThread server;
 
 		public ClientHandler(ServerThread server, Socket sock, boolean gzip)
 				throws IOException {
@@ -218,8 +218,10 @@ public class DataTap extends AbstractProcessor {
 
 				try {
 					Data chunk = chunks.take();
-					if (chunk != null)
+					if (chunk != null) {
 						out.writeObject(chunk);
+						out.reset();
+					}
 				} catch (SocketException se) {
 					log.error("Socket error: {}", se.getMessage());
 					log.debug("Disconnecting client...");
@@ -230,10 +232,14 @@ public class DataTap extends AbstractProcessor {
 			}
 
 			log.debug("Sending exit signal to server...");
+			chunks.clear();
 			server.clientExited(this);
 		}
 
 		public void add(Data chunk) {
+			if (chunks.size() > 25) {
+				log.debug("{} chunks pending in client queue for {}", socket);
+			}
 			chunks.add(chunk);
 		}
 	}

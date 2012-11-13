@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.ProcessContainer;
-import stream.urls.RandomDataServer;
-import stream.urls.StreamsURLStreamHandlerFactory;
 
 /**
  * @author chris
@@ -27,8 +25,6 @@ public class TcpStreamTest {
 	public void test() {
 
 		try {
-
-			URL.setURLStreamHandlerFactory(new StreamsURLStreamHandlerFactory());
 
 			RandomDataServer server = new RandomDataServer(100);
 			server.start();

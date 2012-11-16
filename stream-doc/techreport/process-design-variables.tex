@@ -1,0 +1,45 @@
+\subsection{\label{sec:processVariables}Parameterising Containers}
+The general structure of container definitions described in Section
+\ref{sec:processLayout} allows for the definition of compute graphs
+and adding processors and parameters.
+For a convenient parameterization, the \streams framework supports the
+global definition of properties and includes a intuitive variable
+expansion, following the syntax of well known tools like Ant and
+Maven.
+
+Variables are specified using the {\ttfamily \$} symbol and curly
+bracket wrapped around the property name, e.g. {\ttfamily
+  \$\{myVar\}}. This directly allows to access the Java VM system
+properties within the container definition. Undefined variables
+simple resolve to the empty string.
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}
+     <container>
+
+         <!-- define property 'baseUrl' using the system property 'user.home'   -->
+         <property name="baseUrl" value="file:${user.home}/data/FACT" />
+
+         <stream id="factData" class="fact.io.FactEventStream"
+                url="${baseUrl}/example-data.gz" />
+
+         <process input="factData">
+            <!-- process the data  -->
+         </process>
+     </container>
+  \end{lstlisting}
+  \caption{\label{fig:propertyExample}A container definition using simple variables.}
+\end{figure}
+
+As the variable expansion includes the Java system properties, containers
+can easily be provided with variables by setting properties when starting
+the Java system. The following commands starts the \streams runtime with
+a container definition and adds addition variables:
+
+\vspace{1ex}\hspace{2ex}\sample{java -DbaseUrl="/tmp" -cp stream-runner.jar container.xml}
+
+Variables can be used anywhere in the XML attributes, the variables of
+a container are expanded at startup time. Therefore any changes of the
+variables after the container has been started will not affect the
+configuration.

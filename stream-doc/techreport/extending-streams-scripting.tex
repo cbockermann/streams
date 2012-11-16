@@ -1,0 +1,63 @@
+\subsection{\label{sec:scripting}Using Scripting Languages in \streams}
+Scripting languages provide a convenient way to integrate ad-hoc
+functionality into stream processes. Based on the Java Scripting
+Engine that is provided within the Java virtual machine, the streams
+library includes support for several scripting languages, most notably
+the JavaScript language.
+
+Additional scripting languages are being supported by the
+ScriptingEngine interfaces of the Java virtual machine. This requires
+the corresponding Java implementations (Java archives) to be available
+on the classpath when starting the \streams runtime.
+
+Currently the following scripting languages are supported:
+
+\begin{itemize}
+   \item JavaScript (built into the Java VM)
+   \item JRuby (requires jruby-library in classpath).
+\end{itemize}
+
+Further support for integrating additional languages like Python is
+planned.
+
+
+\subsubsection{\label{sec:javascript}Using JavaScript for Processing}
+The JavaScript language has been part of the Java API for some
+time. The \streams framework provides a simple {\ttfamily JavaScript}
+processor, that can be used to run JavaScript functions on data items
+as shown in Figure \ref{fig:javascriptExample}.
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=XML]
+       <container>
+          ...
+          <process input="...">
+              <!--  Execute a process(data) function defined in the
+                    specified JavaScript file     -->
+              <JavaScript file="/path/to/myScript.js" />
+          </process>
+       </container>
+  \end{lstlisting}
+  \caption{\label{fig:javascriptExample}The {\ttfamily JavaScript} processor applies process() functions defined in JavaScript.}
+\end{figure}
+
+
+Within the JavaScript environment, the data items are accessible at
+{\ttfamily data}. Figure \ref{fig:javascriptProcessor} shows an
+example for the JavaScript code which implements a processor within
+the file {\ttfamily myScript.js}.
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=JavaScript,showspaces=false,showstringspaces=false]
+       function process(data){
+          var id = data.get( "@id" );
+          if( id != null ){
+             println( "ID of item is: " + id );
+          }
+          return data;
+        }
+  \end{lstlisting}
+  \caption{\label{fig:javascriptProcessor}JavaScript code that implements a processor.}
+\end{figure}

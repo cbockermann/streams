@@ -13,15 +13,44 @@
 %%    + Ausblick auf section 4 => streamplugin + runtime für RapidMiner
 %%
 %%
+\clearpage
 \section{\label{sec:abstraction}An Abstract Stream Processing Model}
+Processing streaming data can generally be viewed as establishing a
+{\em data flow graph} where each of the nodes of the graph corresponds
+to some function that is applied as data is passed along the
+edges. This general idea can be found in various existing approaches
+built on top of message passing systems and has been adopted by
+streaming systems such as SPADE, Kafka or Storm.
+
+As the existing systems, the \streams framework is based on an
+abstract definition of such data flow graphs, following the {\em
+  pipes-and-filters} pattern \cite{softwarePatterns}. To that it adds
+an additional {\em control flow} view, which allows for the
+implementation of systems fulfilling the anytime requirement as
+described in Section \ref{sec:intro}. Figure \ref{fig:xmlProcess}
+outlines a general data flow graph built from elements like {\em
+  streams} (S), {\em processes} (P) and {\em queues} (Q) and
+additional control flow elements represented by {\em services} shown
+in orange color.
+
+\begin{figure}[b!]
+  \centering
+  \includegraphics[scale=0.3]{graphics/streams-graph}
+  \caption{\label{fig:xmlProcess} The general concept of a data-flow
+    graph. The \streams framework provides means for defining streams
+    (S), connected processes (P), queues (Q) and adds an abstract
+    orthogonal control flow layer (orange elements).}
+\end{figure}
+
 In this section we introduce the basic concepts and ideas that we
 model within the \streams framework. This mainly comprises the data
-flow (pipes-and-filters \cite{softwarePatterns}), the control flow
-(anytime services) and the basic data structures and elements used for
-data processing. The objective of the very simple abstraction layer is
-to provide a clean and easy-to-use API to implement against. 
+flow), the control flow (anytime services) and the basic data
+structures and elements used for data processing. The objective of the
+abstraction layer is to provide a simple means for rapid prototyping
+of data stream processes and a clean and easy-to-use API to implement
+against.
 
-The structure of the \streams framework builds upon thress basic parts:
+The structure of the \streams framework builds upon three aspects:
 \begin{enumerate}
 \item A {\em data representation} which provides a modeling of the
   data that is to be processed by the designed stream processes
@@ -36,20 +65,59 @@ default assumptions, whereas any special use cases can generally be
 modelled using a combination of different building blocks of the API
 (e.g. queues, services) or custom implementations of the facades.
 
+\subsection*{\label{sec:xmlToRuntime}Executing Data Flow Graphs}
+The main objective of the \streams framework is to provide an adequate
+abstraction layer, which enables users to design streaming processes
+without the need to write any code. A user can prototype {\em
+  containers}, which are the top-level elements containing a data flow
+graph built from the base elements {\em stream}, {\em process} and
+{\em queues}. The {\em process} elements are the executing instances
+which need to be enriched with functions ({\em processors}) that do
+the actual work. The framework provides a large set of such processors
+that can be used to add the required functionality into the data flow
+graph. The containers (graphs) are defined in XML.
+
+The XML process definitions are designed to be independent of the
+underlying execution platform. The \streams framework provides its own
+default runtime implementation, which is able to execute the XML data
+flow graphs. This {\em streams} runtime is a Java library with a very
+small footprint (less than 200 kilobytes) that can be instantly on any
+Java VM.
+
+In addition, \streams provides a compiler to map XML process
+definitions to {\em Storm} topology, to execute processes on a Storm
+cluster. A third execution engine is provided for the Android
+platform, which allows for running \streams definitions on mobile
+devices that are powered by the Android operating system.\baustelle
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.3]{graphics/compile-xml}
+  \caption{\label{fig:compileXml}The XML is compiled into a data flow
+    graph for different runtime environments. Currently the \streams
+    runtime is supported and a prototype for the {\em Storm} compile
+    exists.}
+\end{figure}
+
+
 \subsection{\label{sec:data}Data Representation and Streams}
 A central aspect of data stream processing is the representation of
-data items that contain the values which are to be processed.  We
-consider the case of continuous streaming data being modeled as a
-sequence of {\em data items}. 
+data items that contain the values which are to be processed. From a
+message passing system point of view this is the concrete
+representation of messages. The abstraction of the \streams framework
+considers the case of continuous streaming data being modeled as a
+sequence of {\em data items} which traverse the compute graph.
 
 A data item is a set of $(k,v)$ pairs, where each pair reflects
 an attribute with a name $k$ and a value $v$. The names are required
 to be of type {\ttfamily String} whereas the values can be of any
 type that implements Java's {\ttfamily Serializable} interface. The
-data item is provided by the {\ttfamily stream.data.Data} interface.
+data item is provided by the {\ttfamily stream.Data} interface.
 
-\begin{figure}[h!]
-\begin{center}{
+\begin{table}[h!]
+\centering
+{
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{c|c}\hline
 \textsf{\textbf{Key}} & \textsf{\textbf{Value}} \\ \hline \hline
@@ -58,11 +126,10 @@ data item is provided by the {\ttfamily stream.data.Data} interface.
 {\ttfamily source} & {\ttfamily "file:/tmp/test.csv"}  \\ \hline
 \end{tabular}
 }
-\end{center}
 \caption{\label{tab:dataitem}A data item example with 3 attributes.} 
-\end{figure}
+\end{table}
 
-Figure \ref{tab:dataitem} shows a sample data item as a table of
+Table \ref{tab:dataitem} shows a sample data item as a table of
 (key,value) rows. This representation of data items is provided
 by hash tables, which are generally provided in almost every modern
 programming language.
@@ -70,9 +137,12 @@ programming language.
 The use of such hash tables was chosen to provide a flexible data
 structure that allows for encoding a wide range of record type as well
 as supporting easy interoperation when combining different programming
-languages to implement parts of a streaming process.
+languages to implement parts of a streaming process. This enables the
+use of languages like Python, Ruby or JavaScript to implement custom
+process as we will outline in more detail in Seciton
+\ref{sec:scriptingProcessors}.
 
-\subsubsection*{Streams of Data}
+\subsection*{Streams of Data}
 A {\em data stream} in consequence is an entity that provides access
 to a (possibly unbounded) sequence of such data items. Again, the
 \streams abstraction layer defines data streams as an interface, which
@@ -163,7 +233,7 @@ flow. We discuss the implementation of {\em active streams} and the
 resulting {\em push} oriented data flow in Section \ref{sec:push}.
 
 
-\subsubsection*{Using multiple Processes}
+\subsection*{Using multiple Processes}
 In the \streams framework, processes are by default the only executing
 elements. A process reads from its attached stream and applies all
 inner processors to each data item. The process will be running until

@@ -1,13 +1,53 @@
+\newpage
 \section{\label{sec:processDesign}Designing Stream Processes}
-The former section introduced the main conceptual elements of the \streams library.
-These basic elements are used to define stream processes that can be deployed and
-executed with the \streams runtime environment.
+The former section introduced the main conceptual elements of the
+\streams library for creating data flow graphs. Such graphs are
+contained within a {\em container}.  A container can be deployed by
+compiling the container definition into a data flow graph (or {\em
+  compute graph}) for the runtime environment which is to execute the
+container.
 
-The definition of stream processes is based on simple XML files that define processes,
-streams and queues by XML elements that directly correspond to the elements presented
-in Section \ref{sec:abstraction}.
+Each of the basic elements for the process design (i.e. container
+definition) directly correspond to an XML element that is used to
+define a node in the data flow graph. The following Table
+\ref{tab:xmlElements} lists the base elements provided.
+
+\begin{table}[h!]
+  \centering{
+\renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{c|c} \hline
+    \bf{Graph Element} & \bf{XML Element} \\ \hline \hline
+    Stream & {\ttfamily stream} \\ \hline
+    Process & {\ttfamily process} \\ \hline
+    Queue  & {\ttfamily queue} \\ \hline
+    Service & {\ttfamily service} \\ \hline
+  \end{tabular}}
+  \caption{\label{tab:xmlElements}The basic XML element used to define a compute graph within the \streams framework.}
+\end{table}
+
+
+%These basic elements are used to define stream processes that can be
+%deployed and executed with the \streams runtime environment. The
+%stream processes are essentially data flow graphs built from connected
+%streams, processes and queues. Such graphs form the basis of a general
+%family of message passing frameworks. The \streams framework provides
+%a runtime implementation for the deployment and execution of a data
+%flow graph.
+
+The definition of stream processes is based on simple XML files that
+define processes, streams and queues by XML elements that directly
+correspond to the elements presented in Section
+\ref{sec:abstraction}. Figure \ref{fig:xmlProcess} shows the scheme of
+mapping the XML process definitions into data flow graphs of the
+\streams runtime.
+
+
+
+In addition there exists mappings for other runtime environments
 
 
 \input{process-design-xml}
 
-\input{process-distributed}
+\input{process-design-variables}
+
+%\input{process-design-distributed}

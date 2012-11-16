@@ -1,0 +1,40 @@
+%%
+%%
+%%
+\subsection{\label{sec:streamsClassifiers}Classifiers in \streams}
+The abstract functionality provided by classifiers from the perspective
+of the \streams framework encapsulates two functions:
+\begin{enumerate}
+  \item {\bf Training:} Incorporate new data items into a prediction model.
+  \item {\bf Application:} Provide a prediction for a data item based on the current model.
+\end{enumerate}
+These two tasks are mapped onto two different aspects of the compute
+graph that builds the basis for the streaming processes. The {\em
+  training} is considered to be part of the general data flow,
+i.e. data items are processed by classifiers and will be used to
+enhance the prediction model provided by the classifier.
+
+The model {\em application}, i.e. the prediction based on the current
+model of the classifier, is regarded as an {\em anytime service} that
+is provided by the classifier. This service provides a {\ttfamily
+  predict(Data)} function that is expected to return the prediction of
+the classifier.
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=Java]
+     public interface Classifier extends Service {
+         /**
+          * This method returns a simple prediction based on the given
+          * data item. The prediction is a general serializable value.
+          */
+         public Serializable predict( Data item );
+     }
+  \end{lstlisting}
+  \caption{\label{fig:classifierService}The {\ttfamily Classifier}
+    service interface that needs to be implemented by classifiers in
+    the \streams framework. The return type of the {\ttfamily predict}
+    method might be a number, e.g. for regression or a String, Integer
+    or similar for a classification task.}
+\end{figure}
+

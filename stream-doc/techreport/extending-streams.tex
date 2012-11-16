@@ -1,0 +1,37 @@
+%%
+%%
+%%
+\section{\label{sec:extendingStreams}Extending the \streams Framework}
+In the previous sections we outlined how to create data flow graphs for
+data stream processing by means of the XML elements that are provided
+by the \streams framework. We also introduced the {\em processor}s as
+the atomic functional units that provide the work required to do the
+data processing.
+
+The core \streams framework provides a rich set of basic processors that
+can be used to aggregate statistics, manipulate data and even incorporates
+existing libraries such as the {\em MOA} online learning library (see
+Section \ref{sec:moa} for details on using MOA with \streams).
+
+In many application use cases, we still face the problem of requiring
+application specific pre-processing or functionality that cannot directly be 
+achieved with the existing \streams core processors. Such functionality
+can easily be added by custom implementations of processors. The \streams
+framework provides a very simply Java API which encapsultes the abstract
+concepts outlined in Section \ref{sec:abstraction}.
+
+\medskip
+
+In this section, we will highlight the general ideas of the \streams
+programming API and provide a walk-through on how to implement custom
+processors using the Java language. 
+
+As pointed out earlier, the \streams framework also provides support
+for scripting languages, such as JavaScript, Ruby or Python. In Section
+\ref{sec:scripting} we will give an overview on how to implement custom
+processors using such scripting languages.
+
+
+\input{extending-streams-java}
+\input{extending-streams-services}
+\input{extending-streams-scripting}

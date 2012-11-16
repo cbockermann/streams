@@ -1,1 +1,40 @@
+%%
+%%
+%%
 \section{\label{sec:summary}Summary and Future Work}
+In this report we introduced the \streams framework, which provides
+means for abstracting the definition of data flow graphs for data
+stream processing. The level of abstraction provided by the \streams
+framework enables a rapid prototyping of compute graphs for process
+design as well as providing a simple programming API to include
+custom functionality into the designed processes.
+
+The use of XML for process/graph definitions supports a simple
+exchange of designed processes between users and lifts the level of
+detail for data analysists to hide implementation details where they
+may be distracting from the process design task.
+
+The \streams framework also provides a reference implementation for
+running compute graphs on a single Java virtual machine as well as a
+compiler for mapping graphs to topologies that execute on the {\em
+  Storm} stream engine.
+
+The integration of the {\em MOA} library adds various online learning
+schemes to the \streams framework. This shows the applicability of the
+proposed abstraction layer for the field of online learning. In addition
+the \streams library proved to be useful in application use-cases like
+pre-processing of the FACT telescope data or the coffee machine video
+processing.
+
+\bigskip
+
+Ongoing work currently focuses on a more extensive integration of
+additional algorithms provided by {\em MOA} (e.g. clustering). The
+adaption of the \streams runtime for the Android platform has revealed
+a prototype for running XML process definitions on mobile devices. This
+is another direction that will be integrated into the next release of
+the \streams framework.
+
+For a more convenient design of \streams process definitions, we will
+investigate different XML or process editors that can assist users in
+rapid prototyping of data stream processes.

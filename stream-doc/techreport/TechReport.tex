@@ -31,11 +31,11 @@
 
 
 % ***TODO*** Choose correct title, author, department and email address
-\title{The \textsf{streams} Library for Processing Streaming Data}
-\author{Christian Bockermann\\
+\title{The \textsf{streams} Framework \\*[1ex] {\large Version 0.9.6}}
+\author{{\large Christian Bockermann and Hendrik Blom\\*[1ex]
   Lehrstuhl f\"ur k\"unstliche Intelligenz\\
   Technische Universit\"at Dortmund\\*[1ex]
-  christian.bockermann@udo.edu}
+  {\ttfamily firstname.lastname@udo.edu}}}
 % Please keep date empty
 \date{}
 
@@ -76,12 +76,28 @@
   stringstyle=\color{darkGreen}
 }
 
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
 
 \newcommand{\todo}[1]{\marginpar{{\bf TODO:}\\#1}}
-%\newcommand{\streams}{{\footnotesize\textsf{streams}\ }}
+\newcommand{\TODO}[1]{{{\bf TODO:} #1}}
+\newcommand{\baustelle}{\marginpar{
+  \includegraphics[scale=0.2]{graphics/construction.png}}}
+
 \newcommand{\streams}{{\em streams}\ }
 \newcommand{\rapidminer}{{\footnotesize\textsf{RapidMiner}\ }}
-%\newcommand{\plugin}{{\footnotesize\textsf{Streams Plugin}}}
 \newcommand{\plugin}{{\em Streams Plugin}}
 
 \newcommand{\defitem}[1]{\item[{\footnotesize\textbf{\textsf{#1}}}]}
@@ -105,27 +121,9 @@
 \end{figure}
 }
 
-\newcommand{\TODO}[1]{{{\bf TODO:} #1}}
 
-\makeatletter
-\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
-            {-2.5ex\@plus -1ex \@minus -.25ex}%
-            {1.25ex \@plus .25ex}%
-            {\normalfont\normalsize\bfseries}}
-\newcommand\subsubsubsection{\@startsection{paragraph}{4}{\z@}%
-            {-2.5ex\@plus -1ex \@minus -.25ex}%
-            {1.25ex \@plus .25ex}%
-            {\normalfont\normalsize\bfseries}}
-\makeatother
 
-\newcommand{\StreamSection}[1]{\subsubsection{\label{api:#1}#1}}
-\newcommand{\PackageSection}[1]{\subsubsection*{#1}}
-
-\newcommand{\ProcessorSection}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}
-
-\newcommand{\Package}[1]{\subsubsection{\label{api:#1}Processors in Package {\ttfamily #1}}}
-\newcommand{\Processor}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}
-%\newcomnmand{\Processor}[1]{\subsubsubsection{\label{api:#1}Processor {\ttfamily #1}}
+\input{streams.pkg}
 
 \setcounter{tocdepth}{4} %to make it appears in TOC
 \setcounter{secnumdepth}{4} %to make it numbered
@@ -147,13 +145,23 @@
   library defines a simple abstraction layer for data processing and
   provides a small set of online algorithms for counting and
   classification. Moreover it integrates existing libraries such as
-  MOA. Processes are defined in XML files which follow the
-  semantics and ideas of well established tools like Maven or the
+  MOA. Processes are defined in XML files following the
+  semantics and ideas of well established tools like Ant, Maven or the
   Spring Framework.
 
   The \streams library can be easily embedded into existing software,
-  used as a standalone tool or be integrated into the RapidMiner tool
-  using the \plugin.}
+  used as a standalone tool or be used to define compute graphs that
+  are executed on other backend systems such as the Storm stream
+  engine.  
+}
+
+\medskip 
+
+{\normalsize
+This report reflects the status of the \streams framework in version
+0.9.6. As the framework is continuously enhanced, the report is
+extended as well\footnote{The latest version of the report is available at \url{http://www.jwall.org/streams/TechReport.pdf}.}.
+}
 \end{abstract}
 
 %\begin{document}
@@ -174,7 +182,7 @@
 %%
 %% Section 5 Online Learning Design
 %%
-\input{machine-learning}
+\input{streams-analysis}
 
 %\input{distributed}
 %
@@ -182,9 +190,12 @@
 
 %\input{stream-plugin}
 
+\input{extending-streams}
+
 %%
 %% Section 5 Example Use-Cases
 %%
+\newpage
 \input{examples}
 
 \input{summary}

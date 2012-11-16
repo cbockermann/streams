@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,11 +93,7 @@ public abstract class AbstractDataStream implements DataStream {
 			});
 		}
 
-		if (url.getFile().endsWith(".gz"))
-			reader = new BufferedReader(new InputStreamReader(
-					new GZIPInputStream(url.openStream())));
-		else
-			reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		readHeader();
 	}
 

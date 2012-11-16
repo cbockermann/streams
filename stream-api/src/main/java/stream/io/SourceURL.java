@@ -47,6 +47,8 @@ public final class SourceURL implements Serializable {
 	final String host;
 	final int port;
 	final String path;
+	final String username;
+	final String password;
 
 	public SourceURL(URL url) {
 		this.url = url;
@@ -56,6 +58,8 @@ public final class SourceURL implements Serializable {
 		host = url.getHost();
 		port = url.getPort();
 		path = url.getPath();
+		username = null;
+		password = null;
 	}
 
 	public SourceURL(String urlString) throws Exception {
@@ -69,6 +73,8 @@ public final class SourceURL implements Serializable {
 			Map<String, String> vals = parser.parse(urlString);
 			protocol = vals.get("protocol");
 			host = null;
+			username = null;
+			password = null;
 			port = -1;
 			path = vals.get("path");
 		} else {
@@ -76,7 +82,27 @@ public final class SourceURL implements Serializable {
 			Parser<Map<String, String>> parser = gen.newParser();
 			Map<String, String> vals = parser.parse(urlString);
 			protocol = vals.get("protocol");
-			host = vals.get("host");
+			String hostname = vals.get("host");
+
+			int at = hostname.indexOf("@");
+			if (at >= 0) {
+				String auth = hostname.substring(0, at);
+				String[] tok = auth.split(":", 2);
+				if (tok.length > 1) {
+					username = tok[0];
+					password = tok[1];
+				} else {
+					username = auth;
+					password = "";
+				}
+
+				host = hostname.substring(at + 1);
+			} else {
+				host = hostname;
+				username = null;
+				password = null;
+			}
+
 			if (vals.get("port") == null || "".equals(vals.get("port").trim())) {
 				port = -1;
 			} else
@@ -94,6 +120,12 @@ public final class SourceURL implements Serializable {
 		if ("classpath".equalsIgnoreCase(protocol)) {
 			log.debug("Returning InputStream for classpath resource '{}'",
 					getPath());
+
+			if (urlString.toLowerCase().endsWith(".gz")) {
+				log.debug("Opening URL {} as GZIP stream...", urlString);
+				return new GZIPInputStream(
+						SourceURL.class.getResourceAsStream(getPath()));
+			}
 			return SourceURL.class.getResourceAsStream(getPath());
 		}
 
@@ -106,6 +138,7 @@ public final class SourceURL implements Serializable {
 			URL url = new URL(this.urlString);
 
 			if (urlString.toLowerCase().endsWith(".gz")) {
+				log.debug("Opening URL {} as GZIP stream...", urlString);
 				return new GZIPInputStream(url.openStream());
 			}
 

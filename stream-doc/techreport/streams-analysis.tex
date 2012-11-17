@@ -27,6 +27,10 @@ A large set of online learning methods is already provided by the {\em MOA}
 library, which is directly integrated into the {\em streams-analysis} package.
 We give details on the integration of {\em MOA} in Section \ref{sec:moa}.
 
+The evaluation of online learning often requires large amounts of data.
+In Section \ref{sec:syntheticData} we show how to generate synthetic data
+streams for testing online learning algorithms.
+
 %After that overview in Section \ref{sec:onlineLearning}, we discuss
 %the problem of the {\em online application} of machine learning models
 %which have either been trained online of offline, and then are used to
@@ -51,7 +55,7 @@ data stream $D$, i.e.
 \subsection{\label{sec:onlineLearning}Online Learning from Data Streams}
 The general learning tasks in online learning do not differ from the
 traditional objectives. Supervised learning such as classification or
-regression tasks need...
+regression tasks need... \baustelle
 
 Learning from unbounded and continuous data poses tight challenges to
 the designer of machine learning algorithms. Even simple basic
@@ -60,23 +64,23 @@ values that might be required in a learning algorithms tend to become
 difficult.
 
 
-\subsubsection*{Approximating Distributions}
-As a simple example, the {\em NaiveBayes}\cite{NB} classifier often
-offers a adequate prediction performance in a lot of application
-domains. Starting with the independence assumption of attributes, it
-maximizes computes the class probabilities given the observed
-attributes of a set of training instances. The base rule of bayes is
-given in equation (\ref{eqn:naiveBayes}):
-\begin{eqnarray}
-  P(c | f_1,\ldots,f_n ) = \frac{P(c)\cdot P(f_1,\ldots,f_n|c)}{P(f_1,\ldots,f_n)}.\label{eqn:naiveBayes}
-\end{eqnarray}
+%\subsubsection*{Approximating Distributions}
+%As a simple example, the {\em NaiveBayes}\cite{NB} classifier often
+%offers a adequate prediction performance in a lot of application
+%domains. Starting with the independence assumption of attributes, it
+%maximizes computes the class probabilities given the observed
+%attributes of a set of training instances. The base rule of bayes is
+%given in equation (\ref{eqn:naiveBayes}):
+%\begin{eqnarray}
+%  P(c | f_1,\ldots,f_n ) = \frac{P(c)\cdot P(f_1,\ldots,f_n|c)}{P(f_1,\ldots,f_n)}.\label{eqn:naiveBayes}
+%\end{eqnarray}
 
-Assuming a fixed set $C = \{c_1,\ldots,c_l\}$ of observable classes, we
-can easily approximate $P(c)$ by counting the occurences for each
-$c_i$ in the observed stream. For pure numerical attributes $f_i$,
-generally a gaussian normal distribution is assumed, such that the
-factors $P(f_1,\ldots,f_n|c)$ and $P(f_1,\ldots,f_n)$ can be derived
-by estimating the mean and average for each attribute $f_i$.
+%Assuming a fixed set $C = \{c_1,\ldots,c_l\}$ of observable classes, we
+%can easily approximate $P(c)$ by counting the occurences for each
+%$c_i$ in the observed stream. For pure numerical attributes $f_i$,
+%generally a gaussian normal distribution is assumed, such that the
+%factors $P(f_1,\ldots,f_n|c)$ and $P(f_1,\ldots,f_n)$ can be derived
+%by estimating the mean and average for each attribute $f_i$.
 
 %The setting gets a bit more complicated if the $f_i$ are nominal
 %values, such as variable strings from an unbounded domain such as
@@ -90,7 +94,7 @@ by estimating the mean and average for each attribute $f_i$.
 %% How are classifiers embedded into the streams framework?
 %% How can they be used?
 %%
-\subsubsection{Embedding Classifiers in \streams}
+%\subsubsection{Embedding Classifiers in \streams}
 
 
 %%

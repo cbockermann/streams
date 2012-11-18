@@ -31,7 +31,7 @@
 
 
 % ***TODO*** Choose correct title, author, department and email address
-\title{The \textsf{streams} Framework \\*[1ex] {\large Version 0.9.6}}
+\title{\vspace{6ex}The \textsf{streams} Framework \\*[1ex] {\large Version 0.9.6}}
 \author{{\large Christian Bockermann and Hendrik Blom\\*[1ex]
   Lehrstuhl f\"ur k\"unstliche Intelligenz\\
   Technische Universit\"at Dortmund\\*[1ex]
@@ -152,54 +152,65 @@
   The \streams library can be easily embedded into existing software,
   used as a standalone tool or be used to define compute graphs that
   are executed on other backend systems such as the Storm stream
-  engine.  
+  engine.
 }
 
 \medskip 
 
-{\normalsize
-This report reflects the status of the \streams framework in version
-0.9.6. As the framework is continuously enhanced, the report is
-extended as well\footnote{The latest version of the report is available at \url{http://www.jwall.org/streams/TechReport.pdf}.}.
-}
+{\normalsize This report reflects the status of the \streams framework
+  in version 0.9.6. As the framework is continuously enhanced, the
+  report is extended along. The most recent version of this report is
+  available online\footnote{The latest version of the report is
+    available at
+    \url{http://www.jwall.org/streams/tr.pdf}.}. \baustelle }
 \end{abstract}
 
-%\begin{document}
-%\maketitle
 
-%\input{introduction}
+%%
+%% Section 1 Introduction
+%%
 \input{intro}
 
-%\input{relatedwork}
 \newpage
+%%
+%% Section 2 Abstract Processing Model
+%%
 \input{streamapi}
 
 %%
-%% Section 4
+%% Section 3 Designing Stream Processes
 %%
 \input{process-design}
 
 %%
-%% Section 5 Online Learning Design
+%% Section 4 Online Stream Analysis
 %%
 \input{streams-analysis}
 
-%\input{distributed}
-%
-%\input{streamslibrary}
-
-%\input{stream-plugin}
-
+%%
+%% Section 5 Customizing streams
+%%
 \input{extending-streams}
 
 %%
 %% Section 5 Example Use-Cases
 %%
 \newpage
+
+%%
+%% Section 6 Use Cases / Applications
+%%
 \input{examples}
 
+
+%%
+%% Section 7 Summary & Future Work
+%%
 \input{summary}
-%\input{usecases}
+
+%%
+%% Appendix (API, Installation,...)
+%%
 \input{appendix}
 
 %\input{outlook}

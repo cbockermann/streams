@@ -33,6 +33,49 @@ Another property required for processors is that they need to provide
 a {\em no-args} constructor, i.e. they need to have a constructor that
 comes with no arguments.
 
+For a wide range of common preprocessing tasks, this simple method is
+sufficient enough to handle data. The processors might also maintain a
+state over consecutive calls to the {\ttfamily process(Data)} method.
+This {\ttfamily process} method will be called from within a single
+thread only.
+
+If a processor requires a more sophisticated configuration, e.g. for
+initializing a database connection at startup or release a file handle
+at shutdown, the {\ttfamily StatefulProcessor} interface can be used.
+In addition to the simple {\ttfamily Processor} interface, the stateful
+version adds two additional methods:
+\begin{itemize}
+  \item {\ttfamily init(ProcessContext)}
+  \item {\ttfamily finish()}
+\end{itemize}
+These methods are provide a life-cycle to the processor instances.
+
+\subsubsection{\label{sec:processorLifecycle}The Lifecycle of a Processor}
+As stated above, a processor is expected to follow some basic
+conventions of the JavaBeans specifcation. It is expected to provide a
+constructor with no arguments and should provide access to attributes
+that are intended to be configurable via the XML configuration by
+providing {\ttfamily set}- and {\ttfamily get}-methods.
+
+The general life-cyle of a processor that has been added to a data flow
+graph is as follows:
+
+\begin{enumerate}
+  \item An object of the processor class is being instantiated at
+    container startup time.
+  \item The parameters found as the XML attributes are used to
+    call any {\ttfamily set}-methods that match the attribute names.
+  \item If the processor class implements the {\ttfamily StatefulProcessor}
+    interface, the {\ttfamily init(ProcessContext)} method will be called.
+  \item The {\ttfamily process(Data)} method is called for all data items
+    that the parent process of the processor receives.
+  \item As the container shuts down, the {\ttfamily finish()} method of
+    the processor is called {\em if} the processor class implements the
+    {\ttfamily StatefulProcessor} interface.
+\end{enumerate}
+
+
+
 
 \subsubsection{\label{sec:exampleProcessor}Example: A simple custom processor}
 In the following, we will walk through a very simple example to show
@@ -75,7 +118,7 @@ of the \streams framework to include it in to the process:
 \end{figure}
 
 
-\subsubsection{Processing data}
+\subsubsection*{Processing data}
 The simple example shows the direct correspondence between the XML
 definition of a container and the associated Java implemented
 processors. The data items are represented as simple Hashmaps with

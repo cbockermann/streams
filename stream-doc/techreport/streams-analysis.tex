@@ -21,11 +21,22 @@ the \streams framework using a simple Naive Bayes classifier as example.
 %of an existing library, namely the MOA \cite{moa}, which provides a
 %rich set of state of the art online learning algorithms. 
 
-Following that, we outline the existing online learning implementations
-provided by the {\em streams-analysis} package in Section \ref{sec:streamsAnalysis}.
-A large set of online learning methods is already provided by the {\em MOA}
-library, which is directly integrated into the {\em streams-analysis} package.
-We give details on the integration of {\em MOA} in Section \ref{sec:moa}.
+We first give an overview of the data representation that is used for
+learning from the {\em data items} that represent the basic data format
+of {\em streams}. Following that we outline how learning algorithms are
+embedded into the framework of continuous processes. Here we provide an
+example for online classification and the computation of statistics.
+
+Based on the embedding of online learning schemes for classification,
+we show the integration of the MOA library into the \streams
+framework, which allows for directly using the set of existing
+classifiers for learning (Section \ref{sec:moa}).
+
+%Following that, we outline the existing online learning implementations
+%provided by the {\em streams-analysis} package in Section \ref{sec:streamsAnalysis}.
+%A large set of online learning methods is already provided by the {\em MOA}
+%library, which is directly integrated into the {\em streams-analysis} package.
+%We give details on the integration of {\em MOA} in Section \ref{sec:moa}.
 
 The evaluation of online learning often requires large amounts of data.
 In Section \ref{sec:syntheticData} we show how to generate synthetic data
@@ -37,31 +48,107 @@ streams for testing online learning algorithms.
 %make real-life predictions on streaming data. This will be covered in
 %Section \ref{sec:onlineApplication}.
 
-\subsubsection*{Notation used}
-Within this section, we will denote each data item $d_i$ obtained from
-a stream as a tuple $d_i = (d_{i,1},\ldots,d_{i,k}) \subset
-M_1\times\ldots\times M_k$, where each $M_i$ might refer to some
-domain, e.g. $M_i \subseteq \mathbb{R}$ or an arbitrary set. Further
-we will refer to the index $i$ as the index of the item $d_i$ in a
-data stream $D$, i.e.
-\begin{displaymath}
-  D = \langle d_0,d_1,\ldots \rangle.
-\end{displaymath}
+%\subsubsection*{Notation used}
+%Within this section, we will denote each data item $d_i$ obtained from
+%a stream as a tuple $d_i = (d_{i,1},\ldots,d_{i,k}) \subset
+%M_1\times\ldots\times M_k$, where each $M_i$ might refer to some
+%domain, e.g. $M_i \subseteq \mathbb{R}$ or an arbitrary set. Further
+%we will refer to the index $i$ as the index of the item $d_i$ in a
+%data stream $D$, i.e.
+%\begin{displaymath}
+%  D = \langle d_0,d_1,\ldots \rangle.
+%\end{displaymath}
 
 
 %%
 %%
 %%
 \subsection{\label{sec:onlineLearning}Online Learning from Data Streams}
-The general learning tasks in online learning do not differ from the
-traditional objectives. Supervised learning such as classification or
-regression tasks need... \baustelle
+The general definitions of learning tasks in online learning do not
+differ from the traditional objectives. Supervised learning such as
+classification or regression tasks rely on a source of training data
+to build models that can then be applied to new data for prediction.
 
+% ... \baustelle
 Learning from unbounded and continuous data poses tight challenges to
 the designer of machine learning algorithms. Even simple basic
 building blocks like the computation of a median or minima/maxima
 values that might be required in a learning algorithms tend to become
 difficult.
+
+\subsubsection{\label{sec:dataExamples}Learning from Data Items}
+Online learning algorithms usually require a data representation
+similar to batch learning methods. Typically instances or examples
+used for learning are tuples of some real-valued or finite space.
+
+As an example, the task of (binary) classification can be stated as
+estimating a function $\hat{f}$ that best approximates a true
+(unknown) distribution of instances $(x,y)$ where $x\in M^r$ and $y
+\in \{ -1,1 \}$. Usually features are encoded such that $M=\mathbb{R}$
+in many application domains.
+
+In the \streams framework we encode each of these tuples as data
+items by defining a key $k_i$ for each dimension of $M^p$ and a
+special key for the label $y$. By convention, special keys are
+prefixed with an {\ttfamily @} character. These special keys are
+expected to be ignored as attributes by any learning algorithm.
+Figure \ref{fig:exampleItem} shows an instance fo learning that
+is represented by a data item.
+
+\begin{figure}[h!]
+  \centering
+$(x,y) \stackrel{\mbox{\scriptsize e.g.}}{=} (0.3,0.57,\ldots,0.413,-1) \ \ \rightarrow\ \  $ {\footnotesize \begin{tabular}{c|c|c|c|c}
+{\bf \textsf{Key}} & {\ttfamily x1} & $\cdots$ & {\ttfamily xp} & {\ttfamily @label} \\ \hline
+{\bf \textsf{Value}} & 0.3 & $\cdots$ & 0.413 & -1
+%{\bf Value} & {\ttfamily x1} & 0.4 \\ 
+%$\vdots$ & $\vdots$ \\ 
+%{\ttfamily xp} & 0.413 \\
+%{\ttfamily y} & -1 \\
+\end{tabular}}
+  \caption{\label{fig:exampleItem}Data item representation of an instance for learning, key/value table transposed for brevity.}
+\end{figure}
+
+As the attributes may hold any {\ttfamily Serializable} values, a
+proper pre-processing might be required for applying learning
+algorithms, e.g. if these algorithms cannot handle arbitrary data
+types. Such preprocessing is for example a String-to-Number conversion
+(provided by the {\ttfamily ParseDouble} processor). The \streams
+core classes provide a wide number of preprocessing processors.
+
+\subsubsection*{Filtering Attributes}
+Sometimes it is desirable to train a classifier only on a subset of
+the features/attributes that are contained in the data. The {\ttfamily WithKeys}
+processor, allows for the execution of nested processors on filtered
+data items. As an example, the XML snippet in Figure \ref{fig:exampleWithKeys}
+shows the data preprocessing to apply online learning to the famous Iris
+data set with only two of the attributes being selected.
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=XML]
+    ...
+    <process input="iris">
+       
+        <!-- Rename the "class" attribute to "@label" as by convention
+             a learner expects the label in attribute "@label"        -->
+        <Rename from="class" to="@label" />
+
+        <!-- select two attributes and the label from the
+             data items and apply the inner processors />
+        <WithKeys keys="att1,att2,@label">
+
+            <!-- parse the attributes att1 and att2 to Double values -->
+            <ParseDouble keys="att1,att2" />
+
+            <!-- feed the data item to a naive bayes classifier for training -->
+            <stream.classifier.NaiveBayes id="myNaiveBayes" />
+        </WithKeys>
+
+    </process>
+  \end{lstlisting}
+  \caption{\label{fig:exampleWithKeys}Example XML for training a
+    classifier on a subset of attributes.}
+\end{figure}
 
 
 %\subsubsection*{Approximating Distributions}

@@ -8,19 +8,18 @@ milliseconds. Other units for \texttt{day}, \texttt{hour},
 
 The units can also be combined as in \texttt{1 second 30ms}.
 
-\TODO{Fix table of parameters.}
-%\begin{table}[h]
-%\centering
-%{\footnotesize
-%{\renewcommand{\arraystretch}{1.4}
-%\textsf{
-%\begin{tabular}{|c|c|p{9cm}|c|} \hline
-%\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
-%{\ttfamily time } & String &  & true\\ \hline
-%{\ttfamily condition } & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
-%\end{tabular}
-% } 
-% }
-%}
-%\caption{Parameters of class {\ttfamily stream.flow.Delay}.}
-%\end{table}
+\begin{table}[h]
+\centering
+{\footnotesize
+{\renewcommand{\arraystretch}{1.4}
+\textsf{
+\begin{tabular}{|c|c|p{9cm}|c|} \hline
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} & \textbf{Required} \\ \hline  
+{\ttfamily time } & String & The time that the data flow should be delayed. & true\\ \hline
+{\ttfamily condition } & String & The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression. & false\\ \hline
+\end{tabular}
+ } 
+ }
+}
+\caption{Parameters of class {\ttfamily stream.flow.Delay}.}
+\end{table}

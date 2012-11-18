@@ -44,11 +44,29 @@ initializing a database connection at startup or release a file handle
 at shutdown, the {\ttfamily StatefulProcessor} interface can be used.
 In addition to the simple {\ttfamily Processor} interface, the stateful
 version adds two additional methods:
-\begin{itemize}
-  \item {\ttfamily init(ProcessContext)}
-  \item {\ttfamily finish()}
-\end{itemize}
-These methods are provide a life-cycle to the processor instances.
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=Java]
+    public interface StatefulProcessor extends Processor {
+       /**
+        *  Initialize data structures, open connections,...
+        */
+       public void init(ProcessContext ctx) throws Exception;
+
+       /**
+        *  Close connections, release resources,...
+        */
+       public void finish() throws Exception;
+    }
+  \end{lstlisting}
+  \caption{\label{fig:statefulProcessor} The additional methods of stateful processors.}
+\end{figure}
+
+%\begin{itemize}
+%  \item {\ttfamily init(ProcessContext)}
+%  \item {\ttfamily finish()}
+%\end{itemize}
+%These methods are provide a life-cycle to the processor instances.
 
 \subsubsection{\label{sec:processorLifecycle}The Lifecycle of a Processor}
 As stated above, a processor is expected to follow some basic
@@ -114,7 +132,10 @@ of the \streams framework to include it in to the process:
          </process>
        </container>
   \end{lstlisting}}
-  \caption{\label{fig:multiplyXML}The processors are added to the XML process definition by simply adding an XML element with the name of the implementing class into the process that should contain the processor.}
+\caption{\label{fig:multiplyXML}The processors are added to the XML
+  process definition by simply adding an XML element with the name of
+  the implementing class into the process that should contain the
+  processor.}
 \end{figure}
 
 
@@ -148,39 +169,34 @@ event of the data stream.
   \centering{\footnotesize
   \begin{lstlisting}[language=Java]
      package my.package;
-
      import stream.*;
 
      public class Multiplier implements Processor {
-         /** Extract the attribute x and add y as y = 2 * x
-          *  @param item
-          */
          public Data process( Data item ){
              Serializable value = item.get( "x" );	     
 
              if( value != null  ){
-                // parse a double-value from the string representation
-                Double x = new Double( value.toString() );
-                
-                // add the value 2*x as new attribute of the item:
-                data.put( "y",  new Double(  2 * x ) );
+                Double x = new Double( value.toString() );  // parse value to double
+                data.put( "y",  new Double(  2 * x ) );     // multiply+add result
              }
              return item;
          }
      }
   \end{lstlisting}}
-  \caption{\label{fig:multiplyImpl}A simple custom processor that multiplies an attribute {\ttfamily x} in each data item by a constant factor of 2. If the attribute {\ttfamily x} is not present, this processor will leave the data item unchanged.}
+\caption{\label{fig:multiplyImpl}A simple custom processor that
+  multiplies an attribute {\ttfamily x} in each data item by a
+  constant factor of 2. If the attribute {\ttfamily x} is not present,
+  this processor will leave the data item unchanged.}
 \end{figure}
 
 
 \subsubsection{Adding Parameters to Processors}
 In most cases, we want to add a simple method for parameterizing our
 Processor implementation. This can easily be done by following the
-{\em Convention-over-Configuration} paradigm:
-
-By convention, all {\ttfamily setX(...)} and {\ttfamily getY()}
-methods are automatically regarded as parameters for the data
-processors and directly available as XML attributes.
+{\em Convention-over-Configuration} paradigm: By convention, all
+{\ttfamily setX(...)} and {\ttfamily getY()} methods are automatically
+regarded as parameters for the data processors and directly available
+as XML attributes.
 
 In the example from above, we want to add two parameters: {\ttfamily
 key} and {\ttfamily factor} to our Multiplier implementation. The
@@ -191,6 +207,33 @@ used for multipying (instead of the constant {\ttfamily 2} as above).
 To add these two parameters to our Multiplier, we only need to provide
 corresponding getters and setters as shown in Figure
 \ref{fig:multiplyParameters}.
+        
+After compiling this class, we can directly use the new parameters
+{\ttfamily key} and {\ttfamily factor} as XML attributes. For example,
+to multiply all attributes {\ttfamily z} by {\ttfamily 3.1415}, we can
+use the following XML setup:
+
+\begin{figure}[h!]
+  \centering
+  \begin{lstlisting}[language=XML]
+       <container>
+           ...
+           <process input="...">
+               <my.package.Multiplier key="z" factor="3.1415" />
+            </process>
+       </container>
+  \end{lstlisting}
+  \caption{\label{fig:multiplyParametersXML}}
+\end{figure}
+
+Upon startup, the getters and setters of the Multiplier class will be
+checked and if the argument is a Double (or Integer, Float,...) it
+will be automatically converted to that type.
+
+In the example of our extended Multiplier, the {\ttfamily factor}
+parameter will be created to a Double object of value {\ttfamily 3.1415} and
+used as argument in the {\ttfamily setFactor(..)} method.
+
 
 \begin{figure}[h!]
   \centering \footnotesize{
@@ -224,29 +267,3 @@ corresponding getters and setters as shown in Figure
   \end{lstlisting}}
   \caption{\label{fig:multiplyParameters}The {\ttfamily Multiplier} processor with added parameters.}
 \end{figure}
-        
-After compiling this class, we can directly use the new parameters
-{\ttfamily key} and {\ttfamily factor} as XML attributes. For example,
-to multiply all attributes {\ttfamily z} by {\ttfamily 3.1415}, we can
-use the following XML setup:
-
-\begin{figure}[h!]
-  \centering
-  \begin{lstlisting}[language=XML]
-       <container>
-           ...
-           <process input="...">
-               <my.package.Multiplier key="z" factor="3.1415" />
-            </process>
-       </container>
-  \end{lstlisting}
-  \caption{\label{fig:multiplyParametersXML}}
-\end{figure}
-
-Upon startup, the getters and setters of the Multiplier class will be
-checked and if the argument is a Double (or Integer, Float,...) it
-will be automatically converted to that type.
-
-In the example of our extended Multiplier, the {\ttfamily factor}
-parameter will be created to a Double object of value {\ttfamily 3.1415} and
-used as argument in the {\ttfamily setFactor(..)} method.

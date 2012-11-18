@@ -140,7 +140,7 @@ as supporting easy interoperation when combining different programming
 languages to implement parts of a streaming process. This enables the
 use of languages like Python, Ruby or JavaScript to implement custom
 process as we will outline in more detail in Seciton
-\ref{sec:scriptingProcessors}.
+\ref{sec:scripting}.
 
 \subsection*{Streams of Data}
 A {\em data stream} in consequence is an entity that provides access
@@ -229,8 +229,9 @@ read the next item if all the inner processors have completed.
 Where this pull strategy forms a computing strategy of {\em lazy
   evaluation} as the data items are only read as they are processed,
 the \streams library is not limited to a {\em pull oriented} data
-flow. We discuss the implementation of {\em active streams} and the
-resulting {\em push} oriented data flow in Section \ref{sec:push}.
+flow.
+% We discuss the implementation of {\em active streams} and the
+%resulting {\em push} oriented data flow in Section \ref{sec:push}.
 
 
 \subsection*{Using multiple Processes}

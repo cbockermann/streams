@@ -4,7 +4,7 @@ matches a known distribution or can be designed such that specific
 test-cases can be created for algorithms.
 
 The \streams core package already defines a set of streams for random
-data generation. Using the concept of [MultiStreams](../streams.md)
+data generation. In Combination with the concept of MultiStreams
 this can easily be used to create tailored data streams.
 
 
@@ -94,7 +94,7 @@ clusters with cluster centers (0.0,0.0), (1.0,1.0), (2.0,2.0) and
   \end{lstlisting}
 \end{figure}
 
-\subsubsection{Inbalanced Distributions}
+\subsubsection{Imbalanced Distributions}
 In some cases a unified distribution among the sub-streams is not what
 is required. The {\ttfamily weights} parameters lets you define a
 weight for each substream, resulting in a finer control of the
@@ -116,5 +116,5 @@ to create a stream with a slight fraction of outlier data items:
   \end{lstlisting}
 \end{figure}
 In this example, approximately 1\% of the data items is drawn from the
-outlier stream, wheras the majority is picked from the ``normal''
+outlier stream, whereas the majority is picked from the ``normal''
 stream.

@@ -70,12 +70,12 @@ version adds two additional methods:
 
 \subsubsection{\label{sec:processorLifecycle}The Lifecycle of a Processor}
 As stated above, a processor is expected to follow some basic
-conventions of the JavaBeans specifcation. It is expected to provide a
+conventions of the JavaBeans specification. It is expected to provide a
 constructor with no arguments and should provide access to attributes
 that are intended to be configurable via the XML configuration by
 providing {\ttfamily set}- and {\ttfamily get}-methods.
 
-The general life-cyle of a processor that has been added to a data flow
+The general life-cycle of a processor that has been added to a data flow
 graph is as follows:
 
 \begin{enumerate}
@@ -97,7 +97,7 @@ graph is as follows:
 
 \subsubsection{\label{sec:exampleProcessor}Example: A simple custom processor}
 In the following, we will walk through a very simple example to show
-the implemenation of a processor in more detail. We will start with a
+the implementation of a processor in more detail. We will start with a
 basic class and extend this to have a complete processor in the end.
 
 The main construct is a Java class within a package {\ttfamily my.package}
@@ -202,7 +202,7 @@ In the example from above, we want to add two parameters: {\ttfamily
 key} and {\ttfamily factor} to our Multiplier implementation. The
 {\ttfamily key} parameter will be used to select the attribute used
 instead of {\ttfamily x} and the {\ttfamily factor} will be a value
-used for multipying (instead of the constant {\ttfamily 2} as above).
+used for multiplying (instead of the constant {\ttfamily 2} as above).
 
 To add these two parameters to our Multiplier, we only need to provide
 corresponding getters and setters as shown in Figure
@@ -238,7 +238,7 @@ used as argument in the {\ttfamily setFactor(..)} method.
 \begin{figure}[h!]
   \centering \footnotesize{
   \begin{lstlisting}[language=Java]
-     // imports left out for trunction
+     // imports left out for truncation
      //
      public class Multiplier implements Processor {
         String key = "x";    // by default we still use 'x'

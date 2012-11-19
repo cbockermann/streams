@@ -1,5 +1,26 @@
+\subsection{Installing the \streams Runtime package}
+For a more convenient use of the \streams framework, we created packages
+for the major Linux systems, such as Debian and RedHat based systems. These
+packages install into a proper directory structure and allow for a convenient
+use of \streams.
 
-\subsection{Installing the \streams Runtime on Debian/RedHat}
+The packages provide an {\ttfamily streams.run} command that automatically
+uses all libraries found in {\ttfamily /opt/streams/lib}. With the \streams
+package installed, any container XML file can be started by running
+
+\hspace{4ex}\sample{\# streams.run my-container.xml}
+
+To add additional libraries or custom processors, these simply need to be
+packaged into a Jar file and added to the {\ttfamily /opt/streams/lib}
+directory.
+
+\medskip
+
+The following sections will give a more detailed instructions on how
+to install the \streams packages on the different platforms.
+
+
+\subsubsection{Installing the \streams Runtime on Debian/RedHat}
 For Debian and RPM based systems, there exists a package repository,
 that provides Debian and RPM packages that can easily be installed
 using the system's package managers. A step-by-step guide for setting
@@ -9,7 +30,7 @@ such as RedHat, CentOS or Scientific Linux are provided in
 \ref{sec:installRPM}.
 
 
-\subsubsection{\label{sec:gpgKey}Signatures for Packages}
+\subsubsubsection*{\label{sec:gpgKey}Signatures for Packages}
 The repositories and all packages within the repository are
 cryptographically signed with a GPG key with ID {\ttfamily 0x13443F4A}
 to ensure their consistency. The key is available at
@@ -24,7 +45,7 @@ Fingerprint: 175C 915F 51CA 8AA2 387B  E3E8 48E6 B98D 1344 3F4A}
 This key needs to be added to the package management key ring of the
 system (e.g. {\em apt} on Debian or {\em yum} on RedHat systems).
 
-\subsubsection{\label{sec:installDeb}Installing on Debian/Ubuntu}
+\subsubsubsection*{\label{sec:installDeb}Installing \streams on Debian/Ubuntu}
 There exists a Debian/Ubuntu repository at {\ttfamily
   jwall.org}\footnote{The site \url{http://www.jwall.org/streams/} is
   the base web-site of the \streams framework.} which provides access
@@ -64,7 +85,7 @@ to run XML stream processes:
 
 \sample{\# stream.run my-process.xml}
 
-\subsubsection{\label{sec:installRPM}Installing on RedHat/CentOS/Fedora}
+\subsubsection{\label{sec:installRPM}Installing \streams on RedHat/CentOS/Fedora}
 There exists a YUM repository at the {\ttfamily jwall.org} site, which
 provides access to the latest release versions of the \streams framework
 for RedHat based systems.

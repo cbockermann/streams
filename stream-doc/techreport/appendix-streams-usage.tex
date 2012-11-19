@@ -1,4 +1,4 @@
-\subsection{Running Streams}
+\subsection{Running Streams - Quickstart}
 Designing a simple stream process does not require more than writing
 some XML declaration and executing that XML with the stream-runner as
 shown in the following figure:
@@ -47,7 +47,7 @@ stream.
 There exists a set pre-packaged libraries such as {\em streams-analysis}
 or {\em streams-video}, which are provided at
 \begin{displaymath}
-  \mbox{\url{http://download.jwall.org/streams/libs/}}.
+  \mbox{\url{http://download.jwall.org/streams/libs/}}
 \end{displaymath}
 These add additional processors and stream implementations to the
 \streams runtime for different domain specific intentions. To start
@@ -79,11 +79,11 @@ provided in the {\em streams-video} package.
         </process>
     </container>
   \end{lstlisting}
-  \caption{\label{fig:videoExample}Displaying an MJpeg video stream and plotting the average RGB channel values}
+  \caption{\label{fig:videoExample}Displaying an MJPEG video stream and plotting the average RGB channels.}
 \end{figure}
 
 For the libraries to be included in the path, the following command needs
 to be issued to start the \streams run-time:
 
-\sample{\# java -cp stream-runner.jar:streams-video-0.0.1.jar $\backslash$
+\hspace{4ex}\sample{\# java -cp stream-runner.jar:streams-video-0.0.1.jar $\backslash$
           stream.run video.xml}

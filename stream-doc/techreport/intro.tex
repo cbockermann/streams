@@ -3,11 +3,11 @@ In todays applications, data is continuously produced in various spots
 ranging from network traffic, log file data, monitoring of
 manufacturing processes or scientific experiments. The applications
 typically emit data in non-terminating data streams at a high rate,
-which poses tight challenges on the analysis of such streams.
+which imposes demanding challenges on the analysis of such streams.
 
 We illustrate this by projects of our Collaborative Research Center
 SFB-876. A first example is given by the FACT telescope that is
-associated to project C3. This telscope observes cosmic showers by
+associated to project C3. This telescope observes cosmic showers by
 tracking light that is produced by these showers in the atmosphere
 with a camera.  These showers last about 20 nanoseconds and are
 recorded with a camera of 1440 pixels at a sampling rate of 2 GHz. As
@@ -24,7 +24,7 @@ plethora of log entries.
 
 The project B3 focuses on monitoring (distributed) sensors in an
 automated manufacturing process. These sensors emit detailed
-information of the oven heat or milling pressure of steel production
+information about the furnace heat or milling pressure of steel production
 and are recorded at fine grained time intervals. Analysis of this data
 focuses on supervision and optimization of the production process.
 
@@ -79,7 +79,7 @@ Within this work we will refer to this as the setting of {\em
 that continuously emits data items $d_i$. In the following, we model
 that data stream as a sequence
 $$D = \langle d_0,d_1,\ldots,d_i,\ldots \rangle$$
-with $i\rightarrow\infty$. The framing to operate on streaming data is
+with $i\rightarrow\infty$. The setting to operate on streaming data is
 generally given by the following constraints/requirements:
 \begin{itemize}
   \defitem{C1} continuously processing {\em single items} or {\em small batches} of data,
@@ -169,10 +169,10 @@ processing and storage by building on large cluster infrastructures such
 as Apache's Zookeeper infrastructure.
 
 The {\em Storm} engine relies on executing a computing graph, called a
-{\em topology} in Storm. The nodes (refered to as {\em Bolts}) in this
-graph are user written programs defining the data processing
+{\em topology} in Storm. The nodes (referred to as {\em Bolts}) and the data sources (referred to as {\em Spouts})
+in this graph are user written programs defining the data processing and data acquisition
 steps. The topology is then provided by the user by implementing a
-Java program that creates the desired topology (a {\em toplogy
+Java program that creates the desired topology (a {\em topology
   builder}). To start the topology, the custom topology builder
 implemented by the user is given to the storm engine, which creating
 the bolts and distributing it along the cluster infrastructure.
@@ -180,7 +180,7 @@ the bolts and distributing it along the cluster infrastructure.
 While the {\em Storm} engine is known to be fast and scalable, it
 requires an in-depth knowledge of the user on how to create a topology
 that matches a particular task. Looking from the perspective of a {\em
-  data analysist}, this does not match the higher-level
+  data analysts}, this does not match the higher-level
 rapid-prototyping needs as is adequate for domain experts e.g. in
 projects like telescope data analysis mentioned above.
 
@@ -197,7 +197,7 @@ or {\em Storm}.
 
 \subsubsection*{Our Contributions}
 In this work we introduce the \streams library, a small software
-framework that provides an abstract modelling of stream processes. The
+framework that provides an abstract modeling of stream processes. The
 objective of this framework is to establish a layer of abstraction
 that allows for defining stream processes at a high level, while
 providing the glue to connect various existing libraries such as MOA
@@ -219,14 +219,14 @@ flawlessly integrate into existing runtime environments like {\em
 
 Our proposed framework supports
 \begin{enumerate}
-\item Modelling of continuous stream processes, following the {\em
+\item Modeling of continuous stream processes, following the {\em
     single-pass} paradigm,
 \item Anytime access to services that are provided by the modeled
   processes and the online algorithms deployed in the process setup,
   and
 \item Processing of large data sets using limited memory resources
 \item A simple environment to implement custom stream processors and
-  integrate these into the modelling
+  integrate these into the modeling
 \item A collection of online algorithms for counting and classification
 \item Incorporation of various existing libraries (e.g. MOA
   \cite{moa}) into the modeled process.

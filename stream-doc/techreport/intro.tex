@@ -3,7 +3,7 @@ In toddy's applications, data is continuously produced in various spots
 ranging from network traffic, log file data, monitoring of
 manufacturing processes or scientific experiments. The applications
 typically emit data in non-terminating data streams at a high rate,
-which poses tight challenges on the analysis of such streams.
+which imposes demanding challenges on the analysis of such streams.
 
 We illustrate this by projects of our Collaborative Research Center
 SFB-876. A first example is given by the FACT telescope that is
@@ -24,7 +24,7 @@ plethora of log entries.
 
 The project B3 focuses on monitoring (distributed) sensors in an
 automated manufacturing process. These sensors emit detailed
-information of the oven heat or milling pressure of steel production
+information about the furnace heat or milling pressure of steel production
 and are recorded at fine grained time intervals. Analysis of this data
 focuses on supervision and optimization of the production process.
 
@@ -79,7 +79,7 @@ Within this work we will refer to this as the setting of {\em
 that continuously emits data items $d_i$. In the following, we model
 that data stream as a sequence
 $$D = \langle d_0,d_1,\ldots,d_i,\ldots \rangle$$
-with $i\rightarrow\infty$. The framing to operate on streaming data is
+with $i\rightarrow\infty$. The setting to operate on streaming data is
 generally given by the following constraints/requirements:
 \begin{itemize}
   \defitem{C1} continuously processing {\em single items} or {\em small batches} of data,
@@ -169,8 +169,9 @@ processing and storage by building on large cluster infrastructures such
 as Apache's Zookeeper infrastructure.
 
 The {\em Storm} engine relies on executing a computing graph, called a
-{\em topology} in Storm. The nodes (referred to as {\em Bolts}) in this
-graph are user written programs defining the data processing
+{\em topology} in Storm. The nodes (referred to as {\em Bolts}) and
+the data sources (referred to as {\em Spouts}) in this graph are user
+written programs defining the data processing and data acquisition
 steps. The topology is then provided by the user by implementing a
 Java program that creates the desired topology (a {\em topology
   builder}). To start the topology, the custom topology builder

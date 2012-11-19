@@ -1,5 +1,5 @@
 \section{\label{sec:intro}Introduction}
-In todays applications, data is continuously produced in various spots
+In toddy's applications, data is continuously produced in various spots
 ranging from network traffic, log file data, monitoring of
 manufacturing processes or scientific experiments. The applications
 typically emit data in non-terminating data streams at a high rate,
@@ -89,7 +89,7 @@ generally given by the following constraints/requirements:
 \end{itemize}
 
 
-To catch up with the reqirements of large scale and continuous data,
+To catch up with the requirements of large scale and continuous data,
 online algorithms have recently received a lot of attention. The focus
 of these algorithms is to provide approximate results while limiting
 the memory and time resources required for computation. 
@@ -102,7 +102,7 @@ the memory and time resources required for computation.
 
 
 \subsubsection*{Analysis of Continuous Data}
-{\bf TODO: \"{U}berleitungssatz?}
+%{\bf TODO: \"{U}berleitungssatz?}
 Traditional data analysis methods focus on processing fixed size
 batches of data and often require the data (or large portions of it)
 to be available in main memory. This renders most approaches useless
@@ -128,19 +128,19 @@ compute on $S$ are
 \end{itemize}
 Often, these tasks are further refined to models that focus on a
 recent sliding window of the last $w$ data items observed, e.g. we are
-interested in the top-$k$ elments of the last 5 minutes. 
+interested in the top-$k$ elements of the last 5 minutes. 
 
 Algorithms for solving these tasks on static data sets
 exists. However, the challenging requirements in the continuous data
 setting are the tight limits on the resources available for
-computation. This can for example be realtime constraints, such as a
+computation. This can for example be real-time constraints, such as a
 fixed limit on the time available for processing a data item, or a
 bound on the memory available for computation.
 
 Various algorithms have been proposed dedicated to computational
 problems on data streams. Examples include online quantile computation
 \cite{Greenwald/Khanna/2001a,Arasu/Manku/2004a}, distinct counting of
-elements, frequent itemset mining
+elements, frequent item set mining
 \cite{Charikar02findingfrequent,goethals2007,Cheng06maintainingfrequent},
 clustering \cite{sohler2010,Aggarwal:2003} or training of classifiers
 on a stream \cite{Domingos/Hulten/2000a}.
@@ -169,8 +169,9 @@ processing and storage by building on large cluster infrastructures such
 as Apache's Zookeeper infrastructure.
 
 The {\em Storm} engine relies on executing a computing graph, called a
-{\em topology} in Storm. The nodes (referred to as {\em Bolts}) and the data sources (referred to as {\em Spouts})
-in this graph are user written programs defining the data processing and data acquisition
+{\em topology} in Storm. The nodes (referred to as {\em Bolts}) and
+the data sources (referred to as {\em Spouts}) in this graph are user
+written programs defining the data processing and data acquisition
 steps. The topology is then provided by the user by implementing a
 Java program that creates the desired topology (a {\em topology
   builder}). To start the topology, the custom topology builder
@@ -180,7 +181,7 @@ the bolts and distributing it along the cluster infrastructure.
 While the {\em Storm} engine is known to be fast and scalable, it
 requires an in-depth knowledge of the user on how to create a topology
 that matches a particular task. Looking from the perspective of a {\em
-  data analysts}, this does not match the higher-level
+  data analyst}, this does not match the higher-level
 rapid-prototyping needs as is adequate for domain experts e.g. in
 projects like telescope data analysis mentioned above.
 
@@ -192,7 +193,7 @@ In contrast to these frameworks, the \streams library focuses on
 defining a simple abstraction layer that allows for the definition of
 stream processes by means of only a few basic conceptual elements.
 The resulting processes can be then be easily executed by the \streams
-runtime or mapped to different runtime environments such as {\em S4}
+run-time or mapped to different run-time environments such as {\em S4}
 or {\em Storm}.
 
 \subsubsection*{Our Contributions}
@@ -214,7 +215,7 @@ elements.
 Moreover it provides a simple programming API to implement and
 integrate custom data processors into the designed stream processes.
 The level of abstraction of this programming API is intended to
-flawlessly integrate into existing runtime environments like {\em
+flawlessly integrate into existing run-time environments like {\em
   Storm} or the RapidMiner platform \cite{rapidminerStreams}.
 
 Our proposed framework supports

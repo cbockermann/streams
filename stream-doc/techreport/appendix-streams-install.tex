@@ -35,12 +35,15 @@ The repositories and all packages within the repository are
 cryptographically signed with a GPG key with ID {\ttfamily 0x13443F4A}
 to ensure their consistency. The key is available at
 
-\sample{http://download.jwall.org/software.gpg}
+\hspace{4ex}\sample{http://download.jwall.org/software.gpg}
 
 The key is associated with the following information:
 
-\sample{User ID: jwall.org Software Repository <software@jwall.org>\newline
-Fingerprint: 175C 915F 51CA 8AA2 387B  E3E8 48E6 B98D 1344 3F4A}
+%\hspace{4ex}\sample{User ID: jwall.org Software Repository <software@jwall.org>\newline
+%Fingerprint: 175C 915F 51CA 8AA2 387B  E3E8 48E6 B98D 1344 3F4A}
+\hspace{4ex}\sample{User ID: Christian Bockermann <chris@jwall.org>\newline
+Fingerprint: 4324 5FA1 EA37 1C3E EFE3  0730 A5CE 7F45 C5C3 953C}
+
 
 This key needs to be added to the package management key ring of the
 system (e.g. {\em apt} on Debian or {\em yum} on RedHat systems).
@@ -55,7 +58,7 @@ To access this repository from within your Debian system, you'll need
 create a new file {\ttfamily /etc/apt/sources.list.d/jwall.list} with
 the following content:
 
-\sample{ deb http://download.jwall.org/debian/ jwall main } 
+\hspace{4ex}\sample{ deb http://download.jwall.org/debian/ jwall main } 
 
 The repositories and all packages within the repository are
 cryptographically signed with a GPG key. Please see Section
@@ -66,7 +69,7 @@ This key needs to be added to the APT key ring of the Debian/Ubuntu
 system by running the following commands (the {\ttfamily \#} denotes
 the shell prompt):
 
-\sample{\# sudo wget http://download.jwall.org/debian/software.gpg\newline
+\hspace{4ex}\sample{\# sudo wget http://download.jwall.org/debian/software.gpg\newline
 \# sudo apt-key add software.gpg 
 }
 
@@ -74,7 +77,7 @@ After the key and the repository have been added to the APT package
 management, all that is left is to update the package list and install
 the \streams environment with the following commands:
 
-\sample{\# sudo apt-get update\newline
+\hspace{4ex}\sample{\# sudo apt-get update\newline
 \# sudo apt-get install streams
 }
 
@@ -83,7 +86,7 @@ the lastest version of the {\ttfamily streams} package. After installation,
 the system should be equipped with a new {\ttfamily stream.run} command
 to run XML stream processes:
 
-\sample{\# stream.run my-process.xml}
+\hspace{4ex}\sample{\# stream.run my-process.xml}
 
 \subsubsection{\label{sec:installRPM}Installing \streams on RedHat/CentOS/Fedora}
 There exists a YUM repository at the {\ttfamily jwall.org} site, which
@@ -94,7 +97,7 @@ To access this repository from within your CentOS/RedHat system,
 you'll need to create a file {\ttfamily /etc/yum.repos.d/jwall.repo}
 with the following contents:
 
-\sample{[jwall]\newline
+\hspace{4ex}\sample{[jwall]\newline
 name=CentOS-jwall - jwall.org packages for noarch\newline
 baseurl=http://download.jwall.org/yum/jwall\newline
 enabled=1\newline
@@ -107,13 +110,13 @@ The RPM packages are signed with a GPG key, please see Section
 To import the GPG key into your system's key ring, run the
 following command as super user:
 
-\sample{\# rpm --import http://download.jwall.org/software.gpg}
+\hspace{4ex}\sample{\# rpm --import http://download.jwall.org/software.gpg}
 
 After the key has been imported your system is ready to install
 the \streams package using the system's package manager, e.g.
 by running
 
-\sample{\# yum install streams}
+\hspace{4ex}\sample{\# yum install streams}
 
 This will download the required packages and set up the system
 to provide the {\ttfamily stream.run} command to execute XML

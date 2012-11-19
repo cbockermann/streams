@@ -62,7 +62,7 @@ All of these elements are provided as simple facades (interfaces)
 which have default implementations. The abstraction layer provided by
 these facades is intended to cover most of the use cases with its
 default assumptions, whereas any special use cases can generally be
-modelled using a combination of different building blocks of the API
+modeled using a combination of different building blocks of the API
 (e.g. queues, services) or custom implementations of the facades.
 
 \subsection*{\label{sec:xmlToRuntime}Executing Data Flow Graphs}
@@ -81,7 +81,7 @@ The XML process definitions are designed to be independent of the
 underlying execution platform. The \streams framework provides its own
 default runtime implementation, which is able to execute the XML data
 flow graphs. This {\em streams} runtime is a Java library with a very
-small footprint (less than 200 kilobytes) that can be instantly on any
+small footprint (less than 200 kilobytes) that can be instantly executed on any
 Java VM.
 
 In addition, \streams provides a compiler to map XML process
@@ -96,7 +96,7 @@ devices that are powered by the Android operating system.\baustelle
   \includegraphics[scale=0.3]{graphics/compile-xml}
   \caption{\label{fig:compileXml}The XML is compiled into a data flow
     graph for different runtime environments. Currently the \streams
-    runtime is supported and a prototype for the {\em Storm} compile
+    runtime is supported and a prototype for the {\em Storm} compiler
     exists.}
 \end{figure}
 
@@ -139,7 +139,7 @@ structure that allows for encoding a wide range of record type as well
 as supporting easy interoperation when combining different programming
 languages to implement parts of a streaming process. This enables the
 use of languages like Python, Ruby or JavaScript to implement custom
-process as we will outline in more detail in Seciton
+process as we will outline in more detail in Section
 \ref{sec:scripting}.
 
 \subsection*{Streams of Data}
@@ -210,7 +210,7 @@ The {\em processors} are the low-level functional units that actually
 do the data processing and transform the data items. There exists a
 variety of different processors for manipulating data, extracting or
 parsing values or computing new attributes that are added to the data
-items.  From the prespective of a process designer, the {\em stream}
+items.  From the perspective of a process designer, the {\em stream}
 and {\em process} elements form the basic data flow elements whereas
 the processors are those that do the work.
 
@@ -269,17 +269,16 @@ from this queue, blocking while the queue is empty.
 
 These five basic elements ({\em stream}, {\em data item}, {\em
   processor}, {\em process} and {\em queue}) already allow for
-modelling a wide range of data stream processes with a sequential and
-multi-threaded data flow.
+modeling a wide range of data stream processes with a sequential and
+multi-threaded data flow. Apart from the continuous nature of the data stream source, this model
+of execution matches the same pipelining idea known from tools like
+RapidMiner, where each processor (operator) performs some work on a
+complete set of data (example set).
 %This contrasts to the current RapidMiner execution model, where each
 %operator within a process is executed only once (not counting loops as
 %within a cross validation).
 %This simple {\em data flow} view serves as the basic data-driven
 %exectuion model. 
-Apart from the continuous nature of the data stream source, this model
-of execution matches the same pipelining idea known from tools like
-RapidMiner, where each processor (operator) performs some work on a
-complete set of data (example set).
 
 \subsection{Data Flow and Control Flow}
 A fundamental requirement of data stream processing is given by the
@@ -291,10 +290,10 @@ refer to this anytime access as the {\em control flow}.  Within the
 by processors and which can be invoked at any time. Other processors
 may consume/call services. 
 
-This defines a control flow that is orthonogal to the data flow. Whereas
+This defines a control flow that is orthogonal to the data flow. Whereas
 the flow of data is sequential and determined by the data source, the
 control flow represents the anytime property as the functions of services
-may be called asynchronuous to the data flow.
+may be called asynchronous to the data flow.
 Figure \ref{fig:control} shows the flow of data and service access.
 
 Examples for services my be classifiers, which provide functions for

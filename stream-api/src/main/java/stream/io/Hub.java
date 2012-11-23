@@ -55,7 +55,6 @@ public class Hub implements QueueService, HubService {
 		return null;
 	}
 
-
 	/**
 	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
@@ -90,5 +89,21 @@ public class Hub implements QueueService, HubService {
 	@Override
 	public void unregister(DataStreamListener listener) throws Exception {
 		this.listener.remove(listener);
+	}
+
+	/**
+	 * @see stream.io.QueueService#level()
+	 */
+	@Override
+	public int level() {
+		return 0;
+	}
+
+	/**
+	 * @see stream.io.QueueService#capacity()
+	 */
+	@Override
+	public int capacity() {
+		return 1;
 	}
 }

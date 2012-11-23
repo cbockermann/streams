@@ -1,0 +1,8 @@
+<container server="false" namingService="stream.runtime.DefaultNamingService">
+    <stream id="firstStream" class="stream.io.DataObjectStream" url="tcp://129.217.111.46:9100/"/>
+
+    <process input="firstStream">
+    
+        <stream.plotter.Plotter/>
+    </process>
+ </container>

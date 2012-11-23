@@ -15,7 +15,9 @@ import stream.io.QueueService;
  */
 public class GlobalCollector implements QueueService {
 
-	private final static List<Data> globalCollection = new ArrayList<Data>();
+	static int limit = 100000;
+	private final static List<Data> globalCollection = new ArrayList<Data>(
+			limit);
 
 	/**
 	 * @see stream.service.Service#reset()
@@ -60,7 +62,7 @@ public class GlobalCollector implements QueueService {
 	@Override
 	public Data take() {
 		try {
-			while( globalCollection.isEmpty() ){
+			while (globalCollection.isEmpty()) {
 				globalCollection.wait();
 			}
 		} catch (Exception e) {
@@ -68,5 +70,21 @@ public class GlobalCollector implements QueueService {
 		}
 
 		return globalCollection.get(0);
+	}
+
+	/**
+	 * @see stream.io.QueueService#level()
+	 */
+	@Override
+	public int level() {
+		return globalCollection.size();
+	}
+
+	/**
+	 * @see stream.io.QueueService#capacity()
+	 */
+	@Override
+	public int capacity() {
+		return limit;
 	}
 }

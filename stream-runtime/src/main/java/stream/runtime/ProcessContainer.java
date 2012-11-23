@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -302,6 +303,10 @@ public class ProcessContainer {
 
 	public DependencyGraph getDependencyGraph() {
 		return depGraph;
+	}
+
+	public Set<DataStream> getStreams() {
+		return new LinkedHashSet<DataStream>(this.streams.values());
 	}
 
 	/**

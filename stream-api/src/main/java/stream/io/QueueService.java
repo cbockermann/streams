@@ -40,7 +40,7 @@ public interface QueueService extends Service {
 	 *         queue.
 	 */
 	public Data poll();
-	
+
 	public Data take();
 
 	/**
@@ -53,4 +53,20 @@ public interface QueueService extends Service {
 	 * @return <code>true</code> if item inserted, <code>false</code> otherwise.
 	 */
 	public boolean enqueue(Data item);
+
+	/**
+	 * This method will return the current fill-level of the queue. Calls to
+	 * this method may return different results based on the current state.
+	 * 
+	 * @return
+	 */
+	public int level();
+
+	/**
+	 * This method returns the number if items that can be stored in this queue
+	 * at maximum. Calls to this method will return the same result every time.
+	 * 
+	 * @return
+	 */
+	public int capacity();
 }

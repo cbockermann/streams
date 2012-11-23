@@ -11,13 +11,14 @@
 		<PrintData />
 		<stream.data.Counter id="learner" />
 		<stream.flow.Delay time="100 ms" />
-	</Process>
-	
-	<process input="queue">
-
 		<stream.data.PrintCounter counter="learner" />	
 		<stream.data.stats.CountCheck />
 		<PrintData />
+	</Process>
+	<!-- 
+	<process input="queue">
+
 		
 	</process>	
+	 -->
 </Container>

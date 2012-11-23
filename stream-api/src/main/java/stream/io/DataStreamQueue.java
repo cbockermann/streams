@@ -191,4 +191,20 @@ public abstract class DataStreamQueue extends AbstractDataStream implements
 		this.size = size;
 		this.queue = new LinkedBlockingQueue<Data>(size);
 	}
+
+	/**
+	 * @see stream.io.QueueService#level()
+	 */
+	@Override
+	public int level() {
+		return queue.size() - queue.remainingCapacity();
+	}
+
+	/**
+	 * @see stream.io.QueueService#capacity()
+	 */
+	@Override
+	public int capacity() {
+		return queue.size();
+	}
 }

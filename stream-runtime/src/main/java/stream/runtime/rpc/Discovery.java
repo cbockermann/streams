@@ -118,20 +118,34 @@ public class Discovery extends Thread {
 								announcement, e.getMessage());
 						if (log.isTraceEnabled())
 							e.printStackTrace();
+					} catch (Exception ce) {
+						log.error(
+								"Found container at {}, but failed to connect: {}",
+								announcement, ce.getMessage());
+						if (log.isDebugEnabled()) {
+							ce.printStackTrace();
+						}
 					}
 
 				} else {
 					log.debug("received data-gram without data... {}", p);
 				}
 			} catch (SocketTimeoutException ste) {
+				// if (log.isDebugEnabled())
+				// ste.printStackTrace();
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
+				// if (log.isDebugEnabled())
+				// e.printStackTrace();
 			}
 		}
 
-		if (discovered.isEmpty())
+		if (discovered.isEmpty()) {
+			log.debug("No containers discovered!");
 			return null;
+		}
 
+		log.info("Discovered containers: {}", discovered);
 		return discovered.get(0);
 	}
 

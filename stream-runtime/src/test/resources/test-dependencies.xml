@@ -13,7 +13,7 @@
 		<dependency>
 			<artifactId>stream-core</artifactId>
 			<groupId>org.jwall</groupId>
-			<version>0.9.2</version>
+			<version>0.9.6</version>
 		</dependency>
 	</dependencies>
 
@@ -27,7 +27,7 @@
 		<stream.flow.Delay time="10ms" />
 		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />
 	 -->
-	 <stream.data.test.PrintData />
+	 <stream.data.PrintData />
 		
 	</Process>
 	

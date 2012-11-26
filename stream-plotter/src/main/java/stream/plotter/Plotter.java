@@ -54,6 +54,7 @@ public class Plotter extends DataVisualizer {
 	Double ymin = null;
 	Double ymax = null;
 
+	String title = "";
 	String yrange = "";
 	Long processed = 0L;
 
@@ -62,6 +63,22 @@ public class Plotter extends DataVisualizer {
 
 		}
 	};
+
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * @param title
+	 *            the title to set
+	 */
+	@Parameter(required = false, description = "The title of the plot-window.")
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	/**
 	 * @return the yrange
@@ -149,6 +166,9 @@ public class Plotter extends DataVisualizer {
 			plotPanel.plot.getRangeAxis().setRange(ymin, ymax);
 		}
 
+		if (title != null) {
+			frame.setTitle(title);
+		}
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(plotPanel, BorderLayout.CENTER);
 		frame.setSize(width, height);

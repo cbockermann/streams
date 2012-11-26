@@ -25,59 +25,33 @@ package stream.io;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.Processor;
-import stream.ProcessorList;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.DataFactory;
 
 /**
  * @author chris
  */
 @Description(name = "Stream Process (exec)", group = "Data Stream.Sources")
-public class ProcessStream implements DataStream {
+public class ProcessStream extends AbstractLineStream {
 
 	static Logger log = LoggerFactory.getLogger(ProcessStream.class);
-	final ProcessorList processors = new ProcessorList();
 	protected Process process;
-	protected DataStream dataStream;
-	protected Class<? extends DataStream> dataStreamClass = stream.io.CsvStream.class;
+	protected Stream dataStream;
+	protected Class<? extends Stream> dataStreamClass = stream.io.CsvStream.class;
 
 	protected String format;
 	protected String command;
-	protected String id;
-
-	@Override
-	public String getId() {
-		return this.id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	/**
-	 * @see stream.io.DataStream#getAttributes()
+	 * @param url
 	 */
-	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return null;
-	}
-
-	/**
-	 * @see stream.io.DataStream#readNext()
-	 */
-	@Override
-	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
+	public ProcessStream() {
+		super((SourceURL) null);
 	}
 
 	/**
@@ -104,7 +78,7 @@ public class ProcessStream implements DataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#init()
+	 * @see stream.io.Stream#init()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -112,11 +86,12 @@ public class ProcessStream implements DataStream {
 		Runtime runtime = Runtime.getRuntime();
 		process = runtime.exec(command);
 
-		dataStreamClass = (Class<? extends DataStream>) Class.forName(format);
-		Constructor<? extends DataStream> stream = dataStreamClass
+		dataStreamClass = (Class<? extends Stream>) Class.forName(format);
+		Constructor<? extends Stream> stream = dataStreamClass
 				.getConstructor(InputStream.class);
 		InputStream input = process.getInputStream();
 		dataStream = stream.newInstance(input);
+		dataStream.init();
 	}
 
 	/**
@@ -131,33 +106,25 @@ public class ProcessStream implements DataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext(stream.Data)
+	 * @see stream.io.Stream#read()
 	 */
 	@Override
-	public Data readNext(Data datum) throws Exception {
+	public Data readNext() throws Exception {
 
 		if (process == null) {
 			init();
 		}
 
-		return dataStream.readNext(datum);
+		return dataStream.read();
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.Stream#close()
 	 */
 	@Override
 	public void close() {
 		if (process != null) {
 			process.destroy();
 		}
-	}
-
-	/**
-	 * @see stream.io.DataStream#getPreprocessors()
-	 */
-	@Override
-	public List<Processor> getPreprocessors() {
-		return processors.getProcessors();
 	}
 }

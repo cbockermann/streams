@@ -68,7 +68,7 @@ import stream.util.parser.ParserGenerator;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class LineStream extends AbstractDataStream {
+public class LineStream extends AbstractLineStream {
 
 	static Logger log = LoggerFactory.getLogger(LineStream.class);
 
@@ -78,12 +78,6 @@ public class LineStream extends AbstractDataStream {
 
 	public LineStream(SourceURL url) throws Exception {
 		super(url);
-		this.initReader();
-	}
-
-	public LineStream(SourceURL url, String username, String password)
-			throws Exception {
-		super(url, username, password);
 	}
 
 	public LineStream(InputStream in) throws Exception {
@@ -130,39 +124,17 @@ public class LineStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public void close() {
-		try {
-			reader.close();
-		} catch (Exception e) {
-			log.error("FAiled to close reader: {}", e.getMessage());
-			if (log.isTraceEnabled())
-				e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
-	 */
-	@Override
-	public void readHeader() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
-	 */
-	@Override
-	public Data readItem(Data instance) throws Exception {
+	public Data readNext() throws Exception {
 
 		if (this.limit != null && this.limit > 0 && this.count > this.limit)
 			return null;
 
-		if (instance == null)
-			instance = DataFactory.create();
+		Data instance = DataFactory.create();
 
-		String line = reader.readLine();
+		String line = readLine();
 		if (line == null)
 			return null;
 

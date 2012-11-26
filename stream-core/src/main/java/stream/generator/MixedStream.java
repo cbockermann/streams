@@ -24,40 +24,36 @@
 package stream.generator;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import stream.Data;
-import stream.data.DataFactory;
-import stream.io.DataStream;
+import stream.io.AbstractStream;
+import stream.io.SourceURL;
+import stream.io.Stream;
 
 /**
- * @author chris
- * 
+ * @author chris TODO: this should not extend abstract stream and might be
+ *         obsolete with the Joins in the future.
  */
-public class MixedStream extends GeneratorDataStream {
+public class MixedStream extends AbstractStream {
 
-	Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
+	/**
+	 * @param url
+	 */
+	public MixedStream(SourceURL url) {
+		super((SourceURL) url);
+	}
+
 	Double totalWeight = 0.0d;
 	List<Double> weights = new ArrayList<Double>();
-	List<DataStream> streams = new ArrayList<DataStream>();
+	List<Stream> streams = new ArrayList<Stream>();
 
 	Random rnd = new Random();
 
-	/**
-	 * @see stream.io.DataStream#getAttributes()
-	 */
-	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return types;
-	}
-
-	public void add(Double weight, DataStream stream) {
+	public void add(Double weight, Stream stream) {
 		streams.add(stream);
 		weights.add(totalWeight + weight);
-		types.putAll(stream.getAttributes());
 		totalWeight += weight;
 	}
 
@@ -75,31 +71,11 @@ public class MixedStream extends GeneratorDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext()
+	 * @see stream.io.Stream#read()
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
-	}
-
-	/**
-	 * @see stream.io.DataStream#readNext(stream.Data)
-	 */
-	@Override
-	public Data readNext(Data datum) throws Exception {
 		int i = this.choose();
-		return streams.get(i).readNext(datum);
-	}
-
-	public static void main(String[] args) throws Exception {
-		MixedStream ms = new MixedStream();
-		ms.readNext();
-	}
-
-	/**
-	 * @see stream.io.DataStream#close()
-	 */
-	@Override
-	public void close() {
+		return streams.get(i).read();
 	}
 }

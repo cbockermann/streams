@@ -29,7 +29,7 @@ public class ScopeTest {
 	public void test() {
 
 		try {
-			stream.runtime.Process p = new stream.runtime.Process();
+			stream.runtime.DefaultProcess p = new stream.runtime.DefaultProcess();
 
 			ProcessContext ctx = new ProcessContextImpl();
 

@@ -40,7 +40,7 @@ import stream.data.DataFactory;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class ArffStream extends AbstractDataStream {
+public class ArffStream extends AbstractLineStream {
 	static Logger log = LoggerFactory.getLogger(ArffStream.class);
 
 	/**
@@ -52,7 +52,7 @@ public class ArffStream extends AbstractDataStream {
 	}
 
 	public void readHeader() throws Exception {
-		String line = reader.readLine();
+		String line = readLine();
 
 		while (line != null && !line.startsWith("@data")) {
 			if (line.startsWith("@attribute")) {
@@ -68,23 +68,22 @@ public class ArffStream extends AbstractDataStream {
 
 				attributes.put(tok[1] + app, clazz);
 			}
-			line = reader.readLine();
+			line = readLine();
 		}
 
 		log.info("Attributes of Arff-Stream: {}", attributes);
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readNext(stream.Data)
+	 * @see stream.io.AbstractStream#readNext(stream.Data)
 	 */
 	@Override
-	public Data readItem(Data datum) throws Exception {
-		if (datum == null)
-			datum = DataFactory.create();
+	public Data readNext() throws Exception {
+		Data datum = DataFactory.create();
 
-		String line = reader.readLine();
+		String line = readLine();
 		while (line != null && line.trim().isEmpty())
-			line = reader.readLine();
+			line = readLine();
 
 		if (line != null && !line.trim().equals("")) {
 			String[] tok = line.split(",");
@@ -103,17 +102,4 @@ public class ArffStream extends AbstractDataStream {
 		return datum;
 	}
 
-	/**
-	 * @see stream.io.DataStream#close()
-	 */
-	@Override
-	public void close() {
-		try {
-			reader.close();
-		} catch (Exception e) {
-			log.error("Failed to properly close reader: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-		}
-	}
 }

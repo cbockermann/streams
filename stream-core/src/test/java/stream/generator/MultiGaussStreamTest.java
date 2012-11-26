@@ -50,7 +50,7 @@ public class MultiGaussStreamTest {
 			while (it.hasNext()) {
 				String source = it.next();
 
-				item = streams.get(source).readNext();
+				item = streams.get(source).read();
 				item.put("@label", source);
 				// System.out.println( item );
 				writer.process(item);
@@ -88,7 +88,7 @@ public class MultiGaussStreamTest {
 				outlier++;
 			}
 
-			item = streams.get(source).readNext();
+			item = streams.get(source).read();
 			item.put("@label", source);
 			// System.out.println( item );
 			writer.process(item);

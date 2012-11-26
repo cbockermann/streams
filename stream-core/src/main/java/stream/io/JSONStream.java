@@ -41,7 +41,7 @@ import stream.data.DataFactory;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class JSONStream extends AbstractDataStream {
+public class JSONStream extends AbstractLineStream {
 
 	static Logger log = LoggerFactory.getLogger(JSONStream.class);
 	JSONParser parser = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE);
@@ -58,38 +58,15 @@ public class JSONStream extends AbstractDataStream {
 		super(url);
 	}
 
-	public JSONStream(SourceURL url, String user, String password)
-			throws Exception {
-		super(url, user, password);
-	}
-
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public void close() {
-	}
+	public Data readNext() throws Exception {
 
-	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
-	 */
-	@Override
-	public void readHeader() throws Exception {
-	}
+		Data instance = DataFactory.create();
 
-	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
-	 */
-	@Override
-	public Data readItem(Data instance) throws Exception {
-
-		if (instance == null)
-			instance = DataFactory.create();
-
-		if (reader == null)
-			this.initReader();
-
-		String line = reader.readLine();
+		String line = readLine();
 		log.debug("line: {}", line);
 		if (line == null) {
 			return null;

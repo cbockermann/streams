@@ -25,20 +25,19 @@ package stream.io;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import stream.Data;
 import stream.Processor;
 import stream.data.DataFactory;
 
-public class ListDataStream implements DataStream {
+public class ListDataStream implements Stream {
 
 	final List<Processor> processors = new ArrayList<Processor>();
 	protected List<Data> data;
 	protected int pos = 0;
 	protected String id;
+	protected Long limit = -1L;
 
 	public ListDataStream(Collection<? extends Data> items) {
 		data = new ArrayList<Data>(items);
@@ -56,19 +55,8 @@ public class ListDataStream implements DataStream {
 	}
 
 	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return new HashMap<String, Class<?>>();
-	}
-
-	@Override
-	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
-	}
-
-	@Override
-	public Data readNext(Data datum) throws Exception {
-		if (datum == null)
-			datum = DataFactory.create();
+	public Data read() throws Exception {
+		Data datum = DataFactory.create();
 
 		if (pos < data.size()) {
 			datum.putAll(data.get(pos++));
@@ -78,19 +66,30 @@ public class ListDataStream implements DataStream {
 		return null;
 	}
 
-	@Override
-	public List<Processor> getPreprocessors() {
-		return processors;
-	}
-
 	public void close() {
 		data.clear();
 	}
 
 	/**
-	 * @see stream.io.DataStream#init()
+	 * @see stream.io.Stream#init()
 	 */
 	@Override
 	public void init() throws Exception {
+	}
+
+	/**
+	 * @see stream.io.Stream#getLimit()
+	 */
+	@Override
+	public Long getLimit() {
+		return limit;
+	}
+
+	/**
+	 * @see stream.io.Stream#setLimit(java.lang.Long)
+	 */
+	@Override
+	public void setLimit(Long limit) {
+		this.limit = limit;
 	}
 }

@@ -39,7 +39,7 @@ public class SequentialMultiStreamTest {
 			int count = 0;
 			Data item = null;
 			do {
-				item = stream.readNext();
+				item = stream.read();
 				log.info( "item: {}", item );
 				if( item != null )
 					count++;

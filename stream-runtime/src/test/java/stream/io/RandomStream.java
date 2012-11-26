@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.generator;
+package stream.io;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,8 +31,6 @@ import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
-import stream.io.AbstractStream;
-import stream.io.SourceURL;
 
 /**
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
@@ -41,8 +39,9 @@ import stream.io.SourceURL;
 @Description(group = "Data Stream.Sources.Synthetic")
 public class RandomStream extends AbstractStream {
 
-	Map<String, Object> store = new LinkedHashMap<String, Object>();
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+	Map<String, Object> store = new LinkedHashMap<String, Object>();
+
 	Random[] random = null;
 	String[] keys = new String[] { "att1" };
 
@@ -66,10 +65,6 @@ public class RandomStream extends AbstractStream {
 		this.keys = keys;
 	}
 
-	/**
-	 * @see stream.io.AbstractStream#read()
-	 */
-	@Override
 	public Data readNext() throws Exception {
 		Data data = DataFactory.create();
 
@@ -109,12 +104,4 @@ public class RandomStream extends AbstractStream {
 	public void set(String key, Object val) {
 		store.put(key, val);
 	}
-
-	/**
-	 * @return the attributes
-	 */
-	public Map<String, Class<?>> getAttributes() {
-		return attributes;
-	}
-
 }

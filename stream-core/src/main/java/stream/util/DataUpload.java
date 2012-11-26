@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.io.CsvStream;
 import stream.io.CsvUpload;
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.io.JSONStream;
 import stream.io.SourceURL;
 
@@ -55,7 +55,7 @@ public class DataUpload {
 		if (args.length > 1)
 			remoteUrl = args[1];
 
-		DataStream stream = null;
+		Stream stream = null;
 		String fmt = url.toString();
 		if (fmt.endsWith(".csv") || fmt.endsWith(".csv.gz")) {
 			stream = new CsvStream(new SourceURL(url));
@@ -80,7 +80,7 @@ public class DataUpload {
 		CsvUpload upload = new CsvUpload(new URL(remoteUrl));
 		int limit = 10000;
 		int i = 0;
-		Data item = stream.readNext();
+		Data item = stream.read();
 		while (item != null && limit-- > 0) {
 
 			if (i > 0 && i % 100 == 0) {
@@ -93,7 +93,7 @@ public class DataUpload {
 				Thread.sleep(delay);
 			}
 
-			item = stream.readNext();
+			item = stream.read();
 			i++;
 		}
 	}

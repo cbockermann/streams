@@ -52,10 +52,10 @@ public class MessageTest {
 		m.setMessage("%{x1} ist kleiner als 0.5 und groesser als 0.1");
 		m.setCondition("x1 @lt 0.5  and  x1 @ge 0.1");
 
-		Data item = stream.readNext();
+		Data item = stream.read();
 		while (item != null && i++ < 10) {
 			m.process(item);
-			item = stream.readNext();
+			item = stream.read();
 		}
 
 		// fail("Not yet implemented");

@@ -9,9 +9,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.runtime.Monitor;
-import stream.runtime.Process;
+import stream.runtime.DefaultProcess;
 
 /**
  * @author chris
@@ -40,7 +40,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			int monitorCount = 0;
 
 			for (Object node : graph.nodes) {
-				if (node instanceof Process && !(node instanceof Monitor)) {
+				if (node instanceof DefaultProcess && !(node instanceof Monitor)) {
 					processes++;
 				}
 
@@ -71,7 +71,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			}
 
 			for (Object node : graph.nodes) {
-				if (node instanceof DataStream) {
+				if (node instanceof Stream) {
 					continue;
 				}
 

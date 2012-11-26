@@ -1,20 +1,21 @@
 package stream.io;
 
 import stream.Data;
+import stream.data.DataFactory;
 
-public class SampleStream extends AbstractDataStream {
+public class SampleStream extends AbstractStream {
 
-	@Override
-	public void close() throws Exception {
+	/**
+	 * @param url
+	 */
+	public SampleStream() {
+		super((SourceURL) null);
 	}
 
 	@Override
-	public void readHeader() throws Exception {
-	}
-
-	@Override
-	public Data readItem(Data instance) throws Exception {
-		instance.put( "x", Math.random() );
+	public Data readNext() throws Exception {
+		Data instance = DataFactory.create();
+		instance.put("x", Math.random());
 		return instance;
 	}
 }

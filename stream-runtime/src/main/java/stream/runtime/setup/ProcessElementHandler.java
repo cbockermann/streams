@@ -37,8 +37,8 @@ import org.w3c.dom.NodeList;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
+import stream.runtime.DefaultProcess;
 import stream.runtime.ElementHandler;
-import stream.runtime.Process;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
 import stream.runtime.VariableContext;
@@ -53,6 +53,7 @@ public class ProcessElementHandler implements ElementHandler {
 	static Logger log = LoggerFactory.getLogger(ProcessElementHandler.class);
 	protected final ObjectFactory objectFactory;
 	protected final ProcessorFactory processorFactory;
+	protected final String defaultProcessImplementation = "stream.runtime.DefaultProcess";
 
 	public ProcessElementHandler(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory) {
@@ -93,7 +94,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 		// Create the default data-stream process
 		//
-		String processClass = "stream.runtime.Process";
+		String processClass = defaultProcessImplementation;
 		if (attr.containsKey("class")) {
 			processClass = attr.get("class");
 			log.info("Using custom process class '{}'", processClass);
@@ -136,8 +137,8 @@ public class ProcessElementHandler implements ElementHandler {
 				extra.put("copy.id", pid);
 				var.addVariables(extra);
 				log.info("Creating process '{}'", pid);
-				Process process = createProcess(processClass, attr, container,
-						element, extra);
+				DefaultProcess process = createProcess(processClass, attr,
+						container, element, extra);
 
 				String input = var.expand(src);
 				log.info("Setting source for process {} to {}", process, input);
@@ -159,19 +160,19 @@ public class ProcessElementHandler implements ElementHandler {
 			objectFactory.set("process.id", id);
 			Map<String, String> extra = new HashMap<String, String>();
 			extra.put("process.id", id);
-			Process process = createProcess(processClass, attr, container,
-					element, extra);
+			DefaultProcess process = createProcess(processClass, attr,
+					container, element, extra);
 			log.debug("Created Process object: {}", process);
 			container.getProcesses().add(process);
 		}
 	}
 
-	protected Process createProcess(String processClass,
+	protected DefaultProcess createProcess(String processClass,
 			Map<String, String> attr, ProcessContainer container,
 			Element element, Map<String, String> extraVariables)
 			throws Exception {
-		Process process = (Process) objectFactory.create(processClass, attr,
-				extraVariables);
+		DefaultProcess process = (DefaultProcess) objectFactory.create(
+				processClass, attr, extraVariables);
 		log.debug("Created Process object: {}", process);
 
 		ProcessContext ctx = new ProcessContextImpl(container.getContext());

@@ -30,18 +30,23 @@ import org.junit.Test;
 
 import stream.Data;
 import stream.data.DataFactory;
-import stream.io.AbstractDataStream;
+import stream.io.AbstractStream;
+import stream.io.SourceURL;
 
 /**
  * @author chris
  * 
  */
-public class TestStream extends AbstractDataStream {
+public class TestStream extends AbstractStream {
 
 	Integer numberOfKeys = 10;
 	Random rnd = new Random(2012L);
 	Long id = 1L;
 	String keys[];
+
+	public TestStream() {
+		super((SourceURL) null);
+	}
 
 	/**
 	 * @return the keys
@@ -59,33 +64,11 @@ public class TestStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public void close() {
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#initReader()
-	 */
-	@Override
-	protected void initReader() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
-	 */
-	@Override
-	public void readHeader() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
-	 */
-	@Override
-	public Data readItem(Data instance) throws Exception {
-		if (instance == null)
-			instance = DataFactory.create();
+	public Data readNext() throws Exception {
+		Data instance = DataFactory.create();
 
 		if (keys == null) {
 			instance.put("@id", id);

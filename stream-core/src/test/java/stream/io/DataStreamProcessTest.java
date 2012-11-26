@@ -38,7 +38,7 @@ public class DataStreamProcessTest {
 	static Logger log = LoggerFactory.getLogger(DataStreamProcessTest.class);
 
 	/**
-	 * Test method for {@link stream.io.ProcessStream#readNext()}.
+	 * Test method for {@link stream.io.ProcessStream#read()}.
 	 */
 	@Test
 	public void testReadNext() throws Exception {
@@ -47,10 +47,11 @@ public class DataStreamProcessTest {
 		dsp.setCommand("/bin/cat /tmp/test.csv");
 		dsp.setFormat("stream.io.CsvStream");
 
-		Data item = dsp.readNext();
+		dsp.init();
+		Data item = dsp.read();
 		while (item != null) {
 			log.info("item: {}", item);
-			item = dsp.readNext();
+			item = dsp.read();
 		}
 
 		dsp.close();

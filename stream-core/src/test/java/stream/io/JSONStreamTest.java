@@ -48,15 +48,15 @@ public class JSONStreamTest {
 
 		URL url = JSONStreamTest.class.getResource("/test.json");
 		JSONStream stream = new JSONStream(new SourceURL(url));
-
+		stream.init();
 		List<Data> items = new ArrayList<Data>();
 
-		Data item = stream.readNext();
+		Data item = stream.read();
 		while (item != null) {
 			if (item != null)
 				items.add(item);
 			log.info("Read item {}", item);
-			item = stream.readNext();
+			item = stream.read();
 		}
 
 		Assert.assertEquals(100, items.size());

@@ -6,65 +6,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.io.DataStream;
+import stream.io.Stream;
 
 public class SequentialMultiStream extends AbstractMultiDataStream {
 
-	static Logger log = LoggerFactory.getLogger( SequentialMultiStream.class );
-	
-	String sourceKey = "@source";
-	
-	int index = 0;
+	static Logger log = LoggerFactory.getLogger(SequentialMultiStream.class);
 
+	String sourceKey = "@source";
+
+	int index = 0;
 
 	public String getSourceKey() {
 		return sourceKey;
 	}
 
-
 	public void setSourceKey(String sourceKey) {
 		this.sourceKey = sourceKey;
 	}
 
-
 	/**
-	 * @see stream.io.multi.AbstractMultiDataStream#readNext(stream.Data, java.util.Map)
+	 * @see stream.io.multi.AbstractMultiDataStream#readNext(stream.Data,
+	 *      java.util.Map)
 	 */
 	@Override
-	protected Data readNext(Data item, Map<String, DataStream> streams)
+	protected Data readNext(Data item, Map<String, Stream> streams)
 			throws Exception {
 
 		Data data = null;
 
-		while( ( data == null && index < additionOrder.size() ) ){
+		while ((data == null && index < additionOrder.size())) {
 			try {
-				String current = additionOrder.get( index );
-				log.debug( "Current stream is: {}", current );
-				DataStream currentStream = streams.get( current );
-				data = currentStream.readNext( item );
-				
-				if( data != null ){
-					data.put( sourceKey, current );
-					log.debug( "   returning data {}", data );
+				String current = additionOrder.get(index);
+				log.debug("Current stream is: {}", current);
+				Stream currentStream = streams.get(current);
+				data = currentStream.read();
+
+				if (data != null) {
+					data.put(sourceKey, current);
+					log.debug("   returning data {}", data);
 					return data;
 				}
-				
-				log.debug( "Stream {} ended, switching to next stream", current );
+
+				log.debug("Stream {} ended, switching to next stream", current);
 				index++;
-				
-				if( index >= additionOrder.size() ){
-					log.debug( "No more streams to read from!" );
+
+				if (index >= additionOrder.size()) {
+					log.debug("No more streams to read from!");
 					return null;
 				}
-				
-			} catch ( Exception e) {
-				log.error( "Error: {}", e.getMessage() );
-				if( log.isTraceEnabled() )
+
+			} catch (Exception e) {
+				log.error("Error: {}", e.getMessage());
+				if (log.isTraceEnabled())
 					e.printStackTrace();
 			}
 		}
 
-		log.debug( "No more streams to read from - all seem to have reached their end." );
+		log.debug("No more streams to read from - all seem to have reached their end.");
 		return null;
 	}
 }

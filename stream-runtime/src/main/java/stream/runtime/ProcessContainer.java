@@ -46,10 +46,10 @@ import org.w3c.dom.NodeList;
 
 import stream.Data;
 import stream.ProcessContext;
+import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
-import stream.io.DataStream;
-import stream.io.DataStreamQueue;
+import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ContainerRefElementHandler;
 import stream.runtime.setup.DocumentHandler;
@@ -136,10 +136,10 @@ public class ProcessContainer {
 	protected final ContainerContext context;
 
 	/** The set of data streams (sources) */
-	protected final Map<String, DataStream> streams = new LinkedHashMap<String, DataStream>();
+	protected final Map<String, Source> streams = new LinkedHashMap<String, Source>();
 
 	/** The list of data-stream-queues, that can be fed from external instances */
-	protected final Map<String, DataStreamQueue> listeners = new LinkedHashMap<String, DataStreamQueue>();
+	protected final Map<String, BlockingQueue> listeners = new LinkedHashMap<String, BlockingQueue>();
 
 	/** The list of processes running in this container */
 	protected final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
@@ -305,8 +305,8 @@ public class ProcessContainer {
 		return depGraph;
 	}
 
-	public Set<DataStream> getStreams() {
-		return new LinkedHashSet<DataStream>(this.streams.values());
+	public Set<Source> getStreams() {
+		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
 	/**
@@ -401,38 +401,38 @@ public class ProcessContainer {
 		log.debug("Wiring process inputs to data-streams...");
 		for (AbstractProcess aprocess : processes) {
 
-			if (aprocess instanceof Process) {
-				Process process = (Process) aprocess;
+			if (aprocess instanceof DefaultProcess) {
+				DefaultProcess process = (DefaultProcess) aprocess;
 				String input = process.getInput();
 				if (input == null) {
 					throw new RuntimeException("Process '" + process
 							+ "' is not connected to any input-stream!");
 				}
 
-				DataStream stream = streams.get(input);
+				Source stream = streams.get(input);
 				if (stream == null) {
 					log.debug(
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
-					DataStreamQueue q = new BlockingQueue();
+					BlockingQueue q = new BlockingQueue();
 					registerQueue(input, q, false);
 					stream = q;
 				}
 
 				depGraph.add(process, stream);
-				process.setDataStream(stream);
+				process.setSource(stream);
 			}
 		}
 	}
 
-	public void registerQueue(String id, DataStreamQueue queue,
+	public void registerQueue(String id, BlockingQueue queue,
 			boolean externalListener) throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
 		if (externalListener) {
 			listeners.put(id, queue);
 		}
 		setStream(id, queue);
-		context.register(id, queue);
+		context.register(id, new QueueServiceWrapper(queue));
 	}
 
 	protected void injectServices() throws Exception {
@@ -440,7 +440,7 @@ public class ProcessContainer {
 				this.getContext(), depGraph);
 	}
 
-	public void setStream(String id, DataStream stream) {
+	public void setStream(String id, Source stream) {
 		streams.put(id, stream);
 	}
 
@@ -467,7 +467,7 @@ public class ProcessContainer {
 
 		log.debug("Initializing all DataStreams...");
 		for (String name : streams.keySet()) {
-			DataStream stream = streams.get(name);
+			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);
 			stream.init();
 		}
@@ -551,7 +551,13 @@ public class ProcessContainer {
 	public void dataArrived(String key, Data item) {
 		if (listeners.containsKey(key)) {
 			log.debug("Adding item {} into queue {}", item, key);
-			listeners.get(key).process(item);
+			try {
+				listeners.get(key).write(item);
+			} catch (Exception e) {
+				log.error(
+						"Failed to inject arriving data item into queue {}: {}",
+						key, e.getMessage());
+			}
 		} else {
 			log.warn("No listener defined for {}", key);
 		}
@@ -626,7 +632,7 @@ public class ProcessContainer {
 	 * @param process
 	 * @param ctx
 	 */
-	public void setProcessContext(Process process, ProcessContext ctx) {
+	public void setProcessContext(DefaultProcess process, ProcessContext ctx) {
 		processContexts.put(process, ctx);
 	}
 }

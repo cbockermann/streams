@@ -70,7 +70,7 @@ public class GraphProvider implements GraphService {
 	public void reset() throws Exception {
 		log.debug("Reading graph from {}", file);
 		CsvStream stream = new CsvStream(new FileInputStream(file));
-		Data item = stream.readNext();
+		Data item = stream.read();
 		while (item != null) {
 			Serializable start = item.get("start");
 			Serializable end = item.get("end");
@@ -81,7 +81,7 @@ public class GraphProvider implements GraphService {
 						"Failed to extract start/end from data item: " + item
 								+ "!");
 			}
-			item = stream.readNext();
+			item = stream.read();
 		}
 		stream.close();
 	}

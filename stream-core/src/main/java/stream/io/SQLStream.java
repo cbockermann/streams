@@ -42,9 +42,10 @@ import stream.io.sql.HsqlDialect;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class SQLStream extends AbstractDataStream {
+public class SQLStream extends AbstractStream {
 
-	String url;
+	String username;
+	String password;
 	String driver;
 	String select;
 	Connection connection;
@@ -52,11 +53,19 @@ public class SQLStream extends AbstractDataStream {
 	String[] columns = null;
 	DatabaseDialect dialect = new HsqlDialect();
 
+	public SQLStream(SourceURL url) {
+		super(url);
+	}
+
+	public SQLStream() {
+		super((SourceURL) null);
+	}
+
 	/**
 	 * @return the url
 	 */
 	public String getUrl() {
-		return url;
+		return url.toString();
 	}
 
 	/**
@@ -65,7 +74,11 @@ public class SQLStream extends AbstractDataStream {
 	 */
 	@Parameter(required = true, description = "The JDBC database url to connect to.")
 	public void setUrl(String url) {
-		this.url = url;
+		try {
+			this.url = new SourceURL(url);
+		} catch (Exception e) {
+			throw new RuntimeException("Invalid URL: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -85,14 +98,37 @@ public class SQLStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
+	 * @return the username
 	 */
-	@Override
-	public void readHeader() throws Exception {
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#init()
+	 * @param username
+	 *            the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @see stream.io.AbstractStream#init()
 	 */
 	@Override
 	public void init() throws Exception {
@@ -114,13 +150,12 @@ public class SQLStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public Data readItem(Data instance) throws Exception {
+	public Data readNext() throws Exception {
 
-		if (instance == null)
-			instance = DataFactory.create();
+		Data instance = DataFactory.create();
 
 		if (result != null && result.next()) {
 
@@ -145,7 +180,7 @@ public class SQLStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.Stream#close()
 	 */
 	@Override
 	public void close() {

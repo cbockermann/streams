@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.service.Service;
@@ -81,7 +81,7 @@ public class StreamElementHandler implements ElementHandler {
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
-			DataStream stream = DataStreamFactory.createStream(objectFactory,
+			Stream stream = DataStreamFactory.createStream(objectFactory,
 					processorFactory, element);
 			if (stream != null) {
 				if (id == null)

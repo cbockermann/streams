@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.Processor;
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.io.SourceURL;
 import stream.io.multi.MultiDataStream;
 import stream.runtime.ProcessContainer;
@@ -62,7 +62,7 @@ public class DataStreamFactory {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static DataStream createStream(ObjectFactory objectFactory,
+	public static Stream createStream(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory, Element node) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
@@ -72,7 +72,7 @@ public class DataStreamFactory {
 
 		}
 
-		DataStream stream;
+		Stream stream;
 
 		if (urlParam != null) {
 			Constructor<?> constr = clazz.getConstructor(SourceURL.class);
@@ -95,10 +95,10 @@ public class DataStreamFactory {
 				url = new SourceURL(urlString);
 			}
 
-			stream = (DataStream) constr.newInstance(url);
+			stream = (Stream) constr.newInstance(url);
 		} else {
 			Constructor<?> constr = clazz.getConstructor();
-			stream = (DataStream) constr.newInstance(new Object[0]);
+			stream = (Stream) constr.newInstance(new Object[0]);
 		}
 
 		List<Processor> preProcessors = new ArrayList<Processor>();
@@ -119,7 +119,7 @@ public class DataStreamFactory {
 
 				if (child.getNodeName().equalsIgnoreCase("stream")
 						|| child.getNodeName().equalsIgnoreCase("datastream")) {
-					DataStream innerStream = createStream(objectFactory,
+					Stream innerStream = createStream(objectFactory,
 							processorFactory, child);
 					log.debug("Created inner stream {}", innerStream);
 					String id = child.getAttribute("id");
@@ -140,10 +140,6 @@ public class DataStreamFactory {
 			preProcessors.addAll(procs);
 		}
 
-		for (Processor p : preProcessors) {
-			stream.getPreprocessors().add(p);
-		}
-
 		return stream;
 	}
 
@@ -153,7 +149,7 @@ public class DataStreamFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static DataStream createStream(Map<String, String> params)
+	public static Stream createStream(Map<String, String> params)
 			throws Exception {
 		Class<?> clazz = Class.forName(params.get("class"));
 		Constructor<?> urlConstructor = null;
@@ -165,7 +161,7 @@ public class DataStreamFactory {
 			urlConstructor = null;
 		}
 
-		DataStream stream = null;
+		Stream stream = null;
 		String urlParam = params.get("url");
 		if (urlParam == null || urlConstructor == null) {
 			if (urlParam == null)
@@ -179,7 +175,7 @@ public class DataStreamFactory {
 			}
 
 			try {
-				stream = (DataStream) clazz.newInstance();
+				stream = (Stream) clazz.newInstance();
 				ParameterInjection
 						.inject(stream, params, new VariableContext());
 				stream.init();
@@ -208,7 +204,7 @@ public class DataStreamFactory {
 			url = new URL(urlParam);
 		}
 
-		stream = (DataStream) urlConstructor.newInstance(url);
+		stream = (Stream) urlConstructor.newInstance(url);
 		stream.init();
 		ParameterInjection.inject(stream, params, new VariableContext());
 

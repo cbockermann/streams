@@ -32,12 +32,14 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.data.DataFactory;
+import stream.io.AbstractStream;
+import stream.io.SourceURL;
 
 /**
  * @author chris
  * 
  */
-public class GaussianStream extends GeneratorDataStream {
+public class GaussianStream extends AbstractStream {
 
 	static Logger log = LoggerFactory.getLogger(GaussianStream.class);
 
@@ -70,20 +72,23 @@ public class GaussianStream extends GeneratorDataStream {
 	 *            The parameterization of the attribute distributions.
 	 */
 	public GaussianStream() {
+		super((SourceURL) null);
 	}
 
 	@Override
 	public void init() throws Exception {
 		super.init();
 
-		if( attributes == null && generators.isEmpty() ){
-			throw new Exception( "Parameter 'attributes' missing! This should be a list of mean,deviation pairs!" );
+		if (attributes == null && generators.isEmpty()) {
+			throw new Exception(
+					"Parameter 'attributes' missing! This should be a list of mean,deviation pairs!");
 		}
 
-		if( attributes != null ){
+		if (attributes != null) {
 			int cnt = 1;
-			for( int i = 0; i + 1< attributes.length; i += 2 ){
-				setGenerator( "x" + cnt, new Gaussian( attributes[i], attributes[i+1] ) );
+			for (int i = 0; i + 1 < attributes.length; i += 2) {
+				setGenerator("x" + cnt, new Gaussian(attributes[i],
+						attributes[i + 1]));
 				cnt++;
 			}
 		}
@@ -105,8 +110,6 @@ public class GaussianStream extends GeneratorDataStream {
 		random = new Random(this.seed);
 		this.seedGenerator = new Random(this.seed);
 	}
-
-
 
 	public Long getLimit() {
 		return limit;
@@ -139,39 +142,23 @@ public class GaussianStream extends GeneratorDataStream {
 		}
 	}
 
-
 	public void setAttributes(Double[] attributes) {
 		this.attributes = attributes;
 	}
 
 	/**
-	 * @see stream.io.DataStream#getAttributes()
-	 */
-	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return types;
-	}
-
-	/**
-	 * @see stream.io.DataStream#readNext()
+	 * @see stream.io.Stream#read()
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readNext(stream.Data)
-	 */
-	@Override
-	public Data readNext(Data item) throws Exception {
+		Data item = DataFactory.create();
 		//
 		// TODO: This is cheated: we still create a new item-object, which
 		// should not
 		// happen... :-)
 		//
 
-		if( limit > 0 && count >= limit ){
+		if (limit > 0 && count >= limit) {
 			return null;
 		}
 

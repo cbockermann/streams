@@ -32,12 +32,19 @@ import stream.util.parser.TimeParser;
  * @author chris
  * 
  */
-public class TimeStream extends AbstractDataStream {
+public class TimeStream extends AbstractStream {
 
 	String key = "@timestamp";
 	String interval = "";
 	Long gap = -1L;
 	long last = 0L;
+
+	/**
+	 * @param url
+	 */
+	public TimeStream() {
+		super((SourceURL) null);
+	}
 
 	/**
 	 * @return the interval
@@ -79,27 +86,12 @@ public class TimeStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public void close() {
-	}
+	public Data readNext() throws Exception {
 
-	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
-	 */
-	@Override
-	public void readHeader() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.AbstractDataStream#readItem(stream.Data)
-	 */
-	@Override
-	public Data readItem(Data instance) throws Exception {
-
-		if (instance == null)
-			instance = DataFactory.create();
+		Data instance = DataFactory.create();
 
 		Long timestamp = System.currentTimeMillis();
 

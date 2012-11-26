@@ -46,7 +46,7 @@ public class SQLStreamTest {
 	}
 
 	/**
-	 * Test method for {@link stream.io.AbstractDataStream#readNext()}.
+	 * Test method for {@link stream.io.AbstractStream#read()}.
 	 */
 	@Test
 	public void testReadNext() {
@@ -60,10 +60,10 @@ public class SQLStreamTest {
 
 			stream.init();
 
-			Data item = stream.readNext();
+			Data item = stream.read();
 			while (item != null) {
 				log.info("Read item: {}", item);
-				item = stream.readNext();
+				item = stream.read();
 			}
 
 			stream.close();

@@ -45,19 +45,14 @@ import stream.data.vector.InputVector;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class SvmLightStream extends AbstractDataStream {
+public class SvmLightStream extends AbstractLineStream {
 	static Logger log = LoggerFactory.getLogger(SvmLightStream.class);
 	long lineNumber = 0;
 	boolean addSparseVector = true;
 	String sparseKey = null;
 
-	public SvmLightStream(String url) throws Exception {
-		this(new SourceURL(url), "@sparse-vector");
-	}
-
 	public SvmLightStream(SourceURL url) throws Exception {
 		super(url);
-		initReader();
 	}
 
 	public SvmLightStream(SourceURL url, String sparseVectorKey)
@@ -89,35 +84,24 @@ public class SvmLightStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.AbstractDataStream#readHeader()
+	 * @see stream.io.AbstractStream#readNext(stream.Data)
 	 */
 	@Override
-	public void readHeader() throws Exception {
-	}
+	public Data readNext() throws Exception {
 
-	/**
-	 * @see stream.io.AbstractDataStream#readNext(stream.Data)
-	 */
-	@Override
-	public Data readItem(Data item) throws Exception {
-
-		if (item == null)
-			item = DataFactory.create();
+		Data item = DataFactory.create();
 
 		if (limit > 0 && lineNumber > limit) {
 			return null;
 		}
 
-		if (reader == null)
-			initReader();
-
-		String line = reader.readLine();
+		String line = readLine();
 		if (line == null)
 			return null;
 
 		log.debug("line[{}]: {}", lineNumber, line);
 		while (line != null && !line.matches("^(-|\\+)?\\d(\\.\\d+)?\\s.*")) {
-			line = reader.readLine();
+			line = readLine();
 		}
 
 		if (line == null)
@@ -135,10 +119,8 @@ public class SvmLightStream extends AbstractDataStream {
 	}
 
 	public Data readSparseVector(Data item) throws Exception {
-		if (reader == null)
-			initReader();
 
-		String line = reader.readLine();
+		String line = readLine();
 		if (line == null)
 			return null;
 
@@ -286,7 +268,7 @@ public class SvmLightStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.Stream#close()
 	 */
 	@Override
 	public void close() {

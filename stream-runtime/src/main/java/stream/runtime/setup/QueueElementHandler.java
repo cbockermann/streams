@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import stream.io.DataStreamQueue;
+import stream.io.BlockingQueue;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 
@@ -49,7 +49,7 @@ public class QueueElementHandler implements ElementHandler {
 			throw new Exception("No 'id' attribute defined for queue!");
 		}
 
-		DataStreamQueue queue = (DataStreamQueue) container.getObjectFactory()
+		BlockingQueue queue = (BlockingQueue) container.getObjectFactory()
 				.create(className, params);
 		container.registerQueue(id, queue, true);
 	}

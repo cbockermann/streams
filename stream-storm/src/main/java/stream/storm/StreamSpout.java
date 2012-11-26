@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 
 import stream.Data;
 import stream.StormRunner;
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
@@ -38,7 +38,7 @@ public class StreamSpout extends BaseRichSpout {
 
 	static Logger log = LoggerFactory.getLogger(StreamSpout.class);
 
-	transient DataStream stream;
+	transient Stream stream;
 	protected SpoutOutputCollector output;
 	protected final String xmlConfig;
 	protected final String uuid;
@@ -92,7 +92,7 @@ public class StreamSpout extends BaseRichSpout {
 	public void nextTuple() {
 		log.debug("nextTuple() called");
 		try {
-			Data item = stream.readNext();
+			Data item = stream.read();
 			log.debug("read item: {}", item);
 			if (item != null) {
 				log.debug("Emitting item as tuple...");

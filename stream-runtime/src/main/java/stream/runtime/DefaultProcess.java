@@ -27,22 +27,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.io.DataStream;
+import stream.io.Source;
 
 /**
  * @author chris
  * 
  */
-public class Process extends AbstractProcess implements DataStreamConsumer {
+public class DefaultProcess extends AbstractProcess implements
+		DataStreamConsumer {
 
-	static Logger log = LoggerFactory.getLogger(Process.class);
+	static Logger log = LoggerFactory.getLogger(DefaultProcess.class);
 	static Integer LAST_ID = 0;
-	DataStream dataStream;
+	Source dataSource;
 	Long limit = -1L;
 	String input;
 	String output;
 
-	public Process() {
+	public DefaultProcess() {
 		this.interval = 0L;
 	}
 
@@ -77,18 +78,18 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 	}
 
 	/**
-	 * @see stream.runtime.DataStreamConsumer#setDataStream(stream.io.DataStream)
+	 * @see stream.runtime.DataStreamConsumer#setSource(stream.io.Stream)
 	 */
-	public void setDataStream(DataStream ds) {
-		dataStream = ds;
+	public void setSource(Source ds) {
+		dataSource = ds;
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public DataStream getDataStream() {
-		return dataStream;
+	public Source getSource() {
+		return dataSource;
 	}
 
 	/**
@@ -107,9 +108,9 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 			int tries = 0;
 			while (item == null && tries < 10) {
 				try {
-					log.trace("Reading next item from {}", dataStream);
-					synchronized (dataStream) {
-						item = dataStream.readNext();
+					log.trace("Reading next item from {}", dataSource);
+					synchronized (dataSource) {
+						item = dataSource.read();
 					}
 					tries = 0;
 					return item;
@@ -121,9 +122,9 @@ public class Process extends AbstractProcess implements DataStreamConsumer {
 			return item;
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("Failed to read next item from input '{}'", dataStream);
+			log.error("Failed to read next item from input '{}'", dataSource);
 			throw new RuntimeException("Failed to read next item from input '"
-					+ dataStream + "': " + e.getMessage());
+					+ dataSource + "': " + e.getMessage());
 		}
 	}
 

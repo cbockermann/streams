@@ -23,7 +23,7 @@
  */
 package stream.runtime;
 
-import stream.io.DataStream;
+import stream.io.Source;
 
 /**
  * This interface marks a consumer of a data-stream. The consumer provides the
@@ -48,12 +48,12 @@ public interface DataStreamConsumer {
 	 * 
 	 * @param stream
 	 */
-	public void setDataStream(DataStream stream);
-	
+	public void setSource(Source stream);
+
 	/**
 	 * Returns the data-stream assigned to this consumer.
 	 * 
 	 * @return
 	 */
-	public DataStream getDataStream();
+	public Source getSource();
 }

@@ -23,9 +23,7 @@
  */
 package stream.io;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 
@@ -42,7 +40,7 @@ import stream.data.DataFactory;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class CsvStream extends AbstractDataStream {
+public class CsvStream extends AbstractLineStream {
 	static Logger log = LoggerFactory.getLogger(CsvStream.class);
 
 	String[] keys;
@@ -61,8 +59,6 @@ public class CsvStream extends AbstractDataStream {
 		super(in);
 		this.splitExpression = "(;|,)";
 		log.debug("Split expression is: {}", splitExpression);
-		// initReader();
-		reader = new BufferedReader(new InputStreamReader(in));
 	}
 
 	public CsvStream(InputStream in, String splitter) throws Exception {
@@ -74,14 +70,12 @@ public class CsvStream extends AbstractDataStream {
 		super(in);
 		this.splitExpression = splitter;
 		log.debug("Split expression is: {}", splitExpression);
-		reader = new BufferedReader(new InputStreamReader(in, charset));
 	}
 
 	public CsvStream(SourceURL url, String splitExp) throws Exception {
 		super(url);
 		this.url = url;
 		this.splitExpression = splitExp;
-		this.initReader();
 	}
 
 	@Parameter(name = "separator", required = true, defaultValue = "(;|,)")
@@ -136,7 +130,6 @@ public class CsvStream extends AbstractDataStream {
 			tok = line.split(splitExpression);
 			for (int i = 0; i < tok.length; i++) {
 				tok[i] = removeQuotes(tok[i]);
-				attributes.put(tok[i], Double.class);
 			}
 		} else
 			tok = keys;
@@ -159,11 +152,10 @@ public class CsvStream extends AbstractDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext()
+	 * @see stream.io.Stream#read()
 	 */
-	public Data readItem(Data datum) throws Exception {
-		if (datum == null)
-			datum = DataFactory.create();
+	public Data readNext() throws Exception {
+		Data datum = DataFactory.create();
 
 		String line = readLine();
 		while (line != null && (line.trim().isEmpty() || line.startsWith("#"))) {
@@ -179,7 +171,7 @@ public class CsvStream extends AbstractDataStream {
 				}
 			}
 
-			line = reader.readLine();
+			line = readLine();
 		}
 
 		if (line != null && !line.trim().equals("")) {
@@ -205,37 +197,12 @@ public class CsvStream extends AbstractDataStream {
 		} else
 			return null;
 
-		return preprocess(datum);
-	}
-
-	public String readLine() throws Exception {
-
-		if (reader == null)
-			initReader();
-
-		if (buffer != null && !buffer.isEmpty())
-			return buffer.removeFirst();
-		return reader.readLine();
-	}
-
-	protected Data preprocess(Data datum) throws Exception {
-		if (datum == null)
-			return null;
-
 		return datum;
 	}
 
-	/**
-	 * @see stream.io.DataStream#close()
-	 */
-	@Override
-	public void close() {
-		try {
-			reader.close();
-		} catch (Exception e) {
-			log.error("Failed to properly close reader: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-		}
+	public String readLine() throws Exception {
+		if (buffer != null && !buffer.isEmpty())
+			return buffer.removeFirst();
+		return reader.readLine();
 	}
 }

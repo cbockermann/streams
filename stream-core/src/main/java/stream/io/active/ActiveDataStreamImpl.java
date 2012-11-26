@@ -23,17 +23,14 @@
  */
 package stream.io.active;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.Processor;
 import stream.data.DataFactory;
-import stream.io.DataStream;
+import stream.io.Stream;
 
 /**
  * *
@@ -49,13 +46,30 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	static Logger log = LoggerFactory.getLogger(ActiveDataStreamImpl.class);
 	protected final LinkedBlockingQueue<Data> queue;
 
-	protected DataStream stream;
+	protected Stream stream;
 	protected StreamActivator activator;
 	protected String id;
+	protected Long limit = -1L;
+	protected Long count = 0L;
 
-	public ActiveDataStreamImpl(DataStream stream) {
+	public ActiveDataStreamImpl(Stream stream) {
 		this.stream = stream;
 		this.queue = new LinkedBlockingQueue<Data>(100);
+	}
+
+	/**
+	 * @return the limit
+	 */
+	public Long getLimit() {
+		return limit;
+	}
+
+	/**
+	 * @param limit
+	 *            the limit to set
+	 */
+	public void setLimit(Long limit) {
+		this.limit = limit;
 	}
 
 	@Override
@@ -69,24 +83,19 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	}
 
 	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return stream.getAttributes();
-	}
+	public Data read() throws Exception {
 
-	@Override
-	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
-	}
-
-	@Override
-	public Data readNext(Data datum) throws Exception {
+		if (limit > 0 && count > limit)
+			return null;
 
 		if (queue.isEmpty())
 			return null;
 
+		Data datum = DataFactory.create();
 		Data d = queue.poll();
 		if (d != null)
 			datum.putAll(d);
+		count++;
 		return datum;
 	}
 
@@ -94,15 +103,6 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	public void close() throws Exception {
 		stream.close();
 		this.activator.setRun(false);
-	}
-
-	/**
-	 * @see stream.io.DataStream#getPreprocessors()
-	 * @deprecated
-	 */
-	@Override
-	public List<Processor> getPreprocessors() {
-		return stream.getPreprocessors();
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 		public void run() {
 			while (run) {
 				try {
-					queue.put(stream.readNext());
+					queue.put(stream.read());
 				} catch (InterruptedException e) {
 					log.error("Interrupted while reading stream: {}",
 							e.getMessage());
@@ -142,7 +142,7 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#init()
+	 * @see stream.io.Stream#init()
 	 */
 	@Override
 	public void init() throws Exception {

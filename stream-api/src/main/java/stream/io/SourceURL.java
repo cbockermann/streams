@@ -184,4 +184,12 @@ public final class SourceURL implements Serializable {
 	public String getPath() {
 		return path;
 	}
+
+	public String getUsername() {
+		return null;
+	}
+
+	public String getPassword() {
+		return null;
+	}
 }

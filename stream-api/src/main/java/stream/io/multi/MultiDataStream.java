@@ -25,16 +25,16 @@ package stream.io.multi;
 
 import java.util.Map;
 
-import stream.io.DataStream;
+import stream.io.Stream;
 
 /**
  * @author Hendrik Blom
  * 
  */
-public interface MultiDataStream extends DataStream {
+public interface MultiDataStream extends Stream {
 
-	public void addStream(String id, DataStream stream);
+	public void addStream(String id, Stream stream);
 
-	public Map<String, DataStream> getStreams();
+	public Map<String, Stream> getStreams();
 
 }

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.Processor;
 import stream.data.DataFactory;
-import stream.io.DataStream;
+import stream.io.Stream;
 import stream.io.active.ActiveDataStream;
 import stream.io.active.ActiveDataStreamImpl;
 
@@ -58,7 +58,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	protected Long count = 0L;
 	protected Boolean activate = false;
 
-	protected Map<String, DataStream> streams;
+	protected Map<String, Stream> streams;
 	protected List<String> additionOrder;
 
 	protected ActiveDataStream activeWrapper;
@@ -67,7 +67,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	public AbstractMultiDataStream() {
 		this.attributes = new LinkedHashMap<String, Class<?>>();
 		this.preprocessors = new ArrayList<Processor>();
-		this.streams = new HashMap<String, DataStream>();
+		this.streams = new HashMap<String, Stream>();
 		this.additionOrder = new ArrayList<String>();
 	}
 
@@ -82,14 +82,14 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	}
 
 	@Override
-	public void addStream(String id, DataStream stream) {
+	public void addStream(String id, Stream stream) {
 		streams.put(id, stream);
 		additionOrder.add(id);
 		log.info("added Stream {}", stream);
 	}
 
 	@Override
-	public Map<String, DataStream> getStreams() {
+	public Map<String, Stream> getStreams() {
 		return streams;
 	}
 
@@ -138,7 +138,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 		return preprocessors.remove(idx);
 	}
 
-	protected abstract Data readNext(Data item, Map<String, DataStream> streams)
+	protected abstract Data readNext(Data item, Map<String, Stream> streams)
 			throws Exception;
 
 	/**
@@ -147,7 +147,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	 * @return
 	 * @throws Exception
 	 */
-	public Data readNext() throws Exception {
+	public Data read() throws Exception {
 		return readNext(DataFactory.create());
 	}
 
@@ -184,7 +184,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	}
 
 	public void close() throws Exception {
-		for (DataStream s : streams.values()) {
+		for (Stream s : streams.values()) {
 			try {
 				s.close();
 			} catch (Exception e) {
@@ -194,12 +194,12 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	}
 
 	/**
-	 * @see stream.io.DataStream#init()
+	 * @see stream.io.Stream#init()
 	 */
 	@Override
 	public void init() throws Exception {
 
-		for (DataStream s : streams.values()) {
+		for (Stream s : streams.values()) {
 			s.init();
 		}
 		log.info("initialized all Streams.");

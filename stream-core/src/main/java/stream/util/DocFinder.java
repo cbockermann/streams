@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.annotations.Internal;
-import stream.io.DataStream;
+import stream.io.Stream;
 
 /**
  * @author chris
@@ -45,7 +45,7 @@ public class DocFinder {
 	static Logger log = LoggerFactory.getLogger(DocFinder.class);
 
 	public final static Class<?>[] CLASSES = new Class<?>[] { Processor.class,
-			DataStream.class };
+			Stream.class };
 
 	/**
 	 * @param args

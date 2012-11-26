@@ -41,9 +41,9 @@ public class SvmLightDataStreamTest {
 		try {
 			URL url = SvmLightDataStreamTest.class
 					.getResource("/test-data.svm_light");
-			DataStream stream = new SvmLightStream(new SourceURL(url));
-
-			Data item = stream.readNext();
+			Stream stream = new SvmLightStream(new SourceURL(url));
+			stream.init();
+			Data item = stream.read();
 			while (item != null) {
 				Double expTarget = -1.0d;
 				Assert.assertEquals(expTarget.doubleValue(),
@@ -51,7 +51,7 @@ public class SvmLightDataStreamTest {
 				Assert.assertEquals(new Double("0.43"), item.get("1"));
 				Assert.assertEquals(new Double("0.12"), item.get("3"));
 				Assert.assertEquals(new Double("0.2"), item.get("9284"));
-				item = stream.readNext(item);
+				item = stream.read();
 			}
 
 		} catch (Exception e) {

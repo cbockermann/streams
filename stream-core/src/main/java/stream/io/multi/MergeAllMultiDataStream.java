@@ -27,7 +27,7 @@ import java.util.Map;
 
 import stream.Data;
 import stream.data.DataFactory;
-import stream.io.DataStream;
+import stream.io.Stream;
 
 /**
  * *
@@ -45,7 +45,7 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 	 * @see stream.io.multi.AbstractMultiDataStream#readItem(stream.Data)
 	 */
 	@Override
-	protected Data readNext(Data item, Map<String, DataStream> streams)
+	protected Data readNext(Data item, Map<String, Stream> streams)
 			throws Exception {
 		if (item == null)
 			item = DataFactory.create();
@@ -53,8 +53,8 @@ public class MergeAllMultiDataStream extends AbstractMultiDataStream {
 		boolean stop = true;
 
 		for (String id : additionOrder) {
-			DataStream s = streams.get(id);
-			Data d = s.readNext(item);
+			Stream s = streams.get(id);
+			Data d = s.read();
 			if (d != null) {
 				item.putAll(d);
 				stop = false;

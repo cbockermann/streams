@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.annotations.Description;
+import stream.data.DataFactory;
 
 /**
  * This stream reads the filenames from the given directory. The provided
@@ -22,7 +23,7 @@ import stream.annotations.Description;
  * 
  */
 @Description(group = "Data Stream.Sources")
-public class DirectoryStream extends AbstractDataStream {
+public class DirectoryStream extends AbstractStream {
 
 	Logger log = LoggerFactory.getLogger(DirectoryStream.class);
 
@@ -33,12 +34,10 @@ public class DirectoryStream extends AbstractDataStream {
 
 	public DirectoryStream(SourceURL url) throws Exception {
 		super(url);
-		this.initReader();
-
 	}
 
 	@Override
-	protected void initReader() throws Exception {
+	public void init() throws Exception {
 		dir = new File(new URI(url.toString()));
 		if (!dir.isDirectory())
 			throw new IllegalArgumentException("Directory not found");
@@ -48,11 +47,8 @@ public class DirectoryStream extends AbstractDataStream {
 	}
 
 	@Override
-	public void readHeader() throws Exception {
-	}
-
-	@Override
-	public Data readItem(Data data) throws Exception {
+	public Data readNext() throws Exception {
+		Data data = DataFactory.create();
 		if (counter < files.length) {
 			data.put(
 					"@url",
@@ -65,9 +61,5 @@ public class DirectoryStream extends AbstractDataStream {
 			return data;
 		}
 		return null;
-	}
-
-	@Override
-	public void close() {
 	}
 }

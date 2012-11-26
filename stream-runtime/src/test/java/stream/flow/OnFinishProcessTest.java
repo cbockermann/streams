@@ -11,7 +11,7 @@ public class OnFinishProcessTest {
 
 	@Test
 	public void test() {
-		stream.runtime.Process p = new stream.runtime.Process();
+		stream.runtime.DefaultProcess p = new stream.runtime.DefaultProcess();
 		ProcessorList onFinish = new OnFinish();
 		SimpleMockProcessor m1 = new SimpleMockProcessor();
 		SimpleMockProcessor m2 = new SimpleMockProcessor();

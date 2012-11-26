@@ -21,39 +21,19 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.generator;
+package stream.io;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * <p>
+ * A simple data stream interface, producing data items.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * 
+ */
+public interface Stream extends Source {
 
-import stream.Processor;
-import stream.io.DataStream;
+	public Long getLimit();
 
-public abstract class GeneratorDataStream implements DataStream {
-
-	final List<Processor> processors = new ArrayList<Processor>();
-	protected String id;
-
-	@Override
-	public String getId() {
-		return this.id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public List<Processor> getPreprocessors() {
-		return processors;
-	}
-
-	/**
-	 * @see stream.io.DataStream#init()
-	 */
-	@Override
-	public void init() throws Exception {
-		// TODO Auto-generated method stub
-	}
+	public void setLimit(Long limit);
 }

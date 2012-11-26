@@ -23,14 +23,14 @@
  */
 package stream.io.active;
 
-import stream.io.DataStream;
+import stream.io.Stream;
 
 /**
  * 
  * @author Hendrik Blom
  * 
  */
-public interface ActiveDataStream extends DataStream {
+public interface ActiveDataStream extends Stream {
 
 	public void activate() throws Exception;
 }

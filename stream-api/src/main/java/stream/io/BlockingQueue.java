@@ -23,19 +23,122 @@
  */
 package stream.io;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.Data;
+
 /**
- * @author chris
+ * <p>
+ * The default implementation of a blocking queue of data items.
+ * </p>
+ * 
+ * @author Hendrik Blom, Christian Bockermann
  * 
  */
-public class BlockingQueue extends DataStreamQueue {
+public class BlockingQueue extends AbstractQueue {
 
-	public BlockingQueue() {
-		this(1000);
+	static Logger log = LoggerFactory.getLogger(BlockingQueue.class);
+
+	protected boolean closed = false;
+	protected LinkedBlockingQueue<Data> queue;
+
+	/**
+	 * @see stream.io.Source#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		if (getLimit() < 1) {
+			throw new IllegalArgumentException("Invalid queue-size '"
+					+ getLimit() + "'!");
+		}
+
+		queue = new LinkedBlockingQueue<Data>(getLimit());
 	}
 
-	public BlockingQueue(int size) {
-		super(size);
+	/**
+	 * @see stream.io.Stream#close()
+	 */
+	public void close() throws Exception {
+		queue.clear();
+		queue.add(Data.END_OF_STREAM);
+		queue.notifyAll();
+		closed = true;
 	}
-	
-	
+
+	/**
+	 * @see stream.io.AbstractStream#readItem(stream.Data)
+	 */
+	@Override
+	public Data read() throws Exception {
+
+		Data item = null;
+		try {
+			item = queue.take();
+			log.debug("took item from queue: {}", item);
+		} catch (InterruptedException e) {
+			if (closed)
+				return null;
+			else {
+				log.error("Interruped while waiting for data: {}",
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			}
+		}
+
+		if (item == Data.END_OF_STREAM) {
+			log.debug("Next data-item is end-of-stream event!");
+			closed = true;
+			return null;
+		}
+
+		return item;
+	}
+
+	/**
+	 * @see stream.io.QueueService#poll()
+	 */
+	public Data poll() {
+		return queue.poll();
+	}
+
+	public Data take() {
+		try {
+			Data item = queue.take();
+			if (item == Data.END_OF_STREAM)
+				return null;
+			return item;
+		} catch (Exception e) {
+			log.error("Interrupted while reading on queue: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * @see stream.io.QueueService#enqueue(stream.Data)
+	 */
+	public boolean enqueue(Data item) {
+		try {
+			queue.put(item);
+			return true;
+		} catch (Exception e) {
+			log.error("Error enqueuing item: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @see stream.io.Sink#write(stream.Data)
+	 */
+	@Override
+	public void write(Data item) throws Exception {
+		queue.put(item);
+	}
 }

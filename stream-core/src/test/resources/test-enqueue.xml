@@ -4,7 +4,7 @@
 			class="stream.io.CsvStream" limit="10" />
 			
 			
-	<Service id="myqueue" class="stream.io.BlockingQueue" size="10" />
+	<Queue id="myqueue" class="stream.io.BlockingQueue" size="10" />
 			
 	<process input="test" >
 	
@@ -12,7 +12,7 @@
 	
 		<If condition="src_bytes @lt 200">
 		
-			<Enqueue queue-ref="myqueue" />
+			<Enqueue queue="myqueue" />
 			
 		</If>
 	</process>

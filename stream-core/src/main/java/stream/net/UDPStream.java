@@ -5,25 +5,21 @@ package stream.net;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.Processor;
 import stream.data.DataFactory;
-import stream.io.DataStream;
+import stream.io.AbstractStream;
+import stream.io.SourceURL;
 
 /**
  * @author chris
  * 
  */
-public class UDPStream implements DataStream, Runnable {
+public class UDPStream extends AbstractStream implements Runnable {
 
 	static Logger log = LoggerFactory.getLogger(UDPStream.class);
 	protected String address = "0.0.0.0";
@@ -35,10 +31,16 @@ public class UDPStream implements DataStream, Runnable {
 	protected Integer packetSize = 1024;
 	protected Integer backlog = 100;
 	protected final LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
-	protected final List<Processor> processors = new ArrayList<Processor>();
 
 	protected Thread t;
 	protected String id;
+
+	/**
+	 * @param url
+	 */
+	public UDPStream() {
+		super((SourceURL) null);
+	}
 
 	@Override
 	public String getId() {
@@ -51,15 +53,7 @@ public class UDPStream implements DataStream, Runnable {
 	}
 
 	/**
-	 * @see stream.io.DataStream#getAttributes()
-	 */
-	@Override
-	public Map<String, Class<?>> getAttributes() {
-		return new HashMap<String, Class<?>>();
-	}
-
-	/**
-	 * @see stream.io.DataStream#init()
+	 * @see stream.io.Stream#init()
 	 */
 	@Override
 	public void init() throws Exception {
@@ -74,18 +68,10 @@ public class UDPStream implements DataStream, Runnable {
 	}
 
 	/**
-	 * @see stream.io.DataStream#readNext()
+	 * @see stream.io.Stream#read()
 	 */
 	@Override
-	public Data readNext() throws Exception {
-		return readNext(DataFactory.create());
-	}
-
-	/**
-	 * @see stream.io.DataStream#readNext(stream.Data)
-	 */
-	@Override
-	public Data readNext(Data datum) throws Exception {
+	public Data read() throws Exception {
 
 		Data item = null;
 		while (item == null) {
@@ -97,20 +83,13 @@ public class UDPStream implements DataStream, Runnable {
 			}
 		}
 
+		Data datum = DataFactory.create();
 		datum.putAll(item);
 		return datum;
 	}
 
 	/**
-	 * @see stream.io.DataStream#getPreprocessors()
-	 */
-	@Override
-	public List<Processor> getPreprocessors() {
-		return processors;
-	}
-
-	/**
-	 * @see stream.io.DataStream#close()
+	 * @see stream.io.Stream#close()
 	 */
 	@Override
 	public void close() throws Exception {
@@ -199,5 +178,13 @@ public class UDPStream implements DataStream, Runnable {
 	 */
 	public void setBacklog(Integer backlog) {
 		this.backlog = backlog;
+	}
+
+	/**
+	 * @see stream.io.AbstractStream#readNext()
+	 */
+	@Override
+	public Data readNext() throws Exception {
+		return queue.take();
 	}
 }

@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -33,6 +33,10 @@ import org.w3c.dom.Element;
 import stream.io.Stream;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
+import stream.runtime.setup.DataStreamFactory;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ProcessorFactory;
 import stream.service.Service;
 
 /**
@@ -75,14 +79,14 @@ public class StreamElementHandler implements ElementHandler {
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 		try {
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
 			Stream stream = DataStreamFactory.createStream(objectFactory,
-					processorFactory, element);
+					processorFactory, element, variables);
 			if (stream != null) {
 				if (id == null)
 					id = "" + stream;

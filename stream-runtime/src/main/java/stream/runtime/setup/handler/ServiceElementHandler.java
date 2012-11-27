@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.util.Map;
 
@@ -31,6 +31,8 @@ import org.w3c.dom.Element;
 
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
+import stream.runtime.setup.ObjectFactory;
 import stream.service.Service;
 
 /**
@@ -76,8 +78,8 @@ public class ServiceElementHandler implements ElementHandler {
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 
 		log.debug("handling element {}...", element);
 		Map<String, String> params = objectFactory.getAttributes(element);

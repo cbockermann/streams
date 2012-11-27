@@ -86,7 +86,8 @@ public class ServiceInjectionTest {
 		DependencyGraph graph = new DependencyGraph();
 		Collection<ServiceReference> refs = container.getServiceRefs();
 
-		ServiceInjection.injectServices(refs, container.getContext(), graph);
+		ServiceInjection.injectServices(refs, container.getContext(), graph,
+				container.getVariables());
 
 		container.run();
 	}

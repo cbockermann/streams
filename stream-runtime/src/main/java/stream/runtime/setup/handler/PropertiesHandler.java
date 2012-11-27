@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.runtime.ProcessContainer;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 
 /**
  * <p>
@@ -27,25 +27,24 @@ import stream.runtime.VariableContext;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class PropertiesHandler extends VariableContext implements
-		DocumentHandler {
+public class PropertiesHandler implements DocumentHandler {
 
 	static Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
 
 	/**
-	 * @see stream.runtime.setup.DocumentHandler#handle(stream.runtime.ProcessContainer,
+	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(ProcessContainer container, Document doc)
-			throws Exception {
+	public void handle(ProcessContainer container, Document doc,
+			Variables variables) throws Exception {
 
 		// handle maven-like properties, e.g.
 		// <properties>
 		// <property-name>value-of-property</property-name>
 		// </properties>
 		//
-		findPropertiesElements(container, doc);
+		findPropertiesElements(container, doc, container.getVariables());
 
 		// handle property elements, i.e.
 		// <property>
@@ -53,12 +52,12 @@ public class PropertiesHandler extends VariableContext implements
 		// <value>property-value</value>
 		// </property>
 		//
-		findPropertyElements(container, doc);
+		findPropertyElements(container, doc, container.getVariables());
 
 		// add system properties, e.g defined at command line using the -D flag:
 		// java -Dproperty-name=property-value
 		//
-		addSystemProperties(container);
+		addSystemProperties(container, container.getVariables());
 	}
 
 	/**
@@ -68,7 +67,8 @@ public class PropertiesHandler extends VariableContext implements
 	 * @param container
 	 * @param doc
 	 */
-	private void findPropertiesElements(ProcessContainer container, Document doc) {
+	private void findPropertiesElements(ProcessContainer container,
+			Document doc, Variables variables) {
 		NodeList list = doc.getElementsByTagName("properties");
 		for (int i = 0; i < list.getLength(); i++) {
 
@@ -83,8 +83,7 @@ public class PropertiesHandler extends VariableContext implements
 					String key = ch.getNodeName();
 					String value = ch.getTextContent();
 
-					container.getContext().setProperty(key, value);
-					set(key, value);
+					variables.set(key, value);
 				}
 			}
 
@@ -102,8 +101,8 @@ public class PropertiesHandler extends VariableContext implements
 					Properties p = new Properties();
 					p.load(propUrl.openStream());
 					for (Object k : p.keySet()) {
-						container.getContext().setProperty(k.toString(),
-								p.getProperty(k.toString()));
+						variables
+								.set(k.toString(), p.getProperty(k.toString()));
 					}
 
 				} catch (Exception e) {
@@ -117,8 +116,8 @@ public class PropertiesHandler extends VariableContext implements
 					Properties p = new Properties();
 					p.load(new FileInputStream(file));
 					for (Object k : p.keySet()) {
-						container.getContext().setProperty(k.toString(),
-								p.getProperty(k.toString()));
+						variables
+								.set(k.toString(), p.getProperty(k.toString()));
 					}
 				} catch (Exception e) {
 					log.error("Failed to read properties from file {}: {}",
@@ -135,7 +134,8 @@ public class PropertiesHandler extends VariableContext implements
 	 * @param container
 	 * @param doc
 	 */
-	private void findPropertyElements(ProcessContainer container, Document doc) {
+	private void findPropertyElements(ProcessContainer container, Document doc,
+			Variables variables) {
 
 		NodeList ch = doc.getElementsByTagName("property");
 		for (int i = 0; i < ch.getLength(); i++) {
@@ -152,8 +152,7 @@ public class PropertiesHandler extends VariableContext implements
 						String k = key.trim();
 						String v = value.trim();
 						log.info("Setting property {} = {}", k, v);
-						container.getContext().setProperty(k, v);
-						set(k, v);
+						variables.set(k, v);
 					}
 				}
 			}
@@ -166,11 +165,12 @@ public class PropertiesHandler extends VariableContext implements
 	 * 
 	 * @param container
 	 */
-	private void addSystemProperties(ProcessContainer container) {
+	private void addSystemProperties(ProcessContainer container,
+			Variables variables) {
 		for (Object key : System.getProperties().keySet()) {
-			container.getContext().setProperty(key.toString(),
+			log.debug("Adding system property '{}' = {}", key,
 					System.getProperty(key.toString()));
-			set(key.toString(), System.getProperty(key.toString()));
+			variables.set(key.toString(), System.getProperty(key.toString()));
 		}
 	}
 }

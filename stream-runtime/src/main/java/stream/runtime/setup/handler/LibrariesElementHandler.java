@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -17,8 +17,10 @@ import org.w3c.dom.NodeList;
 
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
 import stream.runtime.dependencies.Dependency;
 import stream.runtime.dependencies.DependencyResolver;
+import stream.runtime.setup.ObjectFactory;
 
 /**
  * @author chris
@@ -58,8 +60,8 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 
 		String text = element.getTextContent();
 		if (text == null) {
@@ -89,12 +91,12 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.setup.DocumentHandler#handle(stream.runtime.ProcessContainer,
+	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(ProcessContainer container, Document doc)
-			throws Exception {
+	public void handle(ProcessContainer container, Document doc,
+			Variables variables) throws Exception {
 
 		log.debug("Checking for dependency definitions...");
 

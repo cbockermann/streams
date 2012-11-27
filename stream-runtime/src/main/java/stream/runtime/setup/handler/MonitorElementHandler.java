@@ -21,9 +21,8 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +33,9 @@ import org.w3c.dom.Element;
 import stream.Processor;
 import stream.runtime.Monitor;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ProcessorFactory;
 
 /**
  * @author chris
@@ -74,8 +76,8 @@ public class MonitorElementHandler extends ProcessElementHandler {
 	 *      .ProcessContainer, org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(element);
 
 		// the default Monitor class is stream.runtime.Monitor
@@ -91,7 +93,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 		log.debug("Created Monitor object: {}", monitor);
 
 		List<Processor> procs = createNestedProcessors(container, element,
-				new HashMap<String, String>());
+				variables);
 		for (Processor p : procs)
 			monitor.add(p);
 

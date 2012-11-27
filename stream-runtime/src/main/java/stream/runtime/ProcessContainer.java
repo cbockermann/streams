@@ -52,20 +52,20 @@ import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
-import stream.runtime.setup.ContainerRefElementHandler;
-import stream.runtime.setup.DocumentHandler;
-import stream.runtime.setup.LibrariesElementHandler;
-import stream.runtime.setup.MonitorElementHandler;
 import stream.runtime.setup.ObjectCreator;
 import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessElementHandler;
 import stream.runtime.setup.ProcessorFactory;
-import stream.runtime.setup.PropertiesHandler;
-import stream.runtime.setup.QueueElementHandler;
-import stream.runtime.setup.ServiceElementHandler;
 import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
-import stream.runtime.setup.StreamElementHandler;
+import stream.runtime.setup.handler.ContainerRefElementHandler;
+import stream.runtime.setup.handler.DocumentHandler;
+import stream.runtime.setup.handler.LibrariesElementHandler;
+import stream.runtime.setup.handler.MonitorElementHandler;
+import stream.runtime.setup.handler.ProcessElementHandler;
+import stream.runtime.setup.handler.PropertiesHandler;
+import stream.runtime.setup.handler.QueueElementHandler;
+import stream.runtime.setup.handler.ServiceElementHandler;
+import stream.runtime.setup.handler.StreamElementHandler;
 import stream.runtime.shutdown.DependencyGraph;
 import stream.runtime.shutdown.LocalShutdownCondition;
 import stream.runtime.shutdown.ServerShutdownCondition;
@@ -99,7 +99,7 @@ public class ProcessContainer {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
 		//
 		log.debug("Adding container shutdown-hook");
-		Runtime.getRuntime().addShutdownHook(new Thread() {
+		java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 
 				if (!runShutdownHook) {
@@ -162,6 +162,7 @@ public class ProcessContainer {
 	boolean server = true;
 
 	Long startTime = 0L;
+	Variables containerVariables = new Variables();
 
 	final static String[] extensions = new String[] {
 			"stream.moa.MoaObjectFactory",
@@ -361,7 +362,7 @@ public class ProcessContainer {
 			name = "local";
 
 		for (DocumentHandler handle : documentHandler) {
-			handle.handle(this, doc);
+			handle.handle(this, doc, containerVariables);
 		}
 		objectFactory.addVariables(context.getProperties());
 
@@ -385,7 +386,7 @@ public class ProcessContainer {
 			Element element = (Element) node;
 			for (ElementHandler handler : this.elementHandler.values()) {
 				if (handler.handlesElement(element)) {
-					handler.handleElement(this, element);
+					handler.handleElement(this, element, containerVariables);
 					continue;
 				}
 			}
@@ -445,7 +446,7 @@ public class ProcessContainer {
 
 	protected void injectServices() throws Exception {
 		ServiceInjection.injectServices(this.getServiceRefs(),
-				this.getContext(), depGraph);
+				this.getContext(), depGraph, containerVariables);
 	}
 
 	public void setStream(String id, Source stream) {
@@ -547,6 +548,10 @@ public class ProcessContainer {
 		log.trace("Running processes: {}", processes);
 		log.info("ProcessContainer finished all processes after {} ms",
 				(end - start));
+	}
+
+	public Variables getVariables() {
+		return this.containerVariables;
 	}
 
 	public Set<String> getStreamListenerNames() {

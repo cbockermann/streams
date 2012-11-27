@@ -1,4 +1,4 @@
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.util.Map;
 
@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import stream.io.BlockingQueue;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
 
 public class QueueElementHandler implements ElementHandler {
 
@@ -31,8 +32,8 @@ public class QueueElementHandler implements ElementHandler {
 	 *      org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 
 		String className = element.getAttribute("class");
 		if (className == null || className.trim().isEmpty())

@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
 
 import stream.annotations.BodyContent;
 import stream.runtime.RuntimeClassLoader;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 import stream.utils.FileUtils;
 
 /**
@@ -53,7 +53,7 @@ import stream.utils.FileUtils;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class ObjectFactory extends VariableContext {
+public class ObjectFactory extends Variables {
 
 	static Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 	static Map<String, Integer> globalObjectNumbers = new HashMap<String, Integer>();
@@ -126,7 +126,8 @@ public class ObjectFactory extends VariableContext {
 				classLoader.addExtraURLs(url);
 			}
 		}
-		log.debug("URLClassLoader.getURLs(): {}", (Object[]) classLoader.getURLs());
+		log.debug("URLClassLoader.getURLs(): {}",
+				(Object[]) classLoader.getURLs());
 	}
 
 	public void addPackage(String pkg) {
@@ -164,12 +165,13 @@ public class ObjectFactory extends VariableContext {
 		globalObjectNumbers.put(obj, cur + 1);
 		return obj + cur;
 	}
-	
+
 	public Object create(Element node) throws Exception {
-		return create( node, new HashMap<String,String>() );
+		return create(node, new HashMap<String, String>());
 	}
 
-	public Object create(Element node, Map<String,String> variables ) throws Exception {
+	public Object create(Element node, Map<String, String> variables)
+			throws Exception {
 		Map<String, String> params = getAttributes(node);
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
@@ -181,26 +183,28 @@ public class ObjectFactory extends VariableContext {
 			}
 		}
 
-		Object obj = create(this.findClassForElement(node), params, variables );
+		Object obj = create(this.findClassForElement(node), params,
+				new Variables(variables));
 		return obj;
 	}
 
-	public Object create( String className, Map<String,String> parameter) throws Exception {
-		return create( className, parameter, new HashMap<String,String>() );
-	}
-	
-	public Object create(String className, Map<String, String> parameter, Map<String,String> extraVariables )
+	public Object create(String className, Map<String, String> parameter)
 			throws Exception {
+		return create(className, parameter, new Variables());
+	}
+
+	public Object create(String className, Map<String, String> parameter,
+			Variables extraVariables) throws Exception {
 
 		Map<String, String> params = new HashMap<String, String>();
 		params.putAll(variables);
 		params.putAll(parameter);
-		
-		VariableContext ctx = new VariableContext( this );
-		ctx.addVariables( extraVariables );
+
+		Variables ctx = new Variables(this);
+		ctx.addVariables(extraVariables);
 
 		log.debug("Parameters for new class: {}", params);
-		log.debug("extra.variables: {}", ctx.getVariables() );
+		log.debug("extra.variables: {}", ctx);
 
 		Map<String, String> p = new HashMap<String, String>();
 		for (String key : parameter.keySet()) {
@@ -236,7 +240,7 @@ public class ObjectFactory extends VariableContext {
 
 		// create an instance of this class using the "default way"
 		//
-		log.debug( "Looking for class '{}'", className );
+		log.debug("Looking for class '{}'", className);
 		Class<?> clazz = Class.forName(className, false, classLoader);
 		object = clazz.newInstance();
 

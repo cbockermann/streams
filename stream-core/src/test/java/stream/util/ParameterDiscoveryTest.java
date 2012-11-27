@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.SetValue;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
 
@@ -54,7 +54,7 @@ public class ParameterDiscoveryTest {
 					.discoverParameters(proc.getClass());
 			log.info("Discovered parameters: {}", keys);
 
-			ParameterInjection.inject(proc, params, new VariableContext());
+			ParameterInjection.inject(proc, params, new Variables());
 
 			Assert.assertTrue("3.0".equals(proc.getValue()));
 

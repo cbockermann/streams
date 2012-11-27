@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.ContainerContext;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 import stream.runtime.shutdown.DependencyGraph;
 import stream.service.Service;
 
@@ -64,15 +64,15 @@ public class ServiceInjection {
 	 */
 	@SuppressWarnings("unused")
 	public static void injectServices(Collection<ServiceReference> refs,
-			ContainerContext ctx, DependencyGraph graph) throws Exception {
+			ContainerContext ctx, DependencyGraph graph,
+			Variables variables) throws Exception {
 
 		Iterator<ServiceReference> it = refs.iterator();
 		while (it.hasNext()) {
 			ServiceReference ref = it.next();
 			log.debug("Checking service-reference {}", ref);
 
-			VariableContext c = new VariableContext(ctx.getProperties());
-			String serviceRef = c.expand(ref.getRef());
+			String serviceRef = variables.expand(ref.getRef());
 			Object consumer = ref.getReceiver();
 
 			if (serviceRef.contains(",")) {

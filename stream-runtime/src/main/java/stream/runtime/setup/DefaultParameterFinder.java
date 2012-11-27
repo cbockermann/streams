@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 
 /**
  * @author chris
@@ -39,7 +39,7 @@ public class DefaultParameterFinder implements ParameterFinder {
 	@Override
 	public Set<String> inject(Map<String, ?> params, Object o) throws Exception {
 		Set<String> set = new LinkedHashSet<String>();
-		set.addAll(ParameterInjection.inject(o, params, new VariableContext()));
+		set.addAll(ParameterInjection.inject(o, params, new Variables()));
 
 		for (ParameterFinder finder : finders) {
 			set.addAll(finder.inject(params, o));

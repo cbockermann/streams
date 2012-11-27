@@ -37,11 +37,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.Processor;
-import stream.io.Stream;
 import stream.io.SourceURL;
+import stream.io.Stream;
 import stream.io.multi.MultiDataStream;
 import stream.runtime.ProcessContainer;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 
 /**
  * @author chris
@@ -63,7 +63,8 @@ public class DataStreamFactory {
 
 	@SuppressWarnings("deprecation")
 	public static Stream createStream(ObjectFactory objectFactory,
-			ProcessorFactory processorFactory, Element node) throws Exception {
+			ProcessorFactory processorFactory, Element node, Variables variables)
+			throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
 		Class<?> clazz = Class.forName(params.get("class"));
@@ -79,7 +80,7 @@ public class DataStreamFactory {
 			SourceURL url = null;
 
 			String urlString = params.get("url");
-			urlString = objectFactory.expand(urlString);
+			urlString = variables.expand(urlString);
 
 			if (urlString.startsWith("classpath:")) {
 				String resource = urlParam.substring("classpath:".length());
@@ -103,7 +104,7 @@ public class DataStreamFactory {
 
 		List<Processor> preProcessors = new ArrayList<Processor>();
 
-		ParameterInjection.inject(stream, params, new VariableContext());
+		ParameterInjection.inject(stream, params, new Variables());
 
 		if (stream instanceof MultiDataStream) {
 			MultiDataStream multiStream = (MultiDataStream) stream;
@@ -120,17 +121,15 @@ public class DataStreamFactory {
 				if (child.getNodeName().equalsIgnoreCase("stream")
 						|| child.getNodeName().equalsIgnoreCase("datastream")) {
 					Stream innerStream = createStream(objectFactory,
-							processorFactory, child);
+							processorFactory, child, variables);
 					log.debug("Created inner stream {}", innerStream);
 					String id = child.getAttribute("id");
 					if (id == null || "".equals(id.trim()))
 						id = innerStream.toString();
 					multiStream.addStream(id, innerStream);
 				} else {
-					log.debug("Creating pre-processors...");
-					List<Processor> procs = processorFactory
-							.createNestedProcessors(child);
-					preProcessors.addAll(procs);
+					throw new Exception(
+							"Pre-processors within streams are no longer supported!");
 				}
 			}
 			stream = multiStream;
@@ -176,8 +175,7 @@ public class DataStreamFactory {
 
 			try {
 				stream = (Stream) clazz.newInstance();
-				ParameterInjection
-						.inject(stream, params, new VariableContext());
+				ParameterInjection.inject(stream, params, new Variables());
 				stream.init();
 				return stream;
 			} catch (Exception e) {
@@ -206,7 +204,7 @@ public class DataStreamFactory {
 
 		stream = (Stream) urlConstructor.newInstance(url);
 		stream.init();
-		ParameterInjection.inject(stream, params, new VariableContext());
+		ParameterInjection.inject(stream, params, new Variables());
 
 		if (stream instanceof MultiDataStream) {
 			log.debug("Found a multi-stream, need to add inner streams...");

@@ -21,10 +21,9 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,11 @@ import stream.runtime.DefaultProcess;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
+import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.ServiceInjection;
+import stream.runtime.setup.ServiceReference;
 import stream.service.Service;
 
 /**
@@ -82,9 +85,14 @@ public class ProcessElementHandler implements ElementHandler {
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 
+		if (log.isDebugEnabled()) {
+			for (String key : variables.keySet()) {
+				// log.debug("   '{}' = '{}'", key, variables.get(key));
+			}
+		}
 		Map<String, String> attr = objectFactory.getAttributes(element);
 		String src = attr.get("source");
 		if (src == null)
@@ -114,8 +122,8 @@ public class ProcessElementHandler implements ElementHandler {
 
 		if (copies != null && !"".equals(copies.trim())) {
 
-			VariableContext var = new VariableContext(container.getContext()
-					.getProperties());
+			Variables var = new Variables(variables);
+			log.info("Expanding '{}'", copies);
 			copies = var.expand(copies);
 
 			String[] ids;
@@ -128,24 +136,25 @@ public class ProcessElementHandler implements ElementHandler {
 					ids[i] = "" + i;
 				}
 			}
+			log.info("Creating {} processes due to copies='{}'", ids.length,
+					copies);
 
 			// Integer times = new Integer(copies);
 
 			for (String pid : ids) {
-				Map<String, String> extra = new HashMap<String, String>();
-				extra.put("process.id", pid);
-				extra.put("copy.id", pid);
-				var.addVariables(extra);
+				Variables local = new Variables(variables);
+				local.put("process.id", pid);
+				local.put("copy.id", pid);
 				log.info("Creating process '{}'", pid);
 				DefaultProcess process = createProcess(processClass, attr,
-						container, element, extra);
+						container, element, local);
 
-				String input = var.expand(src);
+				String input = local.expand(src);
 				log.info("Setting source for process {} to {}", process, input);
 				process.setInput(input);
 
 				if (out != null) {
-					String processOut = var.expand(out);
+					String processOut = local.expand(out);
 					log.info("Setting process output for process {} to {}",
 							process, processOut);
 					process.setOutput(processOut);
@@ -157,11 +166,11 @@ public class ProcessElementHandler implements ElementHandler {
 			}
 
 		} else {
+			Variables local = new Variables(variables);
 			objectFactory.set("process.id", id);
-			Map<String, String> extra = new HashMap<String, String>();
-			extra.put("process.id", id);
+			local.put("process.id", id);
 			DefaultProcess process = createProcess(processClass, attr,
-					container, element, extra);
+					container, element, local);
 			log.debug("Created Process object: {}", process);
 			container.getProcesses().add(process);
 		}
@@ -169,12 +178,17 @@ public class ProcessElementHandler implements ElementHandler {
 
 	protected DefaultProcess createProcess(String processClass,
 			Map<String, String> attr, ProcessContainer container,
-			Element element, Map<String, String> extraVariables)
-			throws Exception {
+			Element element, Variables extraVariables) throws Exception {
+
+		log.info("Creating 'process' element, variable context is:");
+		for (String key : extraVariables.keySet()) {
+			// log.info("  '{}' = '{}'", key, extraVariables.get(key));
+		}
+
 		DefaultProcess process = (DefaultProcess) objectFactory.create(
 				processClass, attr, extraVariables);
 		log.debug("Created Process object: {}", process);
-
+		log.info("Process input is: '{}'", process.getInput());
 		ProcessContext ctx = new ProcessContextImpl(container.getContext());
 		for (String key : attr.keySet()) {
 			ctx.set(key, attr.get(key));
@@ -195,18 +209,14 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected Processor createProcessor(ProcessContainer container,
-			Element child, Map<String, String> extraVariables) throws Exception {
+			Element child, Variables variables) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
 
-		Object o = objectFactory.create(child, extraVariables);
+		Object o = objectFactory.create(child, variables);
 		if (o instanceof Processor) {
 
-			Map<String, String> vars = new HashMap<String, String>(container
-					.getContext().getProperties());
-			vars.putAll(extraVariables);
-
-			VariableContext vctx = new VariableContext(vars);
+			Variables vctx = new Variables(variables);
 			if (o instanceof ProcessorList) {
 
 				NodeList children = child.getChildNodes();
@@ -217,7 +227,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 						Element element = (Element) node;
 						Processor proc = createProcessor(container, element,
-								extraVariables);
+								variables);
 						if (proc != null) {
 							((ProcessorList) o).getProcessors().add(proc);
 						} else {
@@ -282,8 +292,8 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected List<Processor> createNestedProcessors(
-			ProcessContainer container, Element child,
-			Map<String, String> extraVariables) throws Exception {
+			ProcessContainer container, Element child, Variables variables)
+			throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -292,7 +302,7 @@ public class ProcessElementHandler implements ElementHandler {
 			Node cnode = pnodes.item(j);
 			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
 				Processor p = createProcessor(container, (Element) cnode,
-						extraVariables);
+						variables);
 				if (p != null) {
 					log.debug("Found processor...");
 					procs.add(p);

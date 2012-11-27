@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
 import stream.expressions.Condition;
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ public class ParameterInjection {
 	 * @return Returns the parameter key that have been set using this method.
 	 */
 	public static Set<String> inject(Object o, Map<String, ?> params,
-			VariableContext variableContext) throws Exception {
+			Variables variableContext) throws Exception {
 		log.debug("Injecting parameters {} into object {}", params, o);
 
 		// this set contains a list of parameters that have been successfully
@@ -201,7 +201,7 @@ public class ParameterInjection {
 			throws Exception {
 		Map<String, String> params = ParameterDiscovery
 				.getSystemProperties(prefix);
-		inject(object, params, new VariableContext());
+		inject(object, params, new Variables());
 	}
 
 	public static Map<String, String> extract(Object learner) throws Exception {

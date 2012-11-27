@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.runtime.setup;
+package stream.runtime.setup.handler;
 
 import java.net.URI;
 import java.util.Map;
@@ -12,7 +12,9 @@ import org.w3c.dom.Element;
 
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
+import stream.runtime.Variables;
 import stream.runtime.rpc.RMIClient;
+import stream.runtime.setup.ObjectFactory;
 
 /**
  * @author chris
@@ -49,8 +51,8 @@ public class ContainerRefElementHandler implements ElementHandler {
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element,
+			Variables variables) throws Exception {
 
 		Map<String, String> attributes = objectFactory.getAttributes(element);
 		String id = "" + attributes.get("id");

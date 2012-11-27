@@ -41,8 +41,8 @@ public class MemoryLogger extends Thread {
 
 	public void run() {
 		while (true) {
-			Long mem0 = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			Long mem0 = java.lang.Runtime.getRuntime().totalMemory()
+					- java.lang.Runtime.getRuntime().freeMemory();
 			log.info("Current memory usage is {} bytes", mem0);
 
 			try {

@@ -33,7 +33,8 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
-import stream.io.QueueService;
+import stream.io.Sink;
+import stream.io.Source;
 
 /**
  * This class implements the basic active component, ie. a thread executing
@@ -42,32 +43,56 @@ import stream.io.QueueService;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public abstract class AbstractProcess extends Thread implements Runnable,
-		Processor {
+public abstract class AbstractProcess implements stream.Process {
 
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
-	protected boolean running = true;
+
 	protected ProcessContext context;
-	Long interval = 1000L;
-	String intervalString = "1000ms";
-	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
+
+	protected Source source;
+	protected Sink sink;
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
 
-	protected Long count = 0L;
-
-	protected Data lastItem = null;
-
-	protected QueueService outputQueue;
+	/**
+	 * @see stream.Process#setSource(stream.io.Source)
+	 */
+	@Override
+	public void setSource(Source ds) {
+		this.source = ds;
+	}
 
 	/**
-	 * This method will obtain the next item from the "input stream" that this
-	 * instance if processing. In case of this Monitor class, the monitor will
-	 * simply work on a single item over and over again.
-	 * 
-	 * @return
+	 * @see stream.Process#getSource()
 	 */
-	public abstract Data getNextItem();
+	@Override
+	public Source getSource() {
+		return this.source;
+	}
+
+	/**
+	 * @see stream.Process#setSink(stream.io.Sink)
+	 */
+	@Override
+	public void setSink(Sink sink) {
+		this.sink = sink;
+	}
+
+	/**
+	 * @see stream.Process#getSink()
+	 */
+	@Override
+	public Sink getSink() {
+		return this.sink;
+	}
+
+	/**
+	 * @see stream.StatefulProcessor#resetState()
+	 */
+	@Override
+	public void resetState() throws Exception {
+		// TODO: Was machen wir hier eigentlich?
+	}
 
 	/**
 	 * @see stream.Processor#process(stream.Data)
@@ -107,10 +132,7 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 	public void finish() throws Exception {
 
 		log.debug("Finishing process...");
-		running = false;
-
 		try {
-
 			for (Processor proc : processors) {
 				if (proc instanceof StatefulProcessor) {
 					try {
@@ -128,50 +150,38 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		this.interrupt();
 	}
 
 	/**
-	 * @see java.lang.Runnable#run()
+	 * @see stream.Process#execute()
 	 */
 	@Override
-	public void run() {
-
-		for (ProcessListener l : this.processListener) {
-			l.processStarted(this);
-		}
+	public void execute() {
 
 		try {
-			while (running) {
+			Data item = getSource().read();
 
-				// obtain the next item to be processed
-				//
-				Data item = getNextItem();
-				if (item == null) {
-					log.debug("No more items could be read, exiting this process.");
-					running = false;
-					break;
-				}
-
+			while (item != null) {
 				// process the item
 				//
 				item = process(item);
 
-				if (outputQueue != null) {
-					log.debug(
-							"Sending process output to connected output-queue {}",
-							outputQueue);
-					outputQueue.enqueue(item);
+				if (getSink() != null) {
+					log.debug("Sending process output to connected sink {}",
+							getSink());
+					getSink().write(item);
 				}
 
-				count++;
+				// obtain the next item to be processed
+				//
+				item = getSource().read();
 			}
+			log.debug("No more items could be read, exiting this process.");
+
 		} catch (Exception e) {
 			log.error("Aborting process due to errors: {}", e.getMessage());
 			if (log.isDebugEnabled())
 				e.printStackTrace();
-			running = false;
 		}
 
 		try {
@@ -180,10 +190,6 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 			log.warn("Error while finishing process: {}", e.getMessage());
 			if (log.isDebugEnabled())
 				e.printStackTrace();
-		}
-
-		for (ProcessListener l : processListener) {
-			l.processFinished(this);
 		}
 	}
 
@@ -194,11 +200,11 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 		return context;
 	}
 
-	public void addProcessor(Processor p) {
+	public void add(Processor p) {
 		processors.add(p);
 	}
 
-	public void removeProcessor(Processor p) {
+	public void remove(Processor p) {
 		processors.remove(p);
 	}
 
@@ -206,24 +212,8 @@ public abstract class AbstractProcess extends Thread implements Runnable,
 		return processors;
 	}
 
-	public Long getNumberOfItemsProcessed() {
-		return count;
-	}
-
-	public boolean isRunning() {
-		return running;
-	}
-
 	public String toString() {
 		return this.getClass().getCanonicalName() + "[" + super.toString()
 				+ "]";
-	}
-
-	public void addListener(ProcessListener l) {
-		this.processListener.add(l);
-	}
-
-	public void removeListener(ProcessListener l) {
-		this.processListener.remove(l);
 	}
 }

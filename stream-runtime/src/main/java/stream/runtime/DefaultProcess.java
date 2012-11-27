@@ -26,25 +26,17 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Data;
-import stream.io.Source;
-
 /**
  * @author chris
  * 
  */
-public class DefaultProcess extends AbstractProcess implements
-		DataStreamConsumer {
+public class DefaultProcess extends AbstractProcess {
 
 	static Logger log = LoggerFactory.getLogger(DefaultProcess.class);
-	static Integer LAST_ID = 0;
-	Source dataSource;
-	Long limit = -1L;
 	String input;
 	String output;
 
 	public DefaultProcess() {
-		this.interval = 0L;
 	}
 
 	/**
@@ -75,71 +67,5 @@ public class DefaultProcess extends AbstractProcess implements
 	 */
 	public void setOutput(String output) {
 		this.output = output;
-	}
-
-	/**
-	 * @see stream.runtime.DataStreamConsumer#setSource(stream.io.Stream)
-	 */
-	public void setSource(Source ds) {
-		dataSource = ds;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Source getSource() {
-		return dataSource;
-	}
-
-	/**
-	 * @see stream.runtime.AbstractProcess#getNextItem()
-	 */
-	@Override
-	public Data getNextItem() {
-		try {
-
-			if (limit > 0 && count > limit) {
-				log.debug("Limit '{}' reached, no more data from the input will be processed.");
-				return null;
-			}
-
-			Data item = null;
-			int tries = 0;
-			while (item == null && tries < 10) {
-				try {
-					log.trace("Reading next item from {}", dataSource);
-					synchronized (dataSource) {
-						item = dataSource.read();
-					}
-					tries = 0;
-					return item;
-				} catch (Exception e) {
-					e.printStackTrace();
-					tries++;
-				}
-			}
-			return item;
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("Failed to read next item from input '{}'", dataSource);
-			throw new RuntimeException("Failed to read next item from input '"
-					+ dataSource + "': " + e.getMessage());
-		}
-	}
-
-	/**
-	 * @return the limit
-	 */
-	public Long getLimit() {
-		return limit;
-	}
-
-	/**
-	 * @param limit
-	 *            the limit to set
-	 */
-	public void setLimit(Long limit) {
-		this.limit = limit;
 	}
 }

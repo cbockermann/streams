@@ -93,7 +93,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 		List<Processor> procs = createNestedProcessors(container, element,
 				new HashMap<String, String>());
 		for (Processor p : procs)
-			monitor.addProcessor(p);
+			monitor.add(p);
 
 		container.getProcesses().add(monitor);
 	}

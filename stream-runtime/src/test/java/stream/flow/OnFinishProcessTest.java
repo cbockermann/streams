@@ -17,8 +17,8 @@ public class OnFinishProcessTest {
 		SimpleMockProcessor m2 = new SimpleMockProcessor();
 		onFinish.getProcessors().add(m2);
 
-		p.addProcessor(m1);
-		p.addProcessor(onFinish);
+		p.add(m1);
+		p.add(onFinish);
 		// Process
 		p.process(DataFactory.create());
 		Assert.assertTrue(m1.getProcessed());

@@ -86,7 +86,7 @@ public class Start {
 		pb.environment().put("CLASSPATH", classPath.toString());
 
 		log.info("Command: {}", pb.command());
-		Process jvm = pb.start();
+		java.lang.Process jvm = pb.start();
 
 		if (jvm.hashCode() > 0) {
 			log.info("Not monitoring spawned JVM... exiting...");

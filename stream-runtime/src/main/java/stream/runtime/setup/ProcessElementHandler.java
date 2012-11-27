@@ -188,7 +188,7 @@ public class ProcessElementHandler implements ElementHandler {
 		List<Processor> procs = createNestedProcessors(container, element,
 				extraVariables);
 		for (Processor p : procs) {
-			process.addProcessor(p);
+			process.add(p);
 			container.getDependencyGraph().add(process, p);
 		}
 		return process;

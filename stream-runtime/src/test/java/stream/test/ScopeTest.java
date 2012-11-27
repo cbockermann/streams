@@ -38,7 +38,7 @@ public class ScopeTest {
 			sv.setValue("1");
 			sv.setScope(new String[] { "process" });
 
-			p.addProcessor(sv);
+			p.add(sv);
 
 			If cond = new If();
 			cond.setCondition("%{data.frame:red:avg} @lt 10 AND %{data.frame:green:avg} @lt 10 AND %{data.frame:blue:avg} @lt 10");
@@ -49,10 +49,10 @@ public class ScopeTest {
 			sv2.setScope(new String[] { "process" });
 
 			cond.getProcessors().add(sv2);
-			p.addProcessor(cond);
+			p.add(cond);
 
 			PrintData pd = new PrintData();
-			p.addProcessor(pd);
+			p.add(pd);
 
 			p.init(ctx);
 

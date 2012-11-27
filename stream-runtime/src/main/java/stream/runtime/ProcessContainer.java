@@ -45,6 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.Data;
+import stream.Process;
 import stream.ProcessContext;
 import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
@@ -142,9 +143,11 @@ public class ProcessContainer {
 	protected final Map<String, BlockingQueue> listeners = new LinkedHashMap<String, BlockingQueue>();
 
 	/** The list of processes running in this container */
-	protected final List<AbstractProcess> processes = new ArrayList<AbstractProcess>();
+	protected final List<Process> processes = new ArrayList<Process>();
 
-	protected final Map<AbstractProcess, ProcessContext> processContexts = new LinkedHashMap<AbstractProcess, ProcessContext>();
+	protected final Map<Process, ProcessContext> processContexts = new LinkedHashMap<Process, ProcessContext>();
+
+	protected final List<ProcessThread> worker = new ArrayList<ProcessThread>();
 
 	protected final List<ServiceReference> serviceRefs = new ArrayList<ServiceReference>();
 
@@ -331,7 +334,7 @@ public class ProcessContainer {
 	/**
 	 * @return the processes
 	 */
-	public List<AbstractProcess> getProcesses() {
+	public List<Process> getProcesses() {
 		return processes;
 	}
 
@@ -399,11 +402,16 @@ public class ProcessContainer {
 	 */
 	protected void connectProcesses() throws Exception {
 		log.debug("Wiring process inputs to data-streams...");
-		for (AbstractProcess aprocess : processes) {
+		for (Process aprocess : processes) {
 
-			if (aprocess instanceof DefaultProcess) {
+			if (aprocess instanceof Process) {
 				DefaultProcess process = (DefaultProcess) aprocess;
 				String input = process.getInput();
+
+				if (aprocess instanceof Monitor && input == null) {
+					continue;
+				}
+
 				if (input == null) {
 					throw new RuntimeException("Process '" + process
 							+ "' is not connected to any input-stream!");
@@ -474,8 +482,7 @@ public class ProcessContainer {
 
 		log.debug("Creating {} active processes...", processes.size());
 		long start = System.currentTimeMillis();
-		for (AbstractProcess spu : processes) {
-			spu.setDaemon(true);
+		for (Process spu : processes) {
 
 			ProcessContext ctx = this.processContexts.get(spu);
 			if (ctx == null) {
@@ -485,15 +492,17 @@ public class ProcessContainer {
 			log.debug("Initializing process with process-context...");
 			spu.init(ctx);
 
-			spu.addListener(new ProcessListener() {
+			ProcessThread worker = new ProcessThread(spu);
+			worker.setDaemon(true);
+			worker.addListener(new ProcessListener() {
 
 				@Override
-				public void processStarted(AbstractProcess p) {
+				public void processStarted(stream.Process p) {
 					log.debug("Starting process {}", p);
 				}
 
 				@Override
-				public void processFinished(AbstractProcess p) {
+				public void processFinished(stream.Process p) {
 					log.debug(
 							"Process {} finished, removing from dependency-graph.",
 							p);
@@ -515,7 +524,7 @@ public class ProcessContainer {
 			});
 
 			log.debug("Starting stream-process [{}]", spu);
-			spu.start();
+			worker.start();
 			log.debug("Stream-process started.");
 		}
 
@@ -569,7 +578,7 @@ public class ProcessContainer {
 			return;
 
 		synchronized (processes) {
-			for (AbstractProcess process : processes) {
+			for (Process process : processes) {
 				log.debug("Sending SHUTDOWN signal to process {}", process);
 				try {
 					process.finish();
@@ -593,9 +602,9 @@ public class ProcessContainer {
 		while (!processes.isEmpty()) {
 			log.debug("Waiting for {} processes to finish...", processes.size());
 			try {
-				Iterator<AbstractProcess> it = processes.iterator();
+				Iterator<ProcessThread> it = this.worker.iterator();
 				while (it.hasNext()) {
-					AbstractProcess process = it.next();
+					ProcessThread process = it.next();
 					if (!process.isAlive()) {
 						log.debug("another process finished...");
 						it.remove();

@@ -23,19 +23,66 @@
  */
 package stream.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * @author chris
+ * <p>
+ * 
+ * </p>
+ * 
+ * @author Christian Bockermann, Hendrik Blom
  * 
  */
 public class ProcessThread extends Thread {
 
-	final AbstractProcess process;
+	final stream.Process process;
+	boolean running = false;
 
-	public ProcessThread(AbstractProcess process) {
+	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
+
+	public ProcessThread(stream.Process process) {
 		this.process = process;
 	}
 
+	public void addListener(ProcessListener l) {
+		processListener.add(l);
+	}
+
+	public void removeListener(ProcessListener l) {
+		processListener.remove(l);
+	}
+
 	public boolean isRunning() {
-		return process.isRunning();
+		return running;
+	}
+
+	public stream.Process getProcess() {
+		return process;
+	}
+
+	public void run() {
+		running = true;
+		try {
+			for (ProcessListener l : this.processListener) {
+				l.processStarted(process);
+			}
+
+			process.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				process.finish();
+			} catch (Exception fe) {
+				fe.printStackTrace();
+			}
+		} finally {
+
+			for (ProcessListener l : this.processListener) {
+				l.processFinished(process);
+			}
+
+			running = false;
+		}
 	}
 }

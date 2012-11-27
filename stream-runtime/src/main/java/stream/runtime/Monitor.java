@@ -29,20 +29,21 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.ProcessContext;
 import stream.data.DataFactory;
+import stream.io.AbstractStream;
+import stream.io.SourceURL;
 import stream.util.parser.TimeParser;
 
 /**
  * @author chris
  * 
  */
-public class Monitor extends AbstractProcess {
+public class Monitor extends DefaultProcess {
 
 	static Logger log = LoggerFactory.getLogger(Monitor.class);
 	Long interval = 1000L;
 	String intervalString = "1000ms";
 
 	public Monitor() {
-		setDaemon(true);
 	}
 
 	/**
@@ -61,18 +62,6 @@ public class Monitor extends AbstractProcess {
 	}
 
 	/**
-	 * @see stream.runtime.AbstractProcess#getNextItem()
-	 */
-	@Override
-	public Data getNextItem() {
-		if (lastItem == null) {
-			lastItem = DataFactory.create();
-		} else
-			lastItem.clear();
-		return lastItem;
-	}
-
-	/**
 	 * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
 	 */
 	@Override
@@ -82,6 +71,14 @@ public class Monitor extends AbstractProcess {
 		try {
 			interval = TimeParser.parseTime(getInterval());
 			log.debug("Monitor-interval is {} ms", interval);
+
+			source = new AbstractStream((SourceURL) null) {
+				@Override
+				public Data readNext() throws Exception {
+					return DataFactory.create();
+				}
+			};
+
 		} catch (Exception e) {
 			interval = 1000L;
 			throw new Exception("Failed to initialize Monitor: "
@@ -94,14 +91,8 @@ public class Monitor extends AbstractProcess {
 		try {
 			Thread.sleep(interval);
 		} catch (InterruptedException e) {
-			if (!this.running) {
-				log.debug("Monitor finished.");
-				return data;
-			} else {
-				log.debug("Sleep interrupted.");
-				if (log.isDebugEnabled())
-					e.printStackTrace();
-			}
+			log.debug("Monitor finished.");
+			return data;
 		}
 		return data;
 	}

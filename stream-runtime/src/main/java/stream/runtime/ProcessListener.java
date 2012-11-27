@@ -9,7 +9,7 @@ package stream.runtime;
  */
 public interface ProcessListener {
 
-	public void processStarted(AbstractProcess p);
+	public void processStarted(stream.Process p);
 
-	public void processFinished(AbstractProcess p);
+	public void processFinished(stream.Process p);
 }

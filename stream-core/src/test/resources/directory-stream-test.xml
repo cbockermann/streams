@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<container id="process">
+
+     <!-- File entries from directory as Data -->
+     <stream id="list_of_files" class="stream.io.DirectoryStream"
+     		url="${file_url}" limit="3" />
+
+     <process input="list_of_files">
+         
+         <PrintData />
+         
+     </process>
+     		
+</container>

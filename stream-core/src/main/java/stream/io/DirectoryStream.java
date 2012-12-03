@@ -4,7 +4,6 @@
 package stream.io;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 
 import org.slf4j.Logger;
@@ -38,7 +37,11 @@ public class DirectoryStream extends AbstractStream {
 
 	@Override
 	public void init() throws Exception {
-		dir = new File(new URI(url.toString()));
+
+		log.debug("Initializing directory stream with URL '{}'", url.toString());
+		log.debug("   file path of URL is: {}", url.getFile());
+		dir = new File(url.getFile());
+		// dir = new File(new URI(url.toString()));
 		if (!dir.isDirectory())
 			throw new IllegalArgumentException("Directory not found");
 		dirPath = dir.getAbsolutePath();

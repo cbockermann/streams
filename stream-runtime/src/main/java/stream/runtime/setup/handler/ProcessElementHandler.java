@@ -90,7 +90,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 		if (log.isDebugEnabled()) {
 			for (String key : variables.keySet()) {
-				// log.debug("   '{}' = '{}'", key, variables.get(key));
+				log.debug("   '{}' = '{}'", key, variables.get(key));
 			}
 		}
 		Map<String, String> attr = objectFactory.getAttributes(element);
@@ -180,9 +180,9 @@ public class ProcessElementHandler implements ElementHandler {
 			Map<String, String> attr, ProcessContainer container,
 			Element element, Variables extraVariables) throws Exception {
 
-		log.info("Creating 'process' element, variable context is:");
+		log.debug("Creating 'process' element, variable context is:");
 		for (String key : extraVariables.keySet()) {
-			// log.info("  '{}' = '{}'", key, extraVariables.get(key));
+			log.debug("  '{}' = '{}'", key, extraVariables.get(key));
 		}
 
 		DefaultProcess process = (DefaultProcess) objectFactory.create(

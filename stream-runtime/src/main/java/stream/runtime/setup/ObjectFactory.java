@@ -320,7 +320,7 @@ public class ObjectFactory extends Variables {
 				+ node.getNodeName() + "'!");
 	}
 
-	public URL findDocumentation(String className) {
+	private URL findDocumentation(String className) {
 		String docResource = "/" + className.replace('.', '/') + ".md";
 		log.trace("Doc resource for '{}' is '{}'", className, docResource);
 		URL url = classLoader.getResource(docResource);

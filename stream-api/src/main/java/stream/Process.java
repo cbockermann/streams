@@ -7,6 +7,7 @@ import java.util.List;
 
 import stream.io.Sink;
 import stream.io.Source;
+import stream.runtime.LifeCycle;
 
 /**
  * <p>
@@ -18,7 +19,7 @@ import stream.io.Source;
  * @author Christian Bockermann, Hendrik Blom
  * 
  */
-public interface Process extends StatefulProcessor {
+public interface Process extends LifeCycle {
 
 	/**
 	 * The data source of this process.

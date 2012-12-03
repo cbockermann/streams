@@ -26,8 +26,8 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.Data;
-import stream.ProcessContext;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
 import stream.io.SourceURL;
@@ -65,7 +65,7 @@ public class Monitor extends DefaultProcess {
 	 * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
 	 */
 	@Override
-	public void init(ProcessContext context) throws Exception {
+	public void init(Context context) throws Exception {
 		super.init(context);
 
 		try {

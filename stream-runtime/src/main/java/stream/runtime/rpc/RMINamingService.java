@@ -17,6 +17,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.runtime.LifeCycle;
 import stream.service.NamingService;
 import stream.service.Service;
@@ -433,18 +434,18 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	/**
-	 * @see stream.runtime.LifeCycle#init()
-	 */
-	@Override
-	public void init() throws Exception {
-
-	}
-
-	/**
 	 * @see stream.runtime.LifeCycle#finish()
 	 */
 	@Override
 	public void finish() throws Exception {
 		announcer.finish();
+	}
+
+	/**
+	 * @see stream.runtime.LifeCycle#init(stream.Context)
+	 */
+	@Override
+	public void init(Context context) throws Exception {
+		// TODO This should be obsolete after refactoring...
 	}
 }

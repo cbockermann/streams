@@ -17,6 +17,7 @@ import org.w3c.dom.Element;
 import stream.Data;
 import stream.StormRunner;
 import stream.io.Stream;
+import stream.runtime.Variables;
 import stream.runtime.setup.DataStreamFactory;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
@@ -76,7 +77,8 @@ public class StreamSpout extends BaseRichSpout {
 			ObjectFactory obf = ObjectFactory.newInstance();
 			ProcessorFactory pf = new ProcessorFactory(obf);
 			log.debug("Creating stream from element {}", element);
-			stream = DataStreamFactory.createStream(obf, pf, element);
+			stream = DataStreamFactory.createStream(obf, pf, element,
+					new Variables());
 			stream.init();
 		} catch (Exception e) {
 			e.printStackTrace();

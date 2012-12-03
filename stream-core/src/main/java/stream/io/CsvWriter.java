@@ -345,6 +345,5 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		separator = ",";
 		lastHeader = null;
 		headerWritten = false;
-
 	}
 }

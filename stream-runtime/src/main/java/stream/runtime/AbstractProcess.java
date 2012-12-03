@@ -29,6 +29,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
@@ -47,7 +48,8 @@ public abstract class AbstractProcess implements stream.Process {
 
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
-	protected ProcessContext context;
+	protected Context parentContext;
+	protected ProcessContext processContext;
 
 	protected Source source;
 	protected Sink sink;
@@ -87,17 +89,8 @@ public abstract class AbstractProcess implements stream.Process {
 	}
 
 	/**
-	 * @see stream.StatefulProcessor#resetState()
-	 */
-	@Override
-	public void resetState() throws Exception {
-		// TODO: Was machen wir hier eigentlich?
-	}
-
-	/**
 	 * @see stream.Processor#process(stream.Data)
 	 */
-	@Override
 	public Data process(Data input) {
 
 		Data data = input;
@@ -115,15 +108,16 @@ public abstract class AbstractProcess implements stream.Process {
 	/**
 	 * @see stream.DataProcessor#init(stream.runtime.Context)
 	 */
-	public void init(ProcessContext context) throws Exception {
-		this.context = context;
+	public void init(Context context) throws Exception {
+
+		parentContext = context;
+		processContext = new ProcessContextImpl(context);
 
 		for (Processor proc : processors) {
 			if (proc instanceof StatefulProcessor) {
-				((StatefulProcessor) proc).init(context);
+				((StatefulProcessor) proc).init(processContext);
 			}
 		}
-
 	}
 
 	/**
@@ -197,7 +191,7 @@ public abstract class AbstractProcess implements stream.Process {
 	 * @return the context
 	 */
 	public ProcessContext getContext() {
-		return context;
+		return processContext;
 	}
 
 	public void add(Processor p) {

@@ -23,7 +23,6 @@
  */
 package stream.service;
 
-
 /**
  * <p>
  * This interface defines an abstract service. The interface is a marker for any

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.ProcessContext;
 import stream.service.NamingService;
 import stream.service.Service;
@@ -46,6 +47,10 @@ public class ProcessContextImpl implements ProcessContext {
 
 	public ProcessContextImpl() {
 		containerContext = null;
+	}
+
+	public ProcessContextImpl(Context ctx) {
+		this();
 	}
 
 	public ProcessContextImpl(ContainerContext ctx) {

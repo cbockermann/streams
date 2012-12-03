@@ -1,4 +1,4 @@
-VERSION=0.9.7-SNAPSHOT
+VERSION=0.9.8-SNAPSHOT
 REVISION=0
 NAME=streams
 BUILD=.build_tmp
@@ -17,14 +17,14 @@ update-license:
 	find stream-runtime -name '*.java' -exec perl src/main/scripts/prepend.pl {} LICENSE.preamble.txt \;
 
 plugin:
-	@cd stream-plugin && make plugin
+#	@cd stream-plugin && make plugin
 
 install-plugin:
-	@cd stream-plugin && make install
+#	@cd stream-plugin && make install
 
 clean:
 	@mvn clean
-	@cd stream-plugin && make clean
+#	@cd stream-plugin && make clean
 
 
 

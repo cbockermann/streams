@@ -33,7 +33,8 @@ public class ContainerBuilder {
 		//
 		ComputeGraph graph = createComputeGraph(xmlDoc);
 
-		// RTG = Streams-Wrapper Graph für Process,Stream,... || Storm Topology?
+		// RTG = Streams-Wrapper Graph fuer Process,Stream,... || Storm
+		// Topology?
 		//
 		RuntimeGraph rtg = createRuntimeGraph(graph);
 

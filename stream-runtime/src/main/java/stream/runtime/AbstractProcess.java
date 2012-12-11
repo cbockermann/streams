@@ -118,10 +118,10 @@ public abstract class AbstractProcess implements stream.Process {
 				((StatefulProcessor) proc).init(processContext);
 			}
 		}
-		log.info("Process {} (source: {}) initialized, processors: ", this,
+		log.debug("Process {} (source: {}) initialized, processors: ", this,
 				getSource());
 		for (Processor proc : processors) {
-			log.info("   {}", proc);
+			log.debug("   {}", proc);
 		}
 	}
 

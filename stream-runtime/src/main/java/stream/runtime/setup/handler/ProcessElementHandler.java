@@ -131,7 +131,7 @@ public class ProcessElementHandler implements ElementHandler {
 					ids[i] = "" + i;
 				}
 			}
-			log.info("Creating {} processes due to copies='{}'", ids.length,
+			log.debug("Creating {} processes due to copies='{}'", ids.length,
 					copies);
 
 			// Integer times = new Integer(copies);
@@ -145,7 +145,7 @@ public class ProcessElementHandler implements ElementHandler {
 						container, element, local);
 
 				String input = local.expand(src);
-				log.info("Setting source for process {} to {}", process, input);
+				log.debug("Setting source for process {} to {}", process, input);
 				process.setInput(input);
 
 				if (out != null) {
@@ -183,7 +183,7 @@ public class ProcessElementHandler implements ElementHandler {
 		DefaultProcess process = (DefaultProcess) objectFactory.create(
 				processClass, attr, extraVariables);
 		log.debug("Created Process object: {}", process);
-		log.info("Process input is: '{}'", process.getInput());
+		log.debug("Process input is: '{}'", process.getInput());
 		ProcessContext ctx = new ProcessContextImpl(container.getContext());
 		for (String key : attr.keySet()) {
 			ctx.set(key, attr.get(key));

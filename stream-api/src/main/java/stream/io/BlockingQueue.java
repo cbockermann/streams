@@ -92,7 +92,7 @@ public class BlockingQueue extends AbstractQueue {
 		}
 
 		if (closed || item == Data.END_OF_STREAM) {
-			log.info("Next data-item is end-of-stream event!");
+			log.debug("Next data-item is end-of-stream event!");
 			closed = true;
 			return null;
 		}

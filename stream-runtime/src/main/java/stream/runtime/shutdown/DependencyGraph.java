@@ -132,12 +132,12 @@ public class DependencyGraph {
 				this.edges.remove(edge);
 				Object target = edge.getTo();
 				if (this.getSourcesFor(target).isEmpty()) {
-					log.info(
+					log.debug(
 							"[graph-shutdown]     -> No more references to {}, adding to shutdown-queue",
 							target);
 					lifeObjects.addAll(remove(target, notify));
 				} else {
-					log.info("target {} has {} references left", target,
+					log.debug("target {} has {} references left", target,
 							getSourcesFor(target).size());
 				}
 			}

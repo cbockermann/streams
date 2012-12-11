@@ -118,6 +118,11 @@ public abstract class AbstractProcess implements stream.Process {
 				((StatefulProcessor) proc).init(processContext);
 			}
 		}
+		log.info("Process {} (source: {}) initialized, processors: ", this,
+				getSource());
+		for (Processor proc : processors) {
+			log.info("   {}", proc);
+		}
 	}
 
 	/**
@@ -125,7 +130,8 @@ public abstract class AbstractProcess implements stream.Process {
 	 */
 	public void finish() throws Exception {
 
-		log.debug("Finishing process...");
+		log.debug("Finishing process {} (source: {})...", this, this
+				.getSource().getId());
 		try {
 			for (Processor proc : processors) {
 				if (proc instanceof StatefulProcessor) {

@@ -26,7 +26,7 @@ package stream;
 import java.io.Serializable;
 import java.util.Map;
 
-import stream.data.DataFactory;
+import stream.data.DataImpl;
 
 /**
  * <p>
@@ -38,8 +38,6 @@ import stream.data.DataFactory;
  */
 public interface Data extends Map<String, Serializable>, Serializable {
 
-	public final static Data END_OF_STREAM = DataFactory.create();
-	
 	/**
 	 * attributes starting with this prefix are considered special and will not
 	 * be regarded for training classifiers
@@ -69,4 +67,18 @@ public interface Data extends Map<String, Serializable>, Serializable {
 			+ "prediction";
 
 	public Data createCopy();
+
+	public final static Data END_OF_STREAM = new DataImpl() {
+
+		/** The unique class ID */
+		private static final long serialVersionUID = -5458266268553759805L;
+
+		/**
+		 * There is only a single copy of the END_OF_STREAM item.
+		 */
+		@Override
+		public Data createCopy() {
+			return this;
+		}
+	};
 }

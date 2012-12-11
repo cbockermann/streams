@@ -1,0 +1,27 @@
+<container>
+    
+    <stream id="test" class="stream.io.CsvStream"
+        	url="classpath:/stream1.csv" />
+    
+    <service id="collector" class="stream.flow.EnqueueTestAssertion" />
+    
+    <process input="test">
+        
+        <!-- 
+        <PrintData />
+         -->
+        <Enqueue queue="queue:1" />
+        <Enqueue queue="queue:1" />
+        
+    </process>
+    <process input="queue:1">
+        <PrintData />
+    </process>
+    
+    <process input="queue:2">
+        <PrintData />
+    </process>
+<!-- 
+ -->    
+    
+</container>

@@ -76,6 +76,8 @@ public class BlockingQueue extends AbstractQueue {
 
 		Data item = null;
 		try {
+			if (closed)
+				return null;
 			item = queue.take();
 			log.debug("took item from queue: {}", item);
 		} catch (InterruptedException e) {
@@ -89,8 +91,8 @@ public class BlockingQueue extends AbstractQueue {
 			}
 		}
 
-		if (item == Data.END_OF_STREAM) {
-			log.debug("Next data-item is end-of-stream event!");
+		if (closed || item == Data.END_OF_STREAM) {
+			log.info("Next data-item is end-of-stream event!");
 			closed = true;
 			return null;
 		}
@@ -124,7 +126,11 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	public boolean enqueue(Data item) {
 		try {
-			queue.put(item);
+			synchronized (queue) {
+				if (!closed)
+					queue.put(item);
+				queue.notifyAll();
+			}
 			return true;
 		} catch (Exception e) {
 			log.error("Error enqueuing item: {}", e.getMessage());
@@ -139,6 +145,14 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void write(Data item) throws Exception {
-		queue.put(item);
+		synchronized (queue) {
+			if (closed) {
+				queue.notifyAll();
+				log.error("Queue already closed.");
+				// throw new Exception("Queue already closed.");
+			}
+			queue.put(item);
+			queue.notifyAll();
+		}
 	}
 }

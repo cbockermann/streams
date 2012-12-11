@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Process;
-import stream.io.Stream;
+import stream.Processor;
+import stream.io.Source;
+import stream.runtime.AbstractProcess;
 import stream.runtime.Monitor;
 
 /**
@@ -70,31 +72,38 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 				return true;
 			}
 
+			int hangon = 0;
+
+			for (Object root : graph.getRootSources()) {
+				log.info("Root source: {}", root);
+			}
+
 			for (Object node : graph.nodes) {
-				if (node instanceof Stream) {
+				if (node instanceof Source) {
 					continue;
 				}
 
 				if (node instanceof Monitor) {
 					continue;
 				}
-
-				/*
-				 * if (node instanceof Processor && (!(node instanceof
-				 * AbstractProcess))) {
-				 * log.debug("Ignoring dependency-condition for processor '{}'",
-				 * node); continue; }
-				 */
+				if (node instanceof Processor
+						&& (!(node instanceof AbstractProcess))) {
+					log.debug(
+							"Ignoring dependency-condition for processor '{}'",
+							node);
+					continue;
+				}
 
 				if (!graph.getSourcesFor(node).isEmpty()) {
-					log.debug(
+					log.info(
 							"Found referenced node '{}' with {} references -> shutdown condition not met.",
 							node, graph.getSourcesFor(node).size());
-					log.debug("   references are: {}",
-							graph.getSourcesFor(node));
-					return false;
+					log.info("   references are: {}", graph.getSourcesFor(node));
+					hangon++;
 				}
 			}
+			if (hangon > 0)
+				return false;
 
 			log.debug("shutdown-condition fulfilled!");
 			return true;
@@ -105,8 +114,8 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 		synchronized (graph) {
 			while (!isMet(graph)) {
 				try {
-					log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
-					graph.wait();
+					log.info("shutdown-condition not met, waiting for changes in the dependency-graph...");
+					graph.wait(1000L);
 				} catch (Exception e) {
 					log.error("Error while waiting for shutdown-condition: {}",
 							e.getMessage());

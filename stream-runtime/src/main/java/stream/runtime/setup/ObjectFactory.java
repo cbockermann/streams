@@ -286,7 +286,7 @@ public class ObjectFactory extends Variables {
 
 			URL doc = findDocumentation(node.getNodeName());
 			if (doc == null)
-				log.warn("No documentation provided for class '{}'!",
+				log.debug("No documentation provided for class '{}'!",
 						node.getNodeName());
 
 			return node.getNodeName();
@@ -307,7 +307,7 @@ public class ObjectFactory extends Variables {
 
 				URL doc = findDocumentation(clazz.getName());
 				if (doc == null)
-					log.warn("No documentation provided for class '{}'!",
+					log.debug("No documentation provided for class '{}'!",
 							clazz.getName());
 
 				return clazz.getName();

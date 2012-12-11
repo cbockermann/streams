@@ -151,7 +151,7 @@ public class PropertiesHandler implements DocumentHandler {
 							&& !"".equals(value.trim())) {
 						String k = key.trim();
 						String v = value.trim();
-						log.info("Setting property {} = {}", k, v);
+						// log.info("Setting property {} = {}", k, v);
 						variables.set(k, v);
 					}
 				}
@@ -168,8 +168,8 @@ public class PropertiesHandler implements DocumentHandler {
 	private void addSystemProperties(ProcessContainer container,
 			Variables variables) {
 		for (Object key : System.getProperties().keySet()) {
-			log.debug("Adding system property '{}' = {}", key,
-					System.getProperty(key.toString()));
+			// log.debug("Adding system property '{}' = {}", key,
+			// System.getProperty(key.toString()));
 			variables.set(key.toString(), System.getProperty(key.toString()));
 		}
 	}

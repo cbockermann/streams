@@ -93,7 +93,7 @@ public class ProcessContainer {
 
 	final static List<ProcessContainer> container = new ArrayList<ProcessContainer>();
 
-	private static boolean runShutdownHook = true;
+	private static Boolean runShutdownHook = true;
 
 	static {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
@@ -395,7 +395,7 @@ public class ProcessContainer {
 
 		connectProcesses();
 
-		// injectServices();
+		injectServices();
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class ProcessContainer {
 			log.debug("Stream-process started.");
 		}
 
-		log.debug("Waiting for container to finish...");
+		log.info("Waiting for container to finish...");
 
 		ShutdownCondition con = null;
 
@@ -579,13 +579,22 @@ public class ProcessContainer {
 
 	public void shutdown() {
 
-		if (!runShutdownHook)
-			return;
+		synchronized (runShutdownHook) {
+			if (!runShutdownHook)
+				return;
+
+			runShutdownHook = false; // ensure that the shutdown hook is only
+										// run
+			// *once*
+		}
+
+		List<Object> finished = new ArrayList<Object>();
 
 		synchronized (processes) {
 			for (Process process : processes) {
 				log.debug("Sending SHUTDOWN signal to process {}", process);
 				try {
+					finished.add(process);
 					process.finish();
 				} catch (Exception e) {
 					log.error("Failed to properly shutdown process: {}",
@@ -597,6 +606,11 @@ public class ProcessContainer {
 		log.debug("Sending finish() signal to life-cycle objects...");
 		for (LifeCycle object : lifeCyleObjects) {
 			try {
+				if (finished.contains(object))
+					continue;
+				else
+					finished.add(object);
+
 				log.debug("   sending finish() to {}", object);
 				object.finish();
 			} catch (Exception e) {

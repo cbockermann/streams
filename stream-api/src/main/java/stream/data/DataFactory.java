@@ -45,7 +45,6 @@ public class DataFactory {
 	public static DataFactory defaultDataFactory = new DataFactory();
 	private static long dataItemsCreated = 0L;
 
-	
 	protected DataFactory() {
 	}
 
@@ -75,7 +74,6 @@ public class DataFactory {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public Data createDataItem() {
 		//
 		// The DataImpl constructor is only marked as deprecated to make

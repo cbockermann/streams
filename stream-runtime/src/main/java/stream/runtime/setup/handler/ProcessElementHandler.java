@@ -88,11 +88,6 @@ public class ProcessElementHandler implements ElementHandler {
 	public void handleElement(ProcessContainer container, Element element,
 			Variables variables) throws Exception {
 
-		if (log.isDebugEnabled()) {
-			for (String key : variables.keySet()) {
-				log.debug("   '{}' = '{}'", key, variables.get(key));
-			}
-		}
 		Map<String, String> attr = objectFactory.getAttributes(element);
 		String src = attr.get("source");
 		if (src == null)
@@ -105,7 +100,7 @@ public class ProcessElementHandler implements ElementHandler {
 		String processClass = defaultProcessImplementation;
 		if (attr.containsKey("class")) {
 			processClass = attr.get("class");
-			log.info("Using custom process class '{}'", processClass);
+			log.debug("Using custom process class '{}'", processClass);
 		}
 
 		String id = attr.get("id");
@@ -123,7 +118,7 @@ public class ProcessElementHandler implements ElementHandler {
 		if (copies != null && !"".equals(copies.trim())) {
 
 			Variables var = new Variables(variables);
-			log.info("Expanding '{}'", copies);
+			log.debug("Expanding '{}'", copies);
 			copies = var.expand(copies);
 
 			String[] ids;
@@ -145,7 +140,7 @@ public class ProcessElementHandler implements ElementHandler {
 				Variables local = new Variables(variables);
 				local.put("process.id", pid);
 				local.put("copy.id", pid);
-				log.info("Creating process '{}'", pid);
+				log.debug("Creating process '{}'", pid);
 				DefaultProcess process = createProcess(processClass, attr,
 						container, element, local);
 
@@ -155,11 +150,11 @@ public class ProcessElementHandler implements ElementHandler {
 
 				if (out != null) {
 					String processOut = local.expand(out);
-					log.info("Setting process output for process {} to {}",
+					log.debug("Setting process output for process {} to {}",
 							process, processOut);
 					process.setOutput(processOut);
 				} else {
-					log.info("Process has no output connection...");
+					log.debug("Process has no output connection...");
 				}
 
 				container.getProcesses().add(process);

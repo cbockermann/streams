@@ -55,6 +55,8 @@ public abstract class AbstractProcess implements stream.Process {
 	protected Sink sink;
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
+	int counts[];
+	long millis[];
 
 	/**
 	 * @see stream.Process#setSource(stream.io.Source)
@@ -95,11 +97,16 @@ public abstract class AbstractProcess implements stream.Process {
 
 		Data data = input;
 		log.debug("processing data {}", input);
+		int i = 0;
 		for (Processor proc : processors) {
+			long start = System.currentTimeMillis();
 			data = proc.process(data);
+			counts[i]++;
+			millis[i] += (System.currentTimeMillis() - start);
 			if (data == null) {
 				return null;
 			}
+			i++;
 		}
 
 		return data;
@@ -120,8 +127,12 @@ public abstract class AbstractProcess implements stream.Process {
 		}
 		log.debug("Process {} (source: {}) initialized, processors: ", this,
 				getSource());
+		int i = 0;
 		for (Processor proc : processors) {
 			log.debug("   {}", proc);
+			counts[i] = 0;
+			millis[i] = 0;
+			i++;
 		}
 	}
 
@@ -133,6 +144,7 @@ public abstract class AbstractProcess implements stream.Process {
 		log.debug("Finishing process {} (source: {})...", this, this
 				.getSource().getId());
 		try {
+			int i = 0;
 			for (Processor proc : processors) {
 				if (proc instanceof StatefulProcessor) {
 					try {
@@ -144,8 +156,10 @@ public abstract class AbstractProcess implements stream.Process {
 						if (log.isDebugEnabled())
 							e.printStackTrace();
 					}
-
 				}
+				log.info("processor {} processed {} items", proc, counts[i]);
+				log.info("   average time is {} ms/item", ((double) millis[i])
+						/ ((double) counts[i]));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -202,10 +216,14 @@ public abstract class AbstractProcess implements stream.Process {
 
 	public void add(Processor p) {
 		processors.add(p);
+		counts = new int[processors.size()];
+		millis = new long[processors.size()];
 	}
 
 	public void remove(Processor p) {
 		processors.remove(p);
+		counts = new int[processors.size()];
+		millis = new long[processors.size()];
 	}
 
 	public List<Processor> getProcessors() {

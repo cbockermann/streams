@@ -75,7 +75,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			int hangon = 0;
 
 			for (Object root : graph.getRootSources()) {
-				log.info("Root source: {}", root);
+				// log.info("Root source: {}", root);
 			}
 
 			for (Object node : graph.nodes) {
@@ -91,16 +91,17 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 					log.debug(
 							"Ignoring dependency-condition for processor '{}'",
 							node);
-					continue;
-				}
-
-				if (!graph.getSourcesFor(node).isEmpty()) {
-					log.info(
-							"Found referenced node '{}' with {} references -> shutdown condition not met.",
-							node, graph.getSourcesFor(node).size());
-					log.info("   references are: {}", graph.getSourcesFor(node));
+					// continue;
 					hangon++;
 				}
+
+				/*
+				 * if (!graph.getSourcesFor(node).isEmpty()) { //log.info( //
+				 * "Found referenced node '{}' with {} references -> shutdown condition not met."
+				 * , // node, graph.getSourcesFor(node).size());
+				 * //log.info("   references are: {}",
+				 * graph.getSourcesFor(node)); hangon++; }
+				 */
 			}
 			if (hangon > 0)
 				return false;
@@ -114,7 +115,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 		synchronized (graph) {
 			while (!isMet(graph)) {
 				try {
-					log.info("shutdown-condition not met, waiting for changes in the dependency-graph...");
+					// log.info("shutdown-condition not met, waiting for changes in the dependency-graph...");
 					graph.wait(1000L);
 				} catch (Exception e) {
 					log.error("Error while waiting for shutdown-condition: {}",

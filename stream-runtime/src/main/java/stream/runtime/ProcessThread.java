@@ -26,6 +26,11 @@ package stream.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.ProcessContext;
+
 /**
  * <p>
  * 
@@ -36,13 +41,16 @@ import java.util.List;
  */
 public class ProcessThread extends Thread {
 
+	static Logger log = LoggerFactory.getLogger(ProcessThread.class);
 	final stream.Process process;
+	final ProcessContext context;
 	boolean running = false;
 
 	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
-	public ProcessThread(stream.Process process) {
+	public ProcessThread(stream.Process process, ProcessContext ctx) {
 		this.process = process;
+		this.context = ctx;
 	}
 
 	public void addListener(ProcessListener l) {
@@ -61,9 +69,15 @@ public class ProcessThread extends Thread {
 		return process;
 	}
 
+	public void init() throws Exception {
+		log.debug("Initializing process with process-context...");
+		process.init(context);
+	}
+
 	public void run() {
 		running = true;
 		try {
+
 			for (ProcessListener l : this.processListener) {
 				l.processStarted(process);
 			}

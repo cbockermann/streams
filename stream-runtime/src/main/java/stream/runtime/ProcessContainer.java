@@ -490,10 +490,10 @@ public class ProcessContainer {
 				ctx = new ProcessContextImpl(context);
 				processContexts.put(spu, ctx);
 			}
-			log.debug("Initializing process with process-context...");
-			spu.init(ctx);
+			// log.debug("Initializing process with process-context...");
+			// spu.init(ctx);
 
-			ProcessThread worker = new ProcessThread(spu);
+			ProcessThread worker = new ProcessThread(spu, ctx);
 			worker.setDaemon(true);
 			worker.addListener(new ProcessListener() {
 
@@ -523,6 +523,9 @@ public class ProcessContainer {
 					}
 				}
 			});
+
+			log.debug("Initializing stream-process [{}]", spu);
+			worker.init();
 
 			log.debug("Starting stream-process [{}]", spu);
 			worker.start();

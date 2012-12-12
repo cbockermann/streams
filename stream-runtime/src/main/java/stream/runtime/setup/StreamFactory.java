@@ -47,9 +47,9 @@ import stream.runtime.Variables;
  * @author chris
  * 
  */
-public class DataStreamFactory {
+public class StreamFactory {
 
-	static Logger log = LoggerFactory.getLogger(DataStreamFactory.class);
+	static Logger log = LoggerFactory.getLogger(StreamFactory.class);
 
 	final static Map<String, String> streamClassesByExtension = new LinkedHashMap<String, String>();
 
@@ -61,7 +61,6 @@ public class DataStreamFactory {
 		streamClassesByExtension.put("arff", "stream.io.ArffStream");
 	}
 
-	@SuppressWarnings("deprecation")
 	public static Stream createStream(ObjectFactory objectFactory,
 			ProcessorFactory processorFactory, Element node, Variables variables)
 			throws Exception {

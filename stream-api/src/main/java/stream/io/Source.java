@@ -6,8 +6,8 @@ package stream.io;
 import stream.Data;
 
 /**
- * @author chris
- *
+ * @author Christian Bockermann
+ * 
  */
 public interface Source {
 

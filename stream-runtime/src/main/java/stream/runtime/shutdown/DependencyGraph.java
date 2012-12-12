@@ -33,6 +33,25 @@ public class DependencyGraph {
 		this.notify();
 	}
 
+	/**
+	 * This method returns a set of sources that are referenced as inputs (e.g.
+	 * by processes) but are not referenced as outputs (e.g. outputs by
+	 * "enqueue").
+	 * 
+	 * @return
+	 */
+	public synchronized Set<Object> getRootSources() {
+		Set<Object> sources = getSources();
+		Iterator<Object> it = sources.iterator();
+		while (it.hasNext()) {
+			Object source = it.next();
+			if (!getSourcesFor(source).isEmpty()) {
+				it.remove();
+			}
+		}
+		return sources;
+	}
+
 	public synchronized Set<Object> getSources() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
@@ -113,10 +132,13 @@ public class DependencyGraph {
 				this.edges.remove(edge);
 				Object target = edge.getTo();
 				if (this.getSourcesFor(target).isEmpty()) {
-					log.trace(
+					log.debug(
 							"[graph-shutdown]     -> No more references to {}, adding to shutdown-queue",
 							target);
 					lifeObjects.addAll(remove(target, notify));
+				} else {
+					log.debug("target {} has {} references left", target,
+							getSourcesFor(target).size());
 				}
 			}
 		}

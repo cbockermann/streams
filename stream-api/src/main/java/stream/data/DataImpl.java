@@ -55,10 +55,10 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	private static final long serialVersionUID = -7751681008628413236L;
 
 	/**
-	 * @deprecated Creation of Data items should be done with
-	 *             {@link stream.data.DataFactory#create()}
+	 * Creation of Data items should be done with
+	 * {@link stream.data.DataFactory#create()}
 	 */
-	public DataImpl() {
+	protected DataImpl() {
 	}
 
 	/**
@@ -98,6 +98,9 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	@Override
 	public Data createCopy() {
 		try {
+			if (this == Data.END_OF_STREAM)
+				return Data.END_OF_STREAM;
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			oos.writeObject(this);

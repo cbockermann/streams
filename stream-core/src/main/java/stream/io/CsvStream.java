@@ -113,44 +113,6 @@ public class CsvStream extends AbstractLineStream {
 		this.keys = keys;
 	}
 
-	public void readHeader() throws Exception {
-		log.debug("Reading header, splitExpression is '{}'", splitExpression);
-		if (buffer == null)
-			buffer = new LinkedList<String>();
-
-		String[] tok;
-
-		if (keys == null || keys.length == 0) {
-
-			String line = reader.readLine();
-			log.debug("line is: {}", line);
-			while (line.startsWith("#"))
-				line = line.substring(1);
-
-			tok = line.split(splitExpression);
-			for (int i = 0; i < tok.length; i++) {
-				tok[i] = removeQuotes(tok[i]);
-			}
-		} else
-			tok = keys;
-
-		String data = reader.readLine();
-		while (data.startsWith("#")) {
-			data = reader.readLine();
-		}
-
-		buffer.add(data);
-		String dt[] = data.split(splitExpression);
-		for (int i = 0; i < tok.length && i < dt.length; i++) {
-			if (i < dt.length) {
-				if (dt[i].matches("-{0,1}\\d*\\.\\d*E{0,1}-{0,1}\\d*"))
-					attributes.put(tok[i], Double.class);
-				else
-					attributes.put(tok[i], String.class);
-			}
-		}
-	}
-
 	/**
 	 * @see stream.io.Stream#read()
 	 */
@@ -162,12 +124,7 @@ public class CsvStream extends AbstractLineStream {
 			if (line.startsWith("#")) {
 				String dt[] = line.substring(1).split(splitExpression);
 				for (int i = 0; i < dt.length; i++) {
-					if (i < dt.length) {
-						if (dt[i].matches("(-|\\+)?\\d*\\.\\d*"))
-							attributes.put(dt[i], Double.class);
-						else
-							attributes.put(dt[i], String.class);
-					}
+					attributes.put(dt[i], String.class);
 				}
 			}
 
@@ -175,10 +132,7 @@ public class CsvStream extends AbstractLineStream {
 		}
 
 		if (line != null && !line.trim().equals("")) {
-			String[] tok = line.split(splitExpression); // QuotedStringTokenizer.splitRespectQuotes(
-			// line, ';');
-			// //line.split( "(;|,)"
-			// );
+			String[] tok = line.split(splitExpression);
 			int i = 0;
 			for (String name : attributes.keySet()) {
 				if (i < tok.length) {

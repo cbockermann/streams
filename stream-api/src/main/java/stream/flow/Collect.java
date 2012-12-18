@@ -69,25 +69,26 @@ public class Collect implements Processor {
 	/**
 	 * @see stream.Processor#process(stream.Data)
 	 */
-	@Override
-	public Data process(Data input) {
+    @Override
+    public Data process(Data input) {
 
-		if (items.size() < count) {
-			log.debug("Collecting next item, {} already collected.",
-					items.size());
-			items.add(DataFactory.create(input));
-			return null;
-		} else {
-			log.debug("Finished with my collection, emitting the item-array in a new item.");
-			Data[] vals = new Data[items.size()];
-			for (int i = 0; i < vals.length; i++) {
-				vals[i] = items.get(i);
-			}
+        if (items.size() < count) {
+            log.debug("Collecting next item, {} already collected.",
+                    items.size());
+            items.add(DataFactory.create(input));
+        }
+        if (items.size() == count) {
+            log.debug("Finished with my collection, emitting the item-array in a new item.");
+            Data[] vals = new Data[items.size()];
+            for (int i = 0; i < vals.length; i++) {
+                vals[i] = items.get(i);
+            }
 
-			Data collection = DataFactory.create();
-			collection.put(key, vals);
-			items.clear();
-			return collection;
-		}
-	}
+            Data collection = DataFactory.create();
+            collection.put(key, vals);
+            items.clear();
+            return collection;
+        } else
+            return null;
+    }
 }

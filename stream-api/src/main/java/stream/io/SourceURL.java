@@ -117,6 +117,10 @@ public final class SourceURL implements Serializable {
 			return url.openStream();
 		}
 
+		if ("stdin".equalsIgnoreCase(protocol)) {
+			return System.in;
+		}
+
 		if ("classpath".equalsIgnoreCase(protocol)) {
 			log.debug("Returning InputStream for classpath resource '{}'",
 					getPath());

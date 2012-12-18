@@ -145,12 +145,24 @@ public class PredictionError extends AbstractProcessor {
 				if (key.startsWith(Data.PREDICTION_PREFIX)) {
 					Serializable pred = data.get(key);
 
+					String name = key
+							.substring(Data.PREDICTION_PREFIX.length());
+
 					String errKey = key.replaceFirst(Data.PREDICTION_PREFIX,
 							prefix);
 					if (pred == null)
 						continue;
 					Double error = loss.loss(labelValue, pred);
 					errors.put(errKey, error);
+
+					ConfusionMatrix<Serializable> matrix = this.confusionMatrices
+							.get(name);
+					if (matrix == null) {
+						matrix = new ConfusionMatrix<Serializable>();
+						confusionMatrices.put(name, matrix);
+					}
+
+					matrix.add(labelValue, pred);
 				}
 			}
 		}

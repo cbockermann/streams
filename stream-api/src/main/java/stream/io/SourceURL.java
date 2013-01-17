@@ -3,6 +3,8 @@
  */
 package stream.io;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -67,7 +69,8 @@ public final class SourceURL implements Serializable {
 		this.urlString = urlString;
 
 		if (urlString.toLowerCase().startsWith("file:")
-				|| urlString.toLowerCase().startsWith("classpath")) {
+				|| urlString.toLowerCase().startsWith("classpath")
+				|| urlString.toLowerCase().startsWith("fifo")) {
 			ParserGenerator gen = new ParserGenerator(FILE_GRAMMAR);
 			Parser<Map<String, String>> parser = gen.newParser();
 			Map<String, String> vals = parser.parse(urlString);
@@ -138,11 +141,48 @@ public final class SourceURL implements Serializable {
 			return con.getInputStream();
 		}
 
+		String theUrl = this.urlString;
 		try {
-			URL url = new URL(this.urlString);
 
-			if (urlString.toLowerCase().endsWith(".gz")) {
-				log.debug("Opening URL {} as GZIP stream...", urlString);
+			if (theUrl.startsWith("fifo:")) {
+
+				log.info("Handling FIFO URL pattern...");
+				theUrl = theUrl.replace("fifo:", "file:");
+				File file = new File(theUrl.replace("file:", ""));
+				if (!file.exists()) {
+					log.info("Creating new fifo file '{}' with mkfifo", file);
+					Process p = Runtime.getRuntime().exec(
+							"mkfifo " + file.getAbsolutePath());
+					log.info("Waiting for mkfifo to return...");
+					int ret = p.waitFor();
+					log.info("mkfifo finished: {}", ret);
+				} else {
+					log.info("Using existing fifo-file '{}'", file);
+				}
+
+				if (!file.exists()) {
+					throw new IOException(
+							"Failed to create/acquire FIFO file '"
+									+ file.getAbsolutePath() + "'!");
+				}
+
+				if (file.getName().endsWith(".gz")) {
+					log.info(
+							"Returning GZIP around FileInputStream for FIFO {}",
+							file);
+					return new GZIPInputStream(new FileInputStream(file));
+				} else {
+					log.info("Returning FileInputStream for FIFO {}", file);
+					FileInputStream fis = new FileInputStream(file);
+					return fis;
+				}
+			}
+
+			log.info("The URL string is: '{}'", theUrl);
+			URL url = new URL(theUrl);
+
+			if (theUrl.toLowerCase().endsWith(".gz")) {
+				log.debug("Opening URL {} as GZIP stream...", theUrl);
 				return new GZIPInputStream(url.openStream());
 			}
 
@@ -150,7 +190,7 @@ public final class SourceURL implements Serializable {
 		} catch (Exception e) {
 			log.error(
 					"Failed to open '{}' with default Java URL mechanism: {}",
-					urlString, e.getMessage());
+					theUrl, e.getMessage());
 			throw new IOException("No handler found for protocol '" + protocol
 					+ "'!");
 		}

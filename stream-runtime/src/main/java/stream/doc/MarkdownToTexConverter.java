@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.annotations.Parameter;
 import stream.runtime.setup.ParameterDiscovery;
 
@@ -21,8 +24,10 @@ import stream.runtime.setup.ParameterDiscovery;
  * @author chris
  * 
  */
-public class MarkdownToTexConverter implements DocConverter {
+public class MarkdownToTexConverter extends AbstractDocConverter {
 
+	static Logger log = LoggerFactory.getLogger(MarkdownToTexConverter.class);
+	final File pandoc = new File("/usr/local/bin/pandoc");
 	int level = 0;
 
 	/**
@@ -32,6 +37,10 @@ public class MarkdownToTexConverter implements DocConverter {
 	@Override
 	public void convert(InputStream in, OutputStream out) {
 
+		if (!pandoc.canExecute()) {
+			log.debug("Cannot find pandoc command!");
+		}
+
 		try {
 			File tmp = File.createTempFile("markdown_input", ".md");
 
@@ -40,11 +49,9 @@ public class MarkdownToTexConverter implements DocConverter {
 			fos.close();
 
 			File tmp2 = File.createTempFile("pandoc_output", ".tex");
-			String exec = "/usr/local/bin/pandoc -f markdown -t latex --base-header-level="
-					+ level
-					+ " -o "
-					+ tmp2.getAbsolutePath()
-					+ " "
+			String exec = pandoc.getAbsolutePath()
+					+ " -f markdown -t latex --base-header-level=" + level
+					+ " -o " + tmp2.getAbsolutePath() + " "
 					+ tmp.getAbsolutePath();
 			// System.out.println("Executing: " + exec);
 			Process pandoc = Runtime.getRuntime().exec(exec);
@@ -77,7 +84,7 @@ public class MarkdownToTexConverter implements DocConverter {
 			if (!path.isEmpty()) {
 				path = path.substring(1);
 			}
-			p.println("\\input{" + path.replace('/', '_') + "_"
+			p.println("\\input{" + elem.prefix + path.replace('/', '_') + "_"
 					+ elem.name.replace(".md", "") + "}");
 		}
 		p.flush();
@@ -100,7 +107,7 @@ public class MarkdownToTexConverter implements DocConverter {
 		out.println("\\begin{center}{\\footnotesize");
 		out.println("{\\renewcommand{\\arraystretch}{1.4}");
 		out.println("\\textsf{");
-		out.println("\\begin{tabular}{|c|c|p{9cm}|c|} \\hline");
+		out.println("\\begin{tabular}{|c|c|p{\\parameterDescriptionWidth}|c|} \\hline");
 		out.println("\\textbf{Parameter} & \\textbf{Type} & \\textbf{Description} & \\textbf{Required} \\\\ \\hline  ");
 
 		for (String key : tmp.keySet()) {

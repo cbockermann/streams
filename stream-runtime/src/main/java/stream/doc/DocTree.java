@@ -32,6 +32,7 @@ public class DocTree implements Comparable<DocTree> {
 
 	static Logger log = LoggerFactory.getLogger(DocTree.class);
 	DocTree parent = null;
+	String prefix = "API_";
 	final String name;
 	final SortedSet<DocTree> children = new TreeSet<DocTree>();
 
@@ -129,17 +130,38 @@ public class DocTree implements Comparable<DocTree> {
 			if (!p.isEmpty())
 				p = p.substring(1);
 
-			File indexTex = new File(base.getAbsolutePath() + "/"
-					+ p.replace('/', '_') + "_index.tex");
+			p = p.replace('/', '_') + "_index.tex";
+			while (p.startsWith("_"))
+				p = p.substring(1);
+
+			File indexTex = new File(base.getAbsolutePath() + "/" + prefix + p);
 			indexTex.getParentFile().mkdirs();
 			out = new PrintStream(new FileOutputStream(indexTex));
 
+			URL texUrl;
 			URL url = DocTree.class.getResource(getPath() + "/index.md");
-			if (url != null) {
-				DocGenerator.converter.convert(url.openStream(), out);
-				out.println();
-				out.println();
+
+			try {
+				// Class<?> clazz = Class.forName(getPath().replace('/', '.'));
+
+				texUrl = DocTree.class.getResource(getPath() + "/index.tex");
+				log.info("index.tex for path {} is: {}", getPath(), texUrl);
+				if (texUrl != null) {
+					DocGenerator.copy(texUrl.openStream(), out);
+					out.println();
+					out.println();
+					out.println();
+				} else {
+					if (url != null) {
+						DocGenerator.converter.convert(url.openStream(), out);
+						out.println();
+						out.println();
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 			indexTex.getParentFile().mkdirs();
 
 			List<DocTree> list = new ArrayList<DocTree>(children);
@@ -149,7 +171,7 @@ public class DocTree implements Comparable<DocTree> {
 				URL docUrl = DocTree.class.getResource(ch.getPath() + "/"
 						+ ch.name);
 
-				URL texUrl = DocTree.class.getResource(ch.getPath() + "/"
+				texUrl = DocTree.class.getResource(ch.getPath() + "/"
 						+ ch.name.replace(".md", ".tex"));
 				if (docUrl == null && texUrl == null) {
 					log.debug("Not linking non-existing document url for {}",
@@ -179,7 +201,7 @@ public class DocTree implements Comparable<DocTree> {
 				return;
 
 			log.debug("Converting doc-tree leaf '{}'", path);
-			File md = new File(base.getAbsolutePath() + File.separator
+			File md = new File(base.getAbsolutePath() + File.separator + prefix
 					+ getPath().substring(1).replace('/', '_') + "_" + name);
 			generateTex(md);
 		}

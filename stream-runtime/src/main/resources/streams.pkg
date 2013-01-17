@@ -19,3 +19,5 @@
 \newcommand{\Package}[1]{\subsubsection{\label{api:#1}Processors in Package {\ttfamily #1}}}
 \newcommand{\Processor}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}
 %\newcomnmand{\Processor}[1]{\subsubsubsection{\label{api:#1}Processor {\ttfamily #1}}
+
+\newcommand{\parameterDescriptionWidth}{8cm}

@@ -36,6 +36,9 @@ public class FifoInputStreamTest {
 			file.deleteOnExit();
 			log.info("Testing FifoInputStream with fifo at {}", file);
 
+			if (System.getProperty("testing") == null)
+				return;
+
 			final FifoInputStream fis = new FifoInputStream(file);
 
 			// Generator g = new Generator(file);

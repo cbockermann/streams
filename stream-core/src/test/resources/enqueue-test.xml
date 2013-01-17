@@ -11,7 +11,7 @@
         <PrintData />
          -->
         <Enqueue queue="queue:1" />
-        <Enqueue queue="queue:1" />
+        <Enqueue queue="queue:2" />
         
     </process>
     <process input="queue:1">

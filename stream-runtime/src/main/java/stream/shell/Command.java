@@ -3,7 +3,7 @@
  */
 package stream.shell;
 
-import stream.Shell;
+import stream.DebugShell;
 
 /**
  * @author chris
@@ -11,9 +11,9 @@ import stream.Shell;
  */
 public abstract class Command {
 
-	final Shell shell;
+	final DebugShell shell;
 
-	public Command(Shell shell) {
+	public Command(DebugShell shell) {
 		this.shell = shell;
 	}
 

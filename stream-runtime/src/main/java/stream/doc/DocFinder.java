@@ -26,6 +26,8 @@ package stream.doc;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -49,7 +51,7 @@ public class DocFinder {
 
 	public static boolean matches(String[] patterns, Class<?> clazz) {
 
-		if (patterns.length == 0)
+		if (patterns == null || patterns.length == 0)
 			return true;
 
 		try {
@@ -146,4 +148,73 @@ public class DocFinder {
 				+ fmt.format(complete.doubleValue() / total.doubleValue()));
 	}
 
+	/**
+	 * @param args
+	 */
+	public static Map<Class<?>, URL> findDocumentations(String[] packages)
+			throws Exception {
+
+		Map<Class<?>, URL> docTexts = new LinkedHashMap<Class<?>, URL>();
+
+		Class<?>[] classes = ClassFinder.getClasses("");
+
+		SortedSet<String> docs = new TreeSet<String>();
+		SortedSet<String> missing = new TreeSet<String>();
+
+		for (Class<?> clazz : classes) {
+
+			if (Modifier.isAbstract(clazz.getModifiers())
+					|| Modifier.isInterface(clazz.getModifiers()))
+				continue;
+
+			if (clazz.isAnnotationPresent(Internal.class)) {
+				// System.out.println("Skipping internal class " + clazz);
+				continue;
+			}
+
+			for (Class<?> apiClass : CLASSES) {
+
+				if (apiClass.isAssignableFrom(clazz)) {
+
+					if (!matches(packages, clazz)) {
+						log.info("Skipping class {}", clazz);
+						continue;
+					}
+
+					if (clazz.isAnnotationPresent(java.lang.Deprecated.class)) {
+						System.out
+								.println("Skipping deprecated class " + clazz);
+						break;
+					}
+
+					log.debug("Found processor-class {}", clazz);
+					log.debug("    clazz.getName() = {}", clazz.getName());
+					String doc = "/" + clazz.getName().replace('.', '/')
+							+ ".md";
+					log.debug("    docs are at {}", doc);
+
+					URL url = DocFinder.class.getResource(doc);
+
+					String tex = "/" + clazz.getName().replace('.', '/')
+							+ ".tex";
+					URL texUrl = DocFinder.class.getResource(tex);
+					if (texUrl != null)
+						url = texUrl;
+
+					if (url != null) {
+						docs.add(doc);
+
+						docTexts.put(clazz, url);
+
+					} else {
+						missing.add(doc);
+						log.error("No documentation provided for class {}",
+								clazz);
+					}
+				}
+			}
+		}
+
+		return docTexts;
+	}
 }

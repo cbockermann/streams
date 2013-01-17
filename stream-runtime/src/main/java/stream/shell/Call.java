@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Shell;
+import stream.DebugShell;
 import stream.service.NamingService;
 import stream.service.Service;
 
@@ -24,7 +24,7 @@ public class Call extends Command {
 	/**
 	 * @param shell
 	 */
-	public Call(Shell shell) {
+	public Call(DebugShell shell) {
 		super(shell);
 	}
 

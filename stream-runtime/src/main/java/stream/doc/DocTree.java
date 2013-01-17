@@ -347,7 +347,7 @@ public class DocTree implements Comparable<DocTree> {
 							URL texUrl = getTexFile(clazz);
 
 							if (texUrl != null) {
-								url = url;
+								url = texUrl;
 								doc = doc.replace(".md", ".tex");
 							}
 

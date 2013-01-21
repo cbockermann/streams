@@ -117,6 +117,11 @@ public final class SourceURL implements Serializable {
 	public InputStream openStream() throws IOException {
 
 		if (this.url != null) {
+
+			if (url.toString().toLowerCase().endsWith(".gz")) {
+				return new GZIPInputStream(url.openStream());
+			}
+
 			return url.openStream();
 		}
 

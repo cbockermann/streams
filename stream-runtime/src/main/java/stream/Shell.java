@@ -3,6 +3,7 @@
  */
 package stream;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,10 +21,11 @@ public class Shell {
 	final static Map<String, Command> commands = new LinkedHashMap<String, Command>();
 	static {
 		commands.put("search", new SearchCommand());
-		commands.put("help", new SearchCommand());
-		commands.put("doc", new SearchCommand());
-		commands.put("index-doc", new BuildIndex());
+		// commands.put("help", new SearchCommand());
+		// commands.put("doc", new SearchCommand());
+		// commands.put("index-doc", new BuildIndex());
 		commands.put("build-index", new BuildIndex());
+		commands.put("run", new RunCommand());
 	}
 
 	/**
@@ -35,7 +37,8 @@ public class Shell {
 			return;
 		}
 
-		List<String> params = Arrays.asList(args);
+		List<String> params = new ArrayList<String>();
+		params.addAll(Arrays.asList(args));
 		String cmd = params.remove(0);
 
 		Command command = commands.get(cmd);

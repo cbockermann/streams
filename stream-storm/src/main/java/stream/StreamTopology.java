@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.io.TimeStream;
+import stream.runtime.setup.ObjectFactory;
 import stream.storm.ClockSpout;
 import stream.storm.MonitorBolt;
 import stream.storm.ProcessBolt;
@@ -26,6 +27,7 @@ import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -111,6 +113,7 @@ public class StreamTopology {
 		// not been explicitly defined (i.e. 'linking bolts')
 		//
 		// Map<String, String> streams = new LinkedHashMap<String, String>();
+		ObjectFactory of = ObjectFactory.newInstance();
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -128,6 +131,33 @@ public class StreamTopology {
 					StreamSpout spout = new StreamSpout(xml, uuid);
 					SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);
 					st.spouts.put(id, spoutDeclarer);
+					continue;
+				}
+
+				if (el.getNodeName().equalsIgnoreCase("bolt")) {
+
+					String className = el.getAttribute("class");
+					Map<String, String> params = of.getAttributes(el);
+
+					String id = el.getAttribute("id");
+					if (id == null) {
+						id = UUID.randomUUID().toString().toUpperCase();
+					}
+
+					String input = el.getAttribute("input");
+					if (input == null) {
+						throw new RuntimeException(
+								"No 'input' defined for bolt '" + id
+										+ "' (class '" + className + "')");
+					}
+
+					log.info(
+							"Creating direct bolt-instance for class '{}', params: {}",
+							className, params);
+					IRichBolt bolt = (IRichBolt) of.create(className, params);
+					BoltDeclarer boltDeclarer = builder.setBolt(id, bolt)
+							.shuffleGrouping(input);
+					st.bolts.put(id, boltDeclarer);
 					continue;
 				}
 

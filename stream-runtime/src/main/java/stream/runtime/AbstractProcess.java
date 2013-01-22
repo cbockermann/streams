@@ -194,16 +194,14 @@ public abstract class AbstractProcess implements stream.Process {
 
 		} catch (Exception e) {
 			log.error("Aborting process due to errors: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		try {
 			finish();
 		} catch (Exception e) {
 			log.warn("Error while finishing process: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 

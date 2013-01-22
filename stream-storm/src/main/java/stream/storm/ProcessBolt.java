@@ -69,7 +69,10 @@ public class ProcessBolt extends AbstractBolt {
 					config.getDocumentElement(), uuid);
 
 			if (element == null) {
-				throw new Exception("Damn! You screwed the XML :-)");
+				log.error("Failed to find process for uuid '{}' in the XML!",
+						uuid);
+				throw new Exception("Failed to find process for uuid '" + uuid
+						+ "' in the XML!");
 			}
 
 			ObjectFactory obf = ObjectFactory.newInstance();

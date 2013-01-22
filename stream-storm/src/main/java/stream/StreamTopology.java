@@ -3,8 +3,10 @@
  */
 package stream;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import stream.runtime.setup.ObjectFactory;
 import stream.storm.ClockSpout;
 import stream.storm.MonitorBolt;
 import stream.storm.ProcessBolt;
+import stream.storm.QueueBolt;
 import stream.storm.StreamSpout;
 import stream.util.XMLUtils;
 import stream.util.parser.TimeParser;
@@ -32,7 +35,7 @@ import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 
 /**
- * @author chris
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public class StreamTopology {
@@ -120,51 +123,66 @@ public class StreamTopology {
 
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				log.info(node.getNodeName());
+				log.info("--------------------------------------------------------------------------------");
+				log.info("Handling element '{}'", node.getNodeName());
 				Element el = (Element) node;
-				String uuid = el.getAttribute(UUID_ATTRIBUTE);
+				String id = el.getAttribute("id");
+				if (id == null || "".equals(id.trim()))
+					id = el.getAttribute(UUID_ATTRIBUTE);
+				if (id == null || "".equals(id.trim()))
+					id = UUID.randomUUID().toString().toUpperCase();
+
+				String uuid = id;
 
 				if (el.getNodeName().equalsIgnoreCase("stream")) {
-					String id = el.getAttribute("id");
-					log.info("Creating stream-spout for id {}", id);
+					log.info("  > Creating stream-spout with id '{}'", id);
 
 					StreamSpout spout = new StreamSpout(xml, uuid);
 					SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);
 					st.spouts.put(id, spoutDeclarer);
-					continue;
 				}
 
-				if (el.getNodeName().equalsIgnoreCase("bolt")) {
+				if (el.getNodeName().equalsIgnoreCase("bolt")
+						|| el.getNodeName().equals("storm:bolt")) {
 
 					String className = el.getAttribute("class");
 					Map<String, String> params = of.getAttributes(el);
 
-					String id = el.getAttribute("id");
-					if (id == null) {
-						id = UUID.randomUUID().toString().toUpperCase();
-					}
-
-					String input = el.getAttribute("input");
-					if (input == null) {
+					List<String> inputs = getInputNames(el);
+					if (inputs.isEmpty()) {
 						throw new RuntimeException(
 								"No 'input' defined for bolt '" + id
 										+ "' (class '" + className + "')");
 					}
 
-					log.info(
-							"Creating direct bolt-instance for class '{}', params: {}",
-							className, params);
+					// log.debug(
+					// "Creating direct bolt-instance for class '{}', params: {}",
+					// className, params);
 					IRichBolt bolt = (IRichBolt) of.create(className, params);
-					BoltDeclarer boltDeclarer = builder.setBolt(id, bolt)
-							.shuffleGrouping(input);
-					st.bolts.put(id, boltDeclarer);
-					continue;
+
+					log.info("  > Registering bolt '{}' with instance {}", id,
+							bolt);
+					BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);
+					BoltDeclarer cur = boltDeclarer;
+					for (String input : inputs) {
+						log.info(
+								"  > Connecting bolt '{}' to shuffle-group '{}'",
+								id, input);
+						cur = cur.shuffleGrouping(input);
+					}
+
+					st.bolts.put(id, cur);
 				}
 
 				if (el.getNodeName().equalsIgnoreCase("process")) {
 					String input = el.getAttribute("input");
 					String copies = el.getAttribute("copies");
 					Integer workers = 1;
+					List<String> inputs = getInputNames(el);
+					if (inputs.isEmpty())
+						throw new RuntimeException(
+								"No input defined for process '" + id + "'");
+
 					if (copies != null) {
 						try {
 
@@ -176,14 +194,26 @@ public class StreamTopology {
 						}
 					}
 
-					log.info("Adding bolt {}, subscribing to {}", uuid, input);
+					log.info(
+							"  > Adding bolt '{}', subscribing to input(s): '{}'",
+							uuid, input);
 
 					ProcessBolt bolt = new ProcessBolt(xml, uuid);
+					log.info(
+							"  > Registering bolt (process) '{}' with instance {}",
+							uuid, bolt);
 					BoltDeclarer boltDeclarer = builder.setBolt(uuid, bolt,
-							workers).shuffleGrouping(input);
-					st.bolts.put(uuid, boltDeclarer);
+							workers);
 
-					continue;
+					BoltDeclarer cur = boltDeclarer;
+					for (String in : inputs) {
+						log.info(
+								"  > Connecting bolt '{}' to shuffle-group '{}'",
+								uuid, in);
+						cur = cur.shuffleGrouping(in);
+					}
+
+					st.bolts.put(uuid, cur);
 				}
 
 				if (el.getNodeName().equalsIgnoreCase("monitor")) {
@@ -199,10 +229,38 @@ public class StreamTopology {
 					builder.setBolt(uuid, new MonitorBolt(xml, uuid))
 							.shuffleGrouping(clock);
 				}
+
+				if (el.getNodeName().equalsIgnoreCase("queue")) {
+					log.info("  > Adding new QueueBolt instance '{}'", uuid);
+					QueueBolt queue = new QueueBolt(xml, uuid);
+					BoltDeclarer boltDeclarer = builder.setBolt(uuid, queue);
+					log.info("  > declarer is: {}", boltDeclarer);
+				}
+
+				log.info("--------------------------------------------------------------------------------");
 			}
 		}
 
 		return st;
+	}
+
+	protected static List<String> getInputNames(Element el) {
+		List<String> inputs = new ArrayList<String>();
+		String input = el.getAttribute("input");
+		if (input == null)
+			return inputs;
+
+		if (input.indexOf(",") < 0) {
+			inputs.add(input.trim());
+			return inputs;
+		}
+
+		for (String in : input.split(",")) {
+			if (in != null && !in.trim().isEmpty()) {
+				inputs.add(in.trim());
+			}
+		}
+		return inputs;
 	}
 
 	/**

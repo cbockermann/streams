@@ -33,7 +33,7 @@ import stream.annotations.Parameter;
 import stream.data.DataFactory;
 
 /**
- * @author chris
+ * @author Christian Bockermann
  * 
  */
 public abstract class AbstractStream implements Stream {
@@ -119,7 +119,9 @@ public abstract class AbstractStream implements Stream {
 				log.debug("End-of-stream reached!");
 				return null;
 			}
-			datum.put("@stream", this.id);
+
+			if (this.id != null)
+				datum.put("@stream", this.id);
 
 			if (prefix != null && !prefix.trim().isEmpty()) {
 				Data prefixed = DataFactory.create();

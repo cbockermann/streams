@@ -96,8 +96,17 @@ public class XMLUtils {
 		if (element.hasAttribute(UUID_ATTRIBUTE)) {
 			return;
 		}
-		UUID id = UUID.randomUUID();
-		element.setAttribute(UUID_ATTRIBUTE, id.toString());
+
+		String id = element.getAttribute("id");
+		String uuid = UUID.randomUUID().toString().toUpperCase();
+		if (id != null && !id.trim().isEmpty()) {
+			uuid = id;
+		} else {
+			id = uuid;
+			element.setAttribute("id", id);
+		}
+
+		element.setAttribute(UUID_ATTRIBUTE, uuid);
 
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {

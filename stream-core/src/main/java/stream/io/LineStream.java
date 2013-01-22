@@ -127,7 +127,7 @@ public class LineStream extends AbstractLineStream {
 	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public Data readNext() throws Exception {
+	public synchronized Data readNext() throws Exception {
 
 		if (this.limit != null && this.limit > 0 && this.count > this.limit)
 			return null;

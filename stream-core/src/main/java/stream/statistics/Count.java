@@ -25,7 +25,7 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 	static Logger log = LoggerFactory.getLogger(Count.class);
 	String groupBy = null;
 	String timeKey = null;
-	String prefix = "";
+	String prefix = null;
 
 	String window = "5 minutes";
 	Long timeInterval = 300 * 1000L;
@@ -66,7 +66,11 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 				st = new Statistics();
 				st.put("@time", time.doubleValue());
 			}
-			st.add(prefix + pivot, 1.0d);
+			if (prefix != null) {
+				st.add(prefix + pivot, 1.0d);
+			} else {
+				st.add(pivot, 1.0d);
+			}
 			historyStats.add(time, st);
 
 			synchronized (currentStatistics) {

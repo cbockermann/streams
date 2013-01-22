@@ -59,17 +59,6 @@ public class ProcessContextImpl implements ProcessContext {
 	}
 
 	/**
-	 * @see stream.service.NamingService#lookup(java.lang.String)
-	 */
-	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception {
-		if (containerContext == null)
-			throw new Exception("No parent context exists!");
-		return containerContext.lookup(ref, serviceClass);
-	}
-
-	/**
 	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */

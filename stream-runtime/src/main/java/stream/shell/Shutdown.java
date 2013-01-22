@@ -3,7 +3,7 @@
  */
 package stream.shell;
 
-import stream.Shell;
+import stream.DebugShell;
 import stream.runtime.Controller;
 
 /**
@@ -12,7 +12,7 @@ import stream.runtime.Controller;
  */
 public class Shutdown extends Command {
 
-	public Shutdown(Shell shell) {
+	public Shutdown(DebugShell shell) {
 		super(shell);
 	}
 

@@ -366,8 +366,15 @@ public final class ConfusionMatrix<T extends Serializable> {
 		StringBuilder sb = new StringBuilder(
 				"ConfusionMatrix (rows=truth,columns=prediction)")
 				.append(lineSeparator).append("values:").append(lineSeparator);
+		sb.append(lineSeparator);
+		sb.append("     ");
 		for (int i = 0; i < labels.size(); i++) {
-			sb.append(labels.get(i));
+			sb.append(" | pred: " + labels.get(i));
+		}
+		sb.append(lineSeparator);
+
+		for (int i = 0; i < labels.size(); i++) {
+			sb.append("true:" + labels.get(i) + "   |  ");
 			for (int j = 0; j < labels.size(); j++) {
 				sb.append(" ").append(confusionMatrix[i][j]);
 			}

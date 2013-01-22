@@ -75,6 +75,17 @@ public class URLUtilities {
 		in.close();
 	}
 
+	public static void copy(InputStream in, OutputStream out)
+			throws IOException {
+		byte[] buf = new byte[1024];
+		int read = in.read(buf);
+		while (read > 0) {
+			out.write(buf, 0, read);
+			read = in.read(buf);
+		}
+		in.close();
+	}
+
 	public static void copy(URL url, File file) throws IOException {
 		if (url == null)
 			return;

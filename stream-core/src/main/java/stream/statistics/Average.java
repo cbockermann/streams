@@ -63,4 +63,13 @@ public class Average extends Sum {
 			}
 		}
 	}
+
+	/**
+	 * @see stream.statistics.StatisticsLearner#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		super.reset();
+		count = 0.0d;
+	}
 }

@@ -26,15 +26,15 @@ public class ProcessContextMock implements ProcessContext {
 		return ctx.get(variable);
 	}
 
-	/**
-	 * @see stream.service.NamingService#lookup(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception {
-		return (T) services.get(ref);
-	}
+	// /**
+	// * @see stream.service.NamingService#lookup(java.lang.String)
+	// */
+	// @SuppressWarnings("unchecked")
+	// @Override
+	// public <T extends Service> T lookup(String ref, Class<T> serviceClass)
+	// throws Exception {
+	// return (T) services.get(ref);
+	// }
 
 	/**
 	 * @see stream.ProcessContext#get(java.lang.String)

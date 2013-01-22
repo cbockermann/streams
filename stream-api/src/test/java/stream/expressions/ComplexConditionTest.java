@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import stream.Context;
 import stream.Data;
 import stream.data.DataFactory;
-import stream.service.Service;
 
 /**
  * @author chris
@@ -24,11 +23,12 @@ public class ComplexConditionTest {
 	// An empty dummy-context
 	final Context ctx = new Context() {
 
-		@Override
-		public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-				throws Exception {
-			return null;
-		}
+		// @Override
+		// public <T extends Service> T lookup(String ref, Class<T>
+		// serviceClass)
+		// throws Exception {
+		// return null;
+		// }
 
 		@Override
 		public Object resolve(String variable) {

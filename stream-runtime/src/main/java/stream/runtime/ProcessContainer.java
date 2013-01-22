@@ -99,7 +99,7 @@ public class ProcessContainer {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
 		//
 		log.debug("Adding container shutdown-hook");
-		java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
+		Thread t = new Thread() {
 			public void run() {
 
 				if (!runShutdownHook) {
@@ -118,7 +118,10 @@ public class ProcessContainer {
 					pc.shutdown();
 				}
 			}
-		});
+		};
+
+		t.setDaemon(true);
+		java.lang.Runtime.getRuntime().addShutdownHook(t);
 	}
 
 	protected final DependencyGraph depGraph = new DependencyGraph();

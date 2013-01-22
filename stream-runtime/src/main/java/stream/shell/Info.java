@@ -5,7 +5,7 @@ package stream.shell;
 
 import java.lang.reflect.Method;
 
-import stream.Shell;
+import stream.DebugShell;
 import stream.service.NamingService;
 import stream.service.Service;
 
@@ -18,7 +18,7 @@ public class Info extends Command {
 	/**
 	 * @param shell
 	 */
-	public Info(Shell shell) {
+	public Info(DebugShell shell) {
 		super(shell);
 	}
 

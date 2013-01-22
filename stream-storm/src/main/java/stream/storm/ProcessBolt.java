@@ -4,6 +4,7 @@
 package stream.storm;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +20,12 @@ import stream.Data;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.StormRunner;
+import stream.data.DataFactory;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
@@ -39,6 +42,7 @@ public class ProcessBolt extends AbstractBolt {
 
 	transient ProcessorList process;
 	String[] outputs;
+	final BoltContext ctx = new BoltContext();
 
 	public ProcessBolt(String xmlConfig, String uuid) {
 		super(xmlConfig, uuid);
@@ -87,6 +91,8 @@ public class ProcessBolt extends AbstractBolt {
 				}
 			}
 
+			process.init(ctx);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,10 +105,30 @@ public class ProcessBolt extends AbstractBolt {
 	public void execute(Tuple input) {
 		log.debug("Tuple received: {}", input);
 
-		Object data = input.getValueByField("stream.Data");
-		log.debug("Data is: {}", data);
-		if (data != null) {
-			Data item = (Data) data;
+		Data item = null;
+
+		try {
+			Object data = input.getValueByField("stream.Data");
+			log.debug("Data is: {}", data);
+			if (data != null) {
+				item = (Data) data;
+			}
+		} catch (Exception e) {
+			log.debug("Error processing tuple: {}", e.getMessage());
+
+			item = DataFactory.create();
+			Fields fields = input.getFields();
+			for (int i = 0; i < fields.size(); i++) {
+				String key = fields.get(i);
+				Object value = input.getValue(i);
+				if (value instanceof Serializable) {
+					item.put(key, (Serializable) value);
+				}
+			}
+		}
+
+		if (item != null) {
+			log.debug("Processing item...");
 			item = process.process(item);
 
 			if (outputs != null) {
@@ -114,6 +140,8 @@ public class ProcessBolt extends AbstractBolt {
 				log.debug("Emitting item {}", item);
 				output.emit(new Values(item));
 			}
+		} else {
+			log.debug("No item to process!");
 		}
 	}
 }

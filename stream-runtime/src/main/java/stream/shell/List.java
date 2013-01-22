@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Shell;
+import stream.DebugShell;
 import stream.runtime.rpc.ContainerAnnouncement;
 import stream.runtime.rpc.Discovery;
 import stream.runtime.rpc.RMIClient;
@@ -28,7 +28,7 @@ public class List extends Command {
 	/**
 	 * @param shell
 	 */
-	public List(Shell shell) throws Exception {
+	public List(DebugShell shell) throws Exception {
 		super(shell);
 		this.discovery = new Discovery();
 	}

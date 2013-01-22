@@ -74,9 +74,9 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 
 			int hangon = 0;
 
-			for (Object root : graph.getRootSources()) {
-				// log.info("Root source: {}", root);
-			}
+			// for (Object root : graph.getRootSources()) {
+			// log.info("Root source: {}", root);
+			// }
 
 			for (Object node : graph.nodes) {
 				if (node instanceof Source) {

@@ -64,24 +64,24 @@ public class ParameterDiscovery {
 
 			if (ParameterDiscovery.isSetter(m)) {
 
-				log.info("Found setter '{}'", m.getName());
+				log.debug("Found setter '{}'", m.getName());
 				String key = m.getName().substring(3, 4).toLowerCase();
 				if (m.getName().length() > 4)
 					key += m.getName().substring(4);
 
 				Parameter param = m.getAnnotation(Parameter.class);
 				if (param != null) {
-					log.info("setter-method is annotated: {}", param);
+					log.debug("setter-method is annotated: {}", param);
 					if (param.name() != null && !param.name().isEmpty()) {
 						key = param.name();
 					}
 				}
 
 				if (!types.containsKey(key)) {
-					log.info("  => parameter '{}'", key);
+					log.debug("  => parameter '{}'", key);
 					types.put(key, m.getParameterTypes()[0]);
 				} else
-					log.info(
+					log.debug(
 							"Parameter {} already defined by field-annotation",
 							key);
 			}
@@ -131,16 +131,17 @@ public class ParameterDiscovery {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		Field[] fields = clazz.getDeclaredFields();
 
-		log.info("Found {} fields", fields.length);
+		log.debug("Found {} fields", fields.length);
 
 		for (Method m : clazz.getMethods()) {
 			Parameter param = m.getAnnotation(Parameter.class);
 			if (param != null) {
-				log.info("Found @parameter annotated field '{}'", m.getName());
-				log.info("    field.getType() = {}", (Object[]) m.getParameterTypes());
+				log.debug("Found @parameter annotated field '{}'", m.getName());
+				log.debug("    field.getType() = {}",
+						(Object[]) m.getParameterTypes());
 				parameters.add(param);
 			} else {
-				log.info("Field '{}' is not annotated as parameter",
+				log.debug("Field '{}' is not annotated as parameter",
 						m.getName());
 			}
 		}

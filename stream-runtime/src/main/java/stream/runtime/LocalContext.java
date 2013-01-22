@@ -42,16 +42,6 @@ public class LocalContext implements ProcessContext {
 	final Map<String, Object> context = new HashMap<String, Object>();
 
 	/**
-	 * @see stream.service.NamingService#lookup(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception {
-		return (T) lookupService.get(ref);
-	}
-
-	/**
 	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
 	 */

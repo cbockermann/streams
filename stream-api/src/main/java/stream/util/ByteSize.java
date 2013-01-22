@@ -8,7 +8,7 @@ import java.io.Serializable;
 import stream.util.parser.ByteSizeParser;
 
 /**
- * @author chris
+ * @author Christian Bockermann
  * 
  */
 public class ByteSize implements Serializable {
@@ -16,7 +16,13 @@ public class ByteSize implements Serializable {
 	/** The unique class ID */
 	private static final long serialVersionUID = -2170050360625001698L;
 
-	Integer bytes = 0;
+	final Integer bytes;
+
+	public ByteSize(Integer bytes) throws Exception {
+		this.bytes = bytes;
+		if (bytes < 0)
+			throw new Exception("ByteSizes must not be negative!");
+	}
 
 	public ByteSize(String val) throws Exception {
 		Long bs = ByteSizeParser.parseByteSize(val);

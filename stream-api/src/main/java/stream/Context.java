@@ -23,8 +23,6 @@
  */
 package stream;
 
-import stream.service.Service;
-
 /**
  * <p>
  * This interface defines a general context. A context provides the
@@ -67,18 +65,5 @@ public interface Context {
 	 */
 	public Object resolve(String variable); // TODO: Shouldn't we rename this
 											// method to 'get(String)' ??
-
-	/**
-	 * The lookup method provides the lookup of a given reference within the
-	 * Lookup service. If there is no service registered for that reference,
-	 * this method will return <code>null</code>.
-	 * 
-	 * @param ref
-	 * @return
-	 * @throws Exception
-	 * @deprecated
-	 */
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception;
 
 }

@@ -23,16 +23,13 @@
  */
 package stream.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stream.Data;
 import stream.Measurable;
+import stream.util.JavaSerializer;
 import stream.util.SizeOf;
 
 /**
@@ -53,6 +50,11 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -7751681008628413236L;
+
+	final static boolean deepClone = "true".equalsIgnoreCase(System
+			.getProperty("stream.Data.deepClone"));
+
+	final JavaSerializer javaSerializer = new JavaSerializer();
 
 	/**
 	 * Creation of Data items should be done with
@@ -97,23 +99,13 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	 */
 	@Override
 	public Data createCopy() {
-		try {
-			if (this == Data.END_OF_STREAM)
-				return Data.END_OF_STREAM;
+		if (this == Data.END_OF_STREAM)
+			return Data.END_OF_STREAM;
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(this);
-			oos.close();
-			ObjectInputStream ois = new ObjectInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
-			Data copy = (Data) ois.readObject();
-			ois.close();
-			return copy;
-		} catch (Exception e) {
-			throw new RuntimeException(
-					"Failed to create-copy of item due to: '" + e.getMessage()
-							+ "'");
+		if (!deepClone) {
+			return new DataImpl(this);
 		}
+
+		return DataFactory.copy(this);
 	}
 }

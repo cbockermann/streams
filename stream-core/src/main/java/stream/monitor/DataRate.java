@@ -117,12 +117,13 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		Long now = System.currentTimeMillis();
 		Long sec = (now - start);
 		log.info("DataRate processor '" + id
-				+ "' has been running for {} ms, {} items.", sec, count);
+				+ "' has been running for {} ms, {} items.", sec,
+				count.doubleValue());
 		Double s = sec.doubleValue() / 1000.0d;
 		if (s > 0)
-			log.info("Overall average data-rate for processor '" + id
-					+ "' is: {}/second", count,
-					fmt.format(count.doubleValue() / s));
+			log.info(
+					"Overall average data-rate for processor '{}' is: {}/second",
+					id, fmt.format(count.doubleValue() / s));
 	}
 
 	@Override

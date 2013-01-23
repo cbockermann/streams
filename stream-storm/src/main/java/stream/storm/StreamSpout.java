@@ -3,24 +3,16 @@
  */
 package stream.storm;
 
-import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import stream.Data;
-import stream.StormRunner;
 import stream.io.Stream;
 import stream.runtime.Variables;
 import stream.runtime.setup.StreamFactory;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessorFactory;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -29,7 +21,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 /**
- * @author chris
+ * @author Christian Bockermann
  * 
  */
 public class StreamSpout extends BaseRichSpout {
@@ -41,13 +33,16 @@ public class StreamSpout extends BaseRichSpout {
 
 	transient Stream stream;
 	protected SpoutOutputCollector output;
-	protected final String xmlConfig;
-	protected final String uuid;
 
-	public StreamSpout(String xmlConfig, String uuid) {
-		log.debug("Creating spout for stream {}", uuid);
-		this.xmlConfig = xmlConfig;
-		this.uuid = uuid;
+	// the implementing class of the stream
+	protected final String className;
+	protected final Variables parameters;
+
+	public StreamSpout(String className, Map<String, String> params) {
+		log.debug("Creating spout for stream (class: {}, params: {})",
+				className, params);
+		this.className = className;
+		this.parameters = new Variables(params);
 	}
 
 	/**
@@ -61,24 +56,10 @@ public class StreamSpout extends BaseRichSpout {
 			SpoutOutputCollector collector) {
 		this.output = collector;
 		try {
-
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
-			Document config = builder.parse(new ByteArrayInputStream(xmlConfig
-					.getBytes()));
-
-			Element element = StormRunner.findElementByUUID(
-					config.getDocumentElement(), uuid);
-
-			if (element == null) {
-				throw new Exception("Damn! You screwed the XML!!");
-			}
-
-			ObjectFactory obf = ObjectFactory.newInstance();
-			ProcessorFactory pf = new ProcessorFactory(obf);
-			log.debug("Creating stream from element {}", element);
-			stream = StreamFactory.createStream(obf, pf, element,
-					new Variables());
+			Map<String, String> params = new HashMap<String, String>(parameters);
+			log.info("Creating stream for class: {}, params: {}", className,
+					params);
+			stream = StreamFactory.createStream(className, params);
 			stream.init();
 		} catch (Exception e) {
 			e.printStackTrace();

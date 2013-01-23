@@ -44,7 +44,7 @@ public class PropertiesHandler implements DocumentHandler {
 		// <property-name>value-of-property</property-name>
 		// </properties>
 		//
-		findPropertiesElements(container, doc, container.getVariables());
+		findPropertiesElements(container, doc, variables);
 
 		// handle property elements, i.e.
 		// <property>
@@ -52,12 +52,12 @@ public class PropertiesHandler implements DocumentHandler {
 		// <value>property-value</value>
 		// </property>
 		//
-		findPropertyElements(container, doc, container.getVariables());
+		findPropertyElements(container, doc, variables);
 
 		// add system properties, e.g defined at command line using the -D flag:
 		// java -Dproperty-name=property-value
 		//
-		addSystemProperties(container, container.getVariables());
+		addSystemProperties(container, variables);
 	}
 
 	/**

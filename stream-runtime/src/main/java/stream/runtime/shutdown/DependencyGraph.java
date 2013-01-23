@@ -4,6 +4,7 @@
 package stream.runtime.shutdown;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,13 +15,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Process;
 import stream.runtime.LifeCycle;
+import stream.runtime.ProcessListener;
 
 /**
  * @author chris
  * 
  */
-public class DependencyGraph {
+public class DependencyGraph implements ProcessListener {
 
 	static Logger log = LoggerFactory.getLogger(DependencyGraph.class);
 	final Set<Object> nodes = new LinkedHashSet<Object>();
@@ -173,6 +176,16 @@ public class DependencyGraph {
 		}
 	}
 
+	public Collection<Object> getAll(Class<?> pattern) {
+		List<Object> matching = new ArrayList<Object>();
+		for (Object o : this.nodes) {
+			if (pattern.isAssignableFrom(o.getClass())) {
+				matching.add(o);
+			}
+		}
+		return matching;
+	}
+
 	public static class Edge {
 		static Integer lastId = 0;
 		final Integer id = lastId++;
@@ -191,5 +204,29 @@ public class DependencyGraph {
 		public Object getTo() {
 			return to;
 		}
+	}
+
+	/**
+	 * @see stream.runtime.ProcessListener#processStarted(stream.Process)
+	 */
+	@Override
+	public void processStarted(Process p) {
+		if (nodes.contains(p)) {
+			log.debug("Process {} started, already part of this graph.", p);
+		} else {
+			log.debug("Process {} started, but it is not part of this graph.",
+					p);
+		}
+	}
+
+	/**
+	 * @see stream.runtime.ProcessListener#processFinished(stream.Process)
+	 */
+	@Override
+	public void processFinished(Process p) {
+		log.debug(
+				"Process {} finished, removing it from the dependency graph nodes...",
+				p);
+		remove(p);
 	}
 }

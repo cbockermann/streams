@@ -157,8 +157,8 @@ public abstract class AbstractProcess implements stream.Process {
 							e.printStackTrace();
 					}
 				}
-				log.info("processor {} processed {} items", proc, counts[i]);
-				log.info("   average time is {} ms/item", ((double) millis[i])
+				log.debug("processor {} processed {} items", proc, counts[i]);
+				log.debug("   average time is {} ms/item", ((double) millis[i])
 						/ ((double) counts[i]));
 			}
 		} catch (Exception e) {

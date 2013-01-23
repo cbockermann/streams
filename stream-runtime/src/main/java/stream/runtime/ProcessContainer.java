@@ -104,7 +104,8 @@ public class ProcessContainer {
 
 				if (!runShutdownHook) {
 					return;
-				}
+				} else
+					runShutdownHook = false;
 
 				if ("disabled".equalsIgnoreCase(System
 						.getProperty("container.shutdown-hook"))) {
@@ -497,35 +498,35 @@ public class ProcessContainer {
 			// spu.init(ctx);
 
 			ProcessThread worker = new ProcessThread(spu, ctx);
-			worker.setDaemon(true);
-			worker.addListener(new ProcessListener() {
-
-				@Override
-				public void processStarted(stream.Process p) {
-					log.debug("Starting process {}", p);
-				}
-
-				@Override
-				public void processFinished(stream.Process p) {
-					log.debug(
-							"Process {} finished, removing from dependency-graph.",
-							p);
-					depGraph.remove(p);
-
-					List<LifeCycle> endOfLife = depGraph.remove(p);
-					log.debug("End-of-life for: {}", endOfLife);
-					for (LifeCycle lc : endOfLife) {
-						try {
-							log.debug(
-									"Calling finish() for LifeCycle object {}",
-									lc);
-							lc.finish();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			});
+			// worker.setDaemon(true);
+			worker.addListener(depGraph);
+			// worker.addListener(new ProcessListener() {
+			//
+			// @Override
+			// public void processStarted(stream.Process p) {
+			// log.debug("Starting process {}", p);
+			// }
+			//
+			// @Override
+			// public void processFinished(stream.Process p) {
+			// log.debug(
+			// "Process {} finished, removing from dependency-graph.",
+			// p);
+			// depGraph.remove(p);
+			// List<LifeCycle> endOfLife = depGraph.remove(p);
+			// log.debug("End-of-life for: {}", endOfLife);
+			// for (LifeCycle lc : endOfLife) {
+			// try {
+			// log.debug(
+			// "Calling finish() for LifeCycle object {}",
+			// lc);
+			// lc.finish();
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+			// }
+			// }
+			// });
 
 			log.debug("Initializing stream-process [{}]", spu);
 			worker.init();
@@ -544,7 +545,9 @@ public class ProcessContainer {
 		else
 			con = new LocalShutdownCondition();
 
+		log.info("Waiting for shutdown-condition...");
 		con.waitForCondition(depGraph);
+		log.info("Shutdown-condition met, container finished.");
 
 		// if the shutdown condition has properly been reached (no Ctrl+C), then
 		// we do not require the shutdown hook to be run...

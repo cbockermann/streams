@@ -55,6 +55,12 @@ import stream.utils.FileUtils;
  */
 public class ObjectFactory extends Variables {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	static Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 	static Map<String, Integer> globalObjectNumbers = new HashMap<String, Integer>();
 	final static Map<String, String> classNames = new HashMap<String, String>();

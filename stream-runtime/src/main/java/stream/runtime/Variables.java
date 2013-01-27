@@ -23,9 +23,11 @@
  */
 package stream.runtime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,10 @@ import org.slf4j.LoggerFactory;
  * @author chris
  * 
  */
-public class Variables implements Map<String, String> {
+public class Variables implements Map<String, String>, Serializable {
+
+	/** The unique class ID */
+	private static final long serialVersionUID = -8120239592664368847L;
 
 	/* A global logger for this class */
 	static Logger log = LoggerFactory.getLogger(Variables.class);
@@ -51,7 +56,7 @@ public class Variables implements Map<String, String> {
 	Variables parentContext = null;
 
 	/* The variables available in this context */
-	protected Map<String, String> variables = new HashMap<String, String>();
+	protected HashMap<String, String> variables = new HashMap<String, String>();
 
 	public Variables() {
 		this(new HashMap<String, String>());
@@ -63,7 +68,7 @@ public class Variables implements Map<String, String> {
 	}
 
 	public Variables(Map<String, String> variables) {
-		this.variables = variables;
+		this.variables = new HashMap<String, String>(variables);
 	}
 
 	public Variables(Properties p) {
@@ -79,6 +84,14 @@ public class Variables implements Map<String, String> {
 
 	public void set(String key, String val) {
 		variables.put(key, val);
+	}
+
+	public Map<String, String> expandAll(Map<String, String> vars) {
+		Map<String, String> expanded = new LinkedHashMap<String, String>();
+		for (String var : vars.keySet()) {
+			expanded.put(var, expand(vars.get(var)));
+		}
+		return expanded;
 	}
 
 	public String expand(String str, boolean emptyStrings) {

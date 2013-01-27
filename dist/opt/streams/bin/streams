@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# This script calls the stream.run entry point which creates
+# a container from a provided XML definition and starts this
+# container in foreground mode.
+#
+STREAMS_HOME=/opt/streams
+
+#
+# load environment settings from the env configuration
+#
+if [ -f $STREAMS_HOME/conf/environment ]; then
+   . $STREAMS_HOME/conf/environment
+fi
+
+
+#
+# output the classpath if the debug property has been set
+#
+if [ ! -z "${DEBUG}" ]; then
+   echo "Classpath is: ${CP}"
+fi
+
+
+#
+# select the java command
+#
+JAVA=${JAVA_HOME}/bin/java
+
+
+#
+# Call the java VM to create and start the container
+#
+$JAVA -cp $CP stream.Shell $@

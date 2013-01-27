@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.io.Serializer;
+import stream.util.JavaSerializer;
 
 /**
  * <p>
@@ -44,6 +46,8 @@ public class DataFactory {
 	static Logger log = LoggerFactory.getLogger(DataFactory.class);
 	public static DataFactory defaultDataFactory = new DataFactory();
 	private static long dataItemsCreated = 0L;
+
+	final Serializer serializer = new JavaSerializer();
 
 	protected DataFactory() {
 	}
@@ -82,6 +86,14 @@ public class DataFactory {
 		return new DataImpl();
 	}
 
+	public Data clone(Data item) {
+		try {
+			return (Data) serializer.clone(item);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	/***
 	 * <p>
 	 * This method will create a new Data item and will add the contents of the
@@ -110,6 +122,10 @@ public class DataFactory {
 	public static Data create() {
 		dataItemsCreated++;
 		return defaultDataFactory.createDataItem();
+	}
+
+	public static Data copy(Data item) {
+		return defaultDataFactory.clone(item);
 	}
 
 	/***

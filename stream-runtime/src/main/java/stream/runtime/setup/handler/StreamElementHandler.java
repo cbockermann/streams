@@ -34,9 +34,9 @@ import stream.io.Stream;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
-import stream.runtime.setup.StreamFactory;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.StreamFactory;
 import stream.service.Service;
 
 /**
@@ -85,8 +85,8 @@ public class StreamElementHandler implements ElementHandler {
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
-			Stream stream = StreamFactory.createStream(objectFactory,
-					processorFactory, element, variables);
+			Stream stream = StreamFactory.createStream(objectFactory, element,
+					variables);
 			if (stream != null) {
 				if (id == null)
 					id = "" + stream;

@@ -11,6 +11,7 @@
 \makeatother
 
 \newcommand{\StreamSection}[1]{\subsubsection{\label{api:#1}#1}}
+\newcommand{\Stream}[1]{\subsubsection{\label{api:#1}#1}}
 \newcommand{\PackageSection}[1]{\subsubsection*{#1}}
 
 \newcommand{\ProcessorSection}[1]{\paragraph{\label{api:#1}Processor {\ttfamily #1}}}

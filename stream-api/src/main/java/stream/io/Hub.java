@@ -32,6 +32,8 @@ public class Hub implements QueueService, HubService {
 	static Logger log = LoggerFactory.getLogger(Hub.class);
 	final List<DataStreamListener> listener = new CopyOnWriteArrayList<DataStreamListener>();
 
+	String id;
+
 	/**
 	 * @see stream.service.Service#reset()
 	 */
@@ -105,5 +107,21 @@ public class Hub implements QueueService, HubService {
 	@Override
 	public int capacity() {
 		return 1;
+	}
+
+	/**
+	 * @see stream.io.Sink#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @see stream.io.Sink#write(stream.Data)
+	 */
+	@Override
+	public void write(Data item) throws Exception {
+		this.enqueue(item);
 	}
 }

@@ -96,8 +96,17 @@ public class XMLUtils {
 		if (element.hasAttribute(UUID_ATTRIBUTE)) {
 			return;
 		}
-		UUID id = UUID.randomUUID();
-		element.setAttribute(UUID_ATTRIBUTE, id.toString());
+
+		String id = element.getAttribute("id");
+		String uuid = UUID.randomUUID().toString().toUpperCase();
+		if (id != null && !id.trim().isEmpty()) {
+			uuid = id;
+		} else {
+			id = uuid;
+			element.setAttribute("id", id);
+		}
+
+		element.setAttribute(UUID_ATTRIBUTE, uuid);
 
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -174,5 +183,29 @@ public class XMLUtils {
 		if (doc == null)
 			return null;
 		return findElementByUUID(doc.getDocumentElement(), attributeName, uuid);
+	}
+
+	public static Document createDocument(Element element, String docElementName)
+			throws Exception {
+
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+		Document doc = builder.newDocument();
+		Element root = doc.createElement(docElementName);
+
+		doc.appendChild(root);
+		root.appendChild(doc.adoptNode(element.cloneNode(true)));
+
+		return doc;
+	}
+
+	public static String createDocumentXML(Element element,
+			String docElementName) throws Exception {
+		Document doc = createDocument(element, docElementName);
+		Transformer xform = TransformerFactory.newInstance().newTransformer();
+		StringWriter writer = new StringWriter();
+		xform.transform(new DOMSource(doc), new StreamResult(writer));
+		writer.close();
+		return writer.toString();
 	}
 }

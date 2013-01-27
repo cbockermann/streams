@@ -14,16 +14,11 @@ public class ServerShutdownCondition extends AbstractShutdownCondition {
 
 	static Logger log = LoggerFactory.getLogger(ServerShutdownCondition.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
+	/**
+	 * @see stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
 	 */
 	@Override
 	public boolean isMet(DependencyGraph graph) {
 		return false;
-
 	}
-
 }

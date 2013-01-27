@@ -25,6 +25,22 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 
 	Integer every = null;
 	String key = "dataRate";
+	String id;
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getClock() {
 		return clock;
@@ -80,15 +96,34 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 			windowCount++;
 		}
 
-		if (every != null && count % every.intValue() == 0 && start < now) {
+		count++;
+		if (every != null && count % every.intValue() == 0) {
 			Long sec = (now - start) / 1000;
 			if (sec > 0)
 				log.info("{} items processed, data-rate is: {}/second", count,
 						fmt.format(count.doubleValue() / sec.doubleValue()));
 		}
 
-		count++;
 		return input;
+	}
+
+	/**
+	 * @see stream.AbstractProcessor#finish()
+	 */
+	@Override
+	public void finish() throws Exception {
+		super.finish();
+
+		Long now = System.currentTimeMillis();
+		Long sec = (now - start);
+		log.info("DataRate processor '" + id
+				+ "' has been running for {} ms, {} items.", sec,
+				count.doubleValue());
+		Double s = sec.doubleValue() / 1000.0d;
+		if (s > 0)
+			log.info(
+					"Overall average data-rate for processor '{}' is: {}/second",
+					id, fmt.format(count.doubleValue() / s));
 	}
 
 	@Override
@@ -119,4 +154,5 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	public void setEvery(Integer every) {
 		this.every = every;
 	}
+
 }

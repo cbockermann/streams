@@ -44,7 +44,7 @@ public class PropertiesHandler implements DocumentHandler {
 		// <property-name>value-of-property</property-name>
 		// </properties>
 		//
-		findPropertiesElements(container, doc, container.getVariables());
+		findPropertiesElements(container, doc, variables);
 
 		// handle property elements, i.e.
 		// <property>
@@ -52,12 +52,12 @@ public class PropertiesHandler implements DocumentHandler {
 		// <value>property-value</value>
 		// </property>
 		//
-		findPropertyElements(container, doc, container.getVariables());
+		findPropertyElements(container, doc, variables);
 
 		// add system properties, e.g defined at command line using the -D flag:
 		// java -Dproperty-name=property-value
 		//
-		addSystemProperties(container, container.getVariables());
+		addSystemProperties(container, variables);
 	}
 
 	/**
@@ -88,9 +88,9 @@ public class PropertiesHandler implements DocumentHandler {
 			}
 
 			if (prop.hasAttribute("url")) {
+				String purl = prop.getAttribute("url");
 				try {
 					URL propUrl;
-					String purl = prop.getAttribute("url");
 					if (purl.toLowerCase().startsWith("classpath:")) {
 						propUrl = PropertiesHandler.class.getResource(purl
 								.substring("classpath:".length()));
@@ -106,7 +106,8 @@ public class PropertiesHandler implements DocumentHandler {
 					}
 
 				} catch (Exception e) {
-					log.error("Failed to read properties: {}", e.getMessage());
+					log.error("Failed to read properties from url {}: {}",
+							purl, e.getMessage());
 				}
 			}
 

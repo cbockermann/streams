@@ -54,13 +54,16 @@ public class MParser {
 	}
 
 	public String remainder(String str) {
-		if (pos < str.length())
+		if (pos < 0)
+			return "";
+
+		if (pos >= 0 && pos < str.length())
 			return str.substring(pos);
 		return "";
 	}
 
 	public Character firstChar(String str) {
-		if (pos < str.length())
+		if (pos >= 0 && pos < str.length())
 			return str.charAt(pos);
 		return null;
 	}

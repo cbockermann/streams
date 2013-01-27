@@ -153,12 +153,12 @@ public abstract class AbstractProcess implements stream.Process {
 					} catch (Exception e) {
 						log.error("Failed to finish processor '{}': {}", proc,
 								e.getMessage());
-						if (log.isDebugEnabled())
-							e.printStackTrace();
+						// if (log.isDebugEnabled())
+						e.printStackTrace();
 					}
 				}
-				log.info("processor {} processed {} items", proc, counts[i]);
-				log.info("   average time is {} ms/item", ((double) millis[i])
+				log.debug("processor {} processed {} items", proc, counts[i]);
+				log.debug("   average time is {} ms/item", ((double) millis[i])
 						/ ((double) counts[i]));
 			}
 		} catch (Exception e) {
@@ -194,16 +194,14 @@ public abstract class AbstractProcess implements stream.Process {
 
 		} catch (Exception e) {
 			log.error("Aborting process due to errors: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		try {
 			finish();
 		} catch (Exception e) {
 			log.warn("Error while finishing process: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 

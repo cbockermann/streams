@@ -19,6 +19,8 @@ public class GlobalCollector implements QueueService {
 	private final static List<Data> globalCollection = new ArrayList<Data>(
 			limit);
 
+	String id;
+
 	/**
 	 * @see stream.service.Service#reset()
 	 */
@@ -86,5 +88,21 @@ public class GlobalCollector implements QueueService {
 	@Override
 	public int capacity() {
 		return limit;
+	}
+
+	/**
+	 * @see stream.io.Sink#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @see stream.io.Sink#write(stream.Data)
+	 */
+	@Override
+	public void write(Data item) throws Exception {
+		enqueue(item);
 	}
 }

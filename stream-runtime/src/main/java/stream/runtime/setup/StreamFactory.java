@@ -25,9 +25,7 @@ package stream.runtime.setup;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -36,7 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.Processor;
 import stream.io.SourceURL;
 import stream.io.Stream;
 import stream.io.multi.MultiDataStream;
@@ -61,9 +58,42 @@ public class StreamFactory {
 		streamClassesByExtension.put("arff", "stream.io.ArffStream");
 	}
 
+	public static Stream createStream(String className,
+			Map<String, String> params) throws Exception {
+
+		Class<?> clazz = Class.forName(className);
+
+		Stream stream;
+		SourceURL sourceUrl = null;
+		if (params.get("url") != null) {
+			sourceUrl = new SourceURL(params.get("url"));
+		}
+
+		if (sourceUrl != null) {
+			Constructor<?> constr = clazz.getConstructor(SourceURL.class);
+			if (constr == null) {
+				throw new Exception(
+						"Parameter 'url' found, but no SourceURL constructor given in class '"
+								+ className + "'!");
+			}
+
+			stream = (Stream) constr.newInstance(sourceUrl);
+
+			log.info("Injecting variables {} into stream {}", params, stream);
+			ParameterInjection.inject(stream, params, new Variables());
+			return stream;
+		} else {
+			Constructor<?> constr = clazz.getConstructor();
+			stream = (Stream) constr.newInstance(new Object[0]);
+
+			log.info("Injecting variables {} into stream {}", params, stream);
+			ParameterInjection.inject(stream, params, new Variables());
+			return stream;
+		}
+	}
+
 	public static Stream createStream(ObjectFactory objectFactory,
-			ProcessorFactory processorFactory, Element node, Variables variables)
-			throws Exception {
+			Element node, Variables variables) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
 		Class<?> clazz = Class.forName(params.get("class"));
@@ -101,9 +131,9 @@ public class StreamFactory {
 			stream = (Stream) constr.newInstance(new Object[0]);
 		}
 
-		List<Processor> preProcessors = new ArrayList<Processor>();
-
-		ParameterInjection.inject(stream, params, new Variables());
+		params = variables.expandAll(params);
+		log.info("Injecting variables {} into stream {}", params, stream);
+		ParameterInjection.inject(stream, params, variables);
 
 		if (stream instanceof MultiDataStream) {
 			MultiDataStream multiStream = (MultiDataStream) stream;
@@ -119,8 +149,8 @@ public class StreamFactory {
 
 				if (child.getNodeName().equalsIgnoreCase("stream")
 						|| child.getNodeName().equalsIgnoreCase("datastream")) {
-					Stream innerStream = createStream(objectFactory,
-							processorFactory, child, variables);
+					Stream innerStream = createStream(objectFactory, child,
+							variables);
 					log.debug("Created inner stream {}", innerStream);
 					String id = child.getAttribute("id");
 					if (id == null || "".equals(id.trim()))
@@ -132,10 +162,6 @@ public class StreamFactory {
 				}
 			}
 			stream = multiStream;
-		} else {
-			List<Processor> procs = processorFactory
-					.createNestedProcessors(node);
-			preProcessors.addAll(procs);
 		}
 
 		return stream;

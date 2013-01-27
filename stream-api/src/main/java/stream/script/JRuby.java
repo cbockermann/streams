@@ -23,20 +23,181 @@
  */
 package stream.script;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.script.Invocable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngineManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.Data;
+import stream.ProcessContext;
+import stream.StatefulProcessor;
 import stream.annotations.Description;
 
 /**
  * @author chris
  * 
  */
-@Description(name = "(J)Ruby Script", group = "Data Stream.Processing.Script")
+@Description(group = "Data Stream.Processing.Script")
 public class JRuby extends Script {
+	static Logger log = LoggerFactory.getLogger(JRuby.class);
 
-	final static ScriptEngineManager engineManager = new ScriptEngineManager();
+	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+	final static String preamble = "";
 
+	transient String theScript = null;
+	String script = null;
+
+	Invocable impl;
+
+	/**
+	 * @param engine
+	 */
 	public JRuby() {
-		super(engineManager.getEngineByName("jruby"));
+		super(scriptEngineManager.getEngineByName("jruby"));
+	}
+
+	/**
+	 * @see stream.AbstractProcessor#init(stream.Context)
+	 */
+	@Override
+	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
+		this.script = loadScript();
+
+		try {
+			this.initScript();
+
+			if (impl != null && (impl instanceof StatefulProcessor)) {
+				try {
+					impl.invokeFunction("init", ctx);
+					// ((StatefulProcessor) impl).init(ctx);
+				} catch (NoSuchMethodException nsm) {
+					log.warn("No init() function defined in JRuby.");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Error while initializing script: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @see stream.DataProcessor#process(stream.Data)
+	 */
+	@Override
+	public Data process(Data data) {
+
+		try {
+			if (script == null) {
+				log.debug("No script loaded, skipping script execution...");
+				return data;
+			}
+
+			if (impl != null) {
+				try {
+					log.debug("Calling JavaScript implementation of processor interface...");
+					data = (Data) impl.invokeFunction("process", data);
+					return data;
+					// return ((Processor) impl).process(data);
+				} catch (NoSuchMethodException nsme) {
+					log.warn("No function 'process(data)' defined, evaluating running script code!");
+				}
+			}
+
+			log.debug("Script loaded is:\n{}", script);
+
+			ScriptContext ctx = scriptEngine.getContext();
+			scriptEngine.put("data", data);
+			scriptEngine.put("process", this.context);
+
+			log.debug("Evaluating script...");
+			scriptEngine.eval(script, ctx);
+
+		} catch (Exception e) {
+			log.error("Failed to execute script: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+
+			throw new RuntimeException("Script execution error: "
+					+ e.getMessage());
+		}
+
+		log.debug("Returning data: {}", data);
+		return data;
+	}
+
+	protected String loadScript() throws Exception {
+
+		if (embedded != null) {
+			log.info("Using embedded content...");
+			theScript = preamble + "\n" + embedded.getContent();
+			return theScript;
+		}
+
+		if (file != null) {
+			log.debug("Reading script from file {}", file);
+			theScript = loadScript(new FileInputStream(file));
+			return theScript;
+		}
+
+		throw new Exception("Neither embedded script not script file provided!");
+	}
+
+	protected String loadScript(InputStream in) throws Exception {
+		log.debug("Loading script from input-stream {}", in);
+		StringBuffer s = new StringBuffer();
+		s.append(preamble);
+		s.append("\n");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		String line = reader.readLine();
+		while (line != null) {
+			s.append(line + "\n");
+			log.debug("Appending line: {}", line);
+			line = reader.readLine();
+		}
+		reader.close();
+		return s.toString();
+	}
+
+	private void initScript() throws Exception {
+
+		log.debug("Script loaded is:\n{}", script);
+
+		ScriptContext ctx = scriptEngine.getContext();
+		scriptEngine.put("process", this.context);
+
+		log.debug("Evaluating script...");
+		scriptEngine.eval(script, ctx);
+
+		if (scriptEngine instanceof Invocable) {
+			Invocable invocable = (Invocable) scriptEngine;
+			impl = invocable; // invocable.getInterface(StatefulProcessor.class);
+			if (impl != null) {
+				log.debug("JRuby script implements StatefulProcessor interface!!");
+
+				try {
+					impl.invokeFunction("init", this.context);
+				} catch (Exception e) {
+					log.error("Initialization of JRuby script failed: {}",
+							e.getMessage());
+				}
+
+				return;
+			}
+
+			// impl = invocable.getInterface(Processor.class);
+			log.debug("Found JavaScript implementation of processor interface...");
+		}
 	}
 }

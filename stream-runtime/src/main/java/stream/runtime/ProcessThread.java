@@ -78,7 +78,10 @@ public class ProcessThread extends Thread {
 		running = true;
 		try {
 
+			log.debug("Starting process {}, notifying listeners {}", process,
+					processListener);
 			for (ProcessListener l : this.processListener) {
+				log.debug("Calling process-listener {}", l);
 				l.processStarted(process);
 			}
 
@@ -92,8 +95,18 @@ public class ProcessThread extends Thread {
 			}
 		} finally {
 
-			for (ProcessListener l : this.processListener) {
-				l.processFinished(process);
+			try {
+				log.debug("Process {} finished, notifying listeners: {}",
+						process, processListener);
+				for (ProcessListener l : this.processListener) {
+					log.debug("   Calling listener {}", l);
+					l.processFinished(process);
+				}
+			} catch (Exception e) {
+				log.error("Failed to call process listeners: {}",
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
 			}
 
 			running = false;

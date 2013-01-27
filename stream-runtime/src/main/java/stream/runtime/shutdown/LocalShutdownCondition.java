@@ -23,15 +23,13 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 
 	static Logger log = LoggerFactory.getLogger(LocalShutdownCondition.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
+	/**
+	 * @see stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
 	 */
 	@Override
 	public boolean isMet(DependencyGraph graph) {
 
+		log.debug("Checking if shutdown condition is met...");
 		synchronized (graph) {
 
 			if (graph.nodes.isEmpty())
@@ -42,29 +40,20 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			int monitorCount = 0;
 
 			for (Object node : graph.nodes) {
-				if (node instanceof Process && !(node instanceof Monitor)) {
-					processes++;
-				}
-
 				if (node instanceof Monitor) {
 					monitors.add((Monitor) node);
 					monitorCount++;
+					continue;
+				}
+
+				if (node instanceof Process && !(node instanceof Monitor)) {
+					processes++;
 				}
 			}
 
 			if (processes == 0) {
 				log.debug("No more processes running...");
-				for (Monitor m : monitors) {
-					try {
-						log.debug("Finishing monitor {}", m);
-						m.finish();
-						log.debug("Removing monitor {} from dependency graph",
-								m);
-						graph.remove(m);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+				return true;
 			}
 
 			if (processes == 0 && monitorCount == 0) {

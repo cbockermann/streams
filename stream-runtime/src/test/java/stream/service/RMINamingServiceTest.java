@@ -27,6 +27,8 @@ public class RMINamingServiceTest {
 	@Before
 	public void setup() throws Exception {
 
+		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+
 		namingService = new RMINamingService("test", "localhost", port, false);
 
 		ReverseStringServiceImpl reverser = new ReverseStringServiceImpl();

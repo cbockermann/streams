@@ -21,6 +21,8 @@ public class EnqueueTestAssertion implements QueueService {
 	static Logger log = LoggerFactory.getLogger(EnqueueTestAssertion.class);
 	public static List<Data> collection = new ArrayList<Data>();
 
+	String id;
+
 	/**
 	 * @see stream.service.Service#reset()
 	 */
@@ -71,5 +73,21 @@ public class EnqueueTestAssertion implements QueueService {
 	@Override
 	public int capacity() {
 		return Integer.MAX_VALUE;
+	}
+
+	/**
+	 * @see stream.io.Sink#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @see stream.io.Sink#write(stream.Data)
+	 */
+	@Override
+	public void write(Data item) throws Exception {
+		this.enqueue(item);
 	}
 }

@@ -179,7 +179,8 @@ public class ClassFinder {
 
 		for (File file : files) {
 			if (file.isDirectory()) {
-				assert !file.getName().contains(".");
+				if (file.getName().contains("."))
+					continue;
 
 				if (packageName.isEmpty()) {
 					classes.addAll(findClasses(file, file.getName()));

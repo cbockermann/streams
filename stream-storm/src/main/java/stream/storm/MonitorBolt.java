@@ -3,6 +3,8 @@
  */
 package stream.storm;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,8 @@ public class MonitorBolt extends ProcessBolt {
 
 	static Logger log = LoggerFactory.getLogger(MonitorBolt.class);
 
-	public MonitorBolt(String xmlConfig, String uuid) {
-		super(xmlConfig, uuid);
+	public MonitorBolt(String xmlConfig, String uuid, Map<String, String> vars)
+			throws Exception {
+		super(xmlConfig, uuid, vars);
 	}
 }

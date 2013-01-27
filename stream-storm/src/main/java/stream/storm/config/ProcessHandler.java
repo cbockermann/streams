@@ -52,6 +52,15 @@ public class ProcessHandler extends ATopologyElementHandler {
 
 		if (el.getNodeName().equalsIgnoreCase("process")) {
 			String id = el.getAttribute("id");
+			if (id == null || id.trim().isEmpty()) {
+				log.error(
+						"No 'id' attribute defined in process element (class: '{}')",
+						el.getAttribute("class"));
+				throw new Exception(
+						"Missing 'id' attribute for process element!");
+			}
+
+			log.info("  > Creating process-bolt with id '{}'", id);
 
 			String input = el.getAttribute("input");
 			String copies = el.getAttribute("copies");
@@ -71,18 +80,19 @@ public class ProcessHandler extends ATopologyElementHandler {
 				}
 			}
 
-			log.info("  > Adding bolt '{}', subscribing to input(s): '{}'", id,
-					input);
+			log.info("  >   Adding bolt '{}', subscribing to input(s): '{}'",
+					id, input);
 
-			ProcessBolt bolt = new ProcessBolt(xml, id);
-			log.info("  > Registering bolt (process) '{}' with instance {}",
+			ProcessBolt bolt = new ProcessBolt(xml, id, st.getVariables());
+			log.info("  >   Registering bolt (process) '{}' with instance {}",
 					id, bolt);
+
 			BoltDeclarer boltDeclarer = builder.setBolt(id, bolt, workers);
 
 			BoltDeclarer cur = boltDeclarer;
 			for (String in : inputs) {
-				log.info("  > Connecting bolt '{}' to shuffle-group '{}'", id,
-						in);
+				log.info("  >   Connecting bolt '{}' to shuffle-group '{}'",
+						id, in);
 				cur = cur.shuffleGrouping(in);
 			}
 

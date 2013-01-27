@@ -153,8 +153,8 @@ public abstract class AbstractProcess implements stream.Process {
 					} catch (Exception e) {
 						log.error("Failed to finish processor '{}': {}", proc,
 								e.getMessage());
-						if (log.isDebugEnabled())
-							e.printStackTrace();
+						// if (log.isDebugEnabled())
+						e.printStackTrace();
 					}
 				}
 				log.debug("processor {} processed {} items", proc, counts[i]);

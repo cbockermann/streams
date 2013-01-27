@@ -131,6 +131,7 @@ public class StreamFactory {
 			stream = (Stream) constr.newInstance(new Object[0]);
 		}
 
+		params = variables.expandAll(params);
 		log.info("Injecting variables {} into stream {}", params, stream);
 		ParameterInjection.inject(stream, params, variables);
 

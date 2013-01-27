@@ -41,5 +41,4 @@ public abstract class AbstractBolt extends BaseRichBolt {
 		log.debug("Declaring Bolt-output field 'stream.Data'");
 		declarer.declare(new Fields("stream.Data"));
 	}
-
 }

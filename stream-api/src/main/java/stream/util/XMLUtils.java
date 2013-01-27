@@ -184,4 +184,28 @@ public class XMLUtils {
 			return null;
 		return findElementByUUID(doc.getDocumentElement(), attributeName, uuid);
 	}
+
+	public static Document createDocument(Element element, String docElementName)
+			throws Exception {
+
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+		Document doc = builder.newDocument();
+		Element root = doc.createElement(docElementName);
+
+		doc.appendChild(root);
+		root.appendChild(doc.adoptNode(element.cloneNode(true)));
+
+		return doc;
+	}
+
+	public static String createDocumentXML(Element element,
+			String docElementName) throws Exception {
+		Document doc = createDocument(element, docElementName);
+		Transformer xform = TransformerFactory.newInstance().newTransformer();
+		StringWriter writer = new StringWriter();
+		xform.transform(new DOMSource(doc), new StreamResult(writer));
+		writer.close();
+		return writer.toString();
+	}
 }

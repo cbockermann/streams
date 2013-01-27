@@ -22,6 +22,7 @@ import stream.runtime.setup.handler.PropertiesHandler;
 import stream.storm.config.BoltHandler;
 import stream.storm.config.ConfigHandler;
 import stream.storm.config.ProcessHandler;
+import stream.storm.config.SpoutHandler;
 import stream.storm.config.StreamHandler;
 import stream.util.XMLUtils;
 import backtype.storm.Config;
@@ -136,148 +137,176 @@ public class StreamTopology {
 		}
 
 		List<ConfigHandler> handlers = new ArrayList<ConfigHandler>();
-		handlers.add(new BoltHandler(of));
+		handlers.add(new SpoutHandler(of));
 		handlers.add(new StreamHandler(of, xml));
+		handlers.add(new BoltHandler(of));
 		handlers.add(new ProcessHandler(of, xml));
 
 		NodeList list = doc.getDocumentElement().getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
 
-			Node node = list.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
+		for (ConfigHandler handler : handlers) {
 
-				Element el = (Element) node;
-				boolean handled = false;
-				for (ConfigHandler handler : handlers) {
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element el = (Element) node;
+
 					if (handler.handles(el)) {
 						log.info("--------------------------------------------------------------------------------");
 						log.info("Handling element '{}'", node.getNodeName());
 						handler.handle(el, st, builder);
-						handled = true;
 						log.info("--------------------------------------------------------------------------------");
 					}
 				}
-
-				if (handled) {
-					log.debug(
-							"Element '{}' already handled by generic element handler!",
-							el.getNodeName());
-					continue;
-				}
-				//
-				// log.info("--------------------------------------------------------------------------------");
-				// log.info("Handling element '{}'", node.getNodeName());
-				// String id = el.getAttribute("id");
-				// if (id == null || "".equals(id.trim()))
-				// id = el.getAttribute(UUID_ATTRIBUTE);
-				// if (id == null || "".equals(id.trim()))
-				// id = UUID.randomUUID().toString().toUpperCase();
-				//
-				// String uuid = id;
-				//
-				// if (el.getNodeName().equalsIgnoreCase("bolt")
-				// || el.getNodeName().equals("storm:bolt")) {
-				//
-				// String className = el.getAttribute("class");
-				// Map<String, String> params = of.getAttributes(el);
-				//
-				// List<String> inputs = getInputNames(el);
-				// if (inputs.isEmpty()) {
-				// throw new RuntimeException(
-				// "No 'input' defined for bolt '" + id
-				// + "' (class '" + className + "')");
-				// }
-				//
-				// // log.debug(
-				// //
-				// "Creating direct bolt-instance for class '{}', params: {}",
-				// // className, params);
-				// IRichBolt bolt = (IRichBolt) of.create(className, params);
-				//
-				// log.info("  > Injecting parameters {} into bolt {}",
-				// params, bolt);
-				// ParameterInjection.inject(bolt, params, new Variables());
-				//
-				// log.info("  > Registering bolt '{}' with instance {}", id,
-				// bolt);
-				// BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);
-				// BoltDeclarer cur = boltDeclarer;
-				// for (String input : inputs) {
-				// log.info(
-				// "  > Connecting bolt '{}' to shuffle-group '{}'",
-				// id, input);
-				// cur = cur.shuffleGrouping(input);
-				// }
-				//
-				// st.bolts.put(id, cur);
-				// }
-				//
-				// if (el.getNodeName().equalsIgnoreCase("process")) {
-				// String input = el.getAttribute("input");
-				// String copies = el.getAttribute("copies");
-				// Integer workers = 1;
-				// List<String> inputs = getInputNames(el);
-				// if (inputs.isEmpty())
-				// throw new RuntimeException(
-				// "No input defined for process '" + id + "'");
-				//
-				// if (copies != null) {
-				// try {
-				//
-				// } catch (Exception e) {
-				// workers = 1;
-				// throw new RuntimeException(
-				// "Invalid number of copies '" + copies
-				// + "' specified!");
-				// }
-				// }
-				//
-				// log.info(
-				// "  > Adding bolt '{}', subscribing to input(s): '{}'",
-				// uuid, input);
-				//
-				// ProcessBolt bolt = new ProcessBolt(xml, uuid);
-				// log.info(
-				// "  > Registering bolt (process) '{}' with instance {}",
-				// uuid, bolt);
-				// BoltDeclarer boltDeclarer = builder.setBolt(uuid, bolt,
-				// workers);
-				//
-				// BoltDeclarer cur = boltDeclarer;
-				// for (String in : inputs) {
-				// log.info(
-				// "  > Connecting bolt '{}' to shuffle-group '{}'",
-				// uuid, in);
-				// cur = cur.shuffleGrouping(in);
-				// }
-				//
-				// st.bolts.put(uuid, cur);
-				// }
-				//
-				// if (el.getNodeName().equalsIgnoreCase("monitor")) {
-				//
-				// String clock = "clock:" + UUID.randomUUID().toString();
-				// String interval = el.getAttribute("interval");
-				// TimeStream timeStream = new TimeStream();
-				// timeStream.setInterval(interval);
-				//
-				// ClockSpout spout = new ClockSpout(
-				// TimeParser.parseTime(interval));
-				// builder.setSpout(clock, spout);
-				// builder.setBolt(uuid, new MonitorBolt(xml, uuid))
-				// .shuffleGrouping(clock);
-				// }
-				//
-				// if (el.getNodeName().equalsIgnoreCase("queue")) {
-				// log.info("  > Adding new QueueBolt instance '{}'", uuid);
-				// QueueBolt queue = new QueueBolt(xml, uuid);
-				// BoltDeclarer boltDeclarer = builder.setBolt(uuid, queue);
-				// log.info("  > declarer is: {}", boltDeclarer);
-				// }
-				//
-				// log.info("--------------------------------------------------------------------------------");
 			}
 		}
+
+		// Now all bolts, spouts, streams and processes have been defined.
+		// What's left todo is:
+		// - inject services
+		// - inject cross-dataflow-connections (via sinks?)
+		//
+
+		//
+		// for (int i = 0; i < list.getLength(); i++) {
+		//
+		// Node node = list.item(i);
+		// if (node.getNodeType() == Node.ELEMENT_NODE) {
+		//
+		// Element el = (Element) node;
+		// boolean handled = false;
+		// for (ConfigHandler handler : handlers) {
+		// if (handler.handles(el)) {
+		// log.info("--------------------------------------------------------------------------------");
+		// log.info("Handling element '{}'", node.getNodeName());
+		// handler.handle(el, st, builder);
+		// handled = true;
+		// log.info("--------------------------------------------------------------------------------");
+		// }
+		// }
+		//
+		// if (handled) {
+		// log.debug(
+		// "Element '{}' already handled by generic element handler!",
+		// el.getNodeName());
+		// continue;
+		// }
+		// //
+		// //
+		// log.info("--------------------------------------------------------------------------------");
+		// // log.info("Handling element '{}'", node.getNodeName());
+		// // String id = el.getAttribute("id");
+		// // if (id == null || "".equals(id.trim()))
+		// // id = el.getAttribute(UUID_ATTRIBUTE);
+		// // if (id == null || "".equals(id.trim()))
+		// // id = UUID.randomUUID().toString().toUpperCase();
+		// //
+		// // String uuid = id;
+		// //
+		// // if (el.getNodeName().equalsIgnoreCase("bolt")
+		// // || el.getNodeName().equals("storm:bolt")) {
+		// //
+		// // String className = el.getAttribute("class");
+		// // Map<String, String> params = of.getAttributes(el);
+		// //
+		// // List<String> inputs = getInputNames(el);
+		// // if (inputs.isEmpty()) {
+		// // throw new RuntimeException(
+		// // "No 'input' defined for bolt '" + id
+		// // + "' (class '" + className + "')");
+		// // }
+		// //
+		// // // log.debug(
+		// // //
+		// // "Creating direct bolt-instance for class '{}', params: {}",
+		// // // className, params);
+		// // IRichBolt bolt = (IRichBolt) of.create(className, params);
+		// //
+		// // log.info("  > Injecting parameters {} into bolt {}",
+		// // params, bolt);
+		// // ParameterInjection.inject(bolt, params, new Variables());
+		// //
+		// // log.info("  > Registering bolt '{}' with instance {}", id,
+		// // bolt);
+		// // BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);
+		// // BoltDeclarer cur = boltDeclarer;
+		// // for (String input : inputs) {
+		// // log.info(
+		// // "  > Connecting bolt '{}' to shuffle-group '{}'",
+		// // id, input);
+		// // cur = cur.shuffleGrouping(input);
+		// // }
+		// //
+		// // st.bolts.put(id, cur);
+		// // }
+		// //
+		// // if (el.getNodeName().equalsIgnoreCase("process")) {
+		// // String input = el.getAttribute("input");
+		// // String copies = el.getAttribute("copies");
+		// // Integer workers = 1;
+		// // List<String> inputs = getInputNames(el);
+		// // if (inputs.isEmpty())
+		// // throw new RuntimeException(
+		// // "No input defined for process '" + id + "'");
+		// //
+		// // if (copies != null) {
+		// // try {
+		// //
+		// // } catch (Exception e) {
+		// // workers = 1;
+		// // throw new RuntimeException(
+		// // "Invalid number of copies '" + copies
+		// // + "' specified!");
+		// // }
+		// // }
+		// //
+		// // log.info(
+		// // "  > Adding bolt '{}', subscribing to input(s): '{}'",
+		// // uuid, input);
+		// //
+		// // ProcessBolt bolt = new ProcessBolt(xml, uuid);
+		// // log.info(
+		// // "  > Registering bolt (process) '{}' with instance {}",
+		// // uuid, bolt);
+		// // BoltDeclarer boltDeclarer = builder.setBolt(uuid, bolt,
+		// // workers);
+		// //
+		// // BoltDeclarer cur = boltDeclarer;
+		// // for (String in : inputs) {
+		// // log.info(
+		// // "  > Connecting bolt '{}' to shuffle-group '{}'",
+		// // uuid, in);
+		// // cur = cur.shuffleGrouping(in);
+		// // }
+		// //
+		// // st.bolts.put(uuid, cur);
+		// // }
+		// //
+		// // if (el.getNodeName().equalsIgnoreCase("monitor")) {
+		// //
+		// // String clock = "clock:" + UUID.randomUUID().toString();
+		// // String interval = el.getAttribute("interval");
+		// // TimeStream timeStream = new TimeStream();
+		// // timeStream.setInterval(interval);
+		// //
+		// // ClockSpout spout = new ClockSpout(
+		// // TimeParser.parseTime(interval));
+		// // builder.setSpout(clock, spout);
+		// // builder.setBolt(uuid, new MonitorBolt(xml, uuid))
+		// // .shuffleGrouping(clock);
+		// // }
+		// //
+		// // if (el.getNodeName().equalsIgnoreCase("queue")) {
+		// // log.info("  > Adding new QueueBolt instance '{}'", uuid);
+		// // QueueBolt queue = new QueueBolt(xml, uuid);
+		// // BoltDeclarer boltDeclarer = builder.setBolt(uuid, queue);
+		// // log.info("  > declarer is: {}", boltDeclarer);
+		// // }
+		// //
+		// //
+		// log.info("--------------------------------------------------------------------------------");
+		// }
+		// }
 
 		return st;
 	}

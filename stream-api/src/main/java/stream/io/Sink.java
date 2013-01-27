@@ -16,6 +16,8 @@ import stream.Data;
  */
 public interface Sink {
 
+	public String getId();
+
 	/**
 	 * Writes data into the instance represented by this sink.
 	 * 

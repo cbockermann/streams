@@ -88,9 +88,9 @@ public class PropertiesHandler implements DocumentHandler {
 			}
 
 			if (prop.hasAttribute("url")) {
+				String purl = prop.getAttribute("url");
 				try {
 					URL propUrl;
-					String purl = prop.getAttribute("url");
 					if (purl.toLowerCase().startsWith("classpath:")) {
 						propUrl = PropertiesHandler.class.getResource(purl
 								.substring("classpath:".length()));
@@ -106,7 +106,8 @@ public class PropertiesHandler implements DocumentHandler {
 					}
 
 				} catch (Exception e) {
-					log.error("Failed to read properties: {}", e.getMessage());
+					log.error("Failed to read properties from url {}: {}",
+							purl, e.getMessage());
 				}
 			}
 

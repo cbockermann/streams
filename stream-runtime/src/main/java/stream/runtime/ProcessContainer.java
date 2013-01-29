@@ -66,6 +66,7 @@ import stream.runtime.setup.handler.PropertiesHandler;
 import stream.runtime.setup.handler.QueueElementHandler;
 import stream.runtime.setup.handler.ServiceElementHandler;
 import stream.runtime.setup.handler.StreamElementHandler;
+import stream.runtime.setup.handler.SystemPropertiesHandler;
 import stream.runtime.shutdown.DependencyGraph;
 import stream.runtime.shutdown.LocalShutdownCondition;
 import stream.runtime.shutdown.ServerShutdownCondition;
@@ -165,8 +166,8 @@ public class ProcessContainer {
 
 	boolean server = true;
 
-	Long startTime = 0L;
-	Variables containerVariables = new Variables();
+	protected Long startTime = 0L;
+	protected Variables containerVariables = new Variables();
 
 	final static String[] extensions = new String[] {
 			"stream.moa.MoaObjectFactory",
@@ -208,6 +209,7 @@ public class ProcessContainer {
 				objectFactory);
 		documentHandler.add(libHandler);
 		documentHandler.add(new PropertiesHandler());
+		documentHandler.add(new SystemPropertiesHandler());
 
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
@@ -369,7 +371,7 @@ public class ProcessContainer {
 			handle.handle(this, doc, containerVariables);
 		}
 		objectFactory.addVariables(context.getProperties());
-
+		
 		NodeList children = root.getChildNodes();
 
 		if (context.getProperties().get("container.datafactory") != null) {
@@ -400,6 +402,13 @@ public class ProcessContainer {
 		connectProcesses();
 
 		injectServices();
+		
+		//Special Treatment for properties
+		DocumentHandler ph = new PropertiesHandler();
+		Variables pv = new Variables();
+		ph.handle(this, doc, pv);
+		context.getProperties().putAll(pv);
+		
 	}
 
 	/**

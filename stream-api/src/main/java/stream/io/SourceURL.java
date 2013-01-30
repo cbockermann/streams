@@ -8,13 +8,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.urls.Connection;
+import stream.urls.SSLConnection;
 import stream.urls.TcpConnection;
 import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
@@ -39,6 +43,13 @@ public final class SourceURL implements Serializable {
 
 	static Logger log = LoggerFactory.getLogger(SourceURL.class);
 
+	final static Map<String, Class<? extends Connection>> urlProvider = new LinkedHashMap<String, Class<? extends Connection>>();
+	static {
+		urlProvider.put("ssl", stream.urls.SSLConnection.class);
+		urlProvider.put("tcp", stream.urls.TcpConnection.class);
+		urlProvider.put("fifo", stream.urls.FIFOConnection.class);
+	}
+
 	final static String FILE_GRAMMAR = "%(protocol):%(path)";
 	final static String GRAMMAR = "%(protocol)://%(host):%(port)/%(path)";
 
@@ -51,6 +62,8 @@ public final class SourceURL implements Serializable {
 	final String path;
 	final String username;
 	final String password;
+
+	final Map<String, String> parameters = new LinkedHashMap<String, String>();
 
 	public SourceURL(URL url) {
 		this.url = url;
@@ -114,15 +127,59 @@ public final class SourceURL implements Serializable {
 		}
 	}
 
+	protected boolean isGzip() {
+		if (urlString != null && urlString.toLowerCase().endsWith(".gz"))
+			return true;
+
+		if (url != null && url.toString().toLowerCase().endsWith(".gz"))
+			return true;
+
+		return false;
+	}
+
 	public InputStream openStream() throws IOException {
 
+		InputStream inputStream = createStream();
+
+		if (isGzip()) {
+			log.debug("Wrapping stream {} in GZIPInputStream for URL {}",
+					inputStream, this);
+			return new GZIPInputStream(inputStream);
+		}
+
+		return inputStream;
+	}
+
+	private InputStream createStream() throws IOException {
+
 		if (this.url != null) {
-
-			if (url.toString().toLowerCase().endsWith(".gz")) {
-				return new GZIPInputStream(url.openStream());
-			}
-
 			return url.openStream();
+		}
+
+		for (String proto : urlProvider.keySet()) {
+			if (proto.equalsIgnoreCase(protocol)) {
+				Class<? extends Connection> clazz = urlProvider.get(proto);
+				log.debug("Found url-provider '{}' for URL {}", clazz, this);
+				try {
+					Constructor<? extends Connection> constructor = clazz
+							.getConstructor(SourceURL.class);
+
+					log.debug(
+							"Using constructor {} to create new instance of provider {}",
+							constructor, clazz);
+					Connection con = constructor.newInstance(this);
+					return con.connect();
+				} catch (NoSuchMethodException nsm) {
+					nsm.printStackTrace();
+					log.error(
+							"Failed to create instance of class {} for URL {}",
+							clazz, this);
+					throw new IOException(nsm.getMessage());
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new IOException(e.getMessage());
+				}
+			}
 		}
 
 		if ("stdin".equalsIgnoreCase(protocol)) {
@@ -132,18 +189,22 @@ public final class SourceURL implements Serializable {
 		if ("classpath".equalsIgnoreCase(protocol)) {
 			log.debug("Returning InputStream for classpath resource '{}'",
 					getPath());
-
-			if (urlString.toLowerCase().endsWith(".gz")) {
-				log.debug("Opening URL {} as GZIP stream...", urlString);
-				return new GZIPInputStream(
-						SourceURL.class.getResourceAsStream(getPath()));
-			}
 			return SourceURL.class.getResourceAsStream(getPath());
 		}
 
 		if ("tcp".equalsIgnoreCase(protocol)) {
-			TcpConnection con = new TcpConnection(host, port);
+			TcpConnection con = new TcpConnection(this);
 			return con.getInputStream();
+		}
+
+		if ("ssl".equalsIgnoreCase(protocol)) {
+			try {
+				SSLConnection ssl = new SSLConnection(this);
+				ssl.open();
+				return ssl.getInputStream();
+			} catch (Exception e) {
+				throw new IOException(e.getMessage());
+			}
 		}
 
 		String theUrl = this.urlString;
@@ -171,25 +232,13 @@ public final class SourceURL implements Serializable {
 									+ file.getAbsolutePath() + "'!");
 				}
 
-				if (file.getName().endsWith(".gz")) {
-					log.info(
-							"Returning GZIP around FileInputStream for FIFO {}",
-							file);
-					return new GZIPInputStream(new FileInputStream(file));
-				} else {
-					log.info("Returning FileInputStream for FIFO {}", file);
-					FileInputStream fis = new FileInputStream(file);
-					return fis;
-				}
+				log.info("Returning FileInputStream for FIFO {}", file);
+				FileInputStream fis = new FileInputStream(file);
+				return fis;
 			}
 
 			log.info("The URL string is: '{}'", theUrl);
 			URL url = new URL(theUrl);
-
-			if (theUrl.toLowerCase().endsWith(".gz")) {
-				log.debug("Opening URL {} as GZIP stream...", theUrl);
-				return new GZIPInputStream(url.openStream());
-			}
 
 			return url.openStream();
 		} catch (Exception e) {
@@ -240,5 +289,9 @@ public final class SourceURL implements Serializable {
 
 	public String getPassword() {
 		return null;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 }

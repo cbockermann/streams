@@ -54,10 +54,6 @@ public class PropertiesHandler implements DocumentHandler {
 		//
 		findPropertyElements(container, doc, variables);
 
-		// add system properties, e.g defined at command line using the -D flag:
-		// java -Dproperty-name=property-value
-		//
-		addSystemProperties(container, variables);
 	}
 
 	/**
@@ -160,18 +156,4 @@ public class PropertiesHandler implements DocumentHandler {
 		}
 	}
 
-	/**
-	 * This method adds all the system properties to the container properties,
-	 * possibly overwriting pre-defined properties.
-	 * 
-	 * @param container
-	 */
-	private void addSystemProperties(ProcessContainer container,
-			Variables variables) {
-		for (Object key : System.getProperties().keySet()) {
-			// log.debug("Adding system property '{}' = {}", key,
-			// System.getProperty(key.toString()));
-			variables.set(key.toString(), System.getProperty(key.toString()));
-		}
-	}
 }

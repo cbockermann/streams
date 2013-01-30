@@ -11,11 +11,18 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.io.SourceURL;
+
 /**
- * @author chris
+ * <p>
+ * A simple implementation of the abstract {@link Connection} class that
+ * supports connecting to TCP network sockets.
+ * </p>
+ * 
+ * @author Christian Bockermann
  * 
  */
-public class TcpConnection {
+public class TcpConnection extends Connection {
 
 	static Logger log = LoggerFactory.getLogger(TcpURLConnection.class);
 	Socket connect;
@@ -23,18 +30,21 @@ public class TcpConnection {
 	final String host;
 	final Integer port;
 
-	public TcpConnection(String host, Integer port) {
-		this.host = host;
-		this.port = port;
+	public TcpConnection(SourceURL url) {
+		super(url);
+
+		this.host = url.getHost();
+		this.port = url.getPort();
 	}
 
 	/**
 	 * @see java.net.URLConnection#connect()
 	 */
-	public void connect() throws IOException {
+	public InputStream connect() throws IOException {
 		try {
 			log.debug("Connecting via TCP to {}:{}", host, port);
 			connect = new Socket(host, port);
+			return connect.getInputStream();
 		} catch (IOException e) {
 			log.error("Connection failed: {}", e.getMessage());
 			throw e;
@@ -79,5 +89,23 @@ public class TcpConnection {
 	public String toString() {
 		return "TcpConnection(" + super.toString() + ")[" + host + ":" + port
 				+ "]";
+	}
+
+	/**
+	 * @see stream.urls.Connection#getSupportedProtocols()
+	 */
+	@Override
+	public String[] getSupportedProtocols() {
+		return new String[] { "tcp" };
+	}
+
+	/**
+	 * @see stream.urls.Connection#disconnect()
+	 */
+	@Override
+	public void disconnect() throws IOException {
+		if (connect != null) {
+			connect.close();
+		}
 	}
 }

@@ -159,7 +159,9 @@ public class DocIndex implements Serializable {
 		return val;
 	}
 
-	public class Result implements Comparable<Result> {
+	public class Result implements Comparable<Result>, Serializable {
+		/** The unique class ID */
+		private static final long serialVersionUID = -1224420400062085703L;
 		public final URL url;
 		public final Double score;
 		public final String className;

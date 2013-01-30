@@ -1,5 +1,5 @@
 VERSION=0.9.8-SNAPSHOT
-REVISION=0
+REVISION=4
 NAME=streams
 BUILD=.build_tmp
 DIST=jwall-devel

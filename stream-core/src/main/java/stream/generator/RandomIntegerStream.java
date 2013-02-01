@@ -25,7 +25,6 @@ package stream.generator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 
 import stream.Data;
 import stream.annotations.Description;
@@ -43,7 +42,7 @@ public class RandomIntegerStream extends AbstractStream {
 
 	Map<String, Object> store = new LinkedHashMap<String, Object>();
 	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
-//	Random[] random = null;
+	// Random[] random = null;
 	SFMT19937[] random = null;
 	String[] keys = new String[] { "att1" };
 

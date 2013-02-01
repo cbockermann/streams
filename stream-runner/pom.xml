@@ -1,17 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>streams</artifactId>
-		<groupId>org.jwall</groupId>
-		<version>0.9.8-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>stream-runner</artifactId>
-	<name>stream-runner</name>
-	<description>This is a very simple module that includes various dependencies and provides a standalone executable jar including the stream-api, stream-core, stream-runtime and log4j logging libraries.</description>
-
-	<repositories>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>streams</artifactId>
+    <groupId>org.jwall</groupId>
+    <version>0.9.8-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <artifactId>stream-runner</artifactId>
+  <name>stream-runner</name>
+  <description>This is a very simple module that includes various dependencies and provides a standalone executable jar including the stream-api, stream-core, stream-runtime and log4j logging libraries.</description>
+  
+  <repositories>
 		<repository>
 			<id>jwall</id>
 			<name>jwall.org Maven Repository</name>

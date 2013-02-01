@@ -155,4 +155,32 @@ public class BlockingQueue extends AbstractQueue {
 			queue.notifyAll();
 		}
 	}
+
+	/**
+	 * @see stream.io.QueueService#level()
+	 */
+	@Override
+	public int level() {
+		return queue.size();
+	}
+
+	/**
+	 * @see stream.io.QueueService#capacity()
+	 */
+	@Override
+	public int capacity() {
+		return getLimit();
+	}
+
+	/**
+	 * @see stream.service.Service#reset()
+	 */
+	@Override
+	public void reset() throws Exception {
+		if (queue == null) {
+			queue = new LinkedBlockingQueue<Data>(this.getLimit());
+		} else {
+			queue.clear();
+		}
+	}
 }

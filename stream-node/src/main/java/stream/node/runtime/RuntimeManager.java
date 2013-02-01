@@ -34,8 +34,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Data;
-import stream.io.DataStreamQueue;
+import stream.Data;
+import stream.io.Queue;
 import stream.node.StreamNodeContext;
 import stream.runtime.ProcessContainer;
 
@@ -49,7 +49,7 @@ public class RuntimeManager {
 	final Map<String, ProcessContainer> containers = new LinkedHashMap<String, ProcessContainer>();
 	final List<ProcessContainerThread> worker = new ArrayList<ProcessContainerThread>();
 	File deploymentDirectory;
-	Map<String, DataStreamQueue> queues = new LinkedHashMap<String, DataStreamQueue>();
+	Map<String, Queue> queues = new LinkedHashMap<String, Queue>();
 
 	RuntimeDeploymentMonitor deploymentMonitor;
 
@@ -146,7 +146,14 @@ public class RuntimeManager {
 			 * workerThread.start();
 			 */
 
-			ProcessContainerThread.runVM(f);
+			ProcessContainer pc = new ProcessContainer(url);
+			ProcessContainerThread t = new ProcessContainerThread(f, pc);
+
+			worker.add(t);
+			log.info("Spawning process container {}", f);
+			t.start();
+
+			// ProcessContainerThread.runVM(f);
 
 		} catch (Exception e) {
 			log.error(
@@ -261,5 +268,4 @@ public class RuntimeManager {
 		s.append("</container-list>\n");
 		return s.toString();
 	}
-
 }

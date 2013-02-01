@@ -128,7 +128,7 @@ public class StreamNodeContext implements ServletContextListener {
 		Map<String, String> info = new LinkedHashMap<String, String>();
 
 		info.put("Stream Node User", System.getProperty("user.name"));
-		info.put("stream-api Version", StreamNodeContext.class.getPackage()
+		info.put("stream-api Version", stream.Data.class.getPackage()
 				.getImplementationVersion());
 		// Version.getVersion("org.jwall", "stream-api").getVersion());
 		info.put("Java VM", System.getProperty("java.vm.name"));

@@ -25,6 +25,7 @@ package stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -139,8 +140,20 @@ public class run {
 		ProcessContainer container = new ProcessContainer(url);
 
 		log.info("Starting process-container...");
+//		if (true) {
+//    		System.out.println("You're using Eclipse; click in this console and	" +
+//    						"press ENTER to call System.exit() and run the shutdown routine.");
+//    		try {
+//    			System.in.read();
+//    		} catch (IOException e) {
+//    			// TODO Auto-generated catch block
+//    			e.printStackTrace();
+//    		}
+//    		System.exit(0);
+//    	}
 		container.run();
 		log.info("Container finished.");
+		
 	}
 
 	public static void main(URL url, Map<String, ElementHandler> elementHandler)

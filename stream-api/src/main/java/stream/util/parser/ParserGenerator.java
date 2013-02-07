@@ -96,7 +96,21 @@ public class ParserGenerator {
 			tokenDefs.add(new Token(toks));
 		}
 
-		return new GenericParser(tokenDefs);
+		return new GenericTurboParser(tokenDefs);
+	}
+
+	public static List<Token> readGrammar(String grammarDefinition) {
+		List<Token> tokenDefs = new ArrayList<Token>();
+		List<String> tokens = (new ParserGenerator(grammarDefinition))
+				.parseGrammar(grammarDefinition); // QuotedStringTokenizer.splitRespectQuotes(
+		// grammarDefinition,
+		// ' ' );
+		log.debug("Grammar tokens: {}", tokens);
+
+		for (String toks : tokens) {
+			tokenDefs.add(new Token(toks));
+		}
+		return tokenDefs;
 	}
 
 	public boolean isVariableToken(String str) {
@@ -107,35 +121,52 @@ public class ParserGenerator {
 	}
 
 	public static class Token {
-		String value;
-		Pattern pattern;
+		public final boolean isVariable;
+		public final String name;
+		public final String value;
+		public final int length;
+		public final Pattern pattern;
 
 		public Token(String name) {
 			this.value = name;
 
+			this.isVariable = value != null && value.startsWith(TOKEN_START)
+					&& value.endsWith(TOKEN_END);
+			if (isVariable) {
+				this.name = ParserGenerator.stripMacroName(name);
+				// log.info("Token name is: '{}'  value was '{}'", this.name,
+				// value);
+			} else
+				this.name = null;
+			length = value.length();
+
 			if (!name.startsWith(TOKEN_START)) {
+				Pattern p;
 				try {
 					log.debug("trying to treat '{}' as regular expression",
 							name);
-					pattern = Pattern.compile(name);
+					p = Pattern.compile(name);
 				} catch (Exception e) {
-					// e.printStackTrace();
+					p = null;
 				}
+				pattern = p;
 			} else {
 
+				Pattern p = null;
 				try {
 					int idx = name.indexOf("|");
 					int end = name.lastIndexOf(TOKEN_END);
 					if (idx >= 0 && end > idx) {
-						pattern = Pattern.compile(name.substring(idx + 1, end));
+						p = Pattern.compile(name.substring(idx + 1, end));
 					}
-					log.debug("Created regex-token with regex = '{}'", pattern);
+					log.debug("Created regex-token with regex = '{}'", p);
 				} catch (Exception e) {
 					log.debug("Failed to compile pattern: {}", e.getMessage());
 					if (log.isDebugEnabled())
 						e.printStackTrace();
-					pattern = null;
+					p = null;
 				}
+				pattern = p;
 			}
 		}
 
@@ -148,8 +179,7 @@ public class ParserGenerator {
 		}
 
 		public boolean isVariable() {
-			return value != null && value.startsWith(TOKEN_START)
-					&& value.endsWith(TOKEN_END);
+			return isVariable;
 		}
 
 		public String getName() {
@@ -179,11 +209,21 @@ public class ParserGenerator {
 				}
 			}
 
-			return value.length();
+			return length;
 		}
 
 		public String getValue() {
 			return value;
 		}
 	}
+
+	public static String stripMacroName(String name) {
+		if (name.startsWith(ParserGenerator.TOKEN_START)
+				&& name.endsWith(ParserGenerator.TOKEN_END)) {
+			int len = name.length();
+			return name.substring(2, len - 1);
+		}
+		return name;
+	}
+
 }

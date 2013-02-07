@@ -98,13 +98,21 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 
 		count++;
 		if (every != null && count % every.intValue() == 0) {
-			Long sec = (now - start) / 1000;
-			if (sec > 0)
-				log.info("{} items processed, data-rate is: {}/second", count,
-						fmt.format(count.doubleValue() / sec.doubleValue()));
+			printDataRate(now);
 		}
 
 		return input;
+	}
+
+	public void printDataRate() {
+		printDataRate(System.currentTimeMillis());
+	}
+
+	protected void printDataRate(Long now) {
+		Long sec = (now - start) / 1000;
+		if (sec > 0)
+			log.info("{} items processed, data-rate is: {}/second", count,
+					fmt.format(count.doubleValue() / sec.doubleValue()));
 	}
 
 	/**

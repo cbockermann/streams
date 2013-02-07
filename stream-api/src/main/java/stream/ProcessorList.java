@@ -101,6 +101,14 @@ public class ProcessorList extends AbstractProcessor {
 		}
 	}
 
+	public void add(Processor p) {
+		processors.add(p);
+	}
+
+	public void add(int idx, Processor p) {
+		processors.add(idx, p);
+	}
+
 	/**
 	 * Adds a new processor to the list.
 	 * 

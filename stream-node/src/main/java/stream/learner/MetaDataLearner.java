@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
+import stream.Data;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.data.Data;
 import stream.data.Statistics;
 import stream.mining.counter.TopKCounter;
 import stream.statistics.History;

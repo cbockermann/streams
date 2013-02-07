@@ -20,11 +20,11 @@
 			<id>jwall-snapshots</id>
 			<name>jwall.org Snapshot Repository</name>
 			<url>https://secure.jwall.org/maven/repository/snapshots</url>
-		</repository>  
-  </repositories>
-  
-  
-  	<build>
+		</repository>
+	</repositories>
+
+
+	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -74,47 +74,47 @@
 					</execution>
 				</executions>
 			</plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>	
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-	</build>  
-  	<dependencies>
-  		<dependency>
-  			<groupId>org.jwall</groupId>
-  			<artifactId>stream-core</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-plotter</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-  		<dependency>
-  			<groupId>org.jwall</groupId>
-  			<artifactId>stream-runtime</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>org.slf4j</groupId>
-  			<artifactId>slf4j-log4j12</artifactId>
-  			<version>[1.6.4,)</version>
-  		</dependency>
-  	</dependencies>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>stream-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>[1.6.4,)</version>
+		</dependency>
+	</dependencies>
 </project>

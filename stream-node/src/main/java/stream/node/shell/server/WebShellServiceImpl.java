@@ -3,7 +3,7 @@ package stream.node.shell.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Shell;
+import stream.DebugShell;
 import stream.node.shell.client.WebShellService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -16,10 +16,10 @@ public class WebShellServiceImpl extends RemoteServiceServlet implements
 
 	static Logger log = LoggerFactory.getLogger(WebShellServiceImpl.class);
 
-	Shell shell;
+	DebugShell shell;
 
 	public WebShellServiceImpl() throws Exception {
-		shell = new Shell();
+		shell = new DebugShell();
 	}
 
 	@Override

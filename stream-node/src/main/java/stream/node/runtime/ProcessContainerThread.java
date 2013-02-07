@@ -83,8 +83,8 @@ public class ProcessContainerThread extends Thread {
 	public void run() {
 		log.info("Starting container from file {}", containerFile);
 		try {
-			// processContainer.run();
-			runVM(containerFile);
+			processContainer.run();
+			// runVM(containerFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

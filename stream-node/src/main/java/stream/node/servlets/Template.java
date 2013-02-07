@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-import stream.runtime.VariableContext;
+import stream.runtime.Variables;
 import stream.util.URLUtilities;
 
 /**
@@ -24,13 +24,13 @@ public class Template {
 	}
 
 	public String expand(Map<String, String> vars) {
-		VariableContext ctx = new VariableContext(System.getProperties());
+		Variables ctx = new Variables(System.getProperties());
 		ctx.addVariables(vars);
 		return ctx.expand(template);
 	}
 
 	public String expand(String key, String value) {
-		VariableContext ctx = new VariableContext(System.getProperties());
+		Variables ctx = new Variables(System.getProperties());
 		ctx.set(key, value);
 		return ctx.expand(template);
 	}

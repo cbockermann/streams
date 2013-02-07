@@ -7,7 +7,22 @@ package stream.io;
  * @author chris
  * 
  */
-public abstract class AbstractQueue implements Queue {
+public abstract class AbstractQueue implements Queue, QueueService { // TODO:
+																		// QueueService
+																		// ist
+																		// hier
+																		// ein
+																		// fieser
+																		// Hack!!!
+																		// Bitte
+																		// wieder
+																		// entfernen
+																		// und
+																		// Queues
+																		// in
+																		// prozessoren
+																		// extra
+																		// injecten...
 
 	protected String id;
 	protected Integer limit = 1000;

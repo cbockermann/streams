@@ -125,6 +125,21 @@ public final class SourceURL implements Serializable {
 				port = new Integer(vals.get("port"));
 			path = vals.get("path");
 		}
+
+		if (path != null && path.indexOf("?") >= 0) {
+			String qs = path.substring(path.indexOf("?") + 1);
+			log.info("Query string for URL is: {}", qs);
+			for (String pv : qs.split("&")) {
+				if (pv.indexOf("=") > 0) {
+					String[] kv = pv.split("=", 2);
+					parameters.put(kv[0], kv[1]);
+				} else {
+					parameters.put(pv, "1");
+				}
+			}
+
+			log.info("Parameters are: {}", parameters);
+		}
 	}
 
 	protected boolean isGzip() {

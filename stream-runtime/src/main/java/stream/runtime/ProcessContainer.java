@@ -105,8 +105,7 @@ public class ProcessContainer {
 
 				if (!runShutdownHook) {
 					return;
-				} else
-					runShutdownHook = false;
+				} 
 
 				if ("disabled".equalsIgnoreCase(System
 						.getProperty("container.shutdown-hook"))) {
@@ -204,6 +203,7 @@ public class ProcessContainer {
 	 */
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
+		container.add(this);
 
 		LibrariesElementHandler libHandler = new LibrariesElementHandler(
 				objectFactory);

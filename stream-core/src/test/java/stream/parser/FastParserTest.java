@@ -19,7 +19,7 @@ import stream.util.parser.GenericParser;
 import stream.util.parser.GenericTurboParser;
 import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
-import stream.util.parser.ParserGenerator.Token;
+import stream.util.parser.Token;
 
 /**
  * @author chris
@@ -28,17 +28,17 @@ import stream.util.parser.ParserGenerator.Token;
 public class FastParserTest {
 
 	static Logger log = LoggerFactory.getLogger(FastParserTest.class);
-	public final static String INPUT = "84.190.232.52 - - [20/May/2011:22:57:57 +0200] \"GET / HTTP/1.1\" 200 2950 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.68 Safari/534.24\"";
-	public static String format = "%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"";
+	public String INPUT = "84.190.232.52 - - [20/May/2011:22:57:57 +0200] \"GET / HTTP/1.1\" 200 2950 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.68 Safari/534.24\"";
+	public String format = "%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"";
 
-	Integer rounds = 100000;
+	Integer rounds = 1000000;
 	Parser<Map<String, String>> parser;
 	Parser<Map<String, String>> turboParser;
 	boolean output = false;
 
 	@Before
 	public void setup() {
-		format = "%(REMOTE_ADDR) %(MSG)";
+		// format = "%(REMOTE_ADDR) %(MSG)";
 		List<Token> tokens = ParserGenerator.readGrammar(format);
 		parser = new GenericParser(tokens);
 		turboParser = new GenericTurboParser(tokens);
@@ -58,7 +58,9 @@ public class FastParserTest {
 			Map<String, String> out2 = turboParser.parse(INPUT);
 
 			Assert.assertNotNull(out1);
+			log.info("First parse: {}", out1);
 			Assert.assertNotNull(out2);
+			log.info("Second parse: {}", out2);
 
 			Assert.assertEquals(out1.size(), out2.size());
 

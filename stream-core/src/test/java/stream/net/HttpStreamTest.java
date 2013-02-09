@@ -34,9 +34,7 @@ public class HttpStreamTest {
 			container.run();
 
 		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 			fail("Error: " + e.getMessage());
 		}
 

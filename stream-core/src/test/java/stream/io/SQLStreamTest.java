@@ -69,6 +69,7 @@ public class SQLStreamTest {
 			stream.close();
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Error: " + e.getMessage());
 		}
 	}

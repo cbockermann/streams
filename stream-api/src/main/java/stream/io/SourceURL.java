@@ -51,7 +51,8 @@ public final class SourceURL implements Serializable {
 	}
 
 	final static String FILE_GRAMMAR = "%(protocol):%(path)";
-	final static String GRAMMAR = "%(protocol)://%(host):%(port)/%(path)";
+	final static String JDBC_GRAMMAR = "jdbc:%(driver):%(target)/%(path)";
+	final static String GRAMMAR = "%(protocol)://%(address)/%(path)";
 
 	final URL url;
 	final String urlString;
@@ -94,11 +95,16 @@ public final class SourceURL implements Serializable {
 			port = -1;
 			path = vals.get("path");
 		} else {
-			ParserGenerator gen = new ParserGenerator(GRAMMAR);
+			String grammar = GRAMMAR;
+			if (urlString.toLowerCase().startsWith("jdbc")) {
+				grammar = JDBC_GRAMMAR;
+			}
+			ParserGenerator gen = new ParserGenerator(grammar);
 			Parser<Map<String, String>> parser = gen.newParser();
 			Map<String, String> vals = parser.parse(urlString);
 			protocol = vals.get("protocol");
-			String hostname = vals.get("host");
+
+			String hostname = vals.get("address");
 
 			int at = hostname.indexOf("@");
 			if (at >= 0) {
@@ -112,17 +118,29 @@ public final class SourceURL implements Serializable {
 					password = "";
 				}
 
-				host = hostname.substring(at + 1);
+				hostname = hostname.substring(at + 1);
 			} else {
-				host = hostname;
 				username = null;
 				password = null;
 			}
 
-			if (vals.get("port") == null || "".equals(vals.get("port").trim())) {
-				port = -1;
-			} else
-				port = new Integer(vals.get("port"));
+			int idx = hostname.indexOf(":");
+			int port = 80;
+			if (idx > 0) {
+				host = hostname.substring(0, idx);
+				port = Integer.parseInt(hostname.substring(idx + 1));
+			} else {
+				host = hostname;
+				if ("http".equalsIgnoreCase(protocol)) {
+					port = 80;
+				}
+
+				if ("https".equalsIgnoreCase(protocol)) {
+					port = 443;
+				}
+			}
+			this.port = port;
+
 			path = vals.get("path");
 		}
 

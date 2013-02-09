@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.Data;
+import stream.ProcessContext;
 import stream.data.Statistics;
 import stream.statistics.StatisticsService;
 
@@ -63,6 +64,15 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	 */
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	/**
+	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
+	 */
+	@Override
+	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
+		// start = System.currentTimeMillis();
 	}
 
 	@Override
@@ -122,16 +132,20 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	public void finish() throws Exception {
 		super.finish();
 
-		Long now = System.currentTimeMillis();
-		Long sec = (now - start);
-		log.info("DataRate processor '" + id
-				+ "' has been running for {} ms, {} items.", sec,
-				count.doubleValue());
-		Double s = sec.doubleValue() / 1000.0d;
-		if (s > 0)
-			log.info(
-					"Overall average data-rate for processor '{}' is: {}/second",
-					id, fmt.format(count.doubleValue() / s));
+		if (start != null) {
+			Long now = System.currentTimeMillis();
+			Long sec = (now - start);
+			log.info("DataRate processor '" + id
+					+ "' has been running for {} ms, {} items.", sec,
+					count.doubleValue());
+			Double s = sec.doubleValue() / 1000.0d;
+			if (s > 0)
+				log.info(
+						"Overall average data-rate for processor '{}' is: {}/second",
+						id, fmt.format(count.doubleValue() / s));
+		} else {
+			log.info("Start time not available.");
+		}
 	}
 
 	@Override

@@ -30,8 +30,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.util.parser.ParserGenerator.Token;
-
 public class GenericTurboParser extends MParser implements
 		Parser<Map<String, String>> {
 	static Logger log = LoggerFactory.getLogger(GenericTurboParser.class);
@@ -58,16 +56,31 @@ public class GenericTurboParser extends MParser implements
 
 		String values[] = new String[tokens.length];
 		int cur = 0;
-		for (int i = 1; i < tokens.length; i++) {
-			next = tokens[i];
+		for (int i = 1; i < tokens.length + 1; i++) {
+			if (i != tokens.length)
+				next = tokens[i];
+			else
+				next = null;
 
 			if (token.isVariable) {
+				if (next == null) {
+					if (pos >= 0 && pos < str.length())
+						values[cur] = str.substring(pos);
+					else
+						values[cur] = "";
+					break;
+				}
+
 				if (next.isVariable) {
 					int idx = str.indexOf(next.value, pos);
 					if (idx >= 0)
 						values[cur] = str.substring(idx + next.length);
 				} else {
-					values[cur] = readTokenUntil(str, next.value);
+					int idx = str.indexOf(next.value, pos);
+					if (idx < 0)
+						idx = str.length();
+					values[cur] = str.substring(pos, idx);
+					pos = idx;
 				}
 			} else {
 				this.pos += token.length;

@@ -24,11 +24,15 @@ import stream.io.SourceURL;
  */
 public class TcpConnection extends Connection {
 
-	static Logger log = LoggerFactory.getLogger(TcpURLConnection.class);
-	Socket connect;
+	static Logger log = LoggerFactory.getLogger(TcpConnection.class);
 
-	final String host;
-	final Integer port;
+	public final static String PARAM_RECONNECT = "reconnect";
+	public final static String PARAM_RECONNECT_INTERVAL = "reconnectInterval";
+
+	protected Socket connect;
+
+	protected final String host;
+	protected final Integer port;
 
 	public TcpConnection(SourceURL url) {
 		super(url);

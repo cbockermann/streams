@@ -30,8 +30,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.util.parser.ParserGenerator.Token;
-
 public class GenericParser extends MParser implements
 		Parser<Map<String, String>> {
 	static Logger log = LoggerFactory.getLogger(GenericParser.class);
@@ -98,19 +96,17 @@ public class GenericParser extends MParser implements
 						log.debug("   {} = '{}'", strip(token.getValue()), val);
 						log.debug("remainder: '{}'", remainder(str));
 					}
-					reads.put(strip(token.getValue()), val);
+					reads.put(strip(token.value), val);
 				}
 			}
-
-			// skipBlanks( str );
 		}
 
 		return reads;
 	}
 
 	public String strip(String name) {
-		if (name.startsWith(ParserGenerator.TOKEN_START)
-				&& name.endsWith(ParserGenerator.TOKEN_END)) {
+		if (name.startsWith(Token.TOKEN_START)
+				&& name.endsWith(Token.TOKEN_END)) {
 			int len = name.length();
 			return name.substring(2, len - 1);
 		}

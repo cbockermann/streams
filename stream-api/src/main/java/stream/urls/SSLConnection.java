@@ -25,7 +25,7 @@ import stream.io.SourceURL;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class SSLConnection extends Connection {
+public class SSLConnection extends TcpConnection {
 
 	static Logger log = LoggerFactory.getLogger(SSLConnection.class);
 	KeyStore keyStore;
@@ -148,7 +148,7 @@ public class SSLConnection extends Connection {
 	 * @return
 	 * @throws Exception
 	 */
-	public InputStream getInputStream() throws Exception {
+	public InputStream getInputStream() throws IOException {
 		return inputStream;
 	}
 
@@ -159,7 +159,7 @@ public class SSLConnection extends Connection {
 	 * @return
 	 * @throws Exception
 	 */
-	public OutputStream getOutputStream() throws Exception {
+	public OutputStream getOutputStream() throws IOException {
 		return outputStream;
 	}
 

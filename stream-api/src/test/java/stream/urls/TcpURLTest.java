@@ -47,8 +47,8 @@ public class TcpURLTest {
 			}
 
 		} catch (Exception e) {
-			fail("Test failed: " + e.getMessage());
 			e.printStackTrace();
+			fail("Test failed: " + e.getMessage());
 		}
 	}
 }

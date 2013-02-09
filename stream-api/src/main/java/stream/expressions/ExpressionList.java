@@ -80,7 +80,7 @@ public class ExpressionList implements Expression {
 	}
 
 	private boolean and(Context ctx, Data evt) {
-		log.debug("Asserting all matches!");
+		// log.debug("Asserting all matches!");
 		for (Expression exp : exps) {
 			if (!exp.matches(ctx, evt))
 				return false;
@@ -90,7 +90,7 @@ public class ExpressionList implements Expression {
 	}
 
 	private boolean or(Context ctx, Data evt) {
-		log.debug("Asserting any match!");
+		// log.debug("Asserting any match!");
 
 		for (Expression exp : exps) {
 			if (exp.matches(ctx, evt))

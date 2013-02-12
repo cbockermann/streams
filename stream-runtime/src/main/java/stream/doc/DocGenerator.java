@@ -25,7 +25,7 @@ import stream.util.URLUtilities;
  */
 public class DocGenerator {
 
-	final static Class<?>[] CLASSES = new Class<?>[] { Processor.class,
+	public final static Class<?>[] CLASSES = new Class<?>[] { Processor.class,
 			Stream.class };
 
 	final static DocConverter converter = new MarkdownToTexConverter();

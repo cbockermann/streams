@@ -237,4 +237,8 @@ public class SSLConnection extends TcpConnection {
 	public String[] getSupportedProtocols() {
 		return new String[] { "ssl" };
 	}
+
+	public boolean isConnected() {
+		return socket != null && socket.isConnected();
+	}
 }

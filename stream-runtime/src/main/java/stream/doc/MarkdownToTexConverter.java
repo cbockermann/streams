@@ -158,6 +158,12 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 					+ s.substring(m.end());
 		}
 
+		int i = s.indexOf("_");
+		while (i >= 0) {
+			s = s.replace("_", "\\_");
+			i = s.indexOf("_", i + 2);
+		}
+
 		return s;
 	}
 

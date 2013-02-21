@@ -62,17 +62,14 @@ public class ProcessHandler extends ATopologyElementHandler {
 
 			log.info("  > Creating process-bolt with id '{}'", id);
 
-			String input = el.getAttribute("input");
 			String copies = el.getAttribute("copies");
 			Integer workers = 1;
+			String input = el.getAttribute("input");
 			List<String> inputs = getInputNames(el);
-			if (inputs.isEmpty())
-				throw new RuntimeException("No input defined for process '"
-						+ id + "'");
 
-			if (copies != null) {
+			if (copies != null && !copies.isEmpty()) {
 				try {
-
+					workers = Integer.parseInt(copies);
 				} catch (Exception e) {
 					workers = 1;
 					throw new RuntimeException("Invalid number of copies '"
@@ -90,12 +87,18 @@ public class ProcessHandler extends ATopologyElementHandler {
 			BoltDeclarer boltDeclarer = builder.setBolt(id, bolt, workers);
 
 			BoltDeclarer cur = boltDeclarer;
-			for (String in : inputs) {
-				log.info("  >   Connecting bolt '{}' to shuffle-group '{}'",
-						id, in);
-				cur = cur.shuffleGrouping(in);
+			if (!inputs.isEmpty()) {
+				for (String in : inputs) {
+					if (!in.isEmpty()) {
+						log.info(
+								"  >   Connecting bolt '{}' to shuffle-group '{}'",
+								id, in);
+						cur = cur.shuffleGrouping(in);
+					}
+				}
+			} else {
+				log.warn("No input defined for process '{}'!", id);
 			}
-
 			st.addBolt(id, cur);
 		}
 	}

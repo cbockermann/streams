@@ -25,7 +25,6 @@ package stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -61,52 +60,50 @@ public class run {
 					.getProperty("container.stdout"))));
 		}
 	}
-	
-	
-	public static List<String> handleArguments( String[] args ){
-		
-		if( args.length == 0 ){
-			System.out.println( "streams, Version " + getVersion());
+
+	public static List<String> handleArguments(String[] args) {
+
+		if (args.length == 0) {
+			System.out.println("streams, Version " + getVersion());
 			System.out.println();
-			System.out.println( "No container file specified." );
+			System.out.println("No container file specified.");
 			System.out.println();
-			System.out.println( "Usage: " );
-			System.out.println( "\tstream.run /path/container-file.xml" );
+			System.out.println("Usage: ");
+			System.out.println("\tstream.run /path/container-file.xml");
 			System.out.println();
 			return null;
 		}
-		
-		for( String arg : args ){
-			if( arg.equals( "-v" ) || "--version".equals( args ) ){
-				System.out.println( "streams, Version " + getVersion() );
+
+		for (String arg : args) {
+			if (arg.equals("-v") || "--version".equals(args)) {
+				System.out.println("streams, Version " + getVersion());
 				return null;
 			}
 		}
-		
+
 		List<String> list = new ArrayList<String>();
-		for( String arg : args ){
-			if( arg.startsWith( "-D" ) ){
-				int idx = arg.indexOf( "=" );
+		for (String arg : args) {
+			if (arg.startsWith("-D") || arg.startsWith("--")) {
+				int idx = arg.indexOf("=");
 				String key = null;
 				String value = "";
-				if( idx > 2 ){
-					key = arg.substring( 2, idx );
-					value = arg.substring( idx + 1 );
+				if (idx > 2) {
+					key = arg.substring(2, idx);
+					value = arg.substring(idx + 1);
 				} else {
-					key = arg.substring( 2 );
+					key = arg.substring(2);
 				}
-				
-				log.info( "Setting property '{}' = '{}'", key, value );
-				System.setProperty( key, value );
+
+				log.info("Setting property '{}' = '{}'", key, value);
+				System.setProperty(key, value);
 			} else {
-				log.info( "Adding argument '{}'", arg );
-				list.add( arg );
+				log.info("Adding argument '{}'", arg);
+				list.add(arg);
 			}
 		}
-		
+
 		return list;
 	}
-	
 
 	/**
 	 * @param args
@@ -114,10 +111,10 @@ public class run {
 	public static void main(String[] args) throws Exception {
 
 		List<String> params = handleArguments(args);
-		if( params == null || params.isEmpty() ){
+		if (params == null || params.isEmpty()) {
 			return;
 		}
-		
+
 		setupOutput();
 
 		URL url;
@@ -140,20 +137,21 @@ public class run {
 		ProcessContainer container = new ProcessContainer(url);
 
 		log.info("Starting process-container...");
-//		if (true) {
-//    		System.out.println("You're using Eclipse; click in this console and	" +
-//    						"press ENTER to call System.exit() and run the shutdown routine.");
-//    		try {
-//    			System.in.read();
-//    		} catch (IOException e) {
-//    			// TODO Auto-generated catch block
-//    			e.printStackTrace();
-//    		}
-//    		System.exit(0);
-//    	}
+		// if (true) {
+		// System.out.println("You're using Eclipse; click in this console and	"
+		// +
+		// "press ENTER to call System.exit() and run the shutdown routine.");
+		// try {
+		// System.in.read();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// System.exit(0);
+		// }
 		container.run();
 		log.info("Container finished.");
-		
+
 	}
 
 	public static void main(URL url, Map<String, ElementHandler> elementHandler)
@@ -181,42 +179,41 @@ public class run {
 				resource);
 		main(run.class.getResource(resource), elementHandler);
 	}
-	
-	
-	
+
 	public synchronized static String getVersion() {
-	    if (version != null) {
-	        return version;
-	    }
+		if (version != null) {
+			return version;
+		}
 
-	    // try to load from maven properties first
-	    try {
-	        Properties p = new Properties();
-	        InputStream is = run.class.getResourceAsStream("/META-INF/maven/org.jwall/stream-api/pom.properties");
-	        if (is != null) {
-	            p.load(is);
-	            version = p.getProperty("version", "");
-	        }
-	    } catch (Exception e) {
-	        // ignore
-	    }
+		// try to load from maven properties first
+		try {
+			Properties p = new Properties();
+			InputStream is = run.class
+					.getResourceAsStream("/META-INF/maven/org.jwall/stream-api/pom.properties");
+			if (is != null) {
+				p.load(is);
+				version = p.getProperty("version", "");
+			}
+		} catch (Exception e) {
+			// ignore
+		}
 
-	    // fallback to using Java API
-	    if (version == null) {
-	        Package aPackage = run.class.getPackage();
-	        if (aPackage != null) {
-	            version = aPackage.getImplementationVersion();
-	            if (version == null) {
-	                version = aPackage.getSpecificationVersion();
-	            }
-	        }
-	    }
+		// fallback to using Java API
+		if (version == null) {
+			Package aPackage = run.class.getPackage();
+			if (aPackage != null) {
+				version = aPackage.getImplementationVersion();
+				if (version == null) {
+					version = aPackage.getSpecificationVersion();
+				}
+			}
+		}
 
-	    if (version == null) {
-	        // we could not compute the version so use a blank
-	        version = "";
-	    }
+		if (version == null) {
+			// we could not compute the version so use a blank
+			version = "";
+		}
 
-	    return version;
-	} 
+		return version;
+	}
 }

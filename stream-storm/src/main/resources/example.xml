@@ -1,10 +1,11 @@
 <container>
 
-	<stream id="data" class="stream.generator.RandomStream" limit="100000" />
+	<stream id="data" class="stream.generator.RandomStream" limit="1000000" />
 	
-	<process input="data">
+	<process uuid="printer" stream.storm.uuid="printer" input="data">
 		<!--  -->
 		<PrintData />
+		<stream.flow.Delay ms="1ms" />
 	</process>
 	
 </container>

@@ -135,9 +135,11 @@ public class StormRunner {
 
 		StreamTopology st = StreamTopology.create(doc);
 
-		if (System.getProperty("local") == null)
+		if (System.getProperty("local") == null) {
+			conf.put(Config.NIMBUS_HOST, "192.168.10.10");
+			conf.put(Config.NIMBUS_THRIFT_PORT, "6627");
 			StormSubmitter.submitTopology("test", conf, st.createTopology());
-		else {
+		} else {
 			LocalCluster cluster = new LocalCluster();
 			cluster.submitTopology("test", conf, st.createTopology());
 
@@ -148,5 +150,4 @@ public class StormRunner {
 			cluster.shutdown();
 		}
 	}
-
 }

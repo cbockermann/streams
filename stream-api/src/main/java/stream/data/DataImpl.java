@@ -54,7 +54,7 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	final static boolean deepClone = "true".equalsIgnoreCase(System
 			.getProperty("stream.Data.deepClone"));
 
-	final JavaSerializer javaSerializer = new JavaSerializer();
+	final transient JavaSerializer javaSerializer = new JavaSerializer();
 
 	/**
 	 * Creation of Data items should be done with

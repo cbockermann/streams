@@ -56,12 +56,6 @@ public class BoltHandler extends ATopologyElementHandler {
 		String className = el.getAttribute("class");
 		Map<String, String> params = objectFactory.getAttributes(el);
 
-		List<String> inputs = getInputNames(el);
-		if (inputs.isEmpty()) {
-			throw new RuntimeException("No 'input' defined for bolt '" + id
-					+ "' (class '" + className + "')");
-		}
-
 		log.info("  > Found '{}' definition, with class: {}", el.getNodeName(),
 				className);
 		log.info("  >   Parameters are: {}", params);
@@ -79,10 +73,17 @@ public class BoltHandler extends ATopologyElementHandler {
 		log.info("  > Registering bolt '{}' with instance {}", id, bolt);
 		BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);
 		BoltDeclarer cur = boltDeclarer;
-		for (String input : inputs) {
-			log.info("  > Connecting bolt '{}' to shuffle-group '{}'", id,
-					input);
-			cur = cur.shuffleGrouping(input);
+		List<String> inputs = getInputNames(el);
+		if (!inputs.isEmpty()) {
+			for (String input : inputs) {
+				if (!input.isEmpty()) {
+					log.info("  > Connecting bolt '{}' to shuffle-group '{}'",
+							id, input);
+					cur = cur.shuffleGrouping(input);
+				}
+			}
+		} else {
+			log.debug("No inputs defined for bolt '{}'!", id);
 		}
 
 		st.addBolt(id, cur);

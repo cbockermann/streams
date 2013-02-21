@@ -39,12 +39,10 @@ public class StreamSpout extends BaseRichSpout {
 	protected final Variables parameters;
 
 	public StreamSpout(String className, Map<String, String> params) {
-		System.out.println("Beginning of weirdness!");
 		log.debug("Creating spout for stream (class: {}, params: {})",
 				className, params);
 		this.className = className;
 		this.parameters = new Variables(params);
-		System.out.println("Totally weird!");
 	}
 
 	/**
@@ -56,7 +54,6 @@ public class StreamSpout extends BaseRichSpout {
 	@Override
 	public void open(Map conf, TopologyContext context,
 			SpoutOutputCollector collector) {
-		System.out.println("Weird!?");
 		this.output = collector;
 		try {
 			Map<String, String> params = new HashMap<String, String>(parameters);

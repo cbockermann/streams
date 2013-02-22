@@ -37,6 +37,7 @@ public class QueueBolt extends AbstractBolt {
 	 *      backtype.storm.task.TopologyContext,
 	 *      backtype.storm.task.OutputCollector)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {

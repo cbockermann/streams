@@ -222,6 +222,7 @@ public class ProcessBolt extends AbstractBolt {
 			process.init(ctx);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Failed to create process!");
 		}
 	}

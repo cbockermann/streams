@@ -26,9 +26,12 @@ public class TcpStreamTest {
 
 		try {
 
-			RandomDataServer server = new RandomDataServer(100);
+			RandomDataServer server = new RandomDataServer("127.0.0.1", 100);
 			server.start();
+			Thread.sleep(1000);
 			log.info("Creating server socket at port {}", server.getLocalPort());
+			log.info("Server address is {}", server.getLocalAddress());
+			log.info("Waiting a second for the server to start... ");
 
 			System.setProperty("server.address", server.getLocalAddress());
 			System.setProperty("server.port", server.getLocalPort() + "");

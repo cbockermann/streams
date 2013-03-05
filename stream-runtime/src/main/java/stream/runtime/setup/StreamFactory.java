@@ -79,14 +79,14 @@ public class StreamFactory {
 
 			stream = (Stream) constr.newInstance(sourceUrl);
 
-			log.info("Injecting variables {} into stream {}", params, stream);
+			log.debug("Injecting variables {} into stream {}", params, stream);
 			ParameterInjection.inject(stream, params, new Variables());
 			return stream;
 		} else {
 			Constructor<?> constr = clazz.getConstructor();
 			stream = (Stream) constr.newInstance(new Object[0]);
 
-			log.info("Injecting variables {} into stream {}", params, stream);
+			log.debug("Injecting variables {} into stream {}", params, stream);
 			ParameterInjection.inject(stream, params, new Variables());
 			return stream;
 		}
@@ -132,7 +132,7 @@ public class StreamFactory {
 		}
 
 		params = variables.expandAll(params);
-		log.info("Injecting variables {} into stream {}", params, stream);
+		log.debug("Injecting variables {} into stream {}", params, stream);
 		ParameterInjection.inject(stream, params, variables);
 
 		if (stream instanceof MultiDataStream) {
@@ -240,7 +240,7 @@ public class StreamFactory {
 
 	public static Class<?> guessStreamFormat(String url) throws Exception {
 
-		log.info("Trying to derive stream class from URL '{}'", url);
+		log.debug("Trying to derive stream class from URL '{}'", url);
 		String u = url.toLowerCase();
 
 		boolean gz = u.endsWith(".gz");
@@ -253,7 +253,7 @@ public class StreamFactory {
 		int idx = u.lastIndexOf(".");
 		if (idx > 0) {
 			ext = u.substring(idx + 1);
-			log.info("Extension of URL is '{}'", ext);
+			log.debug("Extension of URL is '{}'", ext);
 			String className = streamClassesByExtension.get(ext);
 			if (className != null)
 				return Class.forName(className);

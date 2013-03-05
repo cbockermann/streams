@@ -142,7 +142,7 @@ public class JavaScript extends Script {
 	protected String loadScript() throws Exception {
 
 		if (embedded != null) {
-			log.info("Using embedded content...");
+			log.debug("Using embedded content...");
 			theScript = preamble + "\n" + embedded.getContent();
 			return theScript;
 		}
@@ -186,7 +186,7 @@ public class JavaScript extends Script {
 			Invocable invocable = (Invocable) scriptEngine;
 			impl = invocable; // invocable.getInterface(StatefulProcessor.class);
 			if (impl != null) {
-				log.info("JavaScript implements StatefulProcessor interface!!");
+				log.debug("JavaScript implements StatefulProcessor interface!!");
 				return;
 			}
 

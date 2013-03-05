@@ -43,5 +43,6 @@ public class StatisticsHistory extends History<Statistics> {
 		} else {
 			st.add(data);
 		}
+		this.last = x;
 	}
 }

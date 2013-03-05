@@ -1,0 +1,12 @@
+<container id="test">
+
+	<stream id="data" class="stream.generator.RandomStream" limit="100000" />
+	
+	<process input="data" copies="4">
+		<!--  -->
+		<PrintData />
+		<stream.flow.Delay time="1s" />
+		<stream.net.TcpSender address="192.168.128.4" port="9900" />
+	</process>
+	
+</container>

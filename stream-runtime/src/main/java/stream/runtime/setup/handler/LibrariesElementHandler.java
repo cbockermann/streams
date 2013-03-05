@@ -101,7 +101,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 		log.debug("Checking for dependency definitions...");
 
 		Set<Dependency> deps = findDependencies(doc.getDocumentElement());
-		log.info("Found {} dependencies...", deps.size());
+		log.debug("Found {} dependencies...", deps.size());
 
 		for (Dependency dep : deps) {
 			resolver.resolve(dep);

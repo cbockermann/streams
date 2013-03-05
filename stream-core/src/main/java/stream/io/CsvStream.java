@@ -24,8 +24,9 @@
 package stream.io;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,11 @@ import stream.data.DataFactory;
 public class CsvStream extends AbstractLineStream {
 	static Logger log = LoggerFactory.getLogger(CsvStream.class);
 
+	final ArrayList<String> columns = new ArrayList<String>();
 	String[] keys;
 	String splitExpression = "(;|,)";
-	LinkedList<String> buffer;
+	long lineNo = 0L;
+	boolean header = true;
 
 	/**
 	 * @param url
@@ -78,6 +81,22 @@ public class CsvStream extends AbstractLineStream {
 		this.splitExpression = splitExp;
 	}
 
+	/**
+	 * @return the header
+	 */
+	public boolean isHeader() {
+		return header;
+	}
+
+	/**
+	 * @param header
+	 *            the header to set
+	 */
+	@Parameter(description = "Determines whether the first line should be used as header (column names), defaults to 'true'.", required = false)
+	public void setHeader(boolean header) {
+		this.header = header;
+	}
+
 	@Parameter(name = "separator", required = true, defaultValue = "(;|,)")
 	public void setSeparator(String separator) {
 		splitExpression = separator;
@@ -85,17 +104,6 @@ public class CsvStream extends AbstractLineStream {
 
 	public String getSeparator() {
 		return splitExpression;
-	}
-
-	public String removeQuotes(String str) {
-		String s = str;
-		if (s.startsWith("\""))
-			s = s.substring(1);
-
-		if (s.endsWith("\""))
-			s = s.substring(0, s.length() - 1);
-
-		return s;
 	}
 
 	/**
@@ -117,46 +125,98 @@ public class CsvStream extends AbstractLineStream {
 	 * @see stream.io.Stream#read()
 	 */
 	public Data readNext() throws Exception {
-		Data datum = DataFactory.create();
 
 		String line = readLine();
-		while (line != null && (line.trim().isEmpty() || line.startsWith("#"))) {
-			if (line.startsWith("#")) {
-				String dt[] = line.substring(1).split(splitExpression);
-				for (int i = 0; i < dt.length; i++) {
-					attributes.put(dt[i], String.class);
-				}
-			}
-
-			line = readLine();
-		}
-
-		if (line != null && !line.trim().equals("")) {
-			String[] tok = line.split(splitExpression);
-			int i = 0;
-			for (String name : attributes.keySet()) {
-				if (i < tok.length) {
-					if (Double.class.equals(attributes.get(name))) {
-						try {
-							datum.put(name, new Double(removeQuotes(tok[i])));
-						} catch (Exception e) {
-							datum.put(name, removeQuotes(tok[i]));
-						}
-					} else
-						datum.put(name, removeQuotes(tok[i]));
-					i++;
-				} else
-					break;
-			}
-		} else
+		if (line == null)
 			return null;
 
-		return datum;
+		// if we are reading the first "real" (non-comment) line, and the
+		// 'header' parameter is set, we regard the line as header
+		//
+		if (lineNo == 0L) {
+			if (header) {
+				String[] token = line.split(splitExpression);
+				for (int i = 0; i < token.length; i++) {
+
+					String col = token[i];
+					columns.add(col);
+
+				}
+
+				// we advance to the next line for real data if asked for
+				// reading
+				// the header from the first line
+				//
+				line = readLine();
+			}
+
+			// the 'keys' parameter can be used to override some of the keys
+			//
+			if (keys != null) {
+				for (int i = 0; i < keys.length; i++) {
+					if (i < columns.size())
+						columns.set(i, keys[i]);
+					else
+						columns.add(keys[i]);
+				}
+			}
+		}
+		lineNo++;
+
+		if (line == null)
+			return null;
+
+		final Data item = DataFactory.create();
+		final String[] tok = line.split(splitExpression);
+
+		for (int i = 0; i < tok.length; i++) {
+			String key;
+
+			if (i >= columns.size()) {
+				key = "column:" + i;
+			} else {
+				key = columns.get(i);
+			}
+
+			Serializable value;
+			try {
+				value = new Double(removeQuotes(tok[i]));
+			} catch (Exception e) {
+				value = removeQuotes(tok[i]);
+			}
+
+			item.put(key, value);
+		}
+
+		return item;
 	}
 
+	/**
+	 * This implementation of the readLine() method simply skips all comments,
+	 * i.e. lines starting with the '#' character.
+	 * 
+	 * @see stream.io.AbstractLineStream#readLine()
+	 */
 	public String readLine() throws Exception {
-		if (buffer != null && !buffer.isEmpty())
-			return buffer.removeFirst();
-		return reader.readLine();
+		String line = reader.readLine();
+		while (line != null && line.startsWith("#")) {
+			line = reader.readLine();
+		}
+
+		return line;
+	}
+
+	protected String removeQuotes(String str) {
+		if (str == null)
+			return str;
+
+		String s = str;
+		if (s.startsWith("\""))
+			s = s.substring(1);
+
+		if (s.endsWith("\""))
+			s = s.substring(0, s.length() - 1);
+
+		return s;
 	}
 }

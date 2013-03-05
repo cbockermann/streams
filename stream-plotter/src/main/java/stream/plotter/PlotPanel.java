@@ -285,7 +285,8 @@ public class PlotPanel extends JPanel {
 		keys.addAll(seriesMap.keySet());
 
 		for (String key : keys) {
-
+			if (key.equals(pivotKey))
+				continue;
 			XYSeries series = seriesMap.get(key);
 			if (series == null) {
 				series = new XYSeries(key);
@@ -309,5 +310,13 @@ public class PlotPanel extends JPanel {
 		plot.datasetChanged(new DatasetChangeEvent(this, series));
 		lastUpdate = System.currentTimeMillis();
 		// }
+	}
+
+	public String getPivotKey() {
+		return pivotKey;
+	}
+
+	public void setPivotKey(String pivotKey) {
+		this.pivotKey = pivotKey;
 	}
 }

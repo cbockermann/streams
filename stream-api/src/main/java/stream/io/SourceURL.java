@@ -146,7 +146,7 @@ public final class SourceURL implements Serializable {
 
 		if (path != null && path.indexOf("?") >= 0) {
 			String qs = path.substring(path.indexOf("?") + 1);
-			log.info("Query string for URL is: {}", qs);
+			log.debug("Query string for URL is: {}", qs);
 			for (String pv : qs.split("&")) {
 				if (pv.indexOf("=") > 0) {
 					String[] kv = pv.split("=", 2);
@@ -156,7 +156,7 @@ public final class SourceURL implements Serializable {
 				}
 			}
 
-			log.info("Parameters are: {}", parameters);
+			log.debug("Parameters are: {}", parameters);
 		}
 	}
 
@@ -245,18 +245,18 @@ public final class SourceURL implements Serializable {
 
 			if (theUrl.startsWith("fifo:")) {
 
-				log.info("Handling FIFO URL pattern...");
+				log.debug("Handling FIFO URL pattern...");
 				theUrl = theUrl.replace("fifo:", "file:");
 				File file = new File(theUrl.replace("file:", ""));
 				if (!file.exists()) {
-					log.info("Creating new fifo file '{}' with mkfifo", file);
+					log.debug("Creating new fifo file '{}' with mkfifo", file);
 					Process p = Runtime.getRuntime().exec(
 							"mkfifo " + file.getAbsolutePath());
-					log.info("Waiting for mkfifo to return...");
+					log.debug("Waiting for mkfifo to return...");
 					int ret = p.waitFor();
-					log.info("mkfifo finished: {}", ret);
+					log.debug("mkfifo finished: {}", ret);
 				} else {
-					log.info("Using existing fifo-file '{}'", file);
+					log.debug("Using existing fifo-file '{}'", file);
 				}
 
 				if (!file.exists()) {
@@ -265,12 +265,12 @@ public final class SourceURL implements Serializable {
 									+ file.getAbsolutePath() + "'!");
 				}
 
-				log.info("Returning FileInputStream for FIFO {}", file);
+				log.debug("Returning FileInputStream for FIFO {}", file);
 				FileInputStream fis = new FileInputStream(file);
 				return fis;
 			}
 
-			log.info("The URL string is: '{}'", theUrl);
+			log.debug("The URL string is: '{}'", theUrl);
 			URL url = new URL(theUrl);
 
 			return url.openStream();

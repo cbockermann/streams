@@ -105,7 +105,7 @@ public class ProcessContainer {
 
 				if (!runShutdownHook) {
 					return;
-				} 
+				}
 
 				if ("disabled".equalsIgnoreCase(System
 						.getProperty("container.shutdown-hook"))) {
@@ -371,7 +371,7 @@ public class ProcessContainer {
 			handle.handle(this, doc, containerVariables);
 		}
 		objectFactory.addVariables(context.getProperties());
-		
+
 		NodeList children = root.getChildNodes();
 
 		if (context.getProperties().get("container.datafactory") != null) {
@@ -402,13 +402,13 @@ public class ProcessContainer {
 		connectProcesses();
 
 		injectServices();
-		
-		//Special Treatment for properties
+
+		// Special Treatment for properties
 		DocumentHandler ph = new PropertiesHandler();
 		Variables pv = new Variables();
 		ph.handle(this, doc, pv);
 		context.getProperties().putAll(pv);
-		
+
 	}
 
 	/**
@@ -437,7 +437,7 @@ public class ProcessContainer {
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
 					BlockingQueue q = new BlockingQueue();
-					registerQueue(input, q, false);
+					registerQueue(input, q, true);
 					stream = q;
 				}
 

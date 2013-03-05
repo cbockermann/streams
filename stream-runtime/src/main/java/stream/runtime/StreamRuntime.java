@@ -37,20 +37,27 @@ import stream.runtime.setup.UserSettings;
 public class StreamRuntime {
 
 	public final static UserSettings userSettings = new UserSettings();
+	private static boolean loggingSetup = false;
 
 	public static String[] logSearchPath = new String[] { "",
 			userSettings.getStreamsDirectory().getAbsolutePath() };
 
 	public static void setupLogging() {
 
+		if (loggingSetup)
+			return;
+
+		loggingSetup = true;
+
 		List<String> searchPaths = new ArrayList<String>();
-		if( System.getenv( "STREAMS_HOME" ) != null )
-			searchPaths.add( System.getenv( "STREAMS_HOME" ) + File.separator + "conf" );
-		
-		for( String path : logSearchPath )
-			searchPaths.add( path );
-		
-		for (String path : searchPaths ) {
+		if (System.getenv("STREAMS_HOME") != null)
+			searchPaths.add(System.getenv("STREAMS_HOME") + File.separator
+					+ "conf");
+
+		for (String path : logSearchPath)
+			searchPaths.add(path);
+
+		for (String path : searchPaths) {
 			String p = path;
 			if (!p.isEmpty())
 				p = path + File.separator + "log4j.properties";

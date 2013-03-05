@@ -46,6 +46,9 @@ import stream.runtime.StreamRuntime;
  */
 public class run {
 
+	static {
+		StreamRuntime.setupLogging();
+	}
 	static Logger log = LoggerFactory.getLogger(stream.run.class);
 	private static String version;
 
@@ -94,10 +97,10 @@ public class run {
 					key = arg.substring(2);
 				}
 
-				log.info("Setting property '{}' = '{}'", key, value);
+				log.debug("Setting property '{}' = '{}'", key, value);
 				System.setProperty(key, value);
 			} else {
-				log.info("Adding argument '{}'", arg);
+				log.debug("Adding argument '{}'", arg);
 				list.add(arg);
 			}
 		}

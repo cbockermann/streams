@@ -5,6 +5,7 @@ package stream.net;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -26,6 +27,12 @@ public class RandomDataServer extends Thread {
 		socket = new ServerSocket(0);
 		this.limit = limit;
 		this.setDaemon(true);
+	}
+
+	public RandomDataServer(String host, int limit) throws IOException {
+		socket = new ServerSocket(0, 1000, InetAddress.getByName(host));
+		this.limit = limit;
+		setDaemon(true);
 	}
 
 	public String getLocalAddress() {

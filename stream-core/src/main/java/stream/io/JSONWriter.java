@@ -31,6 +31,7 @@ import java.net.URL;
 import net.minidev.json.JSONObject;
 import stream.Data;
 import stream.data.DataFactory;
+import stream.util.KeyFilter;
 
 /**
  * <p>
@@ -78,7 +79,7 @@ public class JSONWriter extends CsvWriter {
 
 		if (this.keys != null) {
 			Data item = DataFactory.create();
-			for (String key : keys) {
+			for (String key : KeyFilter.select(datum, keys)) {
 				if (datum.containsKey(key))
 					item.put(key, datum.get(key));
 			}

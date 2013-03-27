@@ -5,6 +5,7 @@ package stream.net;
 
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
+import stream.data.DataFactory;
+import stream.util.KeyFilter;
 
 /**
  * @author chris
@@ -59,8 +62,21 @@ public class TcpSender extends AbstractProcessor {
 		try {
 			if (socket == null)
 				connect();
-			log.debug("Sending item {}", input);
-			String json = JSONObject.toJSONString(input);
+
+			String json;
+			if (keys != null) {
+
+				Set<String> selected = KeyFilter.select(input, keys);
+				Data item = DataFactory.create();
+				for (String k : selected) {
+					item.put(k, input.get(k));
+				}
+				log.debug("Sending item {}", item);
+				json = JSONObject.toJSONString(item);
+			} else {
+				json = JSONObject.toJSONString(input);
+			}
+
 			out.println(json);
 		} catch (Exception e) {
 			log.error("Faild to send item: {}", e.getMessage());
@@ -112,4 +128,18 @@ public class TcpSender extends AbstractProcessor {
 		this.port = port;
 	}
 
+	/**
+	 * @return the keys
+	 */
+	public String[] getKeys() {
+		return keys;
+	}
+
+	/**
+	 * @param keys
+	 *            the keys to set
+	 */
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
 }

@@ -24,6 +24,7 @@
 package stream.plotter;
 
 import java.awt.BorderLayout;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
@@ -34,6 +35,7 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
+import stream.util.KeyFilter;
 
 /**
  * @author chris
@@ -202,7 +204,9 @@ public class Plotter extends DataVisualizer {
 			plotPanel.dataArrived(data);
 		} else {
 			Data stats = DataFactory.create();
-			for (String key : keys) {
+
+			Set<String> selected = KeyFilter.select(data, keys);
+			for (String key : selected) {
 				if (data.containsKey(key)) {
 					stats.put(key, data.get(key));
 				} else {

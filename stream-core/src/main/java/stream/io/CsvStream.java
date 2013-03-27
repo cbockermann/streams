@@ -174,14 +174,40 @@ public class CsvStream extends AbstractLineStream {
 
 			if (i >= columns.size()) {
 				key = "column:" + i;
+				columns.add(key);
 			} else {
 				key = columns.get(i);
 			}
 
 			Serializable value;
+
 			try {
-				value = new Double(removeQuotes(tok[i]));
+				// a quoted string is always treated as a plain
+				// string type
+				//
+				if (tok[i].startsWith("\"")) {
+					//
+					// remove surrounding quotes from the value
+					//
+					value = removeQuotes(tok[i]);
+
+				} else {
+					//
+					// If no quotes are provided around the value, we
+					// parse it into an integer or a double, depending
+					// on the presence of a decimal point
+					//
+					if (tok[i].indexOf(".") > 0)
+						value = new Double(tok[i]);
+					else
+						value = new Integer(tok[i]);
+				}
+
 			} catch (Exception e) {
+				//
+				// if parsing fails, we simply treat the value as a
+				// plain string value
+				//
 				value = removeQuotes(tok[i]);
 			}
 

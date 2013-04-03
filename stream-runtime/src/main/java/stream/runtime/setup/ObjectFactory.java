@@ -91,7 +91,15 @@ public class ObjectFactory extends Variables {
 			throw new RuntimeException(
 					"No more than one config element allowed!");
 		}
-		config.appendChild(config.importNode(configNodeList.item(0), true));
+		// Append copy of config element if any...
+		if (configNodeList.getLength() == 1) {
+			config.appendChild(config.importNode(configNodeList.item(0), true));
+		} 
+		// ... append empty config element else.
+		else {
+			config.appendChild(config.createElement("config"));
+		}
+
 		return config;
 	}
 
@@ -292,15 +300,18 @@ public class ObjectFactory extends Variables {
 
 		if (object instanceof Configurable) {
 			StringWriter sw = new StringWriter();
-		    StreamResult sr = new StreamResult(sw);
-		    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		    transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
-		    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-		    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		    transformer.transform(new DOMSource(config), sr);
-		    System.out.println(sw.toString());
+			StreamResult sr = new StreamResult(sw);
+			Transformer transformer = TransformerFactory.newInstance()
+					.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+			transformer.setOutputProperty(
+					"{http://xml.apache.org/xslt}indent-amount", "4");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.transform(new DOMSource(config), sr);
+			System.out.println(sw.toString());
 			log.debug("Applying configuration: {}", config);
 			((Configurable) object).configure(config);
 		}

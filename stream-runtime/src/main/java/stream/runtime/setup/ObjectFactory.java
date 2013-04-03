@@ -24,6 +24,7 @@
 package stream.runtime.setup;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,12 +36,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import stream.Configurable;
 import stream.annotations.BodyContent;
 import stream.runtime.RuntimeClassLoader;
 import stream.runtime.Variables;
@@ -59,8 +71,30 @@ public class ObjectFactory extends Variables {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
+	/**
+	 * Extract the config {@link org.w3c.dom.Element} as a new
+	 * {@link org.w3c.dom.Document}.
+	 * 
+	 * @param node
+	 * @return
+	 * @throws ParserConfigurationException
+	 */
+	public static final Document createConfigDocument(Element node)
+			throws ParserConfigurationException {
+		// Extract optional configuration element, if any.
+		// TODO extract make this into a constant!
+		final Document config = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().newDocument();
+		final NodeList configNodeList = node.getElementsByTagName("config");
+		if (configNodeList.getLength() > 1) {
+			throw new RuntimeException(
+					"No more than one config element allowed!");
+		}
+		config.appendChild(config.importNode(configNodeList.item(0), true));
+		return config;
+	}
+
 	static Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 	static Map<String, Integer> globalObjectNumbers = new HashMap<String, Integer>();
 	final static Map<String, String> classNames = new HashMap<String, String>();
@@ -190,17 +224,18 @@ public class ObjectFactory extends Variables {
 		}
 
 		Object obj = create(this.findClassForElement(node), params,
-				new Variables(variables));
+				createConfigDocument(node), new Variables(variables));
 		return obj;
 	}
 
-	public Object create(String className, Map<String, String> parameter)
-			throws Exception {
-		return create(className, parameter, new Variables());
+	public Object create(String className, Map<String, String> parameter,
+			org.w3c.dom.Document config) throws Exception {
+		return create(className, parameter, config, new Variables());
 	}
 
 	public Object create(String className, Map<String, String> parameter,
-			Variables extraVariables) throws Exception {
+			org.w3c.dom.Document config, Variables extraVariables)
+			throws Exception {
 
 		Map<String, String> params = new HashMap<String, String>();
 		params.putAll(variables);
@@ -254,6 +289,22 @@ public class ObjectFactory extends Variables {
 		//
 		log.debug("Injecting parameters: {}", p);
 		ParameterInjection.inject(object, p, this);
+
+		if (object instanceof Configurable) {
+			StringWriter sw = new StringWriter();
+		    StreamResult sr = new StreamResult(sw);
+		    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+		    transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+		    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		    transformer.transform(new DOMSource(config), sr);
+		    System.out.println(sw.toString());
+			log.debug("Applying configuration: {}", config);
+			((Configurable) object).configure(config);
+		}
+
 		return object;
 	}
 

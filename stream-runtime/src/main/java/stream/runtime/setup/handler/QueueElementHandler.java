@@ -8,6 +8,7 @@ import stream.io.BlockingQueue;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
+import stream.runtime.setup.ObjectFactory;
 
 public class QueueElementHandler implements ElementHandler {
 
@@ -51,7 +52,7 @@ public class QueueElementHandler implements ElementHandler {
 		}
 
 		BlockingQueue queue = (BlockingQueue) container.getObjectFactory()
-				.create(className, params);
+				.create(className, params, ObjectFactory.createConfigDocument(element));
 		container.registerQueue(id, queue, true);
 	}
 }

@@ -181,7 +181,7 @@ public class ProcessElementHandler implements ElementHandler {
 		}
 
 		DefaultProcess process = (DefaultProcess) objectFactory.create(
-				processClass, attr, extraVariables);
+				processClass, attr, ObjectFactory.createConfigDocument(element), extraVariables);
 		log.debug("Created Process object: {}", process);
 		log.debug("Process input is: '{}'", process.getInput());
 		ProcessContext ctx = new ProcessContextImpl(container.getContext());

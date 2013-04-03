@@ -101,7 +101,7 @@ public class ServiceElementHandler implements ElementHandler {
 		log.debug("Creating new service implementation from class {}",
 				className);
 		try {
-			Service service = (Service) objectFactory.create(className, params);
+			Service service = (Service) objectFactory.create(className, params, ObjectFactory.createConfigDocument(element));
 			service.reset();
 			container.getContext().register(id, service);
 		} catch (Exception e) {

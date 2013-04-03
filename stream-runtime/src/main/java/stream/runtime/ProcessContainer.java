@@ -226,6 +226,7 @@ public class ProcessContainer {
 			elementHandler.putAll(customElementHandler);
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(url.openStream());
 
@@ -275,7 +276,7 @@ public class ProcessContainer {
 			String nsClass = root.getAttribute("namingService");
 			if (nsClass != null && !nsClass.trim().isEmpty())
 				namingService = (NamingService) objectFactory.create(nsClass,
-						attr);
+						attr, ObjectFactory.createConfigDocument(root));
 		} catch (Exception e) {
 			log.error("Faild to instantiate naming service '{}': {}",
 					root.getAttribute("namingService"), e.getMessage());

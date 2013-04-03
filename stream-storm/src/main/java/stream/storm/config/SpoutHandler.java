@@ -70,7 +70,7 @@ public class SpoutHandler extends ATopologyElementHandler {
 
 		log.info("  >   Creating spout-instance from class {}, parameters: {}",
 				className, params);
-		IRichSpout bolt = (IRichSpout) objectFactory.create(className, params);
+		IRichSpout bolt = (IRichSpout) objectFactory.create(className, params, ObjectFactory.createConfigDocument(el));
 
 		log.info("  > Registering spout '{}' with instance {}", id, bolt);
 		SpoutDeclarer spoutDeclarer = builder.setSpout(id, bolt);

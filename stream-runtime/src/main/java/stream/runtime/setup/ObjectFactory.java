@@ -24,7 +24,6 @@
 package stream.runtime.setup;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,21 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import stream.Configurable;
 import stream.annotations.BodyContent;
@@ -80,27 +71,10 @@ public class ObjectFactory extends Variables {
 	 * @return
 	 * @throws ParserConfigurationException
 	 */
-	public static final Document createConfigDocument(Element node)
+	public static final Element createConfigDocument(Element node)
 			throws ParserConfigurationException {
-		// Extract optional configuration element, if any.
-		// TODO extract make this into a constant!
-		final Document config = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder().newDocument();
-		final NodeList configNodeList = node.getElementsByTagName("config");
-		if (configNodeList.getLength() > 1) {
-			throw new RuntimeException(
-					"No more than one config element allowed!");
-		}
-		// Append copy of config element if any...
-		if (configNodeList.getLength() == 1) {
-			config.appendChild(config.importNode(configNodeList.item(0), true));
-		}
-		// ... append empty config element else.
-		else {
-			config.appendChild(config.createElement("config"));
-		}
-
-		return config;
+		Element clone = (Element) node.cloneNode(true);
+		return clone;
 	}
 
 	static Logger log = LoggerFactory.getLogger(ObjectFactory.class);
@@ -237,12 +211,12 @@ public class ObjectFactory extends Variables {
 	}
 
 	public Object create(String className, Map<String, String> parameter,
-			org.w3c.dom.Document config) throws Exception {
+			org.w3c.dom.Element config) throws Exception {
 		return create(className, parameter, config, new Variables());
 	}
 
 	public Object create(String className, Map<String, String> parameter,
-			org.w3c.dom.Document config, Variables extraVariables)
+			org.w3c.dom.Element config, Variables extraVariables)
 			throws Exception {
 
 		Map<String, String> params = new HashMap<String, String>();
@@ -298,19 +272,11 @@ public class ObjectFactory extends Variables {
 		log.debug("Injecting parameters: {}", p);
 		ParameterInjection.inject(object, p, this);
 
+		// If the instance implements Configurable, then we provide
+		// it with a deep-cloned copy of the DOM element that was
+		// used to create the instance
+		//
 		if (object instanceof Configurable) {
-			StringWriter sw = new StringWriter();
-			StreamResult sr = new StreamResult(sw);
-			Transformer transformer = TransformerFactory.newInstance()
-					.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-					"yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
-			transformer.setOutputProperty(
-					"{http://xml.apache.org/xslt}indent-amount", "4");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(new DOMSource(config), sr);
 			log.debug("Applying configuration: {}", config);
 			((Configurable) object).configure(config);
 		}

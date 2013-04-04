@@ -43,6 +43,12 @@ package stream;
  */
 public interface Configurable {
 
-	void configure(org.w3c.dom.Document document);
+	/**
+	 * This method is called with the DOM element that was used to create the
+	 * instance implementing this interface.
+	 * 
+	 * @param document
+	 */
+	public void configure(org.w3c.dom.Element document);
 
 }

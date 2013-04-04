@@ -180,7 +180,7 @@ public abstract class AbstractProcess implements stream.Process {
 				//
 				item = process(item);
 
-				if (getSink() != null) {
+				if (item != null && getSink() != null) {
 					log.debug("Sending process output to connected sink {}",
 							getSink());
 					getSink().write(item);

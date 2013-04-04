@@ -45,6 +45,7 @@ public abstract class AbstractStream implements Stream {
 	protected String prefix = null;
 	protected String id;
 	protected InputStream in;
+	boolean closed = false;
 
 	public AbstractStream(SourceURL url) {
 		this.url = url;
@@ -104,6 +105,9 @@ public abstract class AbstractStream implements Stream {
 	 */
 	public Data read() throws Exception {
 
+		if (closed)
+			return null;
+
 		if (limit > 0 && count >= limit)
 			return null;
 
@@ -149,5 +153,6 @@ public abstract class AbstractStream implements Stream {
 	 */
 	@Override
 	public void close() throws Exception {
+		closed = true;
 	}
 }

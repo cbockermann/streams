@@ -62,10 +62,12 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.Stream#close()
 	 */
 	public void close() throws Exception {
-		queue.clear();
-		queue.add(Data.END_OF_STREAM);
-		queue.notifyAll();
-		closed = true;
+		synchronized (queue) {
+			queue.clear();
+			queue.add(Data.END_OF_STREAM);
+			queue.notifyAll();
+			closed = true;
+		}
 	}
 
 	/**
@@ -126,6 +128,11 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	public boolean enqueue(Data item) {
 		try {
+			if (item == null) {
+				this.close();
+				return false;
+			}
+
 			synchronized (queue) {
 				if (!closed)
 					queue.put(item);
@@ -145,14 +152,21 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void write(Data item) throws Exception {
+
+		if (item == null) {
+			this.close();
+			return;
+		}
+
 		synchronized (queue) {
 			if (closed) {
+				// queue.notifyAll();
+				log.error("Write to closed queue '{}'!", getId());
+				throw new Exception("Queue " + getId() + " already closed.");
+			} else {
+				queue.put(item);
 				queue.notifyAll();
-				log.error("Queue already closed.");
-				// throw new Exception("Queue already closed.");
 			}
-			queue.put(item);
-			queue.notifyAll();
 		}
 	}
 

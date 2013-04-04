@@ -68,7 +68,7 @@ public class BoltHandler extends ATopologyElementHandler {
 		// className, params);
 		log.info("  >   Creating bolt-instance from class {}, parameters: {}",
 				className, params);
-		IRichBolt bolt = (IRichBolt) objectFactory.create(className, params);
+		IRichBolt bolt = (IRichBolt) objectFactory.create(className, params, ObjectFactory.createConfigDocument(el));
 
 		log.info("  > Registering bolt '{}' with instance {}", id, bolt);
 		BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);

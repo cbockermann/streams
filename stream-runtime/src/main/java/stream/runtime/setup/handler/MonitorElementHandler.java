@@ -124,7 +124,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 
 				String className = "stream.runtime.Monitor";
 				Monitor monitor = (Monitor) objectFactory.create(className,
-						params);
+						params, ObjectFactory.createConfigDocument(element));
 				List<Processor> procs = createNestedProcessors(container,
 						element, local);
 				for (Processor p : procs)
@@ -139,7 +139,8 @@ public class MonitorElementHandler extends ProcessElementHandler {
 			local.put("monitor.id", "0");
 
 			String className = "stream.runtime.Monitor";
-			Monitor monitor = (Monitor) objectFactory.create(className, params);
+			Monitor monitor = (Monitor) objectFactory.create(className, params,
+					ObjectFactory.createConfigDocument(element));
 			List<Processor> procs = createNestedProcessors(container, element,
 					local);
 			for (Processor p : procs)

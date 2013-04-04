@@ -3,17 +3,9 @@
  */
 package stream.runtime.setup.handler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -43,7 +35,6 @@ public class SystemPropertiesHandler implements DocumentHandler {
 		//
 		addSystemProperties(container, variables);
 	}
-
 
 	/**
 	 * This method adds all the system properties to the container properties,

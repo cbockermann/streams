@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.Processor;
-import stream.runtime.DefaultProcess;
 import stream.runtime.Monitor;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -85,15 +84,13 @@ public class MonitorElementHandler extends ProcessElementHandler {
 		//
 		Map<String, String> attr = objectFactory.getAttributes(element);
 
-		
+		// List<Processor> procs = createNestedProcessors(container, element,
+		// variables);
+		// for (Processor p : procs)
+		// monitor.add(p);
+		//
+		// container.getProcesses().add(monitor);
 
-//		List<Processor> procs = createNestedProcessors(container, element,
-//				variables);
-//		for (Processor p : procs)
-//			monitor.add(p);
-//
-//		container.getProcesses().add(monitor);
-		
 		String copies = attr.get("copies");
 		if (attr.containsKey("multiply")) {
 			copies = attr.get("multiply");
@@ -124,11 +121,12 @@ public class MonitorElementHandler extends ProcessElementHandler {
 				Variables local = new Variables(variables);
 				local.put("monitor.id", pid);
 				local.put("copy.id", pid);
-				
+
 				String className = "stream.runtime.Monitor";
-				Monitor monitor = (Monitor) objectFactory.create(className, params);
-				List<Processor> procs = createNestedProcessors(container, element,
-						local);
+				Monitor monitor = (Monitor) objectFactory.create(className,
+						params);
+				List<Processor> procs = createNestedProcessors(container,
+						element, local);
 				for (Processor p : procs)
 					monitor.add(p);
 				log.debug("Created Monitor object: {}", monitor);
@@ -139,7 +137,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 			Variables local = new Variables(variables);
 			objectFactory.set("monitor.id", "0");
 			local.put("monitor.id", "0");
-			
+
 			String className = "stream.runtime.Monitor";
 			Monitor monitor = (Monitor) objectFactory.create(className, params);
 			List<Processor> procs = createNestedProcessors(container, element,
@@ -149,6 +147,6 @@ public class MonitorElementHandler extends ProcessElementHandler {
 			log.debug("Created Monitor object: {}", monitor);
 			container.getProcesses().add(monitor);
 		}
-		
+
 	}
 }

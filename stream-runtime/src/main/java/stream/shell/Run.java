@@ -1,18 +1,18 @@
 /**
  * 
  */
-package stream;
+package stream.shell;
 
 import java.util.List;
 
+
 /**
  * @author chris
- * 
  */
-public class RunCommand implements Command {
+public class Run implements ShellCommand {
 
 	/**
-	 * @see stream.Command#execute(java.util.List)
+	 * @see stream.shell.ShellCommand#execute(java.util.List)
 	 */
 	@Override
 	public void execute(List<String> args) throws Exception {

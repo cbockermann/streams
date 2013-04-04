@@ -3,6 +3,9 @@
  */
 package stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.io.Queue;
 import stream.io.QueueService;
 
@@ -12,6 +15,7 @@ import stream.io.QueueService;
  */
 public class QueueServiceWrapper implements QueueService, Queue {
 
+	static Logger log = LoggerFactory.getLogger(QueueServiceWrapper.class);
 	Queue queue;
 
 	/**
@@ -116,7 +120,8 @@ public class QueueServiceWrapper implements QueueService, Queue {
 		try {
 			return queue.read();
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 			return null;
 		}
 	}
@@ -129,7 +134,8 @@ public class QueueServiceWrapper implements QueueService, Queue {
 		try {
 			this.queue.write(item);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 			return false;
 		}
 		return true;

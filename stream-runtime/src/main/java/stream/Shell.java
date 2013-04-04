@@ -11,6 +11,8 @@ import java.util.Map;
 
 import stream.doc.BuildIndex;
 import stream.doc.SearchCommand;
+import stream.shell.Run;
+import stream.shell.ShellCommand;
 
 /**
  * @author chris
@@ -18,14 +20,14 @@ import stream.doc.SearchCommand;
  */
 public class Shell {
 
-	final static Map<String, Command> commands = new LinkedHashMap<String, Command>();
+	final static Map<String, ShellCommand> commands = new LinkedHashMap<String, ShellCommand>();
 	static {
 		commands.put("search", new SearchCommand());
 		// commands.put("help", new SearchCommand());
 		// commands.put("doc", new SearchCommand());
 		// commands.put("index-doc", new BuildIndex());
 		commands.put("build-index", new BuildIndex());
-		commands.put("run", new RunCommand());
+		commands.put("run", new Run());
 	}
 
 	/**
@@ -41,7 +43,7 @@ public class Shell {
 		params.addAll(Arrays.asList(args));
 		String cmd = params.remove(0);
 
-		Command command = commands.get(cmd);
+		ShellCommand command = commands.get(cmd);
 		if (command != null) {
 			try {
 				command.execute(params);

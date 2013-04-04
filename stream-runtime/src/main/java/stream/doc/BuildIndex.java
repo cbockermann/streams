@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import stream.Command;
 import stream.doc.helper.DocIndex;
+import stream.shell.ShellCommand;
 import stream.util.URLUtilities;
 
 /**
  * @author chris
  * 
  */
-public class BuildIndex implements Command {
+public class BuildIndex implements ShellCommand {
 
 	/**
-	 * @see stream.Command#execute(java.util.List)
+	 * @see stream.shell.ShellCommand#execute(java.util.List)
 	 */
 	@Override
 	public void execute(List<String> args) throws Exception {

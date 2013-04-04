@@ -6,21 +6,21 @@ package stream.doc;
 import java.util.Arrays;
 import java.util.List;
 
-import stream.Command;
 import stream.annotations.Parameter;
 import stream.doc.helper.DocIndex;
 import stream.doc.helper.DocIndex.Result;
 import stream.runtime.setup.ParameterDiscovery;
+import stream.shell.ShellCommand;
 import stream.util.URLUtilities;
 
 /**
  * @author chris
  * 
  */
-public class DocCommand implements Command {
+public class DocCommand implements ShellCommand {
 
 	/**
-	 * @see stream.Command#execute(java.util.List)
+	 * @see stream.shell.ShellCommand#execute(java.util.List)
 	 */
 	@Override
 	public void execute(List<String> args) throws Exception {

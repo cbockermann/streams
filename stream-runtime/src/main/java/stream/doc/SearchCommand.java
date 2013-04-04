@@ -7,18 +7,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import stream.Command;
 import stream.doc.helper.DocIndex;
 import stream.doc.helper.DocIndex.Result;
+import stream.shell.ShellCommand;
 
 /**
  * @author chris
  * 
  */
-public class SearchCommand implements Command {
+public class SearchCommand implements ShellCommand {
 
 	/**
-	 * @see stream.Command#execute(java.util.List)
+	 * @see stream.shell.ShellCommand#execute(java.util.List)
 	 */
 	@Override
 	public void execute(List<String> args) throws Exception {

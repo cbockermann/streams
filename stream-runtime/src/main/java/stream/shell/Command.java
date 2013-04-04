@@ -7,7 +7,6 @@ import stream.DebugShell;
 
 /**
  * @author chris
- * 
  */
 public abstract class Command {
 

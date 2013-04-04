@@ -31,9 +31,9 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ComputeGraph;
 import stream.runtime.ContainerContext;
 import stream.runtime.Variables;
-import stream.runtime.shutdown.DependencyGraph;
 import stream.service.Service;
 
 /**
@@ -64,7 +64,7 @@ public class ServiceInjection {
 	 */
 	@SuppressWarnings("unused")
 	public static void injectServices(Collection<ServiceReference> refs,
-			ContainerContext ctx, DependencyGraph graph,
+			ContainerContext ctx, ComputeGraph graph,
 			Variables variables) throws Exception {
 
 		Iterator<ServiceReference> it = refs.iterator();

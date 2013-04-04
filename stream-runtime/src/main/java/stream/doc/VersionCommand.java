@@ -5,16 +5,16 @@ package stream.doc;
 
 import java.util.List;
 
-import stream.Command;
+import stream.shell.ShellCommand;
 
 /**
  * @author chris
  * 
  */
-public class VersionCommand implements Command {
+public class VersionCommand implements ShellCommand {
 
 	/**
-	 * @see stream.Command#execute(java.util.List)
+	 * @see stream.shell.ShellCommand#execute(java.util.List)
 	 */
 	@Override
 	public void execute(List<String> args) throws Exception {

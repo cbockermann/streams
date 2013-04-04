@@ -110,7 +110,7 @@ public class StreamsContainerFactory implements ContainerFactory {
 		//
 		// (1,5) Erzeugen des NamingServices
 		//
-		NamingService namingService = createNamingService();
+		// NamingService namingService = createNamingService();
 
 		// (1.75) Erzeugen des leeren Containers
 		//
@@ -122,7 +122,8 @@ public class StreamsContainerFactory implements ContainerFactory {
 		//
 		container = buildContainer(container, doc);
 
-		String host = InetAddress.getLocalHost().getHostAddress(); // .getHostName();
+		// String host = InetAddress.getLocalHost().getHostAddress(); //
+		// .getHostName();
 		String name = InetAddress.getLocalHost().getHostName();
 		if (name.indexOf(".") > 0) {
 			name = name.substring(0, name.indexOf("."));

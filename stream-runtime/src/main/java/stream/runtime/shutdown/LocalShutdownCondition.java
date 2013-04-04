@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.ComputeGraph;
 import stream.Process;
 import stream.Processor;
 import stream.io.Source;
@@ -24,22 +25,22 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 	static Logger log = LoggerFactory.getLogger(LocalShutdownCondition.class);
 
 	/**
-	 * @see stream.runtime.ShutdownCondition#isMet(stream.runtime.DependencyGraph)
+	 * @see stream.runtime.ShutdownCondition#isMet(stream.ComputeGraph)
 	 */
 	@Override
-	public boolean isMet(DependencyGraph graph) {
+	public boolean isMet(ComputeGraph graph) {
 
 		log.debug("Checking if shutdown condition is met...");
 		synchronized (graph) {
 
-			if (graph.nodes.isEmpty())
+			if (graph.nodes().isEmpty())
 				return true;
 
 			List<Monitor> monitors = new ArrayList<Monitor>();
 			int processes = 0;
 			int monitorCount = 0;
 
-			for (Object node : graph.nodes) {
+			for (Object node : graph.nodes()) {
 				if (node instanceof Monitor) {
 					monitors.add((Monitor) node);
 					monitorCount++;
@@ -67,7 +68,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			// log.info("Root source: {}", root);
 			// }
 
-			for (Object node : graph.nodes) {
+			for (Object node : graph.nodes()) {
 				if (node instanceof Source) {
 					continue;
 				}
@@ -100,7 +101,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 		}
 	}
 
-	public void waitForCondition(DependencyGraph graph) {
+	public void waitForCondition(ComputeGraph graph) {
 		synchronized (graph) {
 			while (!isMet(graph)) {
 				try {

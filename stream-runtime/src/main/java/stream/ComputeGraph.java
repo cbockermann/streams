@@ -1,10 +1,11 @@
 /**
  * 
  */
-package stream.runtime.shutdown;
+package stream;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,17 +16,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Process;
+import stream.io.Source;
+import stream.runtime.AbstractProcess;
 import stream.runtime.LifeCycle;
-import stream.runtime.ProcessListener;
 
 /**
  * @author chris
  * 
  */
-public class DependencyGraph implements ProcessListener {
+public class ComputeGraph {
 
-	static Logger log = LoggerFactory.getLogger(DependencyGraph.class);
+	static Logger log = LoggerFactory.getLogger(ComputeGraph.class);
 	final Set<Object> nodes = new LinkedHashSet<Object>();
 	final List<Edge> edges = new ArrayList<Edge>();
 
@@ -45,14 +46,18 @@ public class DependencyGraph implements ProcessListener {
 	 */
 	public synchronized Set<Object> getRootSources() {
 		Set<Object> sources = getSources();
+		Set<Object> srcs = new LinkedHashSet<Object>();
 		Iterator<Object> it = sources.iterator();
 		while (it.hasNext()) {
 			Object source = it.next();
-			if (!getSourcesFor(source).isEmpty()) {
-				it.remove();
+			if (source instanceof Source) {
+				if (!getSourcesFor(source).isEmpty()) {
+					it.remove();
+				}
 			}
+			srcs.add(source);
 		}
-		return sources;
+		return srcs;
 	}
 
 	public synchronized Set<Object> getSources() {
@@ -98,6 +103,10 @@ public class DependencyGraph implements ProcessListener {
 		return nodes;
 	}
 
+	public Set<Object> nodes() {
+		return Collections.unmodifiableSet(nodes);
+	}
+
 	public synchronized void clear() {
 		nodes.clear();
 		edges.clear();
@@ -124,13 +133,38 @@ public class DependencyGraph implements ProcessListener {
 		if (o instanceof LifeCycle) {
 			lifeObjects.add((LifeCycle) o);
 		}
+
+		if (o instanceof Source) {
+			try {
+				synchronized (o) {
+					((Source) o).close();
+				}
+			} catch (Exception e) {
+				log.error("Failed to close source '{}': ", o, e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			}
+		}
+
+		// is this at all required? it does not hurt, though, but the
+		// compute-graph should in theory only consist of sinks, sources and
+		// processes.
+		//
+		if (o instanceof AbstractProcess) {
+			List<Processor> processors = ((AbstractProcess) o).getProcessors();
+			log.debug("Removing {} nested processors of {}", processors.size(),
+					o);
+			for (Processor p : processors) {
+				remove(p, notify);
+			}
+		}
+
 		Iterator<Edge> it = (new ArrayList<Edge>(edges)).iterator();
 		while (it.hasNext()) {
 			Edge edge = it.next();
 			if (edge.getFrom() == o) {
-				// log.debug("[graph-shutdown]   Removing edge ( {} => {} )",
-				// edge.getFrom(),
-				// edge.getTo());
+				log.debug("[graph-shutdown]   Removing edge ( {} => {} )",
+						edge.getFrom(), edge.getTo());
 				this.nodes.remove(o);
 				this.edges.remove(edge);
 				Object target = edge.getTo();
@@ -146,9 +180,9 @@ public class DependencyGraph implements ProcessListener {
 			}
 		}
 
-		log.trace("[dep-graph]  Reference counts: ");
+		log.debug("[dep-graph]  Reference counts: ");
 		for (Object node : this.nodes) {
-			log.trace("[dep-graph]     * {}  is referenced by {} ", node,
+			log.debug("[dep-graph]     * {}  is referenced by {} ", node,
 					this.getSourcesFor(node));
 		}
 		return lifeObjects;
@@ -204,29 +238,5 @@ public class DependencyGraph implements ProcessListener {
 		public Object getTo() {
 			return to;
 		}
-	}
-
-	/**
-	 * @see stream.runtime.ProcessListener#processStarted(stream.Process)
-	 */
-	@Override
-	public void processStarted(Process p) {
-		if (nodes.contains(p)) {
-			log.debug("Process {} started, already part of this graph.", p);
-		} else {
-			log.debug("Process {} started, but it is not part of this graph.",
-					p);
-		}
-	}
-
-	/**
-	 * @see stream.runtime.ProcessListener#processFinished(stream.Process)
-	 */
-	@Override
-	public void processFinished(Process p) {
-		log.debug(
-				"Process {} finished, removing it from the dependency graph nodes...",
-				p);
-		remove(p);
 	}
 }

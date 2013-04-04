@@ -30,10 +30,10 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
+import stream.ComputeGraph;
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
 import stream.runtime.ProcessContainer;
-import stream.runtime.shutdown.DependencyGraph;
 
 /**
  * @author chris
@@ -83,7 +83,7 @@ public class ServiceInjectionTest {
 		URL url = ServiceInjectionTest.class.getResource("/service-test.xml");
 		ProcessContainer container = new ProcessContainer(url);
 
-		DependencyGraph graph = new DependencyGraph();
+		ComputeGraph graph = new ComputeGraph();
 		Collection<ServiceReference> refs = container.getServiceRefs();
 
 		ServiceInjection.injectServices(refs, container.getContext(), graph,

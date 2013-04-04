@@ -27,7 +27,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,6 +43,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.ComputeGraph;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
@@ -67,7 +67,6 @@ import stream.runtime.setup.handler.QueueElementHandler;
 import stream.runtime.setup.handler.ServiceElementHandler;
 import stream.runtime.setup.handler.StreamElementHandler;
 import stream.runtime.setup.handler.SystemPropertiesHandler;
-import stream.runtime.shutdown.DependencyGraph;
 import stream.runtime.shutdown.LocalShutdownCondition;
 import stream.runtime.shutdown.ServerShutdownCondition;
 import stream.runtime.shutdown.ShutdownCondition;
@@ -113,9 +112,9 @@ public class ProcessContainer {
 					return;
 				}
 
-				log.debug("Running shutdown-hook...");
+				log.info("Running shutdown-hook...");
 				for (ProcessContainer pc : container) {
-					log.debug("Sending shutdown signal to {}", pc);
+					log.info("Sending shutdown signal to {}", pc);
 					pc.shutdown();
 				}
 			}
@@ -125,7 +124,7 @@ public class ProcessContainer {
 		java.lang.Runtime.getRuntime().addShutdownHook(t);
 	}
 
-	protected final DependencyGraph depGraph = new DependencyGraph();
+	protected final ComputeGraph depGraph = new ComputeGraph();
 
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
 	protected final ProcessorFactory processorFactory = new ProcessorFactory(
@@ -312,7 +311,7 @@ public class ProcessContainer {
 		this.init(doc);
 	}
 
-	public DependencyGraph getDependencyGraph() {
+	public ComputeGraph getDependencyGraph() {
 		return depGraph;
 	}
 
@@ -508,35 +507,16 @@ public class ProcessContainer {
 			// spu.init(ctx);
 
 			ProcessThread worker = new ProcessThread(spu, ctx);
-			// worker.setDaemon(true);
-			worker.addListener(depGraph);
-			// worker.addListener(new ProcessListener() {
-			//
-			// @Override
-			// public void processStarted(stream.Process p) {
-			// log.debug("Starting process {}", p);
-			// }
-			//
-			// @Override
-			// public void processFinished(stream.Process p) {
-			// log.debug(
-			// "Process {} finished, removing from dependency-graph.",
-			// p);
-			// depGraph.remove(p);
-			// List<LifeCycle> endOfLife = depGraph.remove(p);
-			// log.debug("End-of-life for: {}", endOfLife);
-			// for (LifeCycle lc : endOfLife) {
-			// try {
-			// log.debug(
-			// "Calling finish() for LifeCycle object {}",
-			// lc);
-			// lc.finish();
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// }
-			// }
-			// }
-			// });
+			worker.addListener(new ProcessListener() {
+				@Override
+				public void processStarted(Process p) {
+				}
+
+				@Override
+				public void processFinished(Process p) {
+					depGraph.remove(p);
+				}
+			});
 
 			log.debug("Initializing stream-process [{}]", spu);
 			worker.init();
@@ -602,77 +582,27 @@ public class ProcessContainer {
 			if (!runShutdownHook)
 				return;
 
-			runShutdownHook = false; // ensure that the shutdown hook is only
-										// run
-			// *once*
+			// ensure that the shutdown hook is only run *once*
+			runShutdownHook = false;
 		}
 
-		List<Object> finished = new ArrayList<Object>();
-
-		synchronized (processes) {
-			for (Process process : processes) {
-				log.debug("Sending SHUTDOWN signal to process {}", process);
+		log.debug("Graph has {} source elements", depGraph.getRootSources()
+				.size());
+		for (Object source : depGraph.getRootSources()) {
+			log.debug("Removing element {} from compute-graph", source);
+			List<LifeCycle> lifeCycles = depGraph.remove(source);
+			for (LifeCycle lf : lifeCycles) {
 				try {
-					finished.add(process);
-					process.finish();
+					log.info("Finishing LifeCycle object {}", lf);
+					lf.finish();
 				} catch (Exception e) {
-					log.error("Failed to properly shutdown process: {}",
+					log.error("Failed to end LifeCycle object {}: {}", lf,
 							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
 				}
 			}
 		}
-
-		log.debug("Sending finish() signal to life-cycle objects...");
-		for (LifeCycle object : lifeCyleObjects) {
-			try {
-				if (finished.contains(object))
-					continue;
-				else
-					finished.add(object);
-
-				log.debug("   sending finish() to {}", object);
-				object.finish();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		while (!processes.isEmpty()) {
-			log.debug("Waiting for {} processes to finish...", processes.size());
-			try {
-				Iterator<ProcessThread> it = this.worker.iterator();
-				while (it.hasNext()) {
-					ProcessThread process = it.next();
-					if (!process.isAlive()) {
-						log.debug("another process finished...");
-						it.remove();
-						List<LifeCycle> eol = depGraph.remove(process);
-						for (LifeCycle lc : eol) {
-							try {
-								log.info(
-										"Calling finish() for LifeCycle object {}",
-										lc);
-								lc.finish();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-
-				log.debug("Waiting for {} processes to finish...",
-						processes.size());
-				log.debug("   processes: {}", processes);
-				try {
-					Thread.sleep(500);
-				} catch (Exception e) {
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		log.info("Container shut down.");
 	}
 
 	/**

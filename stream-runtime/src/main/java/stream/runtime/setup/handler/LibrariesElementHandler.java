@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.runtime.ElementHandler;
+import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
 import stream.runtime.dependencies.Dependency;
@@ -95,7 +96,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(ProcessContainer container, Document doc,
+	public void handle(IContainer container, Document doc,
 			Variables variables) throws Exception {
 
 		log.debug("Checking for dependency definitions...");

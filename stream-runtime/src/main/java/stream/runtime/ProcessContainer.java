@@ -87,7 +87,7 @@ import stream.service.NamingService;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class ProcessContainer {
+public class ProcessContainer implements IContainer {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
@@ -311,17 +311,26 @@ public class ProcessContainer {
 		this.init(doc);
 	}
 
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getDependencyGraph()
+	 */
+	@Override
 	public ComputeGraph getDependencyGraph() {
 		return depGraph;
 	}
 
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getStreams()
+	 */
+	@Override
 	public Set<Source> getStreams() {
 		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
-	/**
-	 * @return the name
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -334,20 +343,26 @@ public class ProcessContainer {
 		this.name = name;
 	}
 
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getContext()
+	 */
+	@Override
 	public ContainerContext getContext() {
 		return context;
 	}
 
-	/**
-	 * @return the processes
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getProcesses()
 	 */
+	@Override
 	public List<Process> getProcesses() {
 		return processes;
 	}
 
-	/**
-	 * @return the serviceRefs
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getServiceRefs()
 	 */
+	@Override
 	public List<ServiceReference> getServiceRefs() {
 		return serviceRefs;
 	}
@@ -549,6 +564,10 @@ public class ProcessContainer {
 				(end - start));
 	}
 
+	/* (non-Javadoc)
+	 * @see stream.runtime.IContainer#getVariables()
+	 */
+	@Override
 	public Variables getVariables() {
 		return this.containerVariables;
 	}

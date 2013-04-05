@@ -38,6 +38,7 @@ import stream.Processor;
 import stream.ProcessorList;
 import stream.runtime.DefaultProcess;
 import stream.runtime.ElementHandler;
+import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
 import stream.runtime.Variables;
@@ -203,7 +204,7 @@ public class ProcessElementHandler implements ElementHandler {
 		return process;
 	}
 
-	protected Processor createProcessor(ProcessContainer container,
+	protected Processor createProcessor(IContainer container,
 			Element child, Variables variables) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
@@ -287,7 +288,7 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	protected List<Processor> createNestedProcessors(
-			ProcessContainer container, Element child, Variables variables)
+			IContainer container, Element child, Variables variables)
 			throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 

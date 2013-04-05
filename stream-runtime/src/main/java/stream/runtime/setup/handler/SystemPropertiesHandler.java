@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import stream.runtime.ProcessContainer;
+import stream.runtime.IContainer;
 import stream.runtime.Variables;
 
 /**
@@ -28,7 +28,7 @@ public class SystemPropertiesHandler implements DocumentHandler {
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(ProcessContainer container, Document doc,
+	public void handle(IContainer container, Document doc,
 			Variables variables) throws Exception {
 		// add system properties, e.g defined at command line using the -D flag:
 		// java -Dproperty-name=property-value
@@ -42,7 +42,7 @@ public class SystemPropertiesHandler implements DocumentHandler {
 	 * 
 	 * @param container
 	 */
-	private void addSystemProperties(ProcessContainer container,
+	private void addSystemProperties(IContainer container,
 			Variables variables) {
 		for (Object key : System.getProperties().keySet()) {
 			// log.debug("Adding system property '{}' = {}", key,

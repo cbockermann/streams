@@ -16,7 +16,7 @@ import stream.io.QueueService;
 public class QueueServiceWrapper implements QueueService, Queue {
 
 	static Logger log = LoggerFactory.getLogger(QueueServiceWrapper.class);
-	Queue queue;
+	private Queue queue;
 
 	/**
 	 * @return

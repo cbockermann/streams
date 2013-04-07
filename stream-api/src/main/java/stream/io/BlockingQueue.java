@@ -62,9 +62,16 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.Stream#close()
 	 */
 	public void close() throws Exception {
+		log.debug("Closing queue '{}'...", getId());
 		synchronized (queue) {
-			queue.clear();
-			queue.add(Data.END_OF_STREAM);
+			if (closed) {
+				log.debug("Queue '{}' already closed.", getId());
+				return;
+			}
+
+			log.debug("queue: {}", queue);
+			queue.put(Data.END_OF_STREAM);
+			log.debug("queue': {}", queue);
 			queue.notifyAll();
 			closed = true;
 		}
@@ -75,15 +82,17 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public Data read() throws Exception {
-
+		log.debug("Reading from queue {}", getId());
 		Data item = null;
 		try {
-			if (closed)
+			if (closed && queue.isEmpty()) {
+				log.debug("Queue '{}' is closed and empty => null", getId());
 				return null;
+			}
 			item = queue.take();
 			log.debug("took item from queue: {}", item);
 		} catch (InterruptedException e) {
-			if (closed)
+			if (closed && queue.isEmpty())
 				return null;
 			else {
 				log.error("Interruped while waiting for data: {}",
@@ -93,7 +102,7 @@ public class BlockingQueue extends AbstractQueue {
 			}
 		}
 
-		if (closed || item == Data.END_OF_STREAM) {
+		if (item == Data.END_OF_STREAM) {
 			log.debug("Next data-item is end-of-stream event!");
 			closed = true;
 			return null;
@@ -111,9 +120,7 @@ public class BlockingQueue extends AbstractQueue {
 
 	public Data take() {
 		try {
-			Data item = queue.take();
-			if (item == Data.END_OF_STREAM)
-				return null;
+			Data item = read();
 			return item;
 		} catch (Exception e) {
 			log.error("Interrupted while reading on queue: {}", e.getMessage());
@@ -127,6 +134,7 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
 	public boolean enqueue(Data item) {
+		log.debug("Queue {}: Enqueuing event {}", getId(), item);
 		try {
 			if (item == null) {
 				this.close();
@@ -153,7 +161,9 @@ public class BlockingQueue extends AbstractQueue {
 	@Override
 	public void write(Data item) throws Exception {
 
+		log.debug("Writing to queue '{}': {}", getId(), item);
 		if (item == null) {
+			log.debug("'null' item written! Closing queue '{}'", getId());
 			this.close();
 			return;
 		}
@@ -162,8 +172,9 @@ public class BlockingQueue extends AbstractQueue {
 			if (closed) {
 				// queue.notifyAll();
 				log.error("Write to closed queue '{}'!", getId());
-				throw new Exception("Queue " + getId() + " already closed.");
+				// throw new Exception("Queue " + getId() + " already closed.");
 			} else {
+				log.debug("queue '{}': Adding item '{}'", getId(), item);
 				queue.put(item);
 				queue.notifyAll();
 			}
@@ -191,6 +202,7 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void reset() throws Exception {
+		log.debug("Resetting queue '{}'", getId());
 		if (queue == null) {
 			queue = new LinkedBlockingQueue<Data>(this.getLimit());
 		} else {

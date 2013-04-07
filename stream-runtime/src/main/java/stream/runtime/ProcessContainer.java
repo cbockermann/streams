@@ -311,7 +311,9 @@ public class ProcessContainer implements IContainer {
 		this.init(doc);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getDependencyGraph()
 	 */
 	@Override
@@ -319,7 +321,9 @@ public class ProcessContainer implements IContainer {
 		return depGraph;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getStreams()
 	 */
 	@Override
@@ -327,7 +331,9 @@ public class ProcessContainer implements IContainer {
 		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getName()
 	 */
 	@Override
@@ -343,7 +349,9 @@ public class ProcessContainer implements IContainer {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getContext()
 	 */
 	@Override
@@ -351,7 +359,9 @@ public class ProcessContainer implements IContainer {
 		return context;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getProcesses()
 	 */
 	@Override
@@ -359,7 +369,9 @@ public class ProcessContainer implements IContainer {
 		return processes;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getServiceRefs()
 	 */
 	@Override
@@ -452,6 +464,7 @@ public class ProcessContainer implements IContainer {
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
 					BlockingQueue q = new BlockingQueue();
+					q.setId(input);
 					registerQueue(input, q, true);
 					stream = q;
 				}
@@ -564,7 +577,9 @@ public class ProcessContainer implements IContainer {
 				(end - start));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see stream.runtime.IContainer#getVariables()
 	 */
 	@Override

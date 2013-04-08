@@ -70,10 +70,8 @@ public class BlockingQueue extends AbstractQueue {
 			}
 
 			log.debug("queue: {}", queue);
-			queue.put(Data.END_OF_STREAM);
-			log.debug("queue': {}", queue);
-			queue.notifyAll();
 			closed = true;
+			queue.notifyAll();
 		}
 	}
 
@@ -102,8 +100,8 @@ public class BlockingQueue extends AbstractQueue {
 			}
 		}
 
-		if (item == Data.END_OF_STREAM) {
-			log.debug("Next data-item is end-of-stream event!");
+		if (closed) {
+			log.debug("Reading from closed queue '{}'!", getId());
 			return null;
 		}
 
@@ -143,9 +141,10 @@ public class BlockingQueue extends AbstractQueue {
 				return true;
 
 			synchronized (queue) {
-				if (!closed)
+				if (!closed) {
 					queue.put(item);
-				queue.notifyAll();
+					queue.notifyAll();
+				}
 			}
 			return true;
 		} catch (Exception e) {

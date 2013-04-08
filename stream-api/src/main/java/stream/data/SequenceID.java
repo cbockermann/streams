@@ -80,6 +80,12 @@ public final class SequenceID implements Serializable, Comparable<SequenceID> {
 		return this;
 	}
 
+	public SequenceID getAndIncrement() {
+		SequenceID val = new SequenceID(value);
+		increment();
+		return val;
+	}
+
 	public byte[] value() {
 
 		synchronized (this) {
@@ -132,14 +138,15 @@ public final class SequenceID implements Serializable, Comparable<SequenceID> {
 	}
 
 	public String toString() {
-		StringBuilder b = new StringBuilder();
+		StringBuilder b = new StringBuilder("0x");
 		boolean foundNonZero = false;
 		for (int i = digits; i > 0; i--) {
 			int val = ((int) value[i - 1]) & 0xff;
 			foundNonZero = foundNonZero || val > 0;
-			b.append(Integer.toHexString(val));
-			if (i > 1)
-				b.append(":");
+			if (foundNonZero || i == 1)
+				b.append(Integer.toHexString(val));
+			// if (i > 1)
+			// b.append(":");
 		}
 		return b.toString();
 	}

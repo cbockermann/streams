@@ -5,8 +5,11 @@ package stream.io;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Data;
-import stream.data.LongSequenceID;
+import stream.data.SequenceID;
 
 /**
  * <p>
@@ -18,12 +21,14 @@ import stream.data.LongSequenceID;
  */
 public class OrderedQueue implements Queue {
 
+	static Logger log = LoggerFactory.getLogger(OrderedQueue.class);
+	protected String sequenceKey = "@source:item";
 	protected boolean closed = false;
 	protected Integer limit = 1000;
 	protected String id;
 	protected Object lock = new Object();
 
-	protected LongSequenceID nextOut;
+	protected SequenceID nextOut = new SequenceID();
 	protected Data nextItem;
 	protected ArrayList<Data> queue = new ArrayList<Data>(limit);
 
@@ -52,14 +57,26 @@ public class OrderedQueue implements Queue {
 		synchronized (lock) {
 
 			if (closed) {
-				throw new Exception("Failed to write to closed ordered-queue "
-						+ this + "#" + getId());
+				log.error("Failed to write to closed ordered-queue {}", getId());
+				return;
 			}
 
-			LongSequenceID id = (LongSequenceID) item.get("@source#id");
-			if (id == null)
-				throw new Exception(
-						"Item does not provide sequence-id - required for ordered queue insertion!");
+			SequenceID id = null;
+
+			try {
+				id = (SequenceID) item.get(sequenceKey);
+				if (id == null)
+					throw new Exception(
+							"Item does not provide sequence-id - required for ordered queue insertion!");
+			} catch (Exception e) {
+				log.error(
+						"Failed to determine sequence ID from item at key '{}': {}",
+						sequenceKey, e.getMessage());
+				if (log.isDebugEnabled()) {
+					e.printStackTrace();
+				}
+				throw e;
+			}
 
 			// the inserted item is right the next one that is required
 			// to be pushed out for an ordered sequence.
@@ -77,7 +94,7 @@ public class OrderedQueue implements Queue {
 				Data cur = queue.get(i);
 				if (cur != null) {
 
-					LongSequenceID curId = (LongSequenceID) cur.get("@source#id");
+					SequenceID curId = (SequenceID) cur.get(sequenceKey);
 					if (curId.compareTo(id) > 0) {
 						queue.add(i, item);
 						return;
@@ -101,7 +118,6 @@ public class OrderedQueue implements Queue {
 	 */
 	@Override
 	public void init() throws Exception {
-
 	}
 
 	/**
@@ -111,21 +127,33 @@ public class OrderedQueue implements Queue {
 	public Data read() throws Exception {
 
 		synchronized (lock) {
-			while (nextItem == null) {
+			// log.debug("Queue contents: {}", queue);
+
+			// nextItem will automagically be set in the "write"
+			// method calls
+			//
+			log.debug("nextItem: {}", nextItem);
+			while (!closed && nextItem == null) {
 				lock.wait();
 			}
 
+			if (closed && nextItem == null)
+				return null;
+
 			Data item = nextItem;
-			nextOut.nextValue();
+			log.debug("Returning item: {}", item);
+			nextOut.increment();
+			log.debug("Next SequenceID is: {}", nextOut);
 			nextItem = findNext();
 			return item;
 		}
 	}
 
 	private Data findNext() {
+		log.debug("looking for next item with ID '{}'", nextOut);
 		for (int i = 0; i < queue.size(); i++) {
 			Data cur = queue.get(i);
-			LongSequenceID id = (LongSequenceID) cur.get("@source#id");
+			SequenceID id = (SequenceID) cur.get(sequenceKey);
 			if (id.compareTo(nextOut) == 0) {
 				nextItem = cur;
 				queue.remove(i);

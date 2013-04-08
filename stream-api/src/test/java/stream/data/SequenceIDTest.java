@@ -90,7 +90,7 @@ public class SequenceIDTest {
 	public void testUUID() {
 		SequenceID seq = new SequenceID(16);
 
-		for (int i = 0; i < 384; i++) {
+		for (int i = 0; i < 10240; i++) {
 			SequenceID id = seq.increment();
 			System.out.println(id.uuid().toString() + "   (toString:   "
 					+ id.toString() + " )");

@@ -104,7 +104,6 @@ public class BlockingQueue extends AbstractQueue {
 
 		if (item == Data.END_OF_STREAM) {
 			log.debug("Next data-item is end-of-stream event!");
-			closed = true;
 			return null;
 		}
 
@@ -137,9 +136,11 @@ public class BlockingQueue extends AbstractQueue {
 		log.debug("Queue {}: Enqueuing event {}", getId(), item);
 		try {
 			if (item == null) {
-				this.close();
 				return false;
 			}
+
+			if (item == Data.END_OF_STREAM)
+				return true;
 
 			synchronized (queue) {
 				if (!closed)
@@ -163,10 +164,13 @@ public class BlockingQueue extends AbstractQueue {
 
 		log.debug("Writing to queue '{}': {}", getId(), item);
 		if (item == null) {
-			log.debug("'null' item written! Closing queue '{}'", getId());
-			this.close();
+			log.debug("'null' must not be written to a queue (queue id: '{}')",
+					getId());
 			return;
 		}
+
+		if (item == Data.END_OF_STREAM)
+			return;
 
 		synchronized (queue) {
 			if (closed) {

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
+import stream.data.SequenceID;
 
 /**
  * @author Christian Bockermann
@@ -46,6 +47,7 @@ public abstract class AbstractStream implements Stream {
 	protected String id;
 	protected InputStream in;
 	boolean closed = false;
+	protected SequenceID seqId = new SequenceID();
 
 	public AbstractStream(SourceURL url) {
 		this.url = url;
@@ -126,6 +128,9 @@ public abstract class AbstractStream implements Stream {
 
 			if (this.id != null)
 				datum.put("@stream", this.id);
+
+			SequenceID next = this.seqId.nextValue();
+			datum.put("@stream#id", next);
 
 			if (prefix != null && !prefix.trim().isEmpty()) {
 				Data prefixed = DataFactory.create();

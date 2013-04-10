@@ -328,8 +328,9 @@ public class NewConditionsTest {
 
 		int size = data.size();
 		log.info("Condition: {}", c);
+		long time = end - start == 0 ? 1 : end - start;
 		log.info("{} elements nedded {} ms: {} mio items/s", size,
-				(end - start), ((size / (end - start)) / 1000));
+				time, (size / time) / 1000);
 		log.info("{} ", data.toString());
 	}
 

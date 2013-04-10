@@ -52,27 +52,19 @@ public class ProcessorList extends AbstractProcessor {
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	@Override
-	public Data process(Data input) {
-
-		Data data = input;
-
+	public Data process(Data data) {
 		if (data != null) {
-
 			for (Processor p : processors) {
 				data = p.process(data);
-
 				// If any nested processor returns null we stop further
 				// processing.
 				//
-				if (data == null) {
+				if (data == null)
 					return null;
-				}
 			}
 
-			return data;
 		}
-
-		return input;
+		return data;
 	}
 
 	/**

@@ -51,7 +51,7 @@ public class NewConditionsTest {
 	private Data item;
 	private ConditionFactory cf;
 
-	private int rounds = 1000000;
+	private int rounds = 10000;
 
 	@Before
 	public void setup() {

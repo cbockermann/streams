@@ -160,4 +160,15 @@ public final class SequenceID implements Serializable, Comparable<SequenceID> {
 
 		return new SequenceID(digits);
 	}
+
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+
+		if (o instanceof SequenceID) {
+			return 0 == this.compareTo((SequenceID) o);
+		}
+
+		return false;
+	}
 }

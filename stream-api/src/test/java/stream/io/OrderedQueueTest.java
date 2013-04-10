@@ -82,7 +82,10 @@ public class OrderedQueueTest {
 				SequenceID lastId = (SequenceID) last.get("@source:item");
 				SequenceID curId = (SequenceID) cur.get("@source:item");
 
-				Assert.assertTrue(lastId.increment().equals(curId));
+				SequenceID lastPlusOne = lastId.nextValue();
+
+				log.info(" {}  ==?==  {}", lastPlusOne, curId);
+				Assert.assertTrue(lastPlusOne.compareTo(curId) == 0);
 				last = cur;
 			}
 

@@ -48,6 +48,7 @@ public abstract class AbstractStream implements Stream {
 	protected InputStream in;
 	boolean closed = false;
 	protected SequenceID seqId = new SequenceID();
+	protected String sequenceKey = null;
 
 	public AbstractStream(SourceURL url) {
 		this.url = url;
@@ -102,43 +103,41 @@ public abstract class AbstractStream implements Stream {
 		this.limit = limit;
 	}
 
+	public String getSequenceKey() {
+		return sequenceKey;
+	}
+
+	public void setSequenceKey(String sequenceKey) {
+		this.sequenceKey = sequenceKey;
+	}
+
 	/**
 	 * @see stream.io.Stream#read()
 	 */
 	public Data read() throws Exception {
 
-		if (closed)
+		if (closed || (limit > 0 && count >= limit))
 			return null;
 
-		if (limit > 0 && count >= limit)
+		Data datum = readNext();
+		if (datum == null) {
+			log.debug("End-of-stream reached!");
 			return null;
+		}
 
-		Data datum = null;
-		while (datum == null) {
+		if (this.id != null)
+			datum.put("@stream", this.id);
 
-			//
-			// If the source is empty (i.e. readItem(..) returned null), we
-			// cannot continue, so we leave by returning null
-			//
-			datum = readNext();
-			if (datum == null) {
-				log.debug("End-of-stream reached!");
-				return null;
-			}
-
-			if (this.id != null)
-				datum.put("@stream", this.id);
-
+		if (this.sequenceKey != null) {
 			SequenceID next = this.seqId.nextValue();
 			datum.put("@stream#id", next);
-
-			if (prefix != null && !prefix.trim().isEmpty()) {
-				Data prefixed = DataFactory.create();
-				for (String key : datum.keySet()) {
-					prefixed.put(prefix + ":" + key, datum.get(key));
-				}
-				datum = prefixed;
+		}
+		if (prefix != null && !prefix.trim().isEmpty()) {
+			Data prefixed = DataFactory.create();
+			for (String key : datum.keySet()) {
+				prefixed.put(prefix + ":" + key, datum.get(key));
 			}
+			datum = prefixed;
 		}
 		count++;
 		return datum;

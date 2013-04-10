@@ -119,6 +119,20 @@ public class NewConditionsTest {
 	}
 
 	@Test
+	public void testGreaterCondition() throws Exception {
+
+
+		// ******************************
+		// Condition Double
+		Data data = DataFactory.create();
+		data.put("test", 4d);
+		assertCondition("%{data.test} > 3d", data, true);
+		assertCondition("5d > %{data.test}", data, true);
+		assertCondition("%{data.test} > 5d", data, false);
+		assertCondition("3d > %{data.test}", data, false);
+	}		
+	
+	@Test
 	public void testNotEqualCondition() throws Exception {
 
 		MultiData md = new MultiData(rounds);

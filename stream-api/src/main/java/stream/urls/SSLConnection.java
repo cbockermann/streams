@@ -52,14 +52,16 @@ public class SSLConnection extends TcpConnection {
 			this.password = null;
 
 		if (url.getParameters().containsKey("keystoreUrl")) {
-			URL ksUrl = new URL(url.getParameters().get("keystoreUrl"));
+			SourceURL ksUrl = new SourceURL(url.getParameters().get(
+					"keystoreUrl"));
 			loadKeyStore(ksUrl, password);
 		} else
 			this.keyStore = null;
 
 		if (url.getParameters().containsKey("truststoreUrl")) {
 			this.trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			URL tsUrl = new URL(url.getParameters().get("truststoreUrl"));
+			SourceURL tsUrl = new SourceURL(url.getParameters().get(
+					"truststoreUrl"));
 
 			String trustpw = url.getParameters().get("truststorePassword");
 			if (trustpw == null) {
@@ -80,7 +82,12 @@ public class SSLConnection extends TcpConnection {
 		keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		keyStore.load(url.openStream(), password);
 		this.password = password;
+	}
 
+	public void loadKeyStore(SourceURL source, char[] pass) throws Exception {
+		keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keyStore.load(source.openStream(), pass);
+		this.password = pass;
 	}
 
 	public void setTrustStore(KeyStore ks, char[] password) {
@@ -89,6 +96,11 @@ public class SSLConnection extends TcpConnection {
 	}
 
 	public void loadTrustStore(URL url, char[] password) throws Exception {
+		trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		trustStore.load(url.openStream(), password);
+	}
+
+	public void loadTrustStore(SourceURL url, char[] password) throws Exception {
 		trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		trustStore.load(url.openStream(), password);
 	}

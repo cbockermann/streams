@@ -104,6 +104,14 @@ public class ProcessorFactory {
 				}
 			}
 
+			for (ProcessorCreationHandler handler : this.handlers) {
+				try {
+					handler.processorCreated((Processor) o, child);
+				} catch (Exception e) {
+					throw new RuntimeException(e.getMessage());
+				}
+			}
+
 			return (Processor) o;
 		}
 

@@ -103,6 +103,7 @@ public class XMLUtils {
 			uuid = id;
 		} else {
 			id = uuid;
+			System.err.println("Replacing ID with " + uuid);
 			element.setAttribute("id", id);
 		}
 

@@ -16,6 +16,7 @@ import stream.Processor;
 import stream.ProcessorList;
 import stream.io.Sink;
 import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.ParameterInjection;
 import stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler;
 import backtype.storm.task.OutputCollector;
 
@@ -48,37 +49,6 @@ public class QueueInjection implements ProcessorCreationHandler {
 		return m.getName().substring(3);
 	}
 
-	public static boolean isQueueSetter(Method m) {
-
-		if (!m.getName().toLowerCase().startsWith("set")) {
-			log.debug("Not a setter -> method not starting with 'set'");
-			return false;
-		}
-
-		Class<?>[] types = m.getParameterTypes();
-		if (types.length != 1) {
-			log.debug("Not a setter, parameter types: {}", (Object[]) types);
-			return false;
-		}
-
-		Class<?> type = types[0];
-		if (type.isArray()) {
-			if (Sink.class.isAssignableFrom(type)) {
-				log.info("Found setter for type '{}': {}", Sink.class, m);
-				return true;
-			}
-
-		} else {
-
-			Class<?> ct = type.getComponentType();
-			if (Sink.class.isAssignableFrom(ct)) {
-				log.info("Found setter for array-type '{}': {}", Sink.class, m);
-				return true;
-			}
-		}
-
-		return true;
-	}
 
 	public static boolean isQueueArraySetter(Method m) {
 		Class<?> type = m.getParameterTypes()[0];
@@ -94,9 +64,10 @@ public class QueueInjection implements ProcessorCreationHandler {
 		Map<String, String> params = ObjectFactory.newInstance().getAttributes(
 				from);
 		for (Method m : p.getClass().getMethods()) {
-
-			if (isQueueSetter(m)) {
-				String prop = getQueueSetterName(m);
+			log.info("Checking method {}", m);
+			if (ParameterInjection.isQueueSetter(m)) {
+				final String qsn = getQueueSetterName(m);
+				String prop = qsn.substring(0, 1).toLowerCase() + qsn.substring(1);
 				log.info("Found queue-setter for property {}", prop);
 
 				if (isQueueArraySetter(m)) {
@@ -109,7 +80,8 @@ public class QueueInjection implements ProcessorCreationHandler {
 						}
 					}
 					log.info("Injecting array of queues...");
-					m.invoke(p, wrapper.toArray());
+					Object array = wrapper.toArray(new QueueWrapper[wrapper.size()]);
+					m.invoke(p, array);
 
 				} else {
 					String name = params.get(prop);

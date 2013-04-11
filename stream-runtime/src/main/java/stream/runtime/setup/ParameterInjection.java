@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
 import stream.expressions.Condition;
+import stream.io.Sink;
 import stream.runtime.Variables;
 
 /**
@@ -85,6 +86,11 @@ public class ParameterInjection {
 
 			if (ServiceInjection.isServiceSetter(m)) {
 				log.debug("Skipping ServiceSetter '{}'", m.getName());
+				continue;
+			}
+			
+			if( isQueueSetter( m ) ){
+				log.debug("Skipping QueueSetter '{}'", m.getName());
 				continue;
 			}
 
@@ -284,5 +290,43 @@ public class ParameterInjection {
 		return clazz.equals(String.class) || clazz.equals(Long.class)
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
 				|| clazz.equals(Boolean.class) || clazz.equals(boolean.class);
+	}
+	
+
+	public static boolean isQueueSetter(Method m) {
+
+		if (!m.getName().toLowerCase().startsWith("set")) {
+			log.debug("Not a setter -> method not starting with 'set'");
+			return false;
+		}
+
+		Class<?>[] types = m.getParameterTypes();
+		if (types.length != 1) {
+			log.debug("Not a setter, parameter types: {}", (Object[]) types);
+			return false;
+		}
+
+		Class<?> type = types[0];
+		if (!type.isArray()) {
+			if (Sink.class.isAssignableFrom(type)) {
+				log.info("Found setter for type '{}': {}", Sink.class, m);
+				return true;
+			}
+
+		} else {
+
+			Class<?> ct = type.getComponentType();
+			if (ct != null && Sink.class.isAssignableFrom(ct)) {
+				log.info("Found setter for array-type '{}': {}", Sink.class, m);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean isQueueArraySetter(Method m) {
+		Class<?> type = m.getParameterTypes()[0];
+		return type.isArray();
 	}
 }

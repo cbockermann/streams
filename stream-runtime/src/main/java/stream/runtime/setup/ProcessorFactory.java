@@ -108,6 +108,7 @@ public class ProcessorFactory {
 				try {
 					handler.processorCreated((Processor) o, child);
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new RuntimeException(e.getMessage());
 				}
 			}

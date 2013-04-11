@@ -34,6 +34,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 	}
 
 	public static void injectQueues(Processor proc, OutputCollector collector) {
+		return;
 	}
 
 	public static void injectQueues(ProcessorList procs,

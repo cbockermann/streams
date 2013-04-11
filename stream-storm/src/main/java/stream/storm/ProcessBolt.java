@@ -86,7 +86,6 @@ public class ProcessBolt extends AbstractBolt {
 		// processors - this is required to determine any references to
 		// sinks/services
 		//
-		createProcess();
 	}
 
 	/**
@@ -191,9 +190,7 @@ public class ProcessBolt extends AbstractBolt {
 
 		try {
 
-			if (process == null) {
-				process = createProcess();
-			}
+			this.process = createProcess();
 
 			List<Processor> ps = getAllProcessors();
 			for (Processor p : ps) {

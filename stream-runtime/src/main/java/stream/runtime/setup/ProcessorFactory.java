@@ -44,9 +44,19 @@ public class ProcessorFactory {
 	static Logger log = LoggerFactory.getLogger(ProcessorFactory.class);
 
 	ObjectFactory objectFactory;
+	final List<ProcessorCreationHandler> handlers = new ArrayList<ProcessorCreationHandler>();
 
 	public ProcessorFactory(ObjectFactory of) {
 		this.objectFactory = of;
+	}
+
+	public void addCreationHandler(ProcessorCreationHandler h) {
+		if (!handlers.contains(h))
+			handlers.add(h);
+	}
+
+	public void removeCreationHandler(ProcessorCreationHandler h) {
+		handlers.remove(h);
 	}
 
 	public List<Processor> createNestedProcessors(Element child)
@@ -98,5 +108,10 @@ public class ProcessorFactory {
 		}
 
 		return null;
+	}
+
+	public static interface ProcessorCreationHandler {
+		public void processorCreated(Processor p, Element from)
+				throws Exception;
 	}
 }

@@ -113,6 +113,12 @@ public class ProcessBolt extends AbstractBolt {
 
 		ObjectFactory obf = ObjectFactory.newInstance();
 		ProcessorFactory pf = new ProcessorFactory(obf);
+
+		// The handler injects wrappers for any QueueService accesses, thus
+		// effectively doing the queue-flow injection
+		//
+		pf.addCreationHandler(new QueueInjection(output));
+
 		log.debug("Creating processor-list from element {}", element);
 		List<Processor> list = pf.createNestedProcessors(element);
 

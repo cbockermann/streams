@@ -1,0 +1,17 @@
+<container>
+
+	<stream id="data" class="stream.io.RandomStream" limit="1000"/>
+
+	<process input="data">
+		<Enqueue queue="q1" />
+	</process>
+	
+
+	<queue id="q1" />
+
+	
+	<process id="test" input="q1">
+		<PrintData />		
+	</process>
+
+</container>

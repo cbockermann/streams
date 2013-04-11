@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 import stream.util.XMLUtils;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
-import backtype.storm.StormSubmitter;
+import backtype.storm.generated.StormTopology;
 import backtype.storm.utils.Utils;
 
 /**
@@ -39,12 +39,15 @@ import backtype.storm.utils.Utils;
 public class StormRunner {
 
 	static Logger log = LoggerFactory.getLogger(StormRunner.class);
-	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
+	public final static String UUID_ATTRIBUTE = "id";
 
 	public static void addUUIDAttributes(Element element) {
 
-		UUID id = UUID.randomUUID();
-		element.setAttribute(UUID_ATTRIBUTE, id.toString());
+		String theId = element.getAttribute("id");
+		if (theId == null || theId.trim().isEmpty()) {
+			UUID id = UUID.randomUUID();
+			element.setAttribute(UUID_ATTRIBUTE, id.toString());
+		}
 
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -131,23 +134,28 @@ public class StormRunner {
 			return;
 
 		Config conf = new Config();
-		conf.setDebug(true);
+		conf.setDebug(false);
 
 		StreamTopology st = StreamTopology.create(doc);
 
-		if (System.getProperty("local") == null) {
-			conf.put(Config.NIMBUS_HOST, "192.168.10.10");
-			conf.put(Config.NIMBUS_THRIFT_PORT, "6627");
-			StormSubmitter.submitTopology("test", conf, st.createTopology());
-		} else {
-			LocalCluster cluster = new LocalCluster();
-			cluster.submitTopology("test", conf, st.createTopology());
+		log.info("Creating stream-topology...");
 
-			log.info("Topology submitted.");
-			Utils.sleep(10000000);
+		StormTopology storm = st.createTopology();
 
-			cluster.killTopology("test");
-			cluster.shutdown();
-		}
+		log.info("Starting local cluster...");
+		LocalCluster cluster = new LocalCluster();
+
+		log.info("########################################################################");
+		log.info("submitting topology...");
+		cluster.submitTopology("test", conf, storm);
+		log.info("########################################################################");
+
+		log.info("Topology submitted.");
+		Utils.sleep(10000000);
+
+		log.info("########################################################################");
+		log.info("killing topology...");
+		cluster.killTopology("test");
+		cluster.shutdown();
 	}
 }

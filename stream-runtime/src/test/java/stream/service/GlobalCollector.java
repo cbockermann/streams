@@ -105,4 +105,9 @@ public class GlobalCollector implements QueueService {
 	public void write(Data item) throws Exception {
 		enqueue(item);
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+	}
 }

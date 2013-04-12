@@ -80,5 +80,8 @@ public class Enqueue extends stream.expressions.version2.ConditionedProcessor {
 		super.finish();
 		log.debug("Sending EndOfStream item to all queues...");
 		enqueue(Data.END_OF_STREAM);
+		for (int i = 0; i < queues.length; i++) {
+			queues[i].close();
+		}
 	}
 }

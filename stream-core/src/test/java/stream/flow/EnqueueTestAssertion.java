@@ -90,4 +90,10 @@ public class EnqueueTestAssertion implements QueueService {
 	public void write(Data item) throws Exception {
 		this.enqueue(item);
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -22,4 +22,5 @@ public interface Queue extends Barrel {
 	public Integer getLimit();
 
 	public Data poll();
+
 }

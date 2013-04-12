@@ -69,4 +69,6 @@ public interface QueueService extends Service, Sink {
 	 * @return
 	 */
 	public int capacity();
+
+	public void close() throws Exception;
 }

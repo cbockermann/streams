@@ -26,15 +26,14 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ConditionedProcessor;
 import stream.Data;
 import stream.io.QueueService;
 
 /**
- * @author chris
+ * @author chris,hendrik
  * 
  */
-public class Enqueue extends ConditionedProcessor {
+public class Enqueue extends stream.expressions.version2.ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 	String ref = null;
@@ -55,7 +54,7 @@ public class Enqueue extends ConditionedProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 		if (data == null)
-			return data;
+			return null;
 
 		enqueue(data);
 		return data;
@@ -81,5 +80,8 @@ public class Enqueue extends ConditionedProcessor {
 		super.finish();
 		log.debug("Sending EndOfStream item to all queues...");
 		enqueue(Data.END_OF_STREAM);
+		for (int i = 0; i < queues.length; i++) {
+			queues[i].close();
+		}
 	}
 }

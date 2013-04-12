@@ -23,7 +23,10 @@
  */
 package stream.io;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +43,197 @@ import stream.Data;
  */
 public class BlockingQueue extends AbstractQueue {
 
+	/**
+	 * Linked list node class
+	 */
+	static class Node<E> {
+		E item;
+
+		/**
+		 * One of: - the real successor Node - this Node, meaning the successor
+		 * is head.next - null, meaning there is no successor (this is the last
+		 * node)
+		 */
+		Node<E> next;
+
+		Node(E x) {
+			item = x;
+		}
+	}
+
 	static Logger log = LoggerFactory.getLogger(BlockingQueue.class);
 
-	protected boolean closed = false;
-	protected LinkedBlockingQueue<Data> queue;
+	protected AtomicBoolean closed = new AtomicBoolean(false);
+
+	/** The capacity bound, or Integer.MAX_VALUE if none */
+	private final int capacity;
+
+	/** Current number of elements */
+	private final AtomicInteger count = new AtomicInteger(0);
+
+	/**
+	 * Head of linked list. Invariant: head.item == null
+	 */
+	private transient Node<Data> head;
+
+	/**
+	 * Tail of linked list. Invariant: last.next == null
+	 */
+	private transient Node<Data> last;
+
+	/** Lock held by take, poll, etc */
+	private final ReentrantLock takeLock = new ReentrantLock();
+
+	/** Wait queue for waiting takes */
+	private final Condition notEmpty = takeLock.newCondition();
+
+	/** Lock held by put, offer, etc */
+	private final ReentrantLock putLock = new ReentrantLock();
+
+	/** Wait queue for waiting puts */
+	private final Condition notFull = putLock.newCondition();
+
+	/**
+	 * Creates a {@code LinkedBlockingQueue} with a capacity of
+	 * {@link Integer#MAX_VALUE}.
+	 */
+	public BlockingQueue() {
+		this(Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
+	 * 
+	 * @param capacity
+	 *            the capacity of this queue
+	 * @throws IllegalArgumentException
+	 *             if {@code capacity} is not greater than zero
+	 */
+	public BlockingQueue(int capacity) {
+		if (capacity <= 0)
+			throw new IllegalArgumentException();
+		this.capacity = capacity;
+		last = head = new Node<Data>(null);
+	}
+
+	private void signalNotEmpty() {
+		final ReentrantLock takeLock = this.takeLock;
+		takeLock.lock();
+		try {
+			notEmpty.signal();
+		} finally {
+			takeLock.unlock();
+		}
+	}
+
+	/**
+	 * Signals a waiting put. Called only from take/poll.
+	 */
+	private void signalNotFull() {
+		final ReentrantLock putLock = this.putLock;
+		putLock.lock();
+		try {
+			notFull.signal();
+		} finally {
+			putLock.unlock();
+		}
+	}
+
+	/**
+	 * Links node at end of queue.
+	 * 
+	 * @param node
+	 *            the node
+	 */
+	private void enqueue(Node<Data> node) {
+		// assert putLock.isHeldByCurrentThread();
+		// assert last.next == null;
+		last = last.next = node;
+	}
+
+	/**
+	 * Removes a node from head of queue.
+	 * 
+	 * @return the node
+	 */
+	private Data dequeue() {
+		// assert takeLock.isHeldByCurrentThread();
+		// assert head.item == null;
+		Node<Data> h = head;
+		Node<Data> first = h.next;
+		h.next = h; // help GC
+		head = first;
+		Data x = first.item;
+		first.item = null;
+		return x;
+	}
+
+	/**
+	 * Lock to prevent both puts and takes.
+	 */
+	void fullyLock() {
+		putLock.lock();
+		takeLock.lock();
+	}
+
+	/**
+	 * Unlock to allow both puts and takes.
+	 */
+	void fullyUnlock() {
+		takeLock.unlock();
+		putLock.unlock();
+	}
+
+	public int size() {
+		return count.get();
+	}
+
+	public int remainingCapacity() {
+		return capacity - count.get();
+	}
+
+	/**
+	 * @see stream.io.QueueService#enqueue(stream.Data)
+	 */
+	public boolean enqueue(Data item) {
+		log.debug("Queue {}: Enqueuing event {}", getId(), item);
+		try {
+			if (item == null)
+				return false;
+
+			if (item == Data.END_OF_STREAM)
+				return true;
+			if (closed.get())
+				return false;
+
+			int c = -1;
+			Node<Data> node = new Node<Data>(item);
+			final ReentrantLock putLock = this.putLock;
+			final AtomicInteger count = this.count;
+			putLock.lockInterruptibly();
+			try {
+				while (count.get() == capacity) {
+					notFull.await();
+				}
+				if (closed.get())
+					return false;
+				enqueue(node);
+				c = count.getAndIncrement();
+				if (c + 1 < capacity)
+					notFull.signal();
+			} finally {
+				putLock.unlock();
+			}
+			if (c == 0)
+				signalNotEmpty();
+			return true;
+		} catch (Exception e) {
+			log.error("Error enqueuing item: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			return false;
+		}
+	}
 
 	/**
 	 * @see stream.io.Source#init()
@@ -55,7 +245,6 @@ public class BlockingQueue extends AbstractQueue {
 					+ getLimit() + "'!");
 		}
 
-		queue = new LinkedBlockingQueue<Data>(getLimit());
 	}
 
 	/**
@@ -63,16 +252,19 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	public void close() throws Exception {
 		log.debug("Closing queue '{}'...", getId());
-		synchronized (queue) {
-			if (closed) {
+		fullyLock();
+		try {
+			if (closed.get()) {
 				log.debug("Queue '{}' already closed.", getId());
 				return;
 			}
+			// log.debug("queue: {}", queue);
+			closed.getAndSet(true);
 
-			log.debug("queue: {}", queue);
-			closed = true;
-			queue.notifyAll();
+		} finally {
+			fullyUnlock();
 		}
+
 	}
 
 	/**
@@ -82,17 +274,30 @@ public class BlockingQueue extends AbstractQueue {
 	public Data read() throws Exception {
 		log.debug("Reading from queue {}", getId());
 		Data item = null;
+		int c = -1;
+		final AtomicInteger count = this.count;
+		final ReentrantLock takeLock = this.takeLock;
+		takeLock.lockInterruptibly();
 		try {
-			if (closed && queue.isEmpty()) {
+			if (closed.get() && count.get() == 0) {
 				log.debug("Queue '{}' is closed and empty => null", getId());
 				return null;
 			}
-			item = queue.take();
+			while (count.get() == 0) {
+				notEmpty.await();
+			}
+			item = dequeue();
+			c = count.getAndDecrement();
 			log.debug("took item from queue: {}", item);
+
+			if (c > 1)
+				notEmpty.signal();
+
 		} catch (InterruptedException e) {
-			if (closed && queue.isEmpty())
+			if (closed.get() && count.get() == 0) {
+				log.debug("Queue '{}' is closed and empty => null", getId());
 				return null;
-			else {
+			} else {
 				log.error("Interruped while waiting for data: {}",
 						e.getMessage());
 				if (log.isDebugEnabled())
@@ -100,11 +305,15 @@ public class BlockingQueue extends AbstractQueue {
 			}
 		}
 
-		if (closed) {
-			log.debug("Reading from closed queue '{}'!", getId());
-			return null;
+		// if (closed) {
+		// log.debug("Reading from closed queue '{}'!", getId());
+		// return null;
+		// }
+		finally {
+			takeLock.unlock();
 		}
-
+		if (c == capacity)
+			signalNotFull();
 		return item;
 	}
 
@@ -112,47 +321,11 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.QueueService#poll()
 	 */
 	public Data poll() {
-		return queue.poll();
+		throw new IllegalAccessError("Not Implemented");
 	}
 
 	public Data take() {
-		try {
-			Data item = read();
-			return item;
-		} catch (Exception e) {
-			log.error("Interrupted while reading on queue: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * @see stream.io.QueueService#enqueue(stream.Data)
-	 */
-	public boolean enqueue(Data item) {
-		log.debug("Queue {}: Enqueuing event {}", getId(), item);
-		try {
-			if (item == null) {
-				return false;
-			}
-
-			if (item == Data.END_OF_STREAM)
-				return true;
-
-			synchronized (queue) {
-				if (!closed) {
-					queue.put(item);
-					queue.notifyAll();
-				}
-			}
-			return true;
-		} catch (Exception e) {
-			log.error("Error enqueuing item: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-			return false;
-		}
+		throw new IllegalAccessError("Not Implemented");
 	}
 
 	/**
@@ -161,27 +334,7 @@ public class BlockingQueue extends AbstractQueue {
 	@Override
 	public void write(Data item) throws Exception {
 
-		log.debug("Writing to queue '{}': {}", getId(), item);
-		if (item == null) {
-			log.debug("'null' must not be written to a queue (queue id: '{}')",
-					getId());
-			return;
-		}
-
-		if (item == Data.END_OF_STREAM)
-			return;
-
-		synchronized (queue) {
-			if (closed) {
-				// queue.notifyAll();
-				log.error("Write to closed queue '{}'!", getId());
-				// throw new Exception("Queue " + getId() + " already closed.");
-			} else {
-				log.debug("queue '{}': Adding item '{}'", getId(), item);
-				queue.put(item);
-				queue.notifyAll();
-			}
-		}
+		enqueue(item);
 	}
 
 	/**
@@ -189,7 +342,7 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public int level() {
-		return queue.size();
+		return count.get();
 	}
 
 	/**
@@ -197,7 +350,7 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public int capacity() {
-		return getLimit();
+		return capacity;
 	}
 
 	/**
@@ -205,11 +358,18 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void reset() throws Exception {
-		log.debug("Resetting queue '{}'", getId());
-		if (queue == null) {
-			queue = new LinkedBlockingQueue<Data>(this.getLimit());
-		} else {
-			queue.clear();
+		fullyLock();
+		try {
+			for (Node<Data> p, h = head; (p = h.next) != null; h = p) {
+				h.next = h;
+				p.item = null;
+			}
+			head = last;
+			// assert head.item == null && head.next == null;
+			if (count.getAndSet(0) == capacity)
+				notFull.signal();
+		} finally {
+			fullyUnlock();
 		}
 	}
 }

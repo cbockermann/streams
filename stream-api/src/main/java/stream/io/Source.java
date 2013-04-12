@@ -6,7 +6,7 @@ package stream.io;
 import stream.Data;
 
 /**
- * @author Christian Bockermann
+ * @author Christian Bockermann,Hendrik Blom
  * 
  */
 public interface Source {

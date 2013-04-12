@@ -24,8 +24,8 @@
 package stream;
 
 import stream.annotations.Parameter;
-import stream.expressions.Expression;
-import stream.expressions.ExpressionCompiler;
+import stream.expressions.version2.Condition;
+import stream.expressions.version2.ConditionFactory;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import stream.expressions.ExpressionCompiler;
 public abstract class ConditionedProcessor extends AbstractProcessor {
 
 	/** The expression to check before processing an event */
-	Expression condition;
+	protected Condition condition;
 
 	/**
 	 * @return the condition
@@ -59,19 +59,17 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	@Parameter(name = "condition", required = false, description = "The condition parameter allows to specify a boolean expression that is matched against each item. The processor only processes items matching that expression.")
 	public void setCondition(String condition) {
 		try {
-			if (condition == null || "".equals(condition.trim())) {
-				condition = null;
-				return;
-			}
-
-			this.condition = ExpressionCompiler.parse(condition);
+			ConditionFactory cf = new ConditionFactory();
+			this.condition = cf.create(condition);
+			if (condition.isEmpty())
+				this.condition = null;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 
-	public boolean matches(Data item) {
-		return (condition == null || condition.matches(context, item));
+	public boolean matches(Data item) throws Exception {
+		return condition == null ? true : condition.get(context, item);
 	}
 
 	/**
@@ -79,8 +77,12 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-		if (matches(data))
-			return processMatchingData(data);
+		try {
+			if (matches(data))
+				return processMatchingData(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return data;
 	}

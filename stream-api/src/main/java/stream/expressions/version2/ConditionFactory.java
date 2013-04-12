@@ -27,7 +27,7 @@ public class ConditionFactory {
 		ex = ex.replace(" ", "");
 		// Handle empty Condition
 		if (ex == null || ex.isEmpty()) {
-			log.info("Created new Empty Condition");
+			log.debug("Created new Empty Condition");
 			return new EmptyCondition("EMPTY");
 		}
 
@@ -38,19 +38,19 @@ public class ConditionFactory {
 		ex = replaceAndCreateExpressions(ex);
 		printDoubleExpressions();
 		printStringExpressions();
-		log.info("Expression: {}", ex);
+		log.debug("Expression: {}", ex);
 
 		// Replace subConditions (e.g. (...)) by a Map.key
 		ex = readSubConditions(ex);
 		print("SubConditions", subCond);
-		log.info("Expression: {}", ex);
+		log.debug("Expression: {}", ex);
 
 		// Create ConditionTree
 		ConditionTree t = new ConditionTree(subCond);
 		t.init();
 		t.setRoot(ex);
 		t.eval();
-		log.info("ConditionTree:\n {}", t);
+		log.debug("ConditionTree:\n {}", t);
 
 		// Create the condition from the given tree
 
@@ -342,40 +342,40 @@ public class ConditionFactory {
 
 	private void printDoubleExpressions() {
 		if (dExps.size() == 0)
-			log.info("No DoubleExpressions created.");
+			log.debug("No DoubleExpressions created.");
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("DoubleExpression created:\n");
 			for (Map.Entry<String, Expression<Double>> e : dExps.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.info(b.toString());
+			log.debug(b.toString());
 		}
 	}
 
 	private void printStringExpressions() {
 		if (sExps.size() == 0)
-			log.info("No StringExpressions created.");
+			log.debug("No StringExpressions created.");
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("StringExpressions created:\n");
 			for (Map.Entry<String, Expression<String>> e : sExps.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.info(b.toString());
+			log.debug(b.toString());
 		}
 	}
 
 	private void print(String name, Map<String, String> m) {
 		if (m.isEmpty())
-			log.info("{} is empty", name);
+			log.debug("{} is empty", name);
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("{} contains:\n");
 			for (Map.Entry<String, String> e : m.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.info(b.toString());
+			log.debug(b.toString());
 		}
 	}
 

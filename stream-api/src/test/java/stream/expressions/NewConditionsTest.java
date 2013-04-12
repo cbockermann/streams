@@ -37,6 +37,8 @@ import stream.data.DataFactory;
 import stream.data.ProcessContextMock;
 import stream.data.StatisticsTest;
 import stream.expressions.version2.ConditionFactory;
+import stream.flow.If;
+import stream.flow.Skip;
 import stream.util.MultiData;
 
 /**
@@ -319,7 +321,7 @@ public class NewConditionsTest {
 	public void testEqualConditionIf() throws Exception {
 
 		String condition = "%{data.test} == 3d";
-		stream.flow.version2.If ifP = new stream.flow.version2.If();
+		If ifP = new If();
 		ifP.setCondition(condition);
 		ifP.init(new ProcessContextMock());
 
@@ -331,7 +333,7 @@ public class NewConditionsTest {
 	@Test
 	public void testNotEqualConditionSkip() throws Exception {
 		String condition = "%{data.test} == 3d";
-		stream.flow.version2.Skip skip = new stream.flow.version2.Skip();
+		Skip skip = new Skip();
 		skip.setCondition(condition);
 		skip.init(new ProcessContextMock());
 
@@ -342,7 +344,7 @@ public class NewConditionsTest {
 
 	@Test
 	public void testEmptyConditionNewSkip() throws Exception {
-		stream.flow.version2.Skip skip = new stream.flow.version2.Skip();
+		Skip skip = new Skip();
 		skip.setCondition("");
 		skip.init(new ProcessContextMock());
 		MultiData md = new MultiData(rounds);

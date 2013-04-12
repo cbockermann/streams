@@ -23,9 +23,11 @@
  */
 package stream.flow;
 
-import stream.ConditionedProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.expressions.version2.ConditionedProcessor;
 import stream.Data;
-import stream.annotations.Description;
 
 /**
  * <p>
@@ -33,19 +35,26 @@ import stream.annotations.Description;
  * <code>null</code>) all data items matching a given condition.
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @author Hendrik
  * 
  */
-@Description(group = "Data Stream.Flow")
+//@Description(group = "Data Stream.Flow")
 public class Skip extends ConditionedProcessor {
 
+	static Logger log = LoggerFactory.getLogger(Skip.class);
 	/**
 	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {
-		if (this.matches(data))
-			return null;
+//		log.debug(condition.toString());
+		try {
+			if (this.matches(data))
+				return null;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return data;
 	}

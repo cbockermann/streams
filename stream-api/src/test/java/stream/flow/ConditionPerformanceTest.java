@@ -27,7 +27,7 @@ public class ConditionPerformanceTest {
 		item.put("y", "test");
 
 		Skip skip = new Skip();
-		skip.setCondition("%{data.x} @lt 4.0 and %{data.y} != null and %{data.x} @gt %{data.t}");
+		skip.setCondition("%{data.x} < 4.0 and %{data.y} != null and %{data.x} > %{data.t}");
 
 		Long start = System.currentTimeMillis();
 		int rounds = 1000000;

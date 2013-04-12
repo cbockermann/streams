@@ -46,9 +46,13 @@ public class Assert extends ConditionedProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-		if (!matches(data))
-			throw new ProcessorException(this, "Assertion '" + getCondition()
-					+ "' failed for data item: " + data);
+		try {
+			if (!matches(data))
+				throw new ProcessorException(this, "Assertion '"
+						+ getCondition() + "' failed for data item: " + data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return processMatchingData(data);
 	}
 }

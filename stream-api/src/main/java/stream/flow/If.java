@@ -28,20 +28,24 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.ProcessorList;
-import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.expressions.Expression;
-import stream.expressions.ExpressionCompiler;
+import stream.expressions.version2.Condition;
+import stream.expressions.version2.ConditionFactory;
 
 /**
- * @author chris
+ * @author chris,Hendrik Blom
  * 
  */
-@Description(group = "Data Stream.Flow")
+// @Description(group = "Data Stream.Flow")
 public class If extends ProcessorList {
 
 	static Logger log = LoggerFactory.getLogger(If.class);
-	Expression condition;
+	protected Condition condition;
+
+	public If() {
+		super();
+		condition = null;
+	}
 
 	/**
 	 * @return the condition
@@ -59,20 +63,14 @@ public class If extends ProcessorList {
 	 */
 	@Parameter(name = "condition", required = false)
 	public void setCondition(String condition) {
-		try {
-			if (condition == null || "".equals(condition.trim())) {
-				condition = null;
-				return;
-			}
-
-			this.condition = ExpressionCompiler.parse(condition);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		ConditionFactory cf = new ConditionFactory();
+		this.condition = cf.create(condition);
+		if (condition.isEmpty())
+			condition = null;
 	}
 
-	public boolean matches(Data item) {
-		return (condition == null || condition.matches(context, item));
+	public boolean matches(Data item) throws Exception {
+		return condition == null ? true : condition.get(context, item);
 	}
 
 	/**
@@ -81,11 +79,16 @@ public class If extends ProcessorList {
 	@Override
 	public Data process(Data input) {
 
-		if (matches(input)) {
-			log.debug("processing item {}", input);
-			return super.process(input);
-		} else {
-			log.debug("skipping item {}", input);
+		try {
+			if (matches(input)) {
+				log.debug("processing item {}", input);
+				return super.process(input);
+			} else {
+				log.debug("skipping item {}", input);
+				return input;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			return input;
 		}
 	}

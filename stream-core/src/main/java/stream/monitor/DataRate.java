@@ -81,30 +81,30 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		if (start == null)
 			start = System.currentTimeMillis();
 		Long now = System.currentTimeMillis();
-
-		if (clock != null) {
-			now = new Long(input.get(clock) + "");
-			if (last == 0L)
-				last = now;
-			// log.info( "Timestamp: {}, last: {}", now, last );
-		}
-
-		Double seconds = Math.abs(last - now) / 1000.0d;
-		if (now > last) {
-			elapsed += seconds;
-			rate = windowCount / seconds;
-			// log.debug("data rate: {}  (overall: {})", rate, count / elapsed);
-			last = now;
-			windowCount = 1L;
-
-			if (key != null) {
-				input.put("time", new Double(elapsed));
-				input.put(key, new Double(rate));
-			}
-
-		} else {
-			windowCount++;
-		}
+//
+//		if (clock != null) {
+//			now = new Long(input.get(clock) + "");
+//			if (last == 0L)
+//				last = now;
+//			// log.info( "Timestamp: {}, last: {}", now, last );
+//		}
+//
+//		Double seconds = Math.abs(last - now) / 1000.0d;
+//		if (now > last) {
+//			elapsed += seconds;
+//			rate = windowCount / seconds;
+//			// log.debug("data rate: {}  (overall: {})", rate, count / elapsed);
+//			last = now;
+//			windowCount = 1L;
+//
+//			if (key != null) {
+//				input.put("time", new Double(elapsed));
+//				input.put(key, new Double(rate));
+//			}
+//
+//		} else {
+//			windowCount++;
+//		}
 
 		count++;
 		if (every != null && count % every.intValue() == 0) {

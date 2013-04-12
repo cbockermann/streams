@@ -42,6 +42,8 @@ public class QueueBolt extends AbstractBolt {
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
 		output = collector;
+		log.info("  > Preparing queue '{}' with collector '{}'", this.uuid,
+				collector);
 	}
 
 	/**

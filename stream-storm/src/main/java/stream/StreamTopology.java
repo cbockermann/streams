@@ -22,6 +22,7 @@ import stream.runtime.setup.handler.PropertiesHandler;
 import stream.storm.config.BoltHandler;
 import stream.storm.config.ConfigHandler;
 import stream.storm.config.ProcessHandler;
+import stream.storm.config.QueueHandler;
 import stream.storm.config.SpoutHandler;
 import stream.storm.config.StreamHandler;
 import stream.util.XMLUtils;
@@ -138,6 +139,7 @@ public class StreamTopology {
 
 		List<ConfigHandler> handlers = new ArrayList<ConfigHandler>();
 		handlers.add(new SpoutHandler(of));
+		handlers.add(new QueueHandler(of, xml));
 		handlers.add(new StreamHandler(of, xml));
 		handlers.add(new BoltHandler(of));
 		handlers.add(new ProcessHandler(of, xml));

@@ -47,8 +47,10 @@ public class QueueWrapper implements Sink, Serializable {
 	 */
 	@Override
 	public void write(Data item) throws Exception {
+		log.info("Writing to queue '{}' item {} to '{}'", name, item);
+		log.info("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
 		tuple.add(item);
-		collector.emit(name, tuple);
+		collector.emit(tuple);
 	}
 }

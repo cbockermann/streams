@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
 
 import stream.Processor;
 import stream.ProcessorList;
-import stream.io.Sink;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ParameterInjection;
 import stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler;
@@ -49,7 +48,6 @@ public class QueueInjection implements ProcessorCreationHandler {
 		return m.getName().substring(3);
 	}
 
-
 	public static boolean isQueueArraySetter(Method m) {
 		Class<?> type = m.getParameterTypes()[0];
 		return type.isArray();
@@ -64,11 +62,12 @@ public class QueueInjection implements ProcessorCreationHandler {
 		Map<String, String> params = ObjectFactory.newInstance().getAttributes(
 				from);
 		for (Method m : p.getClass().getMethods()) {
-			log.info("Checking method {}", m);
+			log.debug("Checking method {}", m);
 			if (ParameterInjection.isQueueSetter(m)) {
 				final String qsn = getQueueSetterName(m);
-				String prop = qsn.substring(0, 1).toLowerCase() + qsn.substring(1);
-				log.info("Found queue-setter for property {}", prop);
+				String prop = qsn.substring(0, 1).toLowerCase()
+						+ qsn.substring(1);
+				log.debug("Found queue-setter for property {}", prop);
 
 				if (isQueueArraySetter(m)) {
 					String[] names = params.get(prop).split(",");
@@ -79,17 +78,18 @@ public class QueueInjection implements ProcessorCreationHandler {
 							wrapper.add(new QueueWrapper(collector, name));
 						}
 					}
-					log.info("Injecting array of queues...");
-					Object array = wrapper.toArray(new QueueWrapper[wrapper.size()]);
+					log.debug("Injecting array of queues...");
+					Object array = wrapper.toArray(new QueueWrapper[wrapper
+							.size()]);
 					m.invoke(p, array);
 
 				} else {
 					String name = params.get(prop);
-					log.info("Injecting a single queue...");
+					log.debug("Injecting a single queue...");
 					m.invoke(p, new QueueWrapper(collector, name));
 				}
 			} else {
-				log.info("Skipping method {} => not a queue-setter", m);
+				log.debug("Skipping method {} => not a queue-setter", m);
 			}
 		}
 	}

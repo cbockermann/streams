@@ -5,7 +5,6 @@ package stream.storm;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import stream.data.DataFactory;
 import stream.io.Sink;
 import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ProcessorFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -186,42 +184,14 @@ public class ProcessBolt extends AbstractBolt {
 	@Override
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
+
+		log.info("Preparing ProcessBolt {}", this.uuid);
 		this.output = collector;
+		log.info("   output collector: {}", output);
 
 		try {
 
-			this.process = createProcess();
-
-			List<Processor> ps = getAllProcessors();
-			for (Processor p : ps) {
-
-				for (Method m : p.getClass().getMethods()) {
-
-					if (ParameterDiscovery.isSetter(m)) {
-						//
-						// setters do have exactly ONE argument
-						//
-						Class<?> type = m.getParameterTypes()[0];
-
-						if (Sink.class.isAssignableFrom(type)) {
-							log.info(
-									"We found a setter for a 'Sink' element in processor '{}'",
-									p);
-
-						} else {
-
-							if (type.isArray()
-									&& type.getComponentType()
-											.isAssignableFrom(Sink.class)) {
-								log.info(
-										"We found a setter for an array of sinks in processor '{}'",
-										p);
-							}
-						}
-					}
-				}
-			}
-
+			process = createProcess();
 			process.init(ctx);
 
 		} catch (Exception e) {
@@ -235,7 +205,7 @@ public class ProcessBolt extends AbstractBolt {
 	 */
 	@Override
 	public void execute(Tuple input) {
-		log.debug("Tuple received: {}", input);
+		log.info("Tuple received: {}", input);
 
 		Data item = null;
 

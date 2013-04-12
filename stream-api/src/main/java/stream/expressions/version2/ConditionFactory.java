@@ -175,7 +175,7 @@ public class ConditionFactory {
 				throw new IllegalArgumentException("Bad ConditionString" + c);
 			Expression<Double> left = createOrBuildDoubleExpression(exps[0]);
 			Expression<Double> right = createOrBuildDoubleExpression(exps[1]);
-			return new LEDoubleCondition(left, right);
+			return new GEDoubleCondition(left, right);
 		}
 		if (c.contains(">")) {
 			String[] exps = c.split(">");

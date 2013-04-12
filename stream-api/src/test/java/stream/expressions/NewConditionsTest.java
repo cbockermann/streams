@@ -121,7 +121,6 @@ public class NewConditionsTest {
 	@Test
 	public void testGreaterCondition() throws Exception {
 
-
 		// ******************************
 		// Condition Double
 		Data data = DataFactory.create();
@@ -130,8 +129,51 @@ public class NewConditionsTest {
 		assertCondition("5d > %{data.test}", data, true);
 		assertCondition("%{data.test} > 5d", data, false);
 		assertCondition("3d > %{data.test}", data, false);
-	}		
-	
+	}
+
+	@Test
+	public void testGreaterEqualsCondition() throws Exception {
+
+		// ******************************
+		// Condition Double
+		Data data = DataFactory.create();
+		data.put("test", 4d);
+		assertCondition("%{data.test} >= 3d", data, true);
+		assertCondition("5d >= %{data.test}", data, true);
+		assertCondition("%{data.test} >= 5d", data, false);
+		assertCondition("3d >= %{data.test}", data, false);
+		assertCondition("%{data.test} >= 4d", data, true);
+		assertCondition("4d >= %{data.test}", data, true);
+	}
+
+	@Test
+	public void testLesserCondition() throws Exception {
+
+		// ******************************
+		// Condition Double
+		Data data = DataFactory.create();
+		data.put("test", 4d);
+		assertCondition("%{data.test} < 3d", data, false);
+		assertCondition("5d < %{data.test}", data, false);
+		assertCondition("%{data.test} < 5d", data, true);
+		assertCondition("3d < %{data.test}", data, true);
+	}
+
+	@Test
+	public void testLesserEqualsCondition() throws Exception {
+
+		// ******************************
+		// Condition Double
+		Data data = DataFactory.create();
+		data.put("test", 4d);
+		assertCondition("%{data.test} <= 3d", data, false);
+		assertCondition("5d <= %{data.test}", data, false);
+		assertCondition("%{data.test} <= 5d", data, true);
+		assertCondition("5d >= %{data.test}", data, true);
+		assertCondition("%{data.test} <= 4d", data, true);
+		assertCondition("4d <= %{data.test}", data, true);
+	}
+
 	@Test
 	public void testNotEqualCondition() throws Exception {
 
@@ -343,8 +385,8 @@ public class NewConditionsTest {
 		int size = data.size();
 		log.info("Condition: {}", c);
 		long time = end - start == 0 ? 1 : end - start;
-		log.info("{} elements nedded {} ms: {} mio items/s", size,
-				time, (size / time) / 1000);
+		log.info("{} elements nedded {} ms: {} mio items/s", size, time,
+				(size / time) / 1000);
 		log.info("{} ", data.toString());
 	}
 

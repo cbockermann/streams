@@ -359,6 +359,7 @@ public class NewConditionsTest {
 		Assert.assertEquals(c.get(ctx, data), result);
 	}
 
+	@SuppressWarnings("unused")
 	private void testTime(String condition, Data data) throws Exception {
 		Boolean b = null;
 		stream.expressions.version2.Condition c = cf.create(condition);
@@ -374,6 +375,7 @@ public class NewConditionsTest {
 		log.info("{} ", data.toString());
 	}
 
+	@SuppressWarnings("unused")
 	private void testTime(String condition, stream.util.MultiData data)
 			throws Exception {
 		Boolean b = null;
@@ -392,6 +394,7 @@ public class NewConditionsTest {
 		log.info("{} ", data.toString());
 	}
 
+	@SuppressWarnings("unused")
 	private void testTime(Processor p, Data data) throws Exception {
 		Data d = null;
 		long start = System.currentTimeMillis();
@@ -407,6 +410,7 @@ public class NewConditionsTest {
 		log.info("{} ", data.toString());
 	}
 
+	@SuppressWarnings("unused")
 	private void testTime(Processor p, stream.util.MultiData data)
 			throws Exception {
 		Data da = null;

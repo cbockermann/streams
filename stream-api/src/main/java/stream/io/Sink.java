@@ -25,4 +25,12 @@ public interface Sink {
 	 * @throws Exception
 	 */
 	public void write(Data item) throws Exception;
+
+	/**
+	 * This method is called by the stream runtime environment as the process
+	 * container is shut down. This can be used to close file handles, streams
+	 * or database connections.
+	 * 
+	 */
+	public abstract void close() throws Exception;
 }

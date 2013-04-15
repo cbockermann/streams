@@ -201,8 +201,6 @@ public class BlockingQueue extends AbstractQueue {
 			if (item == null)
 				return false;
 
-			if (item == Data.END_OF_STREAM)
-				return true;
 			if (closed.get())
 				return false;
 
@@ -325,7 +323,12 @@ public class BlockingQueue extends AbstractQueue {
 	}
 
 	public Data take() {
-		throw new IllegalAccessError("Not Implemented");
+		try {
+			return read();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -333,7 +336,6 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void write(Data item) throws Exception {
-
 		enqueue(item);
 	}
 

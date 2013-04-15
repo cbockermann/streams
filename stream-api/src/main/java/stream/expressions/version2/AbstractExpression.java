@@ -79,6 +79,16 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		return r;
 	}
 
+	@Override
+	public String getExpression() {
+		return expression;
+	}
+
+	@Override
+	public String toString() {
+		return expression;
+	}
+
 	protected abstract class ExpressionResolver implements
 			Expression<Serializable> {
 
@@ -97,11 +107,10 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			return this;
 		}
 
-	}
-
-	@Override
-	public String toString() {
-		return expression;
+		@Override
+		public String getExpression() {
+			return key;
+		}
 	}
 
 	private class StaticDoubleExpressionResolver extends ExpressionResolver {
@@ -124,7 +133,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		}
 	}
 
-	private class StaticStringExpressionResolver extends ExpressionResolver {
+	public class StaticStringExpressionResolver extends ExpressionResolver {
 
 		public StaticStringExpressionResolver(String key) {
 			super(key);
@@ -141,7 +150,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		}
 	}
 
-	private class StaticNullExpressionResolver extends ExpressionResolver {
+	public class StaticNullExpressionResolver extends ExpressionResolver {
 
 		public StaticNullExpressionResolver(String key) {
 			super(key);
@@ -159,7 +168,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 	}
 
-	private class ContextExpressionResolver extends ExpressionResolver {
+	public class ContextExpressionResolver extends ExpressionResolver {
 
 		public ContextExpressionResolver(String key) {
 			super(key);
@@ -176,7 +185,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		}
 	}
 
-	private class DataExpressionResolver extends ExpressionResolver {
+	public class DataExpressionResolver extends ExpressionResolver {
 
 		public DataExpressionResolver(String key) {
 			super(key);

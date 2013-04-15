@@ -87,5 +87,5 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 		return data;
 	}
 
-	public abstract Data processMatchingData(Data data);
+	public abstract Data processMatchingData(Data data) throws Exception;
 }

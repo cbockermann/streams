@@ -88,4 +88,10 @@ public class SplitByCondition extends AbstractSplit {
 			return null;
 		}
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

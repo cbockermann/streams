@@ -33,43 +33,16 @@ import stream.io.QueueService;
  * @author chris,hendrik
  * 
  */
-public class Enqueue extends stream.expressions.version2.ConditionedProcessor {
+public class Enqueue extends Emitter {
 
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
-	String ref = null;
-
-	protected QueueService[] queues;
 
 	public void setQueue(QueueService queue) {
-		this.queues = new QueueService[] { queue };
+		super.setSink(queue);
 	}
 
 	public void setQueues(QueueService[] queues) {
-		this.queues = queues;
-	}
-
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data processMatchingData(Data data) {
-		if (data == null)
-			return null;
-
-		enqueue(data);
-		return data;
-	}
-
-	protected void enqueue(Data data) {
-
-		if (queues == null) {
-			log.error("No QueueService injected!");
-			return;
-		}
-
-		for (int i = 0; i < queues.length; i++) {
-			queues[i].enqueue(data.createCopy());
-		}
+		super.setSinks(queues);
 	}
 
 	/**
@@ -79,9 +52,9 @@ public class Enqueue extends stream.expressions.version2.ConditionedProcessor {
 	public void finish() throws Exception {
 		super.finish();
 		log.debug("Sending EndOfStream item to all queues...");
-		enqueue(Data.END_OF_STREAM);
-		for (int i = 0; i < queues.length; i++) {
-			queues[i].close();
+		emit(Data.END_OF_STREAM);
+		for (int i = 0; i < sinks.length; i++) {
+			sinks[i].close();
 		}
 	}
 }

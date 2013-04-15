@@ -61,4 +61,10 @@ public class SplitByRandom extends AbstractSplit {
 	public void add(Condition condition, Sink sink) {
 		sinks.add(sink);
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

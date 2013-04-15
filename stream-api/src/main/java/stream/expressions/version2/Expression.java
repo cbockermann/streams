@@ -40,6 +40,8 @@ public interface Expression<T extends Serializable> {
 
 	public Class<T> type();
 
+	public String getExpression();
+
 	public Expression<Serializable> toSerializableExpression();
 
 }

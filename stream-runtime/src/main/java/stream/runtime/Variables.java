@@ -23,7 +23,11 @@
  */
 package stream.runtime;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -291,5 +295,29 @@ public class Variables implements Map<String, String>, Serializable {
 		}
 		vals.addAll(variables.values());
 		return vals;
+	}
+
+	public static Variables load(URL url) throws IOException {
+
+		Variables vars = new Variables();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				url.openStream()));
+		String line = reader.readLine();
+		while (line != null) {
+			if (!line.startsWith("#")) {
+
+				int idx = line.indexOf("=");
+				if (idx > 0) {
+					String key = line.substring(0, idx);
+					String val = line.substring(idx + 1);
+					vars.put(key, val);
+				}
+			}
+
+			line = reader.readLine();
+		}
+
+		return vars;
 	}
 }

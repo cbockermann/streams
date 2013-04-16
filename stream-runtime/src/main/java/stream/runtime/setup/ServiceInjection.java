@@ -64,8 +64,8 @@ public class ServiceInjection {
 	 */
 	@SuppressWarnings("unused")
 	public static void injectServices(Collection<ServiceReference> refs,
-			ContainerContext ctx, ComputeGraph graph,
-			Variables variables) throws Exception {
+			ContainerContext ctx, ComputeGraph graph, Variables variables)
+			throws Exception {
 
 		Iterator<ServiceReference> it = refs.iterator();
 		while (it.hasNext()) {
@@ -87,16 +87,16 @@ public class ServiceInjection {
 				for (int i = 0; i < serviceRefs.length; i++) {
 					Service serv = ctx.lookup(serviceRefs[i],
 							ref.getServiceClass());
-					log.info("Found service {}", serv);
+					log.debug("Found service {}", serv);
 					@SuppressWarnings("unchecked")
 					Class<Service> sc = (Class<Service>) ref.getServiceClass()
 							.getComponentType();
-					log.info("Casting to {}", ref.getServiceClass()
+					log.debug("Casting to {}", ref.getServiceClass()
 							.getComponentType());
 
 					Array.set(services, i, serv);
 					graph.add(consumer, serv);
-					log.info("Adding service for {}", serviceRefs[i]);
+					log.debug("Adding service for {}", serviceRefs[i]);
 				}
 
 				Method m = getServiceSetter(consumer, ref.getProperty(), true);
@@ -105,9 +105,9 @@ public class ServiceInjection {
 							services, consumer);
 					log.info("Invoking method {}", m);
 					Object[] args = new Object[] { services };
-					log.info("arguments: {}", args);
+					log.debug("arguments: {}", args);
 
-					log.info("Starting invocation on {}", consumer);
+					log.debug("Starting invocation on {}", consumer);
 					m.invoke(consumer, args);
 					continue;
 				} else {

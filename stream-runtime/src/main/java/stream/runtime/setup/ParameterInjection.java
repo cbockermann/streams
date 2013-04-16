@@ -88,8 +88,8 @@ public class ParameterInjection {
 				log.debug("Skipping ServiceSetter '{}'", m.getName());
 				continue;
 			}
-			
-			if( isQueueSetter( m ) ){
+
+			if (isQueueSetter(m)) {
 				log.debug("Skipping QueueSetter '{}'", m.getName());
 				continue;
 			}
@@ -291,7 +291,6 @@ public class ParameterInjection {
 				|| clazz.equals(Integer.class) || clazz.equals(Double.class)
 				|| clazz.equals(Boolean.class) || clazz.equals(boolean.class);
 	}
-	
 
 	public static boolean isQueueSetter(Method m) {
 
@@ -309,7 +308,7 @@ public class ParameterInjection {
 		Class<?> type = types[0];
 		if (!type.isArray()) {
 			if (Sink.class.isAssignableFrom(type)) {
-				log.info("Found setter for type '{}': {}", Sink.class, m);
+				log.debug("Found setter for type '{}': {}", Sink.class, m);
 				return true;
 			}
 
@@ -317,7 +316,7 @@ public class ParameterInjection {
 
 			Class<?> ct = type.getComponentType();
 			if (ct != null && Sink.class.isAssignableFrom(ct)) {
-				log.info("Found setter for array-type '{}': {}", Sink.class, m);
+				log.debug("Found setter for array-type '{}': {}", Sink.class, m);
 				return true;
 			}
 		}

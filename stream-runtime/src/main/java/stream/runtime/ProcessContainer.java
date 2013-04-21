@@ -50,6 +50,7 @@ import stream.ProcessContext;
 import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
+import stream.io.SingleInMultiOutBlockingQueue;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
@@ -458,14 +459,19 @@ public class ProcessContainer implements IContainer {
 							+ "' is not connected to any input-stream!");
 				}
 
+				if (input.contains("[") && input.contains("]")) {
+					log.info("Found singleInMultipleOutQueue");
+
+				}
 				Source stream = streams.get(input);
 				if (stream == null) {
 					log.debug(
 							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
 							input, input);
-					BlockingQueue q = new BlockingQueue();
+
+					BlockingQueue q = new BlockingQueue(1000000);
 					q.setId(input);
-					registerQueue(input, q, true);
+					registerQueue(input, q, false);
 					stream = q;
 				}
 
@@ -478,11 +484,18 @@ public class ProcessContainer implements IContainer {
 	public void registerQueue(String id, BlockingQueue queue,
 			boolean externalListener) throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
-		if (externalListener) {
-			listeners.put(id, queue);
-		}
+		// if (externalListener) {
+		// listeners.put(id, queue);
+		// }
 		setStream(id, queue);
 		context.register(id, new QueueServiceWrapper(queue));
+	}
+
+	public void registerSingleInMultipleOutQueue(String sourceId,
+			SingleInMultiOutBlockingQueue queue) throws Exception {
+		log.debug("A new queue '{}' is registered for id '{}'", queue, sourceId);
+		setStream(sourceId, queue);
+		context.register(sourceId, new QueueServiceWrapper(queue));
 	}
 
 	protected void injectServices() throws Exception {

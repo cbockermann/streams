@@ -50,7 +50,7 @@ public class SplitByCondition extends AbstractSplit {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
+	public boolean write(Data item) throws Exception {
 		for (RoutingEntry entry : routes) {
 			if (entry.condition == null || entry.condition.matches(ctx, item)) {
 				log.debug("Sending item to sink {}", entry.sink);
@@ -58,7 +58,7 @@ public class SplitByCondition extends AbstractSplit {
 
 				if (!multiply) {
 					log.debug("non-multiplying split, doing first-match-delivery");
-					return;
+					return true;
 				}
 			}
 		}
@@ -66,6 +66,7 @@ public class SplitByCondition extends AbstractSplit {
 		log.warn(
 				"No data-flow matching item {} in split {}. Item will be discarded!",
 				item, id);
+		return true;
 	}
 
 	public class RoutingEntry {
@@ -93,5 +94,17 @@ public class SplitByCondition extends AbstractSplit {
 	public void close() throws Exception {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean offer(Data d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

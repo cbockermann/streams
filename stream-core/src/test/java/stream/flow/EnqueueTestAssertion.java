@@ -87,13 +87,25 @@ public class EnqueueTestAssertion implements QueueService {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
-		this.enqueue(item);
+	public boolean write(Data item) throws Exception {
+		return this.enqueue(item);
 	}
 
 	@Override
 	public void close() throws Exception {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean offer(Data item) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

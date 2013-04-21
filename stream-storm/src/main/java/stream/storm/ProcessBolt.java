@@ -274,6 +274,12 @@ public class ProcessBolt extends AbstractBolt {
 				return;
 			output.emit(id, new Values(item));
 		}
+
+		@Override
+		public void close() throws Exception {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	public final class OutputRef {

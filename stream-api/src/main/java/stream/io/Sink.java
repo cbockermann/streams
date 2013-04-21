@@ -24,7 +24,9 @@ public interface Sink {
 	 * @param item
 	 * @throws Exception
 	 */
-	public void write(Data item) throws Exception;
+	public boolean write(Data item) throws Exception;
+
+	public boolean write(Data[] data) throws Exception;
 
 	/**
 	 * This method is called by the stream runtime environment as the process
@@ -33,4 +35,6 @@ public interface Sink {
 	 * 
 	 */
 	public abstract void close() throws Exception;
+
+	public boolean offer(Data d);
 }

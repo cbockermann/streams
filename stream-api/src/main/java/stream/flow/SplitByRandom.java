@@ -34,16 +34,17 @@ public class SplitByRandom extends AbstractSplit {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
+	public boolean write(Data item) throws Exception {
 
 		int idx = random.nextInt(sinks.size());
 		Sink sink = sinks.get(idx);
 		if (sink != null) {
 			log.debug("Sending item to sink {}", sink.getId());
-			sink.write(item);
+			return sink.write(item);
 		} else {
 			log.error("No sink found for index '{}'", idx);
 		}
+		return false;
 	}
 
 	/**
@@ -66,5 +67,17 @@ public class SplitByRandom extends AbstractSplit {
 	public void close() throws Exception {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean offer(Data d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

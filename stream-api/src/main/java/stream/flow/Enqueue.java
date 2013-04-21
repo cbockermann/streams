@@ -26,7 +26,6 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Data;
 import stream.io.QueueService;
 
 /**
@@ -45,16 +44,4 @@ public class Enqueue extends Emitter {
 		super.setSinks(queues);
 	}
 
-	/**
-	 * @see stream.AbstractProcessor#finish()
-	 */
-	@Override
-	public void finish() throws Exception {
-		super.finish();
-		log.debug("Sending EndOfStream item to all queues...");
-		emit(Data.END_OF_STREAM);
-		for (int i = 0; i < sinks.length; i++) {
-			sinks[i].close();
-		}
-	}
 }

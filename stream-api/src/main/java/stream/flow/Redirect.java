@@ -48,10 +48,15 @@ public class Redirect extends ConditionedProcessor {
 			return null;
 
 		for (QueueService queue : queues) {
-			if (queue.enqueue(data)) {
-				log.debug("Redirected item to {}", queue);
-			} else {
-				log.error("Failed to redirect item to {}", queue);
+			try {
+				if (queue.write(data)) {
+					log.debug("Redirected item to {}", queue);
+				} else {
+					log.error("Failed to redirect item to {}", queue);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

@@ -52,13 +52,13 @@ public class OrderedQueue implements Queue {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
+	public boolean write(Data item) throws Exception {
 
 		synchronized (lock) {
 
 			if (closed) {
 				log.error("Failed to write to closed ordered-queue {}", getId());
-				return;
+				return false;
 			}
 
 			SequenceID id = null;
@@ -84,7 +84,7 @@ public class OrderedQueue implements Queue {
 			if (nextOut.compareTo(id) == 0) {
 				nextItem = item;
 				lock.notifyAll();
-				return;
+				return true;
 			}
 
 			// Insert the item at the right ordered spot
@@ -97,12 +97,13 @@ public class OrderedQueue implements Queue {
 					SequenceID curId = (SequenceID) cur.get(sequenceKey);
 					if (curId.compareTo(id) > 0) {
 						queue.add(i, item);
-						return;
+						return true;
 					}
 				}
 			}
 		}
 		queue.add(item);
+		return true;
 	}
 
 	/**
@@ -216,5 +217,17 @@ public class OrderedQueue implements Queue {
 				return item;
 			}
 		}
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean offer(Data d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

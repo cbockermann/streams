@@ -53,4 +53,10 @@ public class QueueWrapper implements Sink, Serializable {
 		tuple.add(item);
 		collector.emit(tuple);
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

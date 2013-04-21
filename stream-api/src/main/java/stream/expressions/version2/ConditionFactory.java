@@ -255,7 +255,7 @@ public class ConditionFactory {
 				run = false;
 
 		}
-		System.out.println("P10: " + ex);
+		// System.out.println("P10: " + ex);
 		return ex;
 
 	}

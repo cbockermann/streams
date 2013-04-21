@@ -29,12 +29,12 @@ public class SplitRoundRobin extends SplitByRandom {
 	 * @see stream.flow.SplitByRandom#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
+	public boolean write(Data item) throws Exception {
 
 		int idx = lastIndex.getAndIncrement();
 		Sink destination = sinks.get(idx % sinks.size());
 		log.debug("Current index '{}' ~> {}", idx % sinks.size(), destination);
 
-		destination.write(item);
+		return destination.write(item);
 	}
 }

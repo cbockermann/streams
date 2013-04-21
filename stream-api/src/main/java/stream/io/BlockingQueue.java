@@ -335,8 +335,8 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
-		enqueue(item);
+	public boolean write(Data item) throws Exception {
+		return enqueue(item);
 	}
 
 	/**
@@ -373,5 +373,55 @@ public class BlockingQueue extends AbstractQueue {
 		} finally {
 			fullyUnlock();
 		}
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		log.debug("Queue {}: Enqueuing event {}", getId(), data);
+		try {
+			if (data == null)
+				return false;
+
+			if (closed.get())
+				return false;
+
+			int c = -1;
+
+			final ReentrantLock putLock = this.putLock;
+			final AtomicInteger count = this.count;
+			putLock.lockInterruptibly();
+			try {
+				// TODO MaxInt
+				while (count.get() == capacity) {
+					notFull.await();
+				}
+				if (closed.get())
+					return false;
+				for (Data item : data) {
+					Node<Data> node = new Node<Data>(item);
+					enqueue(node);
+					c = count.getAndIncrement();
+				}
+				log.info("{}:{}", id, c);
+				if (c + 1 < capacity)
+					notFull.signal();
+			} finally {
+				putLock.unlock();
+			}
+			if (c == 0)
+				signalNotEmpty();
+			return true;
+		} catch (Exception e) {
+			log.error("Error enqueuing item: {}", e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean offer(Data d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -15,7 +15,7 @@ import stream.io.QueueService;
  */
 public class QueueServiceWrapper implements QueueService, Queue {
 
-	static Logger log = LoggerFactory.getLogger(QueueServiceWrapper.class);
+	private Logger log = LoggerFactory.getLogger(QueueServiceWrapper.class);
 	private Queue queue;
 
 	/**
@@ -39,8 +39,8 @@ public class QueueServiceWrapper implements QueueService, Queue {
 	 * @throws Exception
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
-	public void write(Data item) throws Exception {
-		queue.write(item);
+	public boolean write(Data item) throws Exception {
+		return queue.write(item);
 	}
 
 	/**
@@ -157,4 +157,21 @@ public class QueueServiceWrapper implements QueueService, Queue {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public boolean offer(Data item) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		return queue.write(data);
+	}
+
+	@Override
+	public String toString() {
+		return "QueueServiceWrapper " + queue.getId();
+	}
+
 }

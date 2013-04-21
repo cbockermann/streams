@@ -49,6 +49,8 @@ public class ProcessThread extends Thread {
 	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
 	public ProcessThread(stream.Process process, ProcessContext ctx) {
+		// Only for DEBS
+		this.setPriority(10);
 		this.process = process;
 		this.context = ctx;
 	}

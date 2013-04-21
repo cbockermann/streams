@@ -99,13 +99,10 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	 */
 	@Override
 	public Data createCopy() {
-		if (this == Data.END_OF_STREAM)
-			return Data.END_OF_STREAM;
-
-		if (!deepClone) {
-			return new DataImpl(this);
-		}
-
-		return DataFactory.copy(this);
+		// if (!deepClone) {
+		return new DataImpl(this);
+		// }
+		//
+		// return DataFactory.copy(this);
 	}
 }

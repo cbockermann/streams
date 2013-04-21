@@ -50,7 +50,6 @@ import stream.ProcessContext;
 import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
-import stream.io.SingleInMultiOutBlockingQueue;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
@@ -491,13 +490,7 @@ public class ProcessContainer implements IContainer {
 		context.register(id, new QueueServiceWrapper(queue));
 	}
 
-	public void registerSingleInMultipleOutQueue(String sourceId,
-			SingleInMultiOutBlockingQueue queue) throws Exception {
-		log.debug("A new queue '{}' is registered for id '{}'", queue, sourceId);
-		setStream(sourceId, queue);
-		context.register(sourceId, new QueueServiceWrapper(queue));
-	}
-
+	//
 	protected void injectServices() throws Exception {
 		ServiceInjection.injectServices(this.getServiceRefs(),
 				this.getContext(), depGraph, containerVariables);

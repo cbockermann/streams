@@ -29,7 +29,6 @@ import java.util.Map;
 
 import stream.Data;
 import stream.Measurable;
-import stream.util.JavaSerializer;
 import stream.util.SizeOf;
 
 /**
@@ -53,8 +52,6 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 
 	final static boolean deepClone = "true".equalsIgnoreCase(System
 			.getProperty("stream.Data.deepClone"));
-
-	final transient JavaSerializer javaSerializer = new JavaSerializer();
 
 	/**
 	 * Creation of Data items should be done with
@@ -102,10 +99,10 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 		if (this == Data.END_OF_STREAM)
 			return Data.END_OF_STREAM;
 
-		if (!deepClone) {
-			return new DataImpl(this);
+		if (deepClone) {
+			return DataFactory.copy(this);
 		}
 
-		return DataFactory.copy(this);
+		return new DataImpl(this);
 	}
 }

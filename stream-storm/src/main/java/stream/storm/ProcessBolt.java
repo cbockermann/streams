@@ -269,16 +269,29 @@ public class ProcessBolt extends AbstractBolt {
 		 * @see stream.io.Sink#write(stream.Data)
 		 */
 		@Override
-		public void write(Data item) throws Exception {
+		public boolean write(Data item) throws Exception {
 			if (item == null)
-				return;
+				return false;
 			output.emit(id, new Values(item));
+			return true;
 		}
 
 		@Override
 		public void close() throws Exception {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public boolean write(Data[] data) throws Exception {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean offer(Data d) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 	}
 

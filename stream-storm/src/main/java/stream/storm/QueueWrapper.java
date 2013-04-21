@@ -46,17 +46,30 @@ public class QueueWrapper implements Sink, Serializable {
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
-	public void write(Data item) throws Exception {
+	public boolean write(Data item) throws Exception {
 		log.info("Writing to queue '{}' item {} to '{}'", name, item);
 		log.info("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
 		tuple.add(item);
 		collector.emit(tuple);
+		return true;
 	}
 
 	@Override
 	public void close() throws Exception {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean write(Data[] data) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean offer(Data d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

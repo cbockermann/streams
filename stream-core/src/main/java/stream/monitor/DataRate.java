@@ -121,8 +121,9 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	protected void printDataRate(Long now) {
 		Long sec = (now - start) / 1000;
 		if (sec > 0)
-			log.info("{}: {} items processed, data-rate is: {}/second", id,
-					count, fmt.format(count.doubleValue() / sec.doubleValue()));
+			log.info("Data rate '" + getId()
+					+ "': {} items processed, data-rate is: {}/second", count,
+					fmt.format(count.doubleValue() / sec.doubleValue()));
 	}
 
 	/**

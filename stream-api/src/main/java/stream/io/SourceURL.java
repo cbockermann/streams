@@ -36,7 +36,7 @@ import stream.util.parser.ParserGenerator;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public final class SourceURL implements Serializable {
+public class SourceURL implements Serializable {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -7992522266824113404L;

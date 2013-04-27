@@ -165,9 +165,15 @@ public class Emitter extends ConditionedProcessor {
 	@Override
 	public void finish() throws Exception {
 		super.finish();
+
+		if (sinks == null || sinks.length == 0)
+			return;
+
 		log.debug("Sending EndOfStream item to all queues...");
 		for (int i = 0; i < sinks.length; i++) {
-			sinks[i].close();
+			if (sinks[i] != null) {
+				sinks[i].close();
+			}
 		}
 	}
 

@@ -184,6 +184,30 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <show>private</show>
+          <nohelp>true</nohelp>
+          <source>1.6</source>
+        </configuration>
+      </plugin>
+									<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

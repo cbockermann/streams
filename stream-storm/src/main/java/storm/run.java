@@ -103,7 +103,7 @@ public class run {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		List<String> params = storm.Deploy.handleArgs(args);
+		List<String> params = storm.deploy.handleArgs(args);
 
 		if (params.isEmpty()) {
 			System.err.println("You need to specify an XML configuration!");

@@ -29,9 +29,9 @@ import backtype.storm.generated.StormTopology;
  * @author chris
  * 
  */
-public class Deploy {
+public class deploy {
 
-	static Logger log = LoggerFactory.getLogger(Deploy.class);
+	static Logger log = LoggerFactory.getLogger(deploy.class);
 
 	public static List<String> handleArgs(String[] args) throws IOException {
 

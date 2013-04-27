@@ -24,9 +24,14 @@
 package stream.runtime;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stream.runtime.setup.UserSettings;
 
@@ -35,6 +40,8 @@ import stream.runtime.setup.UserSettings;
  * 
  */
 public class StreamRuntime {
+
+	static Logger log = LoggerFactory.getLogger(StreamRuntime.class);
 
 	public final static UserSettings userSettings = new UserSettings();
 	private static boolean loggingSetup = false;
@@ -81,6 +88,33 @@ public class StreamRuntime {
 									+ e.getMessage());
 				}
 			}
+		}
+	}
+
+	public static void loadUserProperties() {
+		File file = new File(System.getProperty("user.home") + File.separator
+				+ ".streams.properties");
+		try {
+
+			if (file.canRead()) {
+				Properties p = new Properties();
+				p.load(new FileInputStream(file));
+
+				for (Object k : p.keySet()) {
+					log.debug("Adding property '{}' = '{}'", k,
+							p.getProperty(k.toString()));
+					System.setProperty(k.toString(),
+							p.getProperty(k.toString()));
+				}
+			} else {
+				log.debug("No $HOME/.streams.properties file found!");
+			}
+
+		} catch (Exception e) {
+			log.error("Failed to read properties from {}: {}", file,
+					e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
 		}
 	}
 }

@@ -89,11 +89,20 @@ public class ProcessHandler extends ATopologyElementHandler {
 			BoltDeclarer cur = boltDeclarer;
 			if (!inputs.isEmpty()) {
 				for (String in : inputs) {
+
 					if (!in.isEmpty()) {
+
+						//
+						// if 'in' is reference to a process/bolt
+						//
+
+						//
+						// else
+						//
 						log.info(
-								"  >   Connecting bolt '{}' to shuffle-group '{}'",
+								"  >   Connecting bolt '{}' to non-group '{}'",
 								id, in);
-						cur = cur.shuffleGrouping(in);
+						cur = cur.noneGrouping(in);
 					}
 				}
 			} else {

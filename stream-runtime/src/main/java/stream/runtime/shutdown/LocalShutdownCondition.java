@@ -102,19 +102,19 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 	}
 
 	public void waitForCondition(ComputeGraph graph) {
-		// synchronized (graph) {
-		// while (!isMet(graph)) {
-		// try {
-		// //
-		// log.info("shutdown-condition not met, waiting for changes in the dependency-graph...");
-		// graph.wait(1000L);
-		// } catch (Exception e) {
-		// log.error("Error while waiting for shutdown-condition: {}",
-		// e.getMessage());
-		// if (log.isDebugEnabled())
-		// e.printStackTrace();
-		// }
-		// }
-		// }
+		synchronized (graph) {
+			while (!isMet(graph)) {
+				try {
+					//
+					log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
+					graph.wait(1000L);
+				} catch (Exception e) {
+					log.error("Error while waiting for shutdown-condition: {}",
+							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				}
+			}
+		}
 	}
 }

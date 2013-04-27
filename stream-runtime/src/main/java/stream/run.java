@@ -136,6 +136,8 @@ public class run {
 
 		StreamRuntime.setupLogging();
 
+		StreamRuntime.loadUserProperties();
+
 		log.debug("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url);
 
@@ -161,6 +163,8 @@ public class run {
 			throws Exception {
 
 		StreamRuntime.setupLogging();
+
+		StreamRuntime.loadUserProperties();
 
 		log.debug("Creating process-container from configuration at {}", url);
 		ProcessContainer container = new ProcessContainer(url, elementHandler);

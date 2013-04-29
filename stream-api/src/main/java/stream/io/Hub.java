@@ -152,4 +152,35 @@ public class Hub implements QueueService, HubService {
 	@Override
 	public void init() throws Exception {
 	}
+
+	/**
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
+	 */
+	@Override
+	public void setSize(Integer limit) {
+	}
+
+	/**
+	 * @see stream.io.Queue#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		return 0; // a hub is a queue of size 0
+	}
+
+	/**
+	 * @see stream.io.Barrel#clear()
+	 */
+	@Override
+	public int clear() {
+		return 0;
+	}
+
+	/**
+	 * @see stream.io.Source#read()
+	 */
+	@Override
+	public Data read() throws Exception {
+		return null;
+	}
 }

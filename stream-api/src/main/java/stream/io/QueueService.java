@@ -30,7 +30,7 @@ import stream.service.Service;
  * @author chris
  * 
  */
-public interface QueueService extends Service, Sink {
+public interface QueueService extends Service, Queue {
 
 	/**
 	 * This method removes the head of the queue. It will return

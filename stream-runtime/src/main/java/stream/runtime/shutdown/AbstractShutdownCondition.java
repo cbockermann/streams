@@ -20,20 +20,20 @@ public abstract class AbstractShutdownCondition implements ShutdownCondition {
 	 * @see stream.runtime.ShutdownCondition#waitForCondition(stream.runtime.
 	 * DependencyGraph)
 	 */
-	@Override
 	public void waitForCondition(ComputeGraph graph) {
-		// while (!isMet(graph)) {
-		// try {
-		// log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
-		// synchronized (graph) {
-		// graph.wait();
-		// }
-		// } catch (Exception e) {
-		// log.error("Error while waiting for shutdown-condition: {}",
-		// e.getMessage());
-		// if (log.isDebugEnabled())
-		// e.printStackTrace();
-		// }
-		// }
+		synchronized (graph) {
+			while (!isMet(graph)) {
+				try {
+					//
+					log.debug("shutdown-condition not met, waiting for changes in the dependency-graph...");
+					graph.wait();
+				} catch (Exception e) {
+					log.error("Error while waiting for shutdown-condition: {}",
+							e.getMessage());
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				}
+			}
+		}
 	}
 }

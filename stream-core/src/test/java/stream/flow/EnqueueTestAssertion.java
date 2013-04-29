@@ -120,4 +120,39 @@ public class EnqueueTestAssertion implements QueueService {
 	@Override
 	public void init() throws Exception {
 	}
+
+	/**
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
+	 */
+	@Override
+	public void setSize(Integer limit) {
+	}
+
+	/**
+	 * @see stream.io.Queue#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		return Integer.MAX_VALUE;
+	}
+
+	/**
+	 * @see stream.io.Barrel#clear()
+	 */
+	@Override
+	public int clear() {
+		int sz = collection.size();
+		collection.clear();
+		return sz;
+	}
+
+	/**
+	 * @see stream.io.Source#read()
+	 */
+	@Override
+	public Data read() throws Exception {
+		if (collection.isEmpty())
+			return null;
+		return collection.get(0);
+	}
 }

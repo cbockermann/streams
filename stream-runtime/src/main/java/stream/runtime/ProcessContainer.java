@@ -500,7 +500,7 @@ public class ProcessContainer implements IContainer {
 		streams.put(id, stream);
 	}
 
-	public void run() throws Exception {
+	public long run() throws Exception {
 
 		if (!container.contains(this)) {
 			container.add(this);
@@ -560,8 +560,7 @@ public class ProcessContainer implements IContainer {
 			log.debug("Stream-process started.");
 		}
 
-		log.info("Waiting for container to finish...");
-
+		log.debug("Waiting for container to finish...");
 		ShutdownCondition con = null;
 
 		if (server)
@@ -569,9 +568,9 @@ public class ProcessContainer implements IContainer {
 		else
 			con = new LocalShutdownCondition();
 
-		log.info("Waiting for shutdown-condition...");
+		log.debug("Waiting for shutdown-condition...");
 		con.waitForCondition(depGraph);
-		log.info("Shutdown-condition met, container finished.");
+		log.debug("Shutdown-condition met, container finished.");
 
 		// if the shutdown condition has properly been reached (no Ctrl+C), then
 		// we do not require the shutdown hook to be run...
@@ -579,8 +578,9 @@ public class ProcessContainer implements IContainer {
 
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);
-		log.info("ProcessContainer finished all processes after {} ms",
+		log.debug("ProcessContainer finished all processes after {} ms",
 				(end - start));
+		return end - start;
 	}
 
 	/*

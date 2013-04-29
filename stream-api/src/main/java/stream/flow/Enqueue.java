@@ -26,7 +26,7 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.io.QueueService;
+import stream.io.Queue;
 
 /**
  * @author chris,hendrik
@@ -36,11 +36,11 @@ public class Enqueue extends Emitter {
 
 	static Logger log = LoggerFactory.getLogger(Enqueue.class);
 
-	public void setQueue(QueueService queue) {
+	public void setQueue(Queue queue) {
 		super.setSink(queue);
 	}
 
-	public void setQueues(QueueService[] queues) {
+	public void setQueues(Queue[] queues) {
 		super.setSinks(queues);
 	}
 

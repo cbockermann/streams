@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import stream.ComputeGraph;
 import stream.io.Stream;
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -80,8 +82,10 @@ public class StreamElementHandler implements ElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 		try {
+			final ComputeGraph computeGraph = container.getDependencyGraph();
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
@@ -92,6 +96,7 @@ public class StreamElementHandler implements ElementHandler {
 					id = "" + stream;
 				stream.setId(id);
 				container.setStream(id, stream);
+				computeGraph.addStream(id, stream);
 			}
 
 			if (stream instanceof Service) {

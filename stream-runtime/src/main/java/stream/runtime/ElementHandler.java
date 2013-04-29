@@ -25,6 +25,7 @@ package stream.runtime;
 
 import org.w3c.dom.Element;
 
+
 /**
  * 
  * @author Hendrik Blom
@@ -37,5 +38,6 @@ public interface ElementHandler {
 	public boolean handlesElement(Element element);
 
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception;
+			Variables variables, DependencyInjection dependencies)
+			throws Exception;
 }

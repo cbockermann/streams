@@ -15,6 +15,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
@@ -62,7 +63,8 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 
 		String text = element.getTextContent();
 		if (text == null) {
@@ -96,8 +98,8 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(IContainer container, Document doc,
-			Variables variables) throws Exception {
+	public void handle(IContainer container, Document doc, Variables variables,
+			DependencyInjection dependencyInjection) throws Exception {
 
 		log.debug("Checking for dependency definitions...");
 

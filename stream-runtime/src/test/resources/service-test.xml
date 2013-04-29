@@ -10,7 +10,7 @@
 	
 		<stream.data.stats.CountServiceLearner id="metaData" />
 		
-		<stream.data.stats.CountCheck countService-ref="metaData" />
+		<stream.data.stats.CountCheck countService="metaData" />
 
 		<stream.test.LogData />
 		

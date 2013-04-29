@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.Processor;
+import stream.runtime.DependencyInjection;
 import stream.runtime.Monitor;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -77,7 +78,8 @@ public class MonitorElementHandler extends ProcessElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(element);
 
 		// the default Monitor class is stream.runtime.Monitor
@@ -126,7 +128,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 				Monitor monitor = (Monitor) objectFactory.create(className,
 						params, ObjectFactory.createConfigDocument(element));
 				List<Processor> procs = createNestedProcessors(container,
-						element, local);
+						element, local, dependencyInjection);
 				for (Processor p : procs)
 					monitor.add(p);
 				log.debug("Created Monitor object: {}", monitor);
@@ -142,7 +144,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 			Monitor monitor = (Monitor) objectFactory.create(className, params,
 					ObjectFactory.createConfigDocument(element));
 			List<Processor> procs = createNestedProcessors(container, element,
-					local);
+					local, dependencyInjection);
 			for (Processor p : procs)
 				monitor.add(p);
 			log.debug("Created Monitor object: {}", monitor);

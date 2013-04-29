@@ -26,6 +26,7 @@ package stream.runtime.setup.handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +34,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.ComputeGraph;
+import stream.ComputeGraph.ServiceRef;
+import stream.ComputeGraph.SinkRef;
+import stream.ComputeGraph.SourceRef;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
+import stream.io.Sink;
 import stream.runtime.DefaultProcess;
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
@@ -44,8 +51,6 @@ import stream.runtime.ProcessContextImpl;
 import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
-import stream.runtime.setup.ServiceInjection;
-import stream.runtime.setup.ServiceReference;
 import stream.service.Service;
 
 /**
@@ -87,7 +92,10 @@ public class ProcessElementHandler implements ElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
+
+		final ComputeGraph computeGraph = container.getDependencyGraph();
 
 		Map<String, String> attr = objectFactory.getAttributes(element);
 		String src = attr.get("source");
@@ -106,7 +114,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 		String id = attr.get("id");
 		if (id == null || "".equals(id.trim())) {
-			id = "process";
+			id = "process-" + UUID.randomUUID().toString();
 		}
 
 		String copies = attr.get("copies");
@@ -143,7 +151,7 @@ public class ProcessElementHandler implements ElementHandler {
 				local.put("copy.id", pid);
 				log.debug("Creating process '{}'", pid);
 				DefaultProcess process = createProcess(processClass, attr,
-						container, element, local);
+						container, element, local, dependencyInjection);
 
 				String input = local.expand(src);
 				log.debug("Setting source for process {} to {}", process, input);
@@ -158,6 +166,7 @@ public class ProcessElementHandler implements ElementHandler {
 					log.debug("Process has no output connection...");
 				}
 
+				computeGraph.addProcess(pid, process);
 				container.getProcesses().add(process);
 			}
 
@@ -166,25 +175,55 @@ public class ProcessElementHandler implements ElementHandler {
 			objectFactory.set("process.id", id);
 			local.put("process.id", id);
 			DefaultProcess process = createProcess(processClass, attr,
-					container, element, local);
+					container, element, local, dependencyInjection);
 			log.debug("Created Process object: {}", process);
 			container.getProcesses().add(process);
+			computeGraph.addProcess(id, process);
 		}
 	}
 
 	protected DefaultProcess createProcess(String processClass,
 			Map<String, String> attr, ProcessContainer container,
-			Element element, Variables extraVariables) throws Exception {
+			Element element, Variables extraVariables,
+			DependencyInjection dependencyInjection) throws Exception {
 
-		log.debug("Creating 'process' element, variable context is:");
+		final ComputeGraph computeGraph = container.getDependencyGraph();
+
+		log.trace("Creating 'process' element, variable context is:");
 		for (String key : extraVariables.keySet()) {
-			log.debug("  '{}' = '{}'", key, extraVariables.get(key));
+			log.trace("  '{}' = '{}'", key, extraVariables.get(key));
 		}
 
 		DefaultProcess process = (DefaultProcess) objectFactory.create(
-				processClass, attr, ObjectFactory.createConfigDocument(element), extraVariables);
-		log.debug("Created Process object: {}", process);
-		log.debug("Process input is: '{}'", process.getInput());
+				processClass, attr,
+				ObjectFactory.createConfigDocument(element), extraVariables);
+		log.info("Created Process object: {}", process);
+		log.info("Process input is: '{}'", process.getInput());
+
+		// add a source-reference for later dependency injection
+		//
+		SourceRef sourceRef = new SourceRef(process, "source",
+				process.getInput());
+		dependencyInjection.add(sourceRef);
+
+		// this should not be required in the future - handled
+		// by dependencyInjection class
+		computeGraph.addReference(sourceRef);
+
+		// check if a sink is referenced with the 'output'
+		//
+		String out = process.getOutput();
+		if (out != null && !out.trim().isEmpty()) {
+			SinkRef sinkRef = new SinkRef(process, "sink", out);
+			log.debug("Adding output reference for process {} to {}", process,
+					out);
+			dependencyInjection.add(sinkRef);
+
+			// this should not be required in the future - handled
+			// by dependencyInjection class
+			computeGraph.addReference(sinkRef);
+		}
+
 		ProcessContext ctx = new ProcessContextImpl(container.getContext());
 		for (String key : attr.keySet()) {
 			ctx.set(key, attr.get(key));
@@ -196,7 +235,7 @@ public class ProcessElementHandler implements ElementHandler {
 		container.setProcessContext(process, ctx);
 
 		List<Processor> procs = createNestedProcessors(container, element,
-				extraVariables);
+				extraVariables, dependencyInjection);
 		for (Processor p : procs) {
 			process.add(p);
 			container.getDependencyGraph().add(process, p);
@@ -204,10 +243,12 @@ public class ProcessElementHandler implements ElementHandler {
 		return process;
 	}
 
-	protected Processor createProcessor(IContainer container,
-			Element child, Variables variables) throws Exception {
+	protected Processor createProcessor(IContainer container, Element child,
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
+		final ComputeGraph computeGraph = container.getDependencyGraph();
 
 		Object o = objectFactory.create(child, variables);
 		if (o instanceof Processor) {
@@ -223,7 +264,7 @@ public class ProcessElementHandler implements ElementHandler {
 
 						Element element = (Element) node;
 						Processor proc = createProcessor(container, element,
-								variables);
+								variables, dependencyInjection);
 						if (proc != null) {
 							((ProcessorList) o).getProcessors().add(proc);
 						} else {
@@ -261,24 +302,49 @@ public class ProcessElementHandler implements ElementHandler {
 				// backwards-compatibility
 				//
 				String k = key;
-
 				if (key.endsWith("-ref"))
-					key = key.replace("-ref", "");
+					throw new Exception(
+							"'-ref' attributes are no longer supported!");
 
-				Class<? extends Service> serviceClass = ServiceInjection
+				final String value = vctx.expand(params.get(k));
+
+				Class<? extends Sink> sinkClass = DependencyInjection
+						.hasSinkSetter(key, o);
+				if (sinkClass != null) {
+					log.info(
+							"Found queue-injection for key '{}' in processor '{}'",
+							key, o);
+
+					String[] refs = value.split(",");
+					SinkRef sinkRefs = new SinkRef(o, key, refs);
+					computeGraph.addReference(sinkRefs);
+					dependencyInjection.add(sinkRefs);
+					log.debug("Adding QueueRef to '{}' for object {}", refs, o);
+					continue;
+				}
+
+				Class<? extends Service> serviceClass = DependencyInjection
 						.hasServiceSetter(key, o);
 				if (serviceClass != null) {
 					log.info(
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String ref = params.get(k);
-					ref = vctx.expand(ref);
-					ServiceReference serviceRef = new ServiceReference(ref, o,
-							key, serviceClass);
-					container.getServiceRefs().add(serviceRef);
+					String[] refs = value.split(",");
+					log.debug("Adding ServiceRef to '{}' for object {}", refs,
+							o);
+					ServiceRef serviceRef = new ServiceRef(o, key, refs,
+							serviceClass);
+					computeGraph.addReference(serviceRef);
+					dependencyInjection.add(serviceRef);
+
+					// ServiceReference serviceRef = new ServiceReference(ref,
+					// o,
+					// key, serviceClass);
+					// container.getServiceRefs().add(serviceRef);
 					continue;
 				}
+
 			}
 
 			return (Processor) o;
@@ -287,9 +353,9 @@ public class ProcessElementHandler implements ElementHandler {
 		return null;
 	}
 
-	protected List<Processor> createNestedProcessors(
-			IContainer container, Element child, Variables variables)
-			throws Exception {
+	protected List<Processor> createNestedProcessors(IContainer container,
+			Element child, Variables variables,
+			DependencyInjection dependencyInjection) throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -298,7 +364,7 @@ public class ProcessElementHandler implements ElementHandler {
 			Node cnode = pnodes.item(j);
 			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
 				Processor p = createProcessor(container, (Element) cnode,
-						variables);
+						variables, dependencyInjection);
 				if (p != null) {
 					log.debug("Found processor...");
 					procs.add(p);

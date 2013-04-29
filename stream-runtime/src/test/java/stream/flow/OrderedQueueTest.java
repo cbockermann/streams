@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.data.SequenceID;
 import stream.runtime.ProcessContainer;
 import stream.test.CollectorService;
 
@@ -46,9 +45,6 @@ public class OrderedQueueTest {
 		int cnt = 0;
 		for (Data item : col.getCollection()) {
 			log.info("   {}", item);
-			SequenceID id = (SequenceID) item.get("@source:item");
-			log.info("     => {}",
-					Long.parseLong(id.toString().substring(2), 16));
 			cnt++;
 		}
 		log.info("cnt = {}", cnt);

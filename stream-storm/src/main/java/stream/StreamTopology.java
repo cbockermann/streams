@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.runtime.DependencyInjection;
 import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.handler.PropertiesHandler;
@@ -114,6 +115,7 @@ public class StreamTopology {
 		doc = XMLUtils.addUUIDAttributes(doc, UUID_ATTRIBUTE);
 
 		String xml = XMLUtils.toString(doc);
+		DependencyInjection dependencies = new DependencyInjection();
 
 		// a map of pre-defined inputs, i.e. input-names => uuids
 		// to catch the case when processes read from queues that have
@@ -124,7 +126,7 @@ public class StreamTopology {
 
 		try {
 			PropertiesHandler handler = new PropertiesHandler();
-			handler.handle(null, doc, st.getVariables());
+			handler.handle(null, doc, st.getVariables(), dependencies);
 
 			log.info("########################################################################");
 			log.info("Found properties: {}", st.getVariables());

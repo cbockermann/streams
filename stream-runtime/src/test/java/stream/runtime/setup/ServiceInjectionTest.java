@@ -51,8 +51,7 @@ public class ServiceInjectionTest {
 
 		Prediction pred = new Prediction();
 
-		Method m = ServiceInjection
-				.getServiceSetter(pred, "learner-ref", false);
+		Method m = ServiceInjection.getServiceSetter(pred, "learner", false);
 		Assert.assertNotNull(m);
 
 		// fail("Not yet implemented");

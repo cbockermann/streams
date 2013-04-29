@@ -24,12 +24,24 @@ public class AddDelayAfter100Items extends AbstractProcessor {
 	public Data process(Data input) {
 		count++;
 		if (count >= 100) {
-			sleep(1000L);
+			sleep(delay.asMillis());
 		}
-		long now = System.currentTimeMillis();
-		input.put("@delay", now - last);
-		last = now;
 		return input;
+	}
+
+	/**
+	 * @return the delay
+	 */
+	public Time getDelay() {
+		return delay;
+	}
+
+	/**
+	 * @param delay
+	 *            the delay to set
+	 */
+	public void setDelay(Time delay) {
+		this.delay = delay;
 	}
 
 	protected void sleep(long millis) {

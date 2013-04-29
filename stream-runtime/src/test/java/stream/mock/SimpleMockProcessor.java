@@ -3,12 +3,14 @@ package stream.mock;
 import stream.Data;
 import stream.ProcessContext;
 import stream.StatefulProcessor;
+import stream.io.Sink;
 
 public class SimpleMockProcessor implements StatefulProcessor {
 
 	private Boolean initialized;
 	private Boolean processed;
 	private Boolean finished;
+	Sink output;
 
 	public SimpleMockProcessor() {
 		initialized = false;
@@ -58,6 +60,21 @@ public class SimpleMockProcessor implements StatefulProcessor {
 
 	@Override
 	public void resetState() throws Exception {
+	}
+
+	/**
+	 * @return the output
+	 */
+	public Sink getOutput() {
+		return output;
+	}
+
+	/**
+	 * @param output
+	 *            the output to set
+	 */
+	public void setOutput(Sink output) {
+		this.output = output;
 	}
 
 }

@@ -136,4 +136,42 @@ public class GlobalCollector implements QueueService {
 	@Override
 	public void init() throws Exception {
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
+	 */
+	@Override
+	public void setSize(Integer limit) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see stream.io.Queue#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see stream.io.Barrel#clear()
+	 */
+	@Override
+	public int clear() {
+		return 0;
+	}
+
+	/**
+	 * @see stream.io.Source#read()
+	 */
+	@Override
+	public Data read() throws Exception {
+		return take();
+	}
 }

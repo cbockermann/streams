@@ -4,7 +4,9 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import stream.ComputeGraph;
 import stream.io.Queue;
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -34,7 +36,10 @@ public class QueueElementHandler implements ElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
+
+		final ComputeGraph computeGraph = container.getDependencyGraph();
 
 		String className = element.getAttribute("class");
 		if (className == null || className.trim().isEmpty())
@@ -54,5 +59,6 @@ public class QueueElementHandler implements ElementHandler {
 		Queue queue = (Queue) container.getObjectFactory().create(className,
 				params, ObjectFactory.createConfigDocument(element));
 		container.registerQueue(id, queue, true);
+		computeGraph.addQueue(id, queue);
 	}
 }

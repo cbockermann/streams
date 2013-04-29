@@ -15,6 +15,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.runtime.DependencyInjection;
 import stream.runtime.IContainer;
 import stream.runtime.Variables;
 
@@ -36,8 +37,8 @@ public class PropertiesHandler implements DocumentHandler {
 	 *      org.w3c.dom.Document)
 	 */
 	@Override
-	public void handle(IContainer container, Document doc,
-			Variables variables) throws Exception {
+	public void handle(IContainer container, Document doc, Variables variables,
+			DependencyInjection depInj) throws Exception {
 
 		// handle maven-like properties, e.g.
 		// <properties>
@@ -63,8 +64,8 @@ public class PropertiesHandler implements DocumentHandler {
 	 * @param container
 	 * @param doc
 	 */
-	private void findPropertiesElements(IContainer container,
-			Document doc, Variables variables) {
+	private void findPropertiesElements(IContainer container, Document doc,
+			Variables variables) {
 		NodeList list = doc.getElementsByTagName("properties");
 		for (int i = 0; i < list.getLength(); i++) {
 

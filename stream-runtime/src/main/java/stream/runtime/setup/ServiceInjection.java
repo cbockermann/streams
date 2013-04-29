@@ -45,6 +45,7 @@ import stream.service.Service;
  * 
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @deprecated Will be replaced by the new DependencyInjection class
  * 
  */
 public class ServiceInjection {

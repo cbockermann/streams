@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Data;
-import stream.data.SequenceID;
 import stream.runtime.ProcessContainer;
 import stream.test.CollectorService;
 
@@ -27,7 +25,7 @@ public class BlockingQueueTest {
 	@Test
 	public void test() throws Exception {
 
-		Integer limit = 100;
+		Integer limit = 110;
 		System.setProperty("limit", limit.toString());
 
 		URL url = BlockingQueueTest.class
@@ -44,15 +42,15 @@ public class BlockingQueueTest {
 		int colSize = col.getCollection().size();
 		log.info("Number of collected elements: {}", colSize);
 
-		int cnt = 0;
-		for (Data item : col.getCollection()) {
-			log.info("   {}", item);
-			SequenceID id = (SequenceID) item.get("@source:item");
-			log.info("     => {}",
-					Long.parseLong(id.toString().substring(2), 16));
-			cnt++;
-		}
-		log.info("cnt = {}", cnt);
+		// int cnt = 0;
+		// for (Data item : col.getCollection()) {
+		// log.info("   {}", item);
+		// SequenceID id = (SequenceID) item.get("@source:item");
+		// log.info("     => {}",
+		// Long.parseLong(id.toString().substring(2), 16));
+		// cnt++;
+		// }
+		// log.info("cnt = {}", cnt);
 
 		Assert.assertEquals(limit.intValue(), colSize);
 	}

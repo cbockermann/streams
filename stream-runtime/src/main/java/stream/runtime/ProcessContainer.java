@@ -168,6 +168,8 @@ public class ProcessContainer implements IContainer {
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
+	protected final DependencyInjection dependencyInjection = new DependencyInjection();
+
 	final static String[] extensions = new String[] {
 			"stream.moa.MoaObjectFactory",
 			"stream.script.JavaScriptProcessorFactory" };
@@ -396,7 +398,7 @@ public class ProcessContainer implements IContainer {
 			name = "local";
 
 		for (DocumentHandler handle : documentHandler) {
-			handle.handle(this, doc, containerVariables);
+			handle.handle(this, doc, containerVariables, dependencyInjection);
 		}
 		objectFactory.addVariables(context.getProperties());
 
@@ -420,7 +422,8 @@ public class ProcessContainer implements IContainer {
 			Element element = (Element) node;
 			for (ElementHandler handler : this.elementHandler.values()) {
 				if (handler.handlesElement(element)) {
-					handler.handleElement(this, element, containerVariables);
+					handler.handleElement(this, element, containerVariables,
+							dependencyInjection);
 					continue;
 				}
 			}
@@ -434,7 +437,7 @@ public class ProcessContainer implements IContainer {
 		// Special Treatment for properties
 		DocumentHandler ph = new PropertiesHandler();
 		Variables pv = new Variables();
-		ph.handle(this, doc, pv);
+		ph.handle(this, doc, pv, dependencyInjection);
 		context.getProperties().putAll(pv);
 
 	}
@@ -478,6 +481,13 @@ public class ProcessContainer implements IContainer {
 				depGraph.add(process, stream);
 				process.setSource(stream);
 			}
+		}
+
+		try {
+			dependencyInjection.injectDependencies(depGraph, namingService);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 

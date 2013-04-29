@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -79,7 +80,8 @@ public class ServiceElementHandler implements ElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 
 		log.debug("handling element {}...", element);
 		Map<String, String> params = objectFactory.getAttributes(element);
@@ -101,7 +103,8 @@ public class ServiceElementHandler implements ElementHandler {
 		log.debug("Creating new service implementation from class {}",
 				className);
 		try {
-			Service service = (Service) objectFactory.create(className, params, ObjectFactory.createConfigDocument(element));
+			Service service = (Service) objectFactory.create(className, params,
+					ObjectFactory.createConfigDocument(element));
 			service.reset();
 			container.getContext().register(id, service);
 		} catch (Exception e) {

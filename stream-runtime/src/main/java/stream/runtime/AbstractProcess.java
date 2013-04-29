@@ -48,6 +48,8 @@ public abstract class AbstractProcess implements stream.Process {
 
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
+	private String id;
+
 	protected Context parentContext;
 	protected ProcessContext processContext;
 
@@ -89,6 +91,21 @@ public abstract class AbstractProcess implements stream.Process {
 	}
 
 	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	public Data process(Data data) {
@@ -126,8 +143,8 @@ public abstract class AbstractProcess implements stream.Process {
 	 */
 	public void finish() throws Exception {
 
-		log.debug("Finishing process {} (source: {})...", this, this
-				.getSource().getId());
+		log.debug("Finishing process {} (source: {})...", this,
+				this.getSource());
 		try {
 			for (Processor proc : processors) {
 				if (proc instanceof StatefulProcessor) {
@@ -206,6 +223,9 @@ public abstract class AbstractProcess implements stream.Process {
 	}
 
 	public String toString() {
+		if (id != null)
+			return getClass().getCanonicalName() + "[" + id + "]";
+
 		return this.getClass().getCanonicalName() + "[" + super.toString()
 				+ "]";
 	}

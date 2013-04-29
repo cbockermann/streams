@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -52,7 +53,8 @@ public class ContainerRefElementHandler implements ElementHandler {
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
-			Variables variables) throws Exception {
+			Variables variables, DependencyInjection dependencyInjection)
+			throws Exception {
 
 		Map<String, String> attributes = objectFactory.getAttributes(element);
 		String id = "" + attributes.get("id");

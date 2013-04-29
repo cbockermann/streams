@@ -139,7 +139,7 @@ public class OrderedQueue implements Queue {
 				lock.wait();
 			}
 
-			if (closed && nextItem == null)
+			if (closed && nextItem == null && this.queue.isEmpty())
 				return null;
 
 			Data item = nextItem;

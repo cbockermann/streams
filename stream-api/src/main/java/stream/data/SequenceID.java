@@ -4,6 +4,7 @@
 package stream.data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.UUID;
 
 /**
@@ -95,6 +96,10 @@ public final class SequenceID implements Serializable, Comparable<SequenceID> {
 			}
 			return vals;
 		}
+	}
+
+	public BigInteger asBigInteger() {
+		return new BigInteger(value);
 	}
 
 	public UUID uuid() {

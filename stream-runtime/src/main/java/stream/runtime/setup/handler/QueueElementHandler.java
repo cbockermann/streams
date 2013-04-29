@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import stream.io.BlockingQueue;
+import stream.io.Queue;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
@@ -51,8 +51,8 @@ public class QueueElementHandler implements ElementHandler {
 			throw new Exception("No 'id' attribute defined for queue!");
 		}
 
-		BlockingQueue queue = (BlockingQueue) container.getObjectFactory()
-				.create(className, params, ObjectFactory.createConfigDocument(element));
+		Queue queue = (Queue) container.getObjectFactory().create(className,
+				params, ObjectFactory.createConfigDocument(element));
 		container.registerQueue(id, queue, true);
 	}
 }

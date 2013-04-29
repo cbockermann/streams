@@ -65,7 +65,7 @@ public class RandomStream extends AbstractStream {
 		this.keys = keys;
 	}
 
-	public Data readNext() throws Exception {
+	public synchronized Data readNext() throws Exception {
 		Data data = DataFactory.create();
 
 		if (keys == null)

@@ -50,6 +50,7 @@ import stream.ProcessContext;
 import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
+import stream.io.Queue;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
@@ -480,8 +481,8 @@ public class ProcessContainer implements IContainer {
 		}
 	}
 
-	public void registerQueue(String id, BlockingQueue queue,
-			boolean externalListener) throws Exception {
+	public void registerQueue(String id, Queue queue, boolean externalListener)
+			throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
 		// if (externalListener) {
 		// listeners.put(id, queue);

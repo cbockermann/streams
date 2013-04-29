@@ -107,6 +107,7 @@ public abstract class AbstractStream implements Stream {
 		return sequenceKey;
 	}
 
+	@Parameter(description = "An optional key which should contain a sequence ID for each item. If not specified, not sequence IDs will be generated.")
 	public void setSequenceKey(String sequenceKey) {
 		this.sequenceKey = sequenceKey;
 	}
@@ -129,8 +130,8 @@ public abstract class AbstractStream implements Stream {
 			datum.put("@stream", this.id);
 
 		if (this.sequenceKey != null) {
-			SequenceID next = this.seqId.nextValue();
-			datum.put("@stream#id", next);
+			SequenceID next = this.seqId.getAndIncrement();
+			datum.put(sequenceKey, next);
 		}
 		if (prefix != null && !prefix.trim().isEmpty()) {
 			Data prefixed = DataFactory.create();

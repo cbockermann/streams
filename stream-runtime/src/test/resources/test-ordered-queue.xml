@@ -1,0 +1,20 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<Stream id="input" class="stream.io.RandomStream" limit="${limit}" sequenceKey="@source:item" />
+	
+	<queue id="ordered" class="stream.io.OrderedQueue" sequenceKey="@source:item" />
+
+
+	<process input="input" copies="4">
+		<stream.flow.Enqueue queue="ordered"/>
+	</process>
+	
+	<process input="ordered">
+		<stream.test.Collector id="collected" />
+	</process>
+	
+</Container>

@@ -4,6 +4,7 @@
 package stream.flow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -97,15 +98,26 @@ public class EnqueueTestAssertion implements QueueService {
 
 	}
 
+	/**
+	 * @see stream.io.Sink#write(java.util.Collection)
+	 */
 	@Override
-	public boolean offer(Data item) {
-		// TODO Auto-generated method stub
+	public boolean write(Collection<Data> data) throws Exception {
 		return false;
 	}
 
+	/**
+	 * @see stream.io.Sink#setId(java.lang.String)
+	 */
 	@Override
-	public boolean write(Data[] data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @see stream.io.Sink#init()
+	 */
+	@Override
+	public void init() throws Exception {
 	}
 }

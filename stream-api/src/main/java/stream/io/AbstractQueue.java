@@ -28,14 +28,6 @@ public abstract class AbstractQueue implements Queue, QueueService { // TODO:
 	protected Integer limit = 1000;
 
 	/**
-	 * @see stream.io.Barrel#clear()
-	 */
-	@Override
-	public int clear() {
-		return 0;
-	}
-
-	/**
 	 * @see stream.io.Source#getId()
 	 */
 	@Override
@@ -52,32 +44,18 @@ public abstract class AbstractQueue implements Queue, QueueService { // TODO:
 	}
 
 	/**
-	 * @see stream.io.Source#init()
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
 	 */
 	@Override
-	public void init() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.Source#close()
-	 */
-	@Override
-	public void close() throws Exception {
-	}
-
-	/**
-	 * @see stream.io.Queue#setLimit(java.lang.Integer)
-	 */
-	@Override
-	public void setLimit(Integer limit) {
+	public void setSize(Integer limit) {
 		this.limit = limit;
 	}
 
 	/**
-	 * @see stream.io.Queue#getLimit()
+	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
-	public Integer getLimit() {
+	public Integer getSize() {
 		return limit;
 	}
 }

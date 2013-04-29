@@ -4,6 +4,7 @@
 package stream.flow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,14 +98,15 @@ public class SplitByCondition extends AbstractSplit {
 	}
 
 	@Override
-	public boolean write(Data[] data) throws Exception {
+	public boolean write(Collection<Data> data) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see stream.io.Sink#init()
+	 */
 	@Override
-	public boolean offer(Data d) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() throws Exception {
 	}
 }

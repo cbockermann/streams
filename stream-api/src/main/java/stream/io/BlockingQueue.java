@@ -23,6 +23,7 @@
  */
 package stream.io;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -238,9 +239,9 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void init() throws Exception {
-		if (getLimit() < 1) {
+		if (getSize() < 1) {
 			throw new IllegalArgumentException("Invalid queue-size '"
-					+ getLimit() + "'!");
+					+ getSize() + "'!");
 		}
 
 	}
@@ -360,23 +361,11 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void reset() throws Exception {
-		fullyLock();
-		try {
-			for (Node<Data> p, h = head; (p = h.next) != null; h = p) {
-				h.next = h;
-				p.item = null;
-			}
-			head = last;
-			// assert head.item == null && head.next == null;
-			if (count.getAndSet(0) == capacity)
-				notFull.signal();
-		} finally {
-			fullyUnlock();
-		}
+		clear();
 	}
 
 	@Override
-	public boolean write(Data[] data) throws Exception {
+	public boolean write(Collection<Data> data) throws Exception {
 		log.debug("Queue {}: Enqueuing event {}", getId(), data);
 		try {
 			if (data == null)
@@ -419,9 +408,25 @@ public class BlockingQueue extends AbstractQueue {
 		}
 	}
 
+	/**
+	 * @see stream.io.Barrel#clear()
+	 */
 	@Override
-	public boolean offer(Data d) {
-		// TODO Auto-generated method stub
-		return false;
+	public int clear() {
+		fullyLock();
+		int removed = count.get();
+		try {
+			for (Node<Data> p, h = head; (p = h.next) != null; h = p) {
+				h.next = h;
+				p.item = null;
+			}
+			head = last;
+			// assert head.item == null && head.next == null;
+			if (count.getAndSet(0) == capacity)
+				notFull.signal();
+		} finally {
+			fullyUnlock();
+		}
+		return removed;
 	}
 }

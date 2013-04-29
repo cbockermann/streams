@@ -1,5 +1,7 @@
 package stream.storm;
 
+import java.util.Collection;
+
 import stream.Data;
 import stream.io.Sink;
 import backtype.storm.task.OutputCollector;
@@ -18,11 +20,6 @@ public class SinkOutputCollector implements Sink {
 	private String id;
 
 	@Override
-	public boolean offer(Data d) {
-		return true;
-	}
-
-	@Override
 	public boolean write(Data item) throws Exception {
 		outputCollector.emit(new Values(item));
 
@@ -30,7 +27,7 @@ public class SinkOutputCollector implements Sink {
 	}
 
 	@Override
-	public boolean write(Data[] data) throws Exception {
+	public boolean write(Collection<Data> data) throws Exception {
 		for (Data item : data) {
 			this.write(item);
 		}
@@ -52,5 +49,12 @@ public class SinkOutputCollector implements Sink {
 	@Override
 	public String getId() {
 		return this.id;
+	}
+
+	/**
+	 * @see stream.io.Sink#init()
+	 */
+	@Override
+	public void init() throws Exception {
 	}
 }

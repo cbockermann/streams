@@ -3,6 +3,7 @@
  */
 package stream.io;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -118,6 +119,14 @@ public class Hub implements QueueService, HubService {
 	}
 
 	/**
+	 * @see stream.io.Sink#setId(java.lang.String)
+	 */
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
@@ -132,14 +141,15 @@ public class Hub implements QueueService, HubService {
 	}
 
 	@Override
-	public boolean write(Data[] data) throws Exception {
+	public boolean write(Collection<Data> data) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see stream.io.Sink#init()
+	 */
 	@Override
-	public boolean offer(Data d) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() throws Exception {
 	}
 }

@@ -4,6 +4,7 @@
 package stream.flow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -69,14 +70,20 @@ public class SplitByRandom extends AbstractSplit {
 
 	}
 
+	/**
+	 * @see stream.io.Sink#init()
+	 */
 	@Override
-	public boolean write(Data[] data) throws Exception {
+	public void init() throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+
 	}
 
+	/**
+	 * @see stream.io.Sink#write(java.util.Collection)
+	 */
 	@Override
-	public boolean offer(Data d) {
+	public boolean write(Collection<Data> data) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -3,6 +3,8 @@
  */
 package stream.io;
 
+import java.util.Collection;
+
 import stream.Data;
 
 /**
@@ -18,15 +20,45 @@ public interface Sink {
 
 	public String getId();
 
+	public void setId(String id);
+
 	/**
-	 * Writes data into the instance represented by this sink.
+	 * Initialize the sink implementation. This method will be called only once.
+	 * 
+	 * @throws Exception
+	 */
+	public void init() throws Exception;
+
+	/**
+	 * Writes data into the instance represented by this sink within a
+	 * transaction. The return type indicates whether the insertion of the item
+	 * succeeded.
 	 * 
 	 * @param item
 	 * @throws Exception
 	 */
 	public boolean write(Data item) throws Exception;
 
-	public boolean write(Data[] data) throws Exception;
+	/**
+	 * Writes the collection of data items into the queue within <b>a single
+	 * transaction</b>. The return value of this method indicates whether the
+	 * writing of <b>all</b> items succeeded or not. If the write of any of the
+	 * items of the collection fails, then this method will return false.
+	 * 
+	 * <b>Important:</b> Implementations of this interface need to take care of
+	 * this transaction sematic:
+	 * <ul>
+	 * <li>If only a portion of the items could be written, then a rollback of
+	 * the previous writes needs to be performed.</li>
+	 * <li>Only a successful write of all items must be ack'ed with a return
+	 * type of <code>true</code>.</li>
+	 * </ul>
+	 * 
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean write(Collection<Data> data) throws Exception;
 
 	/**
 	 * This method is called by the stream runtime environment as the process
@@ -34,7 +66,5 @@ public interface Sink {
 	 * or database connections.
 	 * 
 	 */
-	public abstract void close() throws Exception;
-
-	public boolean offer(Data d);
+	public void close() throws Exception;
 }

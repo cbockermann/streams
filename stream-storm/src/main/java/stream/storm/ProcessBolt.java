@@ -6,6 +6,7 @@ package stream.storm;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -249,7 +250,7 @@ public class ProcessBolt extends AbstractBolt {
 
 	public final class DataForwarder implements Sink {
 
-		final String id;
+		String id;
 		final OutputCollector output;
 
 		public DataForwarder(String id, OutputCollector output) {
@@ -278,20 +279,35 @@ public class ProcessBolt extends AbstractBolt {
 
 		@Override
 		public void close() throws Exception {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
-		public boolean write(Data[] data) throws Exception {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean write(Collection<Data> data) throws Exception {
+
+			for (Data item : data) {
+				output.emit(id, new Values(item));
+			}
+
+			return true;
 		}
 
+		/**
+		 * @see stream.io.Sink#setId(java.lang.String)
+		 */
 		@Override
-		public boolean offer(Data d) {
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see stream.io.Sink#init()
+		 */
+		@Override
+		public void init() throws Exception {
 			// TODO Auto-generated method stub
-			return false;
+
 		}
 	}
 

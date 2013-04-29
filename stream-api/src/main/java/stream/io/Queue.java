@@ -3,8 +3,6 @@
  */
 package stream.io;
 
-import stream.Data;
-
 /**
  * <p>
  * This interface is the top-level definition of queues provided within the
@@ -17,10 +15,17 @@ import stream.Data;
  */
 public interface Queue extends Barrel {
 
-	public void setLimit(Integer limit);
+	/**
+	 * The maximum size the implementation of this queue is able to hold.
+	 * 
+	 * @param limit
+	 */
+	public void setSize(Integer limit);
 
-	public Integer getLimit();
-
-	public Data poll();
-
+	/**
+	 * Returns the maximum size of this queue implementation.
+	 * 
+	 * @return
+	 */
+	public Integer getSize();
 }

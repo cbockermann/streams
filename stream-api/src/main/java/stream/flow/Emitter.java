@@ -1,6 +1,7 @@
 package stream.flow;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,9 +87,9 @@ public class Emitter extends ConditionedProcessor {
 	protected void emit(Data[] data) {
 		for (int i = 0; i < sinks.length; i++) {
 			try {
-				Data[] items = new Data[data.length];
+				ArrayList<Data> items = new ArrayList<Data>(data.length);
 				for (int j = 0; j < data.length; j++) {
-					items[j] = data[j].createCopy();
+					items.add(data[j].createCopy());
 				}
 				sinks[i].write(items);
 			} catch (Exception e) {

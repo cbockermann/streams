@@ -4,6 +4,7 @@
 package stream.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import stream.Data;
@@ -112,14 +113,27 @@ public class GlobalCollector implements QueueService {
 	}
 
 	@Override
-	public boolean offer(Data item) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean write(Collection<Data> data) throws Exception {
+
+		for (Data item : data) {
+			enqueue(item);
+		}
+
+		// the global collector should never fail to collect an item
+		return true;
 	}
 
+	/**
+	 * @see stream.io.Sink#setId(java.lang.String)
+	 */
 	@Override
-	public boolean write(Data[] data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+	public void setId(String id) {
+	}
+
+	/**
+	 * @see stream.io.Sink#init()
+	 */
+	@Override
+	public void init() throws Exception {
 	}
 }

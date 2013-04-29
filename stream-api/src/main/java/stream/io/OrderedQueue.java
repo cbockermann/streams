@@ -4,6 +4,7 @@
 package stream.io;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,51 +183,24 @@ public class OrderedQueue implements Queue {
 	}
 
 	/**
-	 * @see stream.io.Queue#setLimit(java.lang.Integer)
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
 	 */
 	@Override
-	public void setLimit(Integer limit) {
+	public void setSize(Integer limit) {
 		this.limit = limit;
 		this.queue = new ArrayList<Data>(limit);
 	}
 
 	/**
-	 * @see stream.io.Queue#getLimit()
+	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
-	public Integer getLimit() {
+	public Integer getSize() {
 		return limit;
 	}
 
-	/**
-	 * @see stream.io.Queue#poll()
-	 */
 	@Override
-	public Data poll() {
-		synchronized (lock) {
-
-			if (closed)
-				return null;
-
-			if (nextItem == null) {
-				return null;
-			} else {
-
-				Data item = nextItem;
-				nextItem = this.findNext();
-				return item;
-			}
-		}
-	}
-
-	@Override
-	public boolean write(Data[] data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean offer(Data d) {
+	public boolean write(Collection<Data> data) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}

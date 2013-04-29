@@ -3,6 +3,8 @@
  */
 package stream;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,18 +63,18 @@ public class QueueServiceWrapper implements QueueService, Queue {
 
 	/**
 	 * @param limit
-	 * @see stream.io.Queue#setLimit(java.lang.Integer)
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
 	 */
-	public void setLimit(Integer limit) {
-		queue.setLimit(limit);
+	public void setSize(Integer limit) {
+		queue.setSize(limit);
 	}
 
 	/**
 	 * @return
-	 * @see stream.io.Queue#getLimit()
+	 * @see stream.io.Queue#getSize()
 	 */
-	public Integer getLimit() {
-		return queue.getLimit();
+	public Integer getSize() {
+		return queue.getSize();
 	}
 
 	/**
@@ -102,14 +104,6 @@ public class QueueServiceWrapper implements QueueService, Queue {
 	@Override
 	public void reset() throws Exception {
 		queue.clear();
-	}
-
-	/**
-	 * @see stream.io.QueueService#poll()
-	 */
-	@Override
-	public Data poll() {
-		return queue.poll();
 	}
 
 	/**
@@ -158,14 +152,11 @@ public class QueueServiceWrapper implements QueueService, Queue {
 		return 0;
 	}
 
+	/**
+	 * @see stream.io.Sink#write(java.util.Collection)
+	 */
 	@Override
-	public boolean offer(Data item) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean write(Data[] data) throws Exception {
+	public boolean write(Collection<Data> data) throws Exception {
 		return queue.write(data);
 	}
 
@@ -174,4 +165,19 @@ public class QueueServiceWrapper implements QueueService, Queue {
 		return "QueueServiceWrapper " + queue.getId();
 	}
 
+	/**
+	 * @see stream.io.QueueService#poll()
+	 */
+	@Override
+	public Data poll() {
+		try {
+			return queue.read();
+		} catch (Exception e) {
+			log.error("Failed to read from queue '{}': {}", queue,
+					e.getMessage());
+			if (log.isDebugEnabled())
+				e.printStackTrace();
+			return null;
+		}
+	}
 }

@@ -95,7 +95,7 @@ public class ProcessElementHandler implements ElementHandler {
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
 
-		final ComputeGraph computeGraph = container.getDependencyGraph();
+		final ComputeGraph computeGraph = container.computeGraph();
 
 		Map<String, String> attr = objectFactory.getAttributes(element);
 		String src = attr.get("source");
@@ -155,13 +155,15 @@ public class ProcessElementHandler implements ElementHandler {
 
 				String input = local.expand(src);
 				log.debug("Setting source for process {} to {}", process, input);
-				process.setInput(input);
+
+				dependencyInjection.add(new SourceRef(process, "input", input));
 
 				if (out != null) {
 					String processOut = local.expand(out);
 					log.debug("Setting process output for process {} to {}",
 							process, processOut);
-					process.setOutput(processOut);
+					dependencyInjection.add(new SinkRef(process, "output",
+							processOut));
 				} else {
 					log.debug("Process has no output connection...");
 				}
@@ -187,7 +189,7 @@ public class ProcessElementHandler implements ElementHandler {
 			Element element, Variables extraVariables,
 			DependencyInjection dependencyInjection) throws Exception {
 
-		final ComputeGraph computeGraph = container.getDependencyGraph();
+		final ComputeGraph computeGraph = container.computeGraph();
 
 		log.trace("Creating 'process' element, variable context is:");
 		for (String key : extraVariables.keySet()) {
@@ -197,13 +199,14 @@ public class ProcessElementHandler implements ElementHandler {
 		DefaultProcess process = (DefaultProcess) objectFactory.create(
 				processClass, attr,
 				ObjectFactory.createConfigDocument(element), extraVariables);
+		String inputId = extraVariables.expand(attr.get("input"));
 		log.info("Created Process object: {}", process);
-		log.info("Process input is: '{}'", process.getInput());
+		log.info("Process input is: '{}'", inputId);
 
-		// add a source-reference for later dependency injection
+		// Add a source-reference for later dependency injection. The source
+		// is injected into the processes as property 'source'.
 		//
-		SourceRef sourceRef = new SourceRef(process, "source",
-				process.getInput());
+		SourceRef sourceRef = new SourceRef(process, "input", inputId);
 		dependencyInjection.add(sourceRef);
 
 		// this should not be required in the future - handled
@@ -212,11 +215,14 @@ public class ProcessElementHandler implements ElementHandler {
 
 		// check if a sink is referenced with the 'output'
 		//
-		String out = process.getOutput();
-		if (out != null && !out.trim().isEmpty()) {
-			SinkRef sinkRef = new SinkRef(process, "sink", out);
+
+		String outputId = attr.get("output");
+		if (outputId != null && !outputId.trim().isEmpty()) {
+			outputId = extraVariables.expand(outputId);
+
+			SinkRef sinkRef = new SinkRef(process, "output", outputId);
 			log.debug("Adding output reference for process {} to {}", process,
-					out);
+					outputId);
 			dependencyInjection.add(sinkRef);
 
 			// this should not be required in the future - handled
@@ -238,7 +244,7 @@ public class ProcessElementHandler implements ElementHandler {
 				extraVariables, dependencyInjection);
 		for (Processor p : procs) {
 			process.add(p);
-			container.getDependencyGraph().add(process, p);
+			container.computeGraph().add(process, p);
 		}
 		return process;
 	}
@@ -248,7 +254,7 @@ public class ProcessElementHandler implements ElementHandler {
 			throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
-		final ComputeGraph computeGraph = container.getDependencyGraph();
+		final ComputeGraph computeGraph = container.computeGraph();
 
 		Object o = objectFactory.create(child, variables);
 		if (o instanceof Processor) {

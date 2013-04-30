@@ -27,26 +27,26 @@ public interface Process extends LifeCycle {
 	 * @param The
 	 *            data source of this process.
 	 */
-	public void setSource(Source ds);
+	public void setInput(Source ds);
 
 	/**
 	 * The data source of this process.
 	 * 
 	 * @return The data source of this process.
 	 */
-	public Source getSource();
+	public Source getInput();
 
 	/**
 	 * 
 	 * @param sink
 	 */
-	public void setSink(Sink sink);
+	public void setOutput(Sink sink);
 
 	/**
 	 * 
 	 * @return
 	 */
-	public Sink getSink();
+	public Sink getOutput();
 
 	public void add(Processor p);
 

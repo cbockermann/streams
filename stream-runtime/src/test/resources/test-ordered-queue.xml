@@ -6,14 +6,15 @@
 
 	<Stream id="input" class="stream.io.RandomStream" limit="${limit}" sequenceKey="@source:item" />
 	
-	<queue id="ordered" class="stream.io.OrderedQueue" sequenceKey="@source:item" />
+	<queue id="ordered" class="stream.io.BlockingQueue" sequenceKey="@source:item" />
 
 
-	<process input="input" copies="4">
+	<process input="input">
 		<stream.flow.Enqueue queue="ordered"/>
 	</process>
 	
 	<process input="ordered">
+		<stream.data.PrintData />
 		<stream.test.Collector id="collected" />
 	</process>
 	

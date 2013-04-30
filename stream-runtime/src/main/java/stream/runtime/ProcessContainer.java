@@ -56,7 +56,6 @@ import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
-import stream.runtime.setup.ServiceInjection;
 import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.handler.ContainerRefElementHandler;
 import stream.runtime.setup.handler.DocumentHandler;
@@ -125,11 +124,18 @@ public class ProcessContainer implements IContainer {
 		java.lang.Runtime.getRuntime().addShutdownHook(t);
 	}
 
-	protected final ComputeGraph depGraph = new ComputeGraph();
-
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
 	protected final ProcessorFactory processorFactory = new ProcessorFactory(
 			objectFactory);
+
+	/** The final compute graph that will be build... */
+	protected final ComputeGraph depGraph = new ComputeGraph();
+
+	/**
+	 * The dependency-injection management, required for gathering dependencies
+	 * while the compute graph is being built up.
+	 */
+	protected final DependencyInjection dependencyInjection = new DependencyInjection();
 
 	/**
 	 * The name of this container, used in lookup URIs (e.g.
@@ -167,8 +173,6 @@ public class ProcessContainer implements IContainer {
 
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
-
-	protected final DependencyInjection dependencyInjection = new DependencyInjection();
 
 	final static String[] extensions = new String[] {
 			"stream.moa.MoaObjectFactory",
@@ -314,13 +318,11 @@ public class ProcessContainer implements IContainer {
 		this.init(doc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see stream.runtime.IContainer#getDependencyGraph()
+	/**
+	 * @see stream.runtime.IContainer#computeGraph()
 	 */
 	@Override
-	public ComputeGraph getDependencyGraph() {
+	public ComputeGraph computeGraph() {
 		return depGraph;
 	}
 
@@ -430,58 +432,9 @@ public class ProcessContainer implements IContainer {
 
 		}
 
-		connectProcesses();
+		// connectProcesses();
 
-		injectServices();
-
-		// Special Treatment for properties
-		DocumentHandler ph = new PropertiesHandler();
-		Variables pv = new Variables();
-		ph.handle(this, doc, pv, dependencyInjection);
-		context.getProperties().putAll(pv);
-
-	}
-
-	/**
-	 * 
-	 */
-	protected void connectProcesses() throws Exception {
-		log.debug("Wiring process inputs to data-streams...");
-		for (Process aprocess : processes) {
-
-			if (aprocess instanceof Process) {
-				DefaultProcess process = (DefaultProcess) aprocess;
-				String input = process.getInput();
-
-				if (aprocess instanceof Monitor && input == null) {
-					continue;
-				}
-
-				if (input == null) {
-					throw new RuntimeException("Process '" + process
-							+ "' is not connected to any input-stream!");
-				}
-
-				if (input.contains("[") && input.contains("]")) {
-					log.info("Found singleInMultipleOutQueue");
-
-				}
-				Source stream = streams.get(input);
-				if (stream == null) {
-					log.debug(
-							"No stream defined for name '{}' - creating a listener-queue for key '{}'",
-							input, input);
-
-					BlockingQueue q = new BlockingQueue(1000000);
-					q.setId(input);
-					registerQueue(input, q, false);
-					stream = q;
-				}
-
-				depGraph.add(process, stream);
-				process.setSource(stream);
-			}
-		}
+		// injectServices();
 
 		try {
 			dependencyInjection.injectDependencies(depGraph, namingService);
@@ -489,6 +442,13 @@ public class ProcessContainer implements IContainer {
 			e.printStackTrace();
 			throw e;
 		}
+
+		// Special Treatment for properties
+		DocumentHandler ph = new PropertiesHandler();
+		Variables pv = new Variables();
+		ph.handle(this, doc, pv, dependencyInjection);
+		context.getProperties().putAll(pv);
+
 	}
 
 	public void registerQueue(String id, Queue queue, boolean externalListener)
@@ -499,12 +459,6 @@ public class ProcessContainer implements IContainer {
 		// }
 		setStream(id, queue);
 		context.register(id, new QueueServiceWrapper(queue));
-	}
-
-	//
-	protected void injectServices() throws Exception {
-		ServiceInjection.injectServices(this.getServiceRefs(),
-				this.getContext(), depGraph, containerVariables);
 	}
 
 	public void setStream(String id, Source stream) {
@@ -522,7 +476,7 @@ public class ProcessContainer implements IContainer {
 		log.debug("Registering container-controller {}", controller);
 		this.namingService.register(".ctrl", controller);
 
-		this.injectServices();
+		// this.injectServices();
 
 		if (!server && streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");

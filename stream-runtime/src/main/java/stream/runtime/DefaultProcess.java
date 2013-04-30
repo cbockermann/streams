@@ -33,39 +33,4 @@ import org.slf4j.LoggerFactory;
 public class DefaultProcess extends AbstractProcess {
 
 	static Logger log = LoggerFactory.getLogger(DefaultProcess.class);
-	String input;
-	String output;
-
-	public DefaultProcess() {
-	}
-
-	/**
-	 * @param input
-	 *            the input to set
-	 */
-	public void setInput(String input) {
-		this.input = input;
-	}
-
-	/**
-	 * @see stream.runtime.DataStreamConsumer#getInput()
-	 */
-	public String getInput() {
-		return input;
-	}
-
-	/**
-	 * @return the output
-	 */
-	public String getOutput() {
-		return output;
-	}
-
-	/**
-	 * @param output
-	 *            the output to set
-	 */
-	public void setOutput(String output) {
-		this.output = output;
-	}
 }

@@ -39,7 +39,7 @@ public class QueueElementHandler implements ElementHandler {
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
 
-		final ComputeGraph computeGraph = container.getDependencyGraph();
+		final ComputeGraph computeGraph = container.computeGraph();
 
 		String className = element.getAttribute("class");
 		if (className == null || className.trim().isEmpty())

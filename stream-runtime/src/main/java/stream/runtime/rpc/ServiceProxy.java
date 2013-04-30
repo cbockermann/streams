@@ -13,11 +13,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.runtime.setup.ServiceInjection;
+import stream.runtime.DependencyInjection;
 import stream.service.Service;
 
 public final class ServiceProxy extends UnicastRemoteObject implements
-RemoteEndpoint {
+		RemoteEndpoint {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = -8727610044832533407L;
@@ -32,8 +32,8 @@ RemoteEndpoint {
 		log.debug("Creating ServiceProxy for {}", service);
 		this.serviceImpl = service;
 
-		serviceInterfaces = getServiceInterfaces( service );
-		
+		serviceInterfaces = getServiceInterfaces(service);
+
 		for (Class<? extends Service> cl : serviceInterfaces) {
 
 			for (Method m : cl.getMethods()) {
@@ -79,38 +79,39 @@ RemoteEndpoint {
 
 		for (Class<?> clazz : serviceImpl.getClass().getInterfaces()) {
 			if (clazz != Service.class
-					&& ServiceInjection.isServiceImplementation(clazz)) {
+					&& DependencyInjection.isServiceImplementation(clazz)) {
 				return (Class<? extends Service>) clazz;
 			}
 		}
 
 		return null;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public static Class<? extends Service>[] getServiceInterfaces( Class<?> serviceImpl ){
+	public static Class<? extends Service>[] getServiceInterfaces(
+			Class<?> serviceImpl) {
 		Class<?> cur = serviceImpl;
 		List<Class<? extends Service>> intfs = new ArrayList<Class<? extends Service>>();
 
-		while( cur != null ){
-			log.debug( "checking interfaces of class {}", cur );
+		while (cur != null) {
+			log.debug("checking interfaces of class {}", cur);
 			for (Class<?> clazz : cur.getInterfaces()) {
 				if (clazz != Service.class
-						&& ServiceInjection.isServiceImplementation(clazz)) {
-					log.debug( "Adding service interface: {}", clazz );
+						&& DependencyInjection.isServiceImplementation(clazz)) {
+					log.debug("Adding service interface: {}", clazz);
 					intfs.add((Class<? extends Service>) clazz);
 				} else {
-					log.debug( "Not a service interface: {}", clazz );
+					log.debug("Not a service interface: {}", clazz);
 				}
 			}
 			cur = cur.getSuperclass();
 		}
-		
-		return (Class<? extends Service>[]) intfs.toArray( new Class<?>[ intfs.size() ] );
+
+		return (Class<? extends Service>[]) intfs.toArray(new Class<?>[intfs
+				.size()]);
 	}
-	
-	public static Class<? extends Service>[] getServiceInterfaces( Service p ){
-		return getServiceInterfaces( p.getClass() );
+
+	public static Class<? extends Service>[] getServiceInterfaces(Service p) {
+		return getServiceInterfaces(p.getClass());
 	}
 }

@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import stream.annotations.BodyContent;
 import stream.expressions.Condition;
 import stream.io.Sink;
+import stream.runtime.DependencyInjection;
 import stream.runtime.Variables;
 
 /**
@@ -84,7 +85,7 @@ public class ParameterInjection {
 
 			Class<?>[] t = m.getParameterTypes();
 
-			if (ServiceInjection.isServiceSetter(m)) {
+			if (DependencyInjection.isServiceSetter(m)) {
 				log.debug("Skipping ServiceSetter '{}'", m.getName());
 				continue;
 			}
@@ -264,7 +265,7 @@ public class ParameterInjection {
 
 	public static boolean isTypeSupported(Class<?> clazz) {
 
-		if (ServiceInjection.isServiceImplementation(clazz))
+		if (DependencyInjection.isServiceImplementation(clazz))
 			return false;
 
 		if (clazz.isArray() && isNativeType(clazz.getComponentType())) {

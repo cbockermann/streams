@@ -59,34 +59,34 @@ public abstract class AbstractProcess implements stream.Process {
 	protected final List<Processor> processors = new ArrayList<Processor>();
 
 	/**
-	 * @see stream.Process#setSource(stream.io.Source)
+	 * @see stream.Process#setInput(stream.io.Source)
 	 */
 	@Override
-	public void setSource(Source ds) {
+	public void setInput(Source ds) {
 		this.source = ds;
 	}
 
 	/**
-	 * @see stream.Process#getSource()
+	 * @see stream.Process#getInput()
 	 */
 	@Override
-	public Source getSource() {
+	public Source getInput() {
 		return this.source;
 	}
 
 	/**
-	 * @see stream.Process#setSink(stream.io.Sink)
+	 * @see stream.Process#setOutput(stream.io.Sink)
 	 */
 	@Override
-	public void setSink(Sink sink) {
+	public void setOutput(Sink sink) {
 		this.sink = sink;
 	}
 
 	/**
-	 * @see stream.Process#getSink()
+	 * @see stream.Process#getOutput()
 	 */
 	@Override
-	public Sink getSink() {
+	public Sink getOutput() {
 		return this.sink;
 	}
 
@@ -135,7 +135,7 @@ public abstract class AbstractProcess implements stream.Process {
 			}
 		}
 		log.debug("Process {} (source: {}) initialized, processors: ", this,
-				getSource());
+				getInput());
 	}
 
 	/**
@@ -143,8 +143,7 @@ public abstract class AbstractProcess implements stream.Process {
 	 */
 	public void finish() throws Exception {
 
-		log.debug("Finishing process {} (source: {})...", this,
-				this.getSource());
+		log.debug("Finishing process {} (source: {})...", this, this.getInput());
 		try {
 			for (Processor proc : processors) {
 				if (proc instanceof StatefulProcessor) {
@@ -154,7 +153,6 @@ public abstract class AbstractProcess implements stream.Process {
 					} catch (Exception e) {
 						log.error("Failed to finish processor '{}': {}", proc,
 								e.getMessage());
-						// if (log.isDebugEnabled())
 						e.printStackTrace();
 					}
 				}
@@ -171,22 +169,22 @@ public abstract class AbstractProcess implements stream.Process {
 	public void execute() {
 
 		try {
-			Data item = getSource().read();
+			Data item = getInput().read();
 
 			while (item != null) {
 				// process the item
 				//
 				item = process(item);
 
-				if (item != null && getSink() != null) {
+				if (item != null && getOutput() != null) {
 					log.debug("Sending process output to connected sink {}",
-							getSink());
-					getSink().write(item);
+							getOutput());
+					getOutput().write(item);
 				}
 
 				// obtain the next item to be processed
 				//
-				item = getSource().read();
+				item = getInput().read();
 			}
 			log.debug("No more items could be read, exiting this process.");
 

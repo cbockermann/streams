@@ -17,7 +17,7 @@ import stream.runtime.setup.ServiceReference;
  */
 public interface IContainer {
 
-	public abstract ComputeGraph getDependencyGraph();
+	public abstract ComputeGraph computeGraph();
 
 	public abstract Set<Source> getStreams();
 

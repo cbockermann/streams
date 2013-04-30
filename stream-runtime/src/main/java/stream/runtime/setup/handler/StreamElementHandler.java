@@ -85,7 +85,7 @@ public class StreamElementHandler implements ElementHandler {
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
 		try {
-			final ComputeGraph computeGraph = container.getDependencyGraph();
+			final ComputeGraph computeGraph = container.computeGraph();
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 

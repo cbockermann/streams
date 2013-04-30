@@ -2,14 +2,16 @@
     This simple container experiment checks whether the ServiceInjection is working properly.
  -->
 
-<Container server="true">
+<container>
 
 
-	<Service id="col1" class="stream.service.GlobalCollector" />
-	<Service id="col2" class="stream.service.GlobalCollector" />
+	<stream id="random" class="stream.io.RandomStream" limit="10"/>
+
+	<queue id="col1" class="stream.service.GlobalCollector" />
+	<queue id="col2" class="stream.service.GlobalCollector" />
 	
 
-	<Process input="input">
+	<Process input="random">
 
 		<stream.test.LogData />
 		
@@ -17,4 +19,4 @@
 		
 	</Process>
 	
-</Container>
+</container>

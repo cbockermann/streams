@@ -11,6 +11,7 @@ import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
+import stream.service.Service;
 
 public class QueueElementHandler implements ElementHandler {
 
@@ -60,5 +61,10 @@ public class QueueElementHandler implements ElementHandler {
 				params, ObjectFactory.createConfigDocument(element));
 		container.registerQueue(id, queue, true);
 		computeGraph.addQueue(id, queue);
+
+		if (queue instanceof Service) {
+			container.getContext().register(id, (Service) queue);
+			computeGraph.addService(id, (Service) queue);
+		}
 	}
 }

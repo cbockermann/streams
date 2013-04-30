@@ -53,7 +53,7 @@ public class ServiceArrayTest {
 
 				Data item = DataFactory.create();
 				item.put("@id", i);
-				item.put( "@stream", "input" );
+				item.put("@stream", "input");
 				log.info("Adding item {}", item);
 
 				pc.dataArrived("input", item);

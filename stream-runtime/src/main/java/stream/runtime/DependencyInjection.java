@@ -3,6 +3,7 @@
  */
 package stream.runtime;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,10 +129,15 @@ public class DependencyInjection {
 
 				Class<?> type = m.getParameterTypes()[0];
 				if (type.isArray()) {
-					log.info("Injecting   '{}'.{}   <-- " + resolvedRefs, o,
-							property);
+
+					Object values = Array.newInstance(type.getComponentType(),
+							resolvedRefs.length);
+					for (int i = 0; i < Array.getLength(values); i++) {
+						Array.set(values, i, (resolvedRefs[i]));
+					}
+					log.info("Injecting   '{}'.{}   <-- " + values, o, property);
 					log.info("Calling method  '{}'", m);
-					m.invoke(o, resolvedRefs);
+					m.invoke(o, values);
 				} else {
 					log.info("Injecting   '{}'.{}   <-- " + resolvedRefs[0], o,
 							property);

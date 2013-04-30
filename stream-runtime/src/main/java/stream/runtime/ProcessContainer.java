@@ -47,7 +47,6 @@ import stream.ComputeGraph;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
-import stream.QueueServiceWrapper;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.Queue;
@@ -458,7 +457,7 @@ public class ProcessContainer implements IContainer {
 		// listeners.put(id, queue);
 		// }
 		setStream(id, queue);
-		context.register(id, new QueueServiceWrapper(queue));
+		// context.register(id, queue);
 	}
 
 	public void setStream(String id, Source stream) {

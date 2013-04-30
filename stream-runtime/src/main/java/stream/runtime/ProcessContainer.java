@@ -70,6 +70,7 @@ import stream.runtime.shutdown.LocalShutdownCondition;
 import stream.runtime.shutdown.ServerShutdownCondition;
 import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
+import stream.util.XMLUtils;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -448,6 +449,7 @@ public class ProcessContainer implements IContainer {
 		ph.handle(this, doc, pv, dependencyInjection);
 		context.getProperties().putAll(pv);
 
+		context.setProperty("xml", XMLUtils.toString(doc));
 	}
 
 	public void registerQueue(String id, Queue queue, boolean externalListener)

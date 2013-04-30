@@ -216,6 +216,7 @@ public class PlotPanel extends JPanel {
 			series.getSeries(i).setMaximumItemCount(steps);
 		}
 		stepField.setText(steps + "");
+		stepSlider.setValue(steps);
 	}
 
 	public Integer getSteps() {

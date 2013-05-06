@@ -118,18 +118,18 @@ public class SSLConnection extends TcpConnection {
 
 			log.debug("Specific keystore specified, creating custom SSL context...");
 			KeyManagerFactory kmf = getKeyManagerFactory();
-			log.info(
+			log.debug(
 					"Initializing key manager factory with keyStore {} and password {}",
 					keyStore, password);
 			kmf.init(keyStore, password);
 
 			TrustManagerFactory tmf = getTrustManagerFactory();
-			log.info("Initializing trust manager factory with trustStore {}",
+			log.debug("Initializing trust manager factory with trustStore {}",
 					trustStore);
 			tmf.init(trustStore);
 
 			ssl = SSLContext.getInstance("TLS");
-			log.info("Created SSL context {}", ssl);
+			log.debug("Created SSL context {}", ssl);
 			ssl.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
 			factory = ssl.getSocketFactory();

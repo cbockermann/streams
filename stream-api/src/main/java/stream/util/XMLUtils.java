@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,6 +24,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -208,5 +211,16 @@ public class XMLUtils {
 		xform.transform(new DOMSource(doc), new StreamResult(writer));
 		writer.close();
 		return writer.toString();
+	}
+
+	public static Map<String, String> getAttributes(Node node) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		NamedNodeMap att = node.getAttributes();
+		for (int i = 0; i < att.getLength(); i++) {
+			Node attr = att.item(i);
+			String value = attr.getNodeValue();
+			map.put(attr.getNodeName(), value);
+		}
+		return map;
 	}
 }

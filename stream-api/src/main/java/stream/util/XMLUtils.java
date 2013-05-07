@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -207,6 +208,9 @@ public class XMLUtils {
 			String docElementName) throws Exception {
 		Document doc = createDocument(element, docElementName);
 		Transformer xform = TransformerFactory.newInstance().newTransformer();
+		xform.setOutputProperty(OutputKeys.INDENT, "yes");
+		xform.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+				"2");
 		StringWriter writer = new StringWriter();
 		xform.transform(new DOMSource(doc), new StreamResult(writer));
 		writer.close();
@@ -222,5 +226,21 @@ public class XMLUtils {
 			map.put(attr.getNodeName(), value);
 		}
 		return map;
+	}
+
+	public static String extract(String[] elems, Document doc) {
+		return extract(elems, 0, doc.getDocumentElement());
+	}
+
+	public static String extract(String[] path, int level, Element el) {
+		if (level == path.length - 1)
+			return el.getTextContent();
+
+		NodeList list = el.getElementsByTagName(path[level]);
+		if (list.getLength() == 0)
+			return null;
+
+		Element e = (Element) list.item(0);
+		return extract(path, level + 1, e);
 	}
 }

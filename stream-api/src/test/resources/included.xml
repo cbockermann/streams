@@ -1,0 +1,7 @@
+<module>
+	<stream id="test" />
+
+	<process input="test" >
+		<PrintData />
+	</process>
+</module>

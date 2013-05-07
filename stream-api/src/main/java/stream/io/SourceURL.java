@@ -66,6 +66,18 @@ public class SourceURL implements Serializable {
 
 	final Map<String, String> parameters = new LinkedHashMap<String, String>();
 
+	protected SourceURL() {
+		this.url = null;
+		this.urlString = "";
+
+		protocol = url.getProtocol();
+		host = "";
+		port = 0;
+		path = "";
+		username = null;
+		password = null;
+	}
+
 	public SourceURL(URL url) {
 		this.url = url;
 		this.urlString = url.toString();

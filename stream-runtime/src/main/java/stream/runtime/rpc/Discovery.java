@@ -51,7 +51,7 @@ public class Discovery extends Thread {
 		} catch (Exception e) {
 			timeout = 100;
 		}
-		log.info("Using connection timeout of {} ms", timeout);
+		log.debug("Using connection timeout of {} ms", timeout);
 
 		DatagramPacket query = new DatagramPacket(
 				ContainerAnnouncement.CONTAINER_QUERY,

@@ -123,7 +123,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			announcer.start();
 		}
 
-		discover();
+		// discover();
 	}
 
 	public static int getFreePort() throws Exception {

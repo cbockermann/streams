@@ -58,6 +58,14 @@ public class StreamFactory {
 		streamClassesByExtension.put("arff", "stream.io.ArffStream");
 	}
 
+	/**
+	 * @deprecated
+	 * 
+	 * @param className
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
 	public static Stream createStream(String className,
 			Map<String, String> params) throws Exception {
 
@@ -81,15 +89,15 @@ public class StreamFactory {
 
 			log.debug("Injecting variables {} into stream {}", params, stream);
 			ParameterInjection.inject(stream, params, new Variables());
-			return stream;
 		} else {
 			Constructor<?> constr = clazz.getConstructor();
 			stream = (Stream) constr.newInstance(new Object[0]);
 
 			log.debug("Injecting variables {} into stream {}", params, stream);
 			ParameterInjection.inject(stream, params, new Variables());
-			return stream;
 		}
+
+		return stream;
 	}
 
 	public static Stream createStream(ObjectFactory objectFactory,
@@ -172,6 +180,7 @@ public class StreamFactory {
 	 * @param params
 	 * @return
 	 * @throws Exception
+	 * @deprecated
 	 */
 	public static Stream createStream(Map<String, String> params)
 			throws Exception {

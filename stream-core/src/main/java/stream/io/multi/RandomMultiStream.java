@@ -40,11 +40,15 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 	}
 
 	protected String selectNextStream() {
+
+		if (additionOrder.isEmpty())
+			return null;
+
 		double rnd = Math.random();
 
 		double sum = 0.0d;
 
-		for (int i = 0; i < weights.length; i++) {
+		for (int i = 0; i < additionOrder.size(); i++) {
 
 			if (rnd >= sum && rnd < (sum + weights[i])) {
 				return additionOrder.get(i);
@@ -60,9 +64,20 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 	protected Data readNext(Data item, Map<String, Stream> streams)
 			throws Exception {
 		String nextKey = selectNextStream();
+		if (nextKey == null) {
+			log.info("No more streams found for selection!");
+			return null;
+		}
+
 		Stream stream = streams.get(nextKey);
+
 		Data nextItem = stream.read();
-		nextItem.put("@stream:id", nextKey);
+		if (nextItem == null) {
+			streams.remove(nextKey);
+			additionOrder.remove(nextKey);
+			return readNext(item, streams);
+		}
+
 		return nextItem;
 	}
 }

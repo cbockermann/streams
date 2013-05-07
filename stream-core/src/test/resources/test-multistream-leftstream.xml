@@ -1,0 +1,13 @@
+<container>
+
+	<Stream id="LeftEvent" class="stream.io.CsvStream"
+			url="classpath:/data/temporal-left.csv" keys="timestamp,id" />
+
+
+	<process input="LeftEvent">
+		
+		<stream.test.Collector id="collector" />
+		
+	</process>
+
+</container>

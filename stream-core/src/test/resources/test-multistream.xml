@@ -1,0 +1,17 @@
+<container>
+
+	<Stream id="merged" class="stream.io.multi.RandomMultiStream">
+		<Stream id="LeftEvent" class="stream.io.CsvStream"
+			url="classpath:/data/temporal-left.csv" keys="timestamp,id" />
+		<Stream id="RightEvent" class="stream.io.CsvStream"
+			url="classpath:/data/temporal-right.csv" keys="timestamp,id" />
+	</Stream>
+
+
+	<process input="merged">
+		
+		<stream.test.Collector id="collector" />
+		
+	</process>
+
+</container>

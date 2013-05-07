@@ -1,0 +1,13 @@
+<container>
+
+		<Stream id="RightEvent" class="stream.io.CsvStream"
+			url="classpath:/data/temporal-right.csv" keys="timestamp,id" />
+
+
+	<process input="RightEvent">
+		
+		<stream.test.Collector id="collector" />
+		
+	</process>
+
+</container>

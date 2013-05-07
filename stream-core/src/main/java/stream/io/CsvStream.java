@@ -119,6 +119,8 @@ public class CsvStream extends AbstractLineStream {
 	 */
 	public void setKeys(String[] keys) {
 		this.keys = keys;
+		if (this.keys != null && this.keys.length > 0)
+			this.header = false;
 	}
 
 	/**

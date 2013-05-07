@@ -33,6 +33,7 @@ import org.junit.Test;
 import stream.ComputeGraph;
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
+import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
 
 /**
@@ -64,10 +65,10 @@ public class ServiceInjectionTest {
 	 */
 	@Test
 	public void testIsServiceImplementation() {
-		Assert.assertTrue(ServiceInjection
+		Assert.assertTrue(DependencyInjection
 				.isServiceImplementation(PredictionService.class));
 
-		Assert.assertFalse(ServiceInjection
+		Assert.assertFalse(DependencyInjection
 				.isServiceImplementation(ParameterUtils.class));
 	}
 

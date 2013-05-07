@@ -70,6 +70,7 @@ import stream.runtime.shutdown.LocalShutdownCondition;
 import stream.runtime.shutdown.ServerShutdownCondition;
 import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
+import stream.service.Service;
 import stream.util.XMLUtils;
 
 /**
@@ -478,6 +479,12 @@ public class ProcessContainer implements IContainer {
 		this.namingService.register(".ctrl", controller);
 
 		// this.injectServices();
+
+		Map<String, Service> services = computeGraph().services();
+		for (String name : services.keySet()) {
+			log.info("Registering service '{}' => {}", name, services.get(name));
+			namingService.register(name, services.get(name));
+		}
 
 		if (!server && streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");

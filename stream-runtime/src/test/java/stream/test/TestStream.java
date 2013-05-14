@@ -25,6 +25,8 @@ package stream.test;
 
 import java.util.Random;
 
+import org.junit.Test;
+
 import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
@@ -56,5 +58,14 @@ public class TestStream extends AbstractStream {
 		}
 
 		return instance;
+	}
+
+	@Test
+	public void test() {
+		//
+		// This method is only here to prevent junit tests from failing
+		// as maven tries to run this class as test, but cannot find a
+		// test-method without this method.
+		//
 	}
 }

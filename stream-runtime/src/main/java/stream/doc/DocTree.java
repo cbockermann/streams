@@ -230,11 +230,15 @@ public class DocTree implements Comparable<DocTree> {
 				Class<?> clazz = Class.forName(className);
 
 				if (DocFinder.implementsInterface(clazz, Stream.class)) {
-					out.println("\\Stream{" + clazz.getSimpleName() + "}\n");
+					out.println("\\Stream{" + clazz.getSimpleName() + "}");
+					out.println("\\label{sec:" + clazz.getCanonicalName()
+							+ "}\n");
 				}
 
 				if (DocFinder.implementsInterface(clazz, Processor.class)) {
-					out.println("\\Processor{" + clazz.getSimpleName() + "}\n");
+					out.println("\\Processor{" + clazz.getSimpleName() + "}");
+					out.println("\\label{sec:" + clazz.getCanonicalName()
+							+ "}\n");
 				}
 
 				DocGenerator.copy(texUrl.openStream(), fos);
@@ -302,7 +306,10 @@ public class DocTree implements Comparable<DocTree> {
 		DocTree tree = new DocTree("");
 
 		try {
-			Class<?>[] classes = ClassFinder.getClasses("");
+			List<Class<?>> classes = new ArrayList<Class<?>>();
+			for (String pattern : patterns) {
+				classes.addAll(ClassFinder.getClasses(pattern));
+			}
 
 			SortedSet<String> docs = new TreeSet<String>();
 			SortedSet<String> missing = new TreeSet<String>();
@@ -357,8 +364,8 @@ public class DocTree implements Comparable<DocTree> {
 							else {
 								missing.add(doc);
 								log.error(
-										"No documentation provided for class {}",
-										clazz);
+										"No documentation provided for class '{}'",
+										clazz.getCanonicalName());
 							}
 						} else {
 							log.debug("Skipping class '{}' due to patterns {}",

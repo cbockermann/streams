@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,10 @@ public class DocGenerator {
 
 	public DocGenerator(File outputDirectory) {
 		outDir = outputDirectory;
+	}
+
+	public void generateDocs(List<String> packages) throws Exception {
+		generateDocs(packages.toArray(new String[packages.size()]));
 	}
 
 	public void generateDocs(String[] packages) throws Exception {

@@ -53,7 +53,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 					+ " -f markdown -t latex --base-header-level=" + level
 					+ " -o " + tmp2.getAbsolutePath() + " "
 					+ tmp.getAbsolutePath();
-			// System.out.println("Executing: " + exec);
+			log.debug("Executing: {}", exec);
 			Process pandoc = Runtime.getRuntime().exec(exec);
 
 			pandoc.waitFor();
@@ -138,7 +138,8 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 		out.println(" } ");
 		out.println(" } ");
 		out.println(" } ");
-		out.println("\\caption{Parameters of class {\\ttfamily "
+		out.println("\\caption{\\label{api:" + clazz.getCanonicalName()
+				+ "} Parameters of class {\\ttfamily "
 				+ clazz.getCanonicalName() + "}.}");
 		out.println("\\end{center}");
 		out.println("\\end{table}");

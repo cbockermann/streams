@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -82,7 +83,7 @@ public class DocFinder {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		Class<?>[] classes = ClassFinder.getClasses("");
+		List<Class<?>> classes = ClassFinder.getClasses("");
 
 		SortedSet<String> docs = new TreeSet<String>();
 		SortedSet<String> missing = new TreeSet<String>();
@@ -156,7 +157,7 @@ public class DocFinder {
 
 		Map<Class<?>, URL> docTexts = new LinkedHashMap<Class<?>, URL>();
 
-		Class<?>[] classes = ClassFinder.getClasses("");
+		List<Class<?>> classes = ClassFinder.getClasses("");
 
 		SortedSet<String> docs = new TreeSet<String>();
 		SortedSet<String> missing = new TreeSet<String>();

@@ -54,7 +54,7 @@ public class ClassFinder {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public static Class<?>[] getClasses(String packageName)
+	public static List<Class<?>> getClasses(String packageName)
 			throws ClassNotFoundException, IOException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		ClassLoader classLoader = ClassFinder.class.getClassLoader(); // .getContextClassLoader();
@@ -104,7 +104,7 @@ public class ClassFinder {
 			log.debug("Found {} classes in {}", cl.size(), directory);
 			classes.addAll(cl);
 		}
-		return classes.toArray(new Class[classes.size()]);
+		return classes;
 	}
 
 	public static List<Class<?>> findClasses(JarFile jar, String packageName)
@@ -115,8 +115,14 @@ public class ClassFinder {
 		while (en.hasMoreElements()) {
 
 			JarEntry entry = en.nextElement();
-			entry.getName();
-			log.debug("Checking JarEntry '{}'", entry.getName());
+			String resourceName = entry.getName().replaceAll("/", ".");
+			log.debug("Checking JarEntry '{}' (as className: {})",
+					entry.getName(), resourceName);
+
+			if (!resourceName.startsWith(packageName)) {
+				// log.info("Skipping entry due to package name mismatch!");
+				continue;
+			}
 
 			if (entry.getName().endsWith(".class")
 					&& !entry.getName().startsWith("com.rapidminer")
@@ -131,10 +137,9 @@ public class ClassFinder {
 
 					log.trace("Found class {}", clazz);
 					classes.add(clazz);
+				} catch (IllegalAccessError iae) {
 				} catch (VerifyError ve) {
-
 				} catch (NoClassDefFoundError ncdfe) {
-
 				} catch (ClassNotFoundException cnfe) {
 					log.error("Failed to locate class for entry '{}': {}",
 							entry, cnfe.getMessage());

@@ -266,7 +266,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 		if (!headerWritten
 				|| (keys == null && datum.keySet().size() > headers.size())) {
-			p.print("# ");
+			// p.print("# ");
 			Iterator<String> it = datum.keySet().iterator();
 			if (keys != null)
 				it = Arrays.asList(keys).iterator();

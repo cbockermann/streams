@@ -135,13 +135,14 @@ public class DependencyInjection {
 					for (int i = 0; i < Array.getLength(values); i++) {
 						Array.set(values, i, (resolvedRefs[i]));
 					}
-					log.info("Injecting   '{}'.{}   <-- " + values, o, property);
-					log.info("Calling method  '{}'", m);
+					log.debug("Injecting   '{}'.{}   <-- " + values, o,
+							property);
+					log.debug("Calling method  '{}'", m);
 					m.invoke(o, values);
 				} else {
-					log.info("Injecting   '{}'.{}   <-- " + resolvedRefs[0], o,
-							property);
-					log.info("Calling method  '{}' with arg '{}'", m,
+					log.debug("Injecting   '{}'.{}   <-- " + resolvedRefs[0],
+							o, property);
+					log.debug("Calling method  '{}' with arg '{}'", m,
 							resolvedRefs[0]);
 					m.invoke(o, new Object[] { resolvedRefs[0] });
 				}

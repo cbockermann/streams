@@ -200,8 +200,8 @@ public class ProcessElementHandler implements ElementHandler {
 				processClass, attr,
 				ObjectFactory.createConfigDocument(element), extraVariables);
 		String inputId = extraVariables.expand(attr.get("input"));
-		log.info("Created Process object: {}", process);
-		log.info("Process input is: '{}'", inputId);
+		log.debug("Created Process object: {}", process);
+		log.debug("Process input is: '{}'", inputId);
 
 		// Add a source-reference for later dependency injection. The source
 		// is injected into the processes as property 'source'.
@@ -317,7 +317,7 @@ public class ProcessElementHandler implements ElementHandler {
 				Class<? extends Sink> sinkClass = DependencyInjection
 						.hasSinkSetter(key, o);
 				if (sinkClass != null) {
-					log.info(
+					log.debug(
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
@@ -332,7 +332,7 @@ public class ProcessElementHandler implements ElementHandler {
 				Class<? extends Service> serviceClass = DependencyInjection
 						.hasServiceSetter(key, o);
 				if (serviceClass != null) {
-					log.info(
+					log.debug(
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 

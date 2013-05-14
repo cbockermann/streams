@@ -23,9 +23,12 @@
  */
 package stream.io;
 
+import java.io.File;
 import java.net.URL;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stream.runtime.ProcessContainer;
 
@@ -35,8 +38,15 @@ import stream.runtime.ProcessContainer;
  */
 public class TestLineWriter {
 
+	static Logger log = LoggerFactory.getLogger(TestLineWriter.class);
+
 	@Test
 	public void test() throws Exception {
+
+		File tmp = File.createTempFile("test-line-writer", ".out");
+		tmp.deleteOnExit();
+		System.setProperty("test.out", tmp.getAbsolutePath());
+		log.info("Writing test output to {}", tmp);
 		URL url = TestLineWriter.class.getResource("/test-line-writer.xml");
 		ProcessContainer container = new ProcessContainer(url);
 		container.run();

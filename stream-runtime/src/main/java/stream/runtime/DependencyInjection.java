@@ -215,6 +215,17 @@ public class DependencyInjection {
 		return isServiceImplementation(paramTypes[0]);
 	}
 
+	public static boolean isSourceSetter(Method m) {
+		if (!m.getName().startsWith("set"))
+			return false;
+
+		Class<?>[] paramTypes = m.getParameterTypes();
+		if (paramTypes.length != 1)
+			return false;
+
+		return Source.class.isAssignableFrom(paramTypes[0]);
+	}
+
 	/**
 	 * This method checks whether the given class implements the Service
 	 * interface.

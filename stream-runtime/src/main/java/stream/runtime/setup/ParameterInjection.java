@@ -90,6 +90,11 @@ public class ParameterInjection {
 				continue;
 			}
 
+			if (DependencyInjection.isSourceSetter(m)) {
+				log.debug("Skipping SourceSetter '{}'", m.getName());
+				continue;
+			}
+
 			if (isQueueSetter(m)) {
 				log.debug("Skipping QueueSetter '{}'", m.getName());
 				continue;

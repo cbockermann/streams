@@ -5,6 +5,8 @@ package stream.runtime.setup;
 
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Method;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import stream.ComputeGraph;
 import stream.ComputeGraph.SinkRef;
 import stream.io.BlockingQueue;
 import stream.io.Sink;
+import stream.io.Source;
 import stream.mock.SimpleMockProcessor;
 import stream.runtime.DefaultProcess;
 import stream.runtime.DependencyInjection;
@@ -60,5 +63,19 @@ public class DependencyInjectionTest {
 		} catch (Exception e) {
 			fail("Test failed: " + e.getMessage());
 		}
+	}
+
+	@Test
+	public void testIsSourceSetter() {
+		try {
+			Method m = stream.runtime.DefaultProcess.class.getMethod(
+					"setInput", Source.class);
+			Assert.assertTrue(DependencyInjection.isSourceSetter(m));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Test failed: " + e.getMessage());
+		}
+
 	}
 }

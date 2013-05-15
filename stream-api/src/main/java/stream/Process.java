@@ -4,6 +4,7 @@
 package stream;
 
 import java.util.List;
+import java.util.Map;
 
 import stream.io.Sink;
 import stream.io.Source;
@@ -55,4 +56,7 @@ public interface Process extends LifeCycle {
 	public List<Processor> getProcessors();
 
 	public void execute() throws Exception;
+
+	public Map<String, String> getProperties();
+
 }

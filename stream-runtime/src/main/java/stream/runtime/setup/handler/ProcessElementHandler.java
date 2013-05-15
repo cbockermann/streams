@@ -203,6 +203,9 @@ public class ProcessElementHandler implements ElementHandler {
 		log.debug("Created Process object: {}", process);
 		log.debug("Process input is: '{}'", inputId);
 
+		process.getProperties().putAll(attr);
+		process.getProperties().putAll(extraVariables);
+
 		// Add a source-reference for later dependency injection. The source
 		// is injected into the processes as property 'source'.
 		//

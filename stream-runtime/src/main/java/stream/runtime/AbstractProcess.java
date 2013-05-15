@@ -24,7 +24,9 @@
 package stream.runtime;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,10 @@ public abstract class AbstractProcess implements stream.Process {
 	protected Sink sink;
 
 	protected final List<Processor> processors = new ArrayList<Processor>();
+
+	protected final Map<String, String> properties = new LinkedHashMap<String, String>();
+
+	Priority priority = new Priority();
 
 	/**
 	 * @see stream.Process#setInput(stream.io.Source)
@@ -218,6 +224,25 @@ public abstract class AbstractProcess implements stream.Process {
 
 	public List<Processor> getProcessors() {
 		return processors;
+	}
+
+	public Map<String, String> getProperties() {
+		return this.properties;
+	}
+
+	/**
+	 * @return the priority
+	 */
+	public Priority getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority
+	 *            the priority to set
+	 */
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 
 	public String toString() {

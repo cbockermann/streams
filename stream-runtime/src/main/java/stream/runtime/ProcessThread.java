@@ -24,7 +24,9 @@
 package stream.runtime;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,16 @@ import stream.ProcessContext;
 public class ProcessThread extends Thread {
 
 	static Logger log = LoggerFactory.getLogger(ProcessThread.class);
+
+	static final Map<String, Integer> PRIORITY_NAMES = new LinkedHashMap<String, Integer>();
+	static {
+		PRIORITY_NAMES.put("lowest", Thread.MIN_PRIORITY);
+		PRIORITY_NAMES.put("low", 2);
+		PRIORITY_NAMES.put("normal", Thread.NORM_PRIORITY);
+		PRIORITY_NAMES.put("high", 7);
+		PRIORITY_NAMES.put("highest", Thread.MAX_PRIORITY);
+	}
+
 	final stream.Process process;
 	final ProcessContext context;
 	boolean running = false;
@@ -49,8 +61,29 @@ public class ProcessThread extends Thread {
 	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
 	public ProcessThread(stream.Process process, ProcessContext ctx) {
-		// Only for DEBS
-		this.setPriority(10);
+
+		Integer prio = Thread.NORM_PRIORITY;
+		try {
+			String prioValue = process.getProperties().get("priority");
+			if (prioValue == null)
+				prioValue = "normal";
+
+			if (PRIORITY_NAMES.containsKey(prioValue)) {
+				prioValue = PRIORITY_NAMES.get(prioValue).toString();
+			}
+
+			prio = new Integer(prioValue);
+		} catch (Exception e) {
+			prio = Thread.NORM_PRIORITY;
+		}
+
+		if (prio > Thread.MAX_PRIORITY)
+			prio = Thread.MAX_PRIORITY;
+
+		if (prio < Thread.MIN_PRIORITY)
+			prio = Thread.MIN_PRIORITY;
+
+		this.setPriority(prio);
 		this.process = process;
 		this.context = ctx;
 	}

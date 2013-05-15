@@ -1,0 +1,18 @@
+<container>
+
+	<service id="lookup" key="id" class="stream.lookup.CsvDatabase" url="classpath:/data/userdata.csv" />
+	
+	
+	<stream id="stream" class="stream.io.LineStream" 
+	    format="%(timestamp) %(id)"
+		   url="classpath:/data/user.log" />
+	
+	
+	<process input="stream">
+		<PrintData />
+		<stream.data.Lookup key="id" lookup="lookup"/>
+		<PrintData />
+		<stream.test.Collector id="collector" />
+	</process>
+
+</container>

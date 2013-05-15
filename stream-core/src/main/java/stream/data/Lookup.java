@@ -23,6 +23,8 @@
  */
 package stream.data;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +85,25 @@ public class Lookup extends AbstractProcessor {
 			log.error("No LookupService injected!");
 			return item;
 		}
-		String varib = ExpressionResolver.resolve(key, context, item)
-				.toString();
-		Data lookupData = lookup.lookup(varib);
-		item.putAll(lookupData);
+
+		Serializable value = null;
+
+		if (key.indexOf("%{") >= 0) {
+			value = (Serializable) ExpressionResolver.resolve(key, context,
+					item);
+		} else {
+			value = item.get(key);
+		}
+
+		if (value == null) {
+			log.debug("No value for lookup key '{}' in item {}", key, item);
+			return item;
+		}
+
+		Data lookupData = lookup.lookup(value.toString());
+		if (lookupData != null) {
+			item.putAll(lookupData);
+		}
 		return item;
 	}
 }

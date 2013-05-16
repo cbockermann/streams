@@ -80,7 +80,7 @@ public class NewConditionsTest {
 		testTime("%{data.test} == 3", md);
 		testTime("%{data.test} == null", md);
 		md.put("test", "test");
-		testTime("%{data.test} == 'test'", md);
+		testTime("'%{data.test}' == 'test'", md);
 
 		// ******************************
 		// Condition Double
@@ -102,8 +102,8 @@ public class NewConditionsTest {
 		// ******************************
 		// Condition String
 		data.put("test", "test");
-		assertCondition("'%{data.test}' == 'test'", data, true);
-		assertCondition("'test' == '%{data.test}'", data, true);
+		assertCondition("%{data.test} == 'test'", data, true);
+		assertCondition("'test' == %{data.test}", data, true);
 		// ******************************
 		// Condition Null
 		data.put("test", 3);
@@ -211,6 +211,10 @@ public class NewConditionsTest {
 		data.remove("test");
 		assertCondition("%{data.test}!=null", data, false);
 		assertCondition("null != %{data.test}", data, false);
+		// Condition String
+		data.put("test", "test");
+		assertCondition("%{data.test} != 'test'", data, false);
+		assertCondition("'test' != %{data.test}", data, false);
 
 	}
 
@@ -349,6 +353,36 @@ public class NewConditionsTest {
 		skip.init(new ProcessContextMock());
 		MultiData md = new MultiData(rounds);
 		testTime(skip, md);
+	}
+
+	@Test
+	public void testRXCondition() throws Exception {
+
+		// ******************************
+		Data data = DataFactory.create();
+		data.put("name", "*");
+		assertCondition("%{data.name} @rx '.*'", data, true);
+		assertCondition("%{data.name} @nrx '.*'", data, false);
+
+		data.put("name", "network roaming");
+		assertCondition("%{data.name} @nrx 'network.*'", data, false);
+		assertCondition("%{data.name} @rx 'network.*'", data, true);
+
+		data.put("name", "47");
+		assertCondition("%{data.name} @nrx '[1-9][0-9]'", data, false);
+		assertCondition("%{data.name} @rx '[1-9][0-9]'", data, true);
+
+		data.put("name", "199");
+		assertCondition("%{data.name} @nrx '[1-9][0-9]'", data, true);
+		assertCondition("%{data.name} @rx '[1-9][0-9]'", data, false);
+		data.put("mail", "horst19@ober-horst.de");
+		assertCondition(
+				"%{data.mail} @rx '[A-za-z0-9]+@[a-zA-Z0-9.-]+\\.[A-Za-z]+'",
+				data, true);
+		assertCondition(
+				"%{data.mail} @nrx '[A-za-z0-9]+@[a-zA-Z0-9.-]+\\.[A-Za-z]+'",
+				data, false);
+
 	}
 
 	private void assertCondition(String condition, Data data, Boolean result)

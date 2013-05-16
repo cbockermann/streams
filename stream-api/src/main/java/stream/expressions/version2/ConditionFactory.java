@@ -35,7 +35,13 @@ public class ConditionFactory {
 		 * Replace the ExpressionStrings by a Map.key and create the
 		 * corresponding Instances of Expression
 		 */
+
+		// Check brackets
+		checkBrackets(ex, "{", "}");
+		// checkBrackets(ex, "(", ")");
+
 		ex = replaceAndCreateExpressions(ex);
+		ex = replaceAndCreateStringExpressions(ex);
 		printDoubleExpressions();
 		printStringExpressions();
 		log.debug("Expression: {}", ex);
@@ -65,7 +71,8 @@ public class ConditionFactory {
 		if (t.isLeaf()) {
 			if (t.getRoot().contains("null"))
 				return createNullCondition(t.getRoot());
-			if (t.getRoot().contains("\'"))
+			// Hier ist die Magic
+			if (t.getRoot().contains("p10se"))
 				return createStringCondition(t.getRoot());
 			return createDoubleCondition(t.getRoot());
 		}
@@ -117,7 +124,7 @@ public class ConditionFactory {
 
 	private OperatorCondition<String> createStringCondition(String c) {
 		if (c == null || c.isEmpty())
-			throw new IllegalArgumentException("Bad ConditionString" + c);
+			throw new IllegalArgumentException("Empty or NULL Expression" + c);
 
 		// S Expressions
 		if (c.contains("==")) {
@@ -137,7 +144,24 @@ public class ConditionFactory {
 			Expression<String> right = createOrBuildStringExpression(exps[1]);
 			return new NotEqualsStringCondition(left, right);
 		}
-		return null;
+		if (c.contains("@rx")) {
+			String[] exps = c.split("@rx");
+			if (exps.length != 2)
+				throw new IllegalArgumentException("Bad ConditionString" + c);
+			Expression<String> left = createOrBuildStringExpression(exps[0]);
+			Expression<String> right = createOrBuildStringExpression(exps[1]);
+			return new EqualsRXCondition(left, right);
+		}
+		if (c.contains("@nrx")) {
+			String[] exps = c.split("@nrx");
+			if (exps.length != 2)
+				throw new IllegalArgumentException("Bad ConditionString" + c);
+			Expression<String> left = createOrBuildStringExpression(exps[0]);
+			Expression<String> right = createOrBuildStringExpression(exps[1]);
+			return new NotEqualsRXCondition(left, right);
+		}
+		throw new IllegalArgumentException(
+				"Unknown Operator in the given Expression" + c);
 	}
 
 	private OperatorCondition<Double> createDoubleCondition(String c) {
@@ -216,17 +240,75 @@ public class ConditionFactory {
 
 	private Expression<String> createOrBuildStringExpression(String key) {
 		Expression<String> e = sExps.get(key);
-		if (e == null)
+		if (e == null) {
+			Expression<Double> d = dExps.get(key);
+			if (d != null)
+				key = "%{" + d.getExpression() + "}";
 			e = new StringExpression(key);
+		}
 		return e;
+	}
+
+	private void checkBrackets(String ex, String bracketOpen,
+			String bracketClose) {
+		// Test brackets
+		boolean run = true;
+		String testB = ex;
+		while (run) {
+			int s1 = testB.indexOf(bracketOpen);
+			int s2 = testB.indexOf(bracketOpen, s1 + 1);
+			int e1 = testB.indexOf(bracketClose);
+
+			if (s1 < 0 && e1 < 0)
+				run = false;
+			else {
+
+				// Bracket {{}
+				if (s2 > 0 && s2 < e1) {
+					String ss = "";
+					if (s2 > 0)
+						ss = testB.substring(0, s2);
+					String se = "";
+					if (s2 < testB.length())
+						se = testB.substring(s2 + 1);
+					throw new IllegalArgumentException("1:Bad " + bracketOpen
+							+ "..." + bracketClose + ":" + ss + "__"
+							+ bracketOpen + "__" + se);
+				}
+				// only one } left or }{}
+				if (s1 < 0 && e1 >= 0 || (e1 < s1 && s1 > 0 && e1 >= 0)) {
+					String ss = "";
+					if (e1 > 0)
+						ss = testB.substring(0, e1 - 1);
+					String se = "";
+					if (e1 < testB.length())
+						se = testB.substring(e1 + 1);
+					throw new IllegalArgumentException("1:Bad " + bracketOpen
+							+ "..." + bracketClose + ":" + ss + "__"
+							+ bracketClose + "__" + se);
+				}
+				// only one { left
+				if (s1 >= 0 && e1 < 0) {
+					String ss = "";
+					if (s1 > 0)
+						ss = testB.substring(0, s1 - 1);
+					String se = "";
+					if (s1 < testB.length())
+						se = testB.substring(s1 + 1);
+					throw new IllegalArgumentException("1:Bad " + bracketOpen
+							+ "..." + bracketClose + ":" + ss + "__"
+							+ bracketOpen + "__" + se);
+				}
+
+				testB = testB.substring(e1 + 1);
+			}
+
+		}
+
 	}
 
 	private String replaceAndCreateExpressions(String ex) {
 		// PRIO 10
-		List<Integer> ms = find(ex, "%{");
-		List<Integer> me = find(ex, "}");
-		if (ms.size() != me.size())
-			throw new IllegalArgumentException("Bad %{...}");
 		boolean run = true;
 		int i = 0;
 		while (run) {
@@ -238,8 +320,9 @@ public class ConditionFactory {
 				if (s - 1 >= 0 && ex.charAt(s - 1) == '\'') {
 					if (e + 1 < ex.length() && ex.charAt(e + 1) == '\'') {
 						se = ex.substring(s - 1, e + 2);
-						key = ";p10e_" + i;
+						key = ";p10se_" + i;
 						StringExpression exp = new StringExpression(se);
+
 						sExps.put(key, exp);
 					} else
 						throw new IllegalArgumentException("Bad String ''");
@@ -249,13 +332,43 @@ public class ConditionFactory {
 					DoubleExpression exp = new DoubleExpression(se);
 					dExps.put(key, exp);
 				}
+
 				ex = ex.replace(se, key);
 				i++;
 			} else
 				run = false;
 
 		}
+
 		// System.out.println("P10: " + ex);
+		return ex;
+
+	}
+
+	private String replaceAndCreateStringExpressions(String ex) {
+		// PRIO 10
+		List<Integer> ms = find(ex, "'");
+		if (ms.size() % 2 != 0)
+			throw new IllegalArgumentException("Bad %{...}");
+		boolean run = true;
+		int i = 0;
+		while (run) {
+			int s = ex.indexOf("'");
+			if (s >= 0) {
+				String subString = ex.substring(s);
+				int e = subString.indexOf("'", 1);
+				System.out.println(subString);
+				String se = subString.substring(0, e + 1);
+				String key = ";p10se_" + i;
+				StringExpression exp = new StringExpression(se);
+
+				sExps.put(key, exp);
+				ex = ex.replace(se, key);
+				i++;
+
+			} else
+				run = false;
+		}
 		return ex;
 
 	}
@@ -283,6 +396,7 @@ public class ConditionFactory {
 	private String brackets(String ex, int count)
 			throws IllegalArgumentException {
 
+		// TODO Aufwerten der Fehlermeldung
 		List<Integer> ms = find(ex, "(");
 		List<Integer> me = find(ex, ")");
 		if (ms.size() != me.size())

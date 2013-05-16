@@ -12,7 +12,8 @@ public abstract class OperatorCondition<I extends Serializable> extends
 	public OperatorCondition(Expression<I> left, Expression<I> right,
 			String operation) {
 		// TODO
-		super(left.toString() + " " + operation + " " + right.toString());
+		super(left != null ? left.toString() : "null" + " " + operation + " "
+				+ right != null ? right.toString() : "null");
 		this.left = left;
 		this.right = right;
 		this.op = operation;

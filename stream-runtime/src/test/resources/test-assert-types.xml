@@ -1,0 +1,12 @@
+<container>
+
+	<stream id="testData" class="stream.io.ConstantStreamMock" limit="10" />
+	
+	
+	<process input="testData">
+	
+		<stream.data.AssertTypes id="assertion1" types="id::java.lang.Long,name::java.lang.String,data::java.lang.String[3]" />
+	
+	</process>
+
+</container>

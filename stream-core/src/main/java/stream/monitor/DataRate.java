@@ -80,7 +80,7 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 
 		if (start == null)
 			start = System.currentTimeMillis();
-		Long now = System.currentTimeMillis();
+		// Long now = System.currentTimeMillis();
 		//
 		// if (clock != null) {
 		// now = new Long(input.get(clock) + "");
@@ -108,7 +108,7 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 
 		count++;
 		if (every != null && count % every.intValue() == 0) {
-			printDataRate(now);
+			printDataRate(System.currentTimeMillis());
 		}
 
 		return input;

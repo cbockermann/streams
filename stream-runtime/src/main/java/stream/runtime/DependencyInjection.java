@@ -18,6 +18,7 @@ import stream.ComputeGraph.ServiceRef;
 import stream.ComputeGraph.SinkRef;
 import stream.ComputeGraph.SourceRef;
 import stream.Reference;
+import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.setup.ParameterInjection;
@@ -70,17 +71,14 @@ public class DependencyInjection {
 	private boolean inject(Reference ref, ComputeGraph graph,
 			NamingService namingService) throws Exception {
 
-		if (ref instanceof SinkRef) {
+		if (ref instanceof SinkRef)
 			return inject((SinkRef) ref, graph);
-		}
 
-		if (ref instanceof SourceRef) {
+		if (ref instanceof SourceRef)
 			return inject((SourceRef) ref, graph);
-		}
 
-		if (ref instanceof ServiceRef) {
+		if (ref instanceof ServiceRef)
 			return inject((ServiceRef) ref, graph, namingService);
-		}
 
 		return false;
 	}
@@ -91,6 +89,16 @@ public class DependencyInjection {
 		Sink[] sinks = new Sink[refs.length];
 		for (int i = 0; i < sinks.length; i++) {
 			sinks[i] = graph.sinks().get(refs[i]);
+			if (sinks[i] == null) {
+				Queue queue = new stream.io.BlockingQueue();
+				graph.addQueue(refs[i], queue);
+
+				if (queue instanceof Service) {
+					graph.addService(refs[i], (Service) queue);
+				}
+				log.info("Created new Queue: {}", queue);
+				sinks[i] = queue;
+			}
 		}
 		return injectResolvedReferences(ref.object(), ref.property(), sinks);
 	}
@@ -101,6 +109,17 @@ public class DependencyInjection {
 		Source[] sources = new Source[refs.length];
 		for (int i = 0; i < sources.length; i++) {
 			sources[i] = graph.sources().get(refs[i]);
+			// TODO Create Queue
+			if (sources[i] == null) {
+				Queue queue = new stream.io.BlockingQueue();
+				graph.addQueue(refs[i], queue);
+
+				if (queue instanceof Service) {
+					graph.addService(refs[i], (Service) queue);
+				}
+				log.info("Created new Queue: {}", queue);
+				sources[i] = queue;
+			}
 		}
 
 		return injectResolvedReferences(ref.object(), ref.property(), sources);
@@ -138,13 +157,26 @@ public class DependencyInjection {
 					log.debug("Injecting   '{}'.{}   <-- " + values, o,
 							property);
 					log.debug("Calling method  '{}'", m);
+					// try {
 					m.invoke(o, values);
+					// } catch (IllegalArgumentException e) {
+					// throw new IllegalArgumentException(
+					// "IllegalArgumentException" + o + ":"
+					// + values.toString());
+					//
+					// }
 				} else {
 					log.debug("Injecting   '{}'.{}   <-- " + resolvedRefs[0],
 							o, property);
 					log.debug("Calling method  '{}' with arg '{}'", m,
 							resolvedRefs[0]);
+					// try {
 					m.invoke(o, new Object[] { resolvedRefs[0] });
+					// } catch (IllegalArgumentException e) {
+					// throw new IllegalArgumentException(
+					// "IllegalArgumentException" + o + ":"
+					// + resolvedRefs[0]);
+					// }
 				}
 				return true;
 			}

@@ -23,6 +23,7 @@
  */
 package stream.runtime;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -175,6 +176,10 @@ public abstract class AbstractProcess implements stream.Process {
 	public void execute() {
 
 		try {
+			if (getInput() == null) {
+				log.error("Could not read from input!");
+				throw new IOException("Can't read from input");
+			}
 			Data item = getInput().read();
 
 			while (item != null) {

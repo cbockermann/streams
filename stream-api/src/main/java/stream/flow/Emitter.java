@@ -49,16 +49,20 @@ public class Emitter extends ConditionedProcessor {
 	}
 
 	public void setSink(Sink sink) {
-		this.keys = new String[] {};
-		this.sinks = new Sink[] { sink };
-		batch = new Data[1][batchSize];
-		filter = null;
+		if (sink != null) {
+			this.keys = new String[] {};
+			this.sinks = new Sink[] { sink };
+			batch = new Data[1][batchSize];
+			filter = null;
+		}
 
 	}
 
 	public void setSinks(Sink[] sinks) {
-		this.sinks = sinks;
-		batch = new Data[sinks.length][batchSize];
+		if (sinks != null) {
+			this.sinks = sinks;
+			batch = new Data[sinks.length][batchSize];
+		}
 	}
 
 	public void setSkip(Boolean skip) {
@@ -92,10 +96,12 @@ public class Emitter extends ConditionedProcessor {
 					items.add(data[j].createCopy());
 				}
 				sinks[i].write(items);
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 	}
 
@@ -133,6 +139,7 @@ public class Emitter extends ConditionedProcessor {
 				// }
 
 			}
+
 		}
 	}
 
@@ -167,10 +174,11 @@ public class Emitter extends ConditionedProcessor {
 	public void finish() throws Exception {
 		super.finish();
 
-		if (sinks == null || sinks.length == 0)
+		if (sinks == null || sinks.length == 0) {
+			log.debug("Closing no Sinks...");
 			return;
-
-		log.debug("Sending EndOfStream item to all queues...");
+		}
+		log.debug("Closing all Sinks...");
 		for (int i = 0; i < sinks.length; i++) {
 			if (sinks[i] != null) {
 				sinks[i].close();

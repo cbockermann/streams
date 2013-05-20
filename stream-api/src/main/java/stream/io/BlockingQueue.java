@@ -99,7 +99,8 @@ public class BlockingQueue extends AbstractQueue {
 	 * {@link Integer#MAX_VALUE}.
 	 */
 	public BlockingQueue() {
-		this(Integer.MAX_VALUE);
+		this(1000000);
+		// this(Integer.MAX_VALUE);
 	}
 
 	/**
@@ -340,30 +341,6 @@ public class BlockingQueue extends AbstractQueue {
 		return enqueue(item);
 	}
 
-	/**
-	 * @see stream.io.QueueService#level()
-	 */
-	@Override
-	public int level() {
-		return count.get();
-	}
-
-	/**
-	 * @see stream.io.QueueService#capacity()
-	 */
-	@Override
-	public int capacity() {
-		return capacity;
-	}
-
-	/**
-	 * @see stream.service.Service#reset()
-	 */
-	@Override
-	public void reset() throws Exception {
-		clear();
-	}
-
 	@Override
 	public boolean write(Collection<Data> data) throws Exception {
 		log.debug("Queue {}: Enqueuing event {}", getId(), data);
@@ -428,5 +405,23 @@ public class BlockingQueue extends AbstractQueue {
 			fullyUnlock();
 		}
 		return removed;
+	}
+
+	@Override
+	public int level() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int capacity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void reset() throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }

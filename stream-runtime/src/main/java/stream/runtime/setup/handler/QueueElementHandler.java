@@ -57,6 +57,8 @@ public class QueueElementHandler implements ElementHandler {
 			throw new Exception("No 'id' attribute defined for queue!");
 		}
 
+		// TODO Dieses erzeugen einer Queue und das erzeugen implizieter Queues
+		// sollte identisch sein....
 		Queue queue = (Queue) container.getObjectFactory().create(className,
 				params, ObjectFactory.createConfigDocument(element));
 		container.registerQueue(id, queue, true);

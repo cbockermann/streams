@@ -89,13 +89,17 @@ public class Emitter extends ConditionedProcessor {
 	}
 
 	protected void emit(Data[] data) {
+		if (sinks == null)
+			return;
+
 		for (int i = 0; i < sinks.length; i++) {
 			try {
 				ArrayList<Data> items = new ArrayList<Data>(data.length);
 				for (int j = 0; j < data.length; j++) {
 					items.add(data[j].createCopy());
 				}
-				sinks[i].write(items);
+				if (sinks[i] != null)
+					sinks[i].write(items);
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -131,7 +135,8 @@ public class Emitter extends ConditionedProcessor {
 				Data d = data.createCopy();
 				// if (!sinks[i].offer(d)) {
 				try {
-					sinks[i].write(d);
+					if (sinks[i] != null)
+						sinks[i].write(d);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

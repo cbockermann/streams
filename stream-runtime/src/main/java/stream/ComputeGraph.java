@@ -195,6 +195,8 @@ public class ComputeGraph {
 		// is this at all required? it does not hurt, though, but the
 		// compute-graph should in theory only consist of sinks, sources and
 		// processes.
+		// CB: Yes, it IS required as is removes the edges of processors to
+		// queues.
 		//
 		if (o instanceof AbstractProcess) {
 			List<Processor> processors = ((AbstractProcess) o).getProcessors();
@@ -208,6 +210,7 @@ public class ComputeGraph {
 		Iterator<Edge> it = (new ArrayList<Edge>(edges)).iterator();
 		while (it.hasNext()) {
 			Edge edge = it.next();
+
 			if (edge.getFrom() == o) {
 				log.debug("[graph-shutdown]   Removing edge ( {} => {} )",
 						edge.getFrom(), edge.getTo());
@@ -223,6 +226,10 @@ public class ComputeGraph {
 					log.debug("target {} has {} references left", target,
 							getSourcesFor(target).size());
 				}
+			}
+
+			if (edge.getTo() == o) {
+
 			}
 		}
 

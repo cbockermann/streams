@@ -96,7 +96,7 @@ public class DependencyInjection {
 				if (queue instanceof Service) {
 					graph.addService(refs[i], (Service) queue);
 				}
-				log.info("Created new Queue: {}", queue);
+				log.debug("Creating implicitly defined queue: {}", queue);
 				sinks[i] = queue;
 			}
 		}

@@ -70,7 +70,7 @@ public class SourceURL implements Serializable {
 		this.url = null;
 		this.urlString = "";
 
-		protocol = url.getProtocol();
+		protocol = "unknown";
 		host = "";
 		port = 0;
 		path = "";

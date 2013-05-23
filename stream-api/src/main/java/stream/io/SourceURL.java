@@ -217,7 +217,7 @@ public class SourceURL implements Serializable {
 				} catch (NoSuchMethodException nsm) {
 					nsm.printStackTrace();
 					log.error(
-							"Failed to create instance of class {} for URL {}",
+							"Failed to create instance of class {} for URL {}",
 							clazz, this);
 					throw new IOException(nsm.getMessage());
 				} catch (Exception e) {

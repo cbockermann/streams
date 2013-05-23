@@ -39,7 +39,7 @@ public class MultiStreamTest {
 					CollectorService.class);
 			Assert.assertNotNull(collect);
 			List<Data> coll = collect.getCollection();
-			log.info("Collected {} items: {}", coll.size(), coll);
+			log.info("Collected {} items: {}", coll.size(), coll);
 			Assert.assertEquals(6, coll.size());
 
 		} catch (Exception e) {
@@ -61,7 +61,7 @@ public class MultiStreamTest {
 					CollectorService.class);
 			Assert.assertNotNull(collect);
 			List<Data> coll = collect.getCollection();
-			log.info("Collected {} items: {}", coll.size(), coll);
+			log.info("Collected {} items: {}", coll.size(), coll);
 			Assert.assertEquals(6, coll.size());
 
 		} catch (Exception e) {
@@ -83,7 +83,7 @@ public class MultiStreamTest {
 					CollectorService.class);
 			Assert.assertNotNull(collect);
 			List<Data> coll = collect.getCollection();
-			log.info("Collected {} items: {}", coll.size(), coll);
+			log.info("Collected {} items: {}", coll.size(), coll);
 			Assert.assertEquals(12, coll.size());
 
 		} catch (Exception e) {

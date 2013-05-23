@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * This class implements a sequence element which is internally represented as a
- * chunk of bytes (byte[] array) with ascending significance.
+ * chunk of bytes (byte[] array) with ascending significance.
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 

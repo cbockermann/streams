@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import stream.StreamTopology;
 import stream.runtime.setup.ObjectFactory;
 import stream.storm.StreamSpout;
+import stream.util.XMLElementMatch;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -76,11 +77,28 @@ public class StreamHandler extends ATopologyElementHandler {
 		params = st.getVariables().expandAll(params);
 		log.info("  >   expanded stream-parameters are: {}", params);
 
-		StreamSpout spout = new StreamSpout(className, params);
+		StreamSpout spout = new StreamSpout(xml, id, className, params);
 		log.info("  >   stream-spout instance is: {}", spout);
 
 		SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);
 		log.info("  >   declared spout is: {}", spoutDeclarer);
 		st.spouts.put(id, spoutDeclarer);
+	}
+
+	public static class StreamFinder implements XMLElementMatch {
+		final String id;
+
+		public StreamFinder(String id) {
+			this.id = id;
+		}
+
+		/**
+		 * @see stream.util.XMLElementMatch#matches(org.w3c.dom.Element)
+		 */
+		@Override
+		public boolean matches(Element el) {
+			return "stream".equalsIgnoreCase(el.getNodeName())
+					&& id.equals(el.getAttribute("id"));
+		}
 	}
 }

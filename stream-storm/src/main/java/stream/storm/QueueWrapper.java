@@ -53,7 +53,7 @@ public class QueueWrapper implements Queue, Sink, Serializable {
 		log.debug("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
 		tuple.add(item);
-		collector.emit(name, tuple);
+		collector.emit(tuple);
 		return true;
 	}
 

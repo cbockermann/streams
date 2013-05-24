@@ -65,7 +65,7 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 			throws Exception {
 		String nextKey = selectNextStream();
 		if (nextKey == null) {
-			log.info("No more streams found for selection!");
+			log.debug("No more streams found for selection!");
 			return null;
 		}
 

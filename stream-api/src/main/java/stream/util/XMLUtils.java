@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -181,6 +183,28 @@ public class XMLUtils {
 		}
 
 		return null;
+	}
+
+	public static List<Element> findElements(Document doc, XMLElementMatch match) {
+		return findElements(doc.getDocumentElement(), match);
+	}
+
+	private static List<Element> findElements(Element el, XMLElementMatch match) {
+		List<Element> es = new ArrayList<Element>();
+		if (match.matches(el)) {
+			es.add(el);
+		}
+
+		NodeList children = el.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node node = children.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element e = (Element) node;
+				es.addAll(findElements(e, match));
+			}
+		}
+
+		return es;
 	}
 
 	public static Element findElementByUUID(Document doc, String attributeName,

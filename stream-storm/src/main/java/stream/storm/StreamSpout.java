@@ -3,16 +3,21 @@
  */
 package stream.storm;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import stream.Data;
 import stream.io.Stream;
 import stream.runtime.Variables;
+import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.StreamFactory;
+import stream.storm.config.StreamHandler.StreamFinder;
+import stream.util.XMLUtils;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -37,12 +42,35 @@ public class StreamSpout extends BaseRichSpout {
 	// the implementing class of the stream
 	protected final String className;
 	protected final Variables parameters;
+	protected final String xml;
+	protected final String id;
 
-	public StreamSpout(String className, Map<String, String> params) {
+	public StreamSpout(String xml, String id, String className,
+			Map<String, String> params) throws Exception {
 		log.debug("Creating spout for stream (class: {}, params: {})",
 				className, params);
+		this.xml = xml;
+		this.id = id;
 		this.className = className;
 		this.parameters = new Variables(params);
+		stream = createStream();
+	}
+
+	protected Stream createStream() throws Exception {
+		Stream stream = null;
+
+		Document doc = XMLUtils.parseDocument(xml);
+		List<Element> els = XMLUtils.findElements(doc, new StreamFinder(id));
+
+		if (els.size() != 1) {
+			throw new RuntimeException(
+					"Failed to locate 'stream' element for id '" + id + "'!");
+		}
+
+		Element el = els.get(0);
+		ObjectFactory objectFactory = ObjectFactory.newInstance();
+		stream = StreamFactory.createStream(objectFactory, el, parameters);
+		return stream;
 	}
 
 	/**
@@ -56,10 +84,10 @@ public class StreamSpout extends BaseRichSpout {
 			SpoutOutputCollector collector) {
 		this.output = collector;
 		try {
-			Map<String, String> params = new HashMap<String, String>(parameters);
-			log.info("Creating stream for class: {}, params: {}", className,
-					params);
-			stream = StreamFactory.createStream(className, params);
+
+			if (stream == null)
+				stream = createStream();
+
 			stream.init();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +105,9 @@ public class StreamSpout extends BaseRichSpout {
 		try {
 			Data item = stream.read();
 			log.debug("read item: {}", item);
-			if (item != null) {
+			if (item == null) {
+				Thread.sleep(500);
+			} else {
 				log.debug("Emitting item as tuple...");
 				output.emit(new Values(item));
 			}

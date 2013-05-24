@@ -52,7 +52,7 @@ public class QueueWrapper implements Queue, Sink, Serializable {
 		log.debug("Writing to queue '{}'  (item is: {})", name, item);
 		log.debug("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
-		tuple.add(item);
+		tuple.add(item.createCopy());
 		collector.emit(tuple);
 		return true;
 	}

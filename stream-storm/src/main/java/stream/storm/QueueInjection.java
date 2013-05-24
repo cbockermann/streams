@@ -17,8 +17,9 @@ import org.w3c.dom.Element;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.Subscription;
+import stream.io.Queue;
+import stream.runtime.DependencyInjection;
 import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ParameterInjection;
 import stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler;
 import backtype.storm.task.OutputCollector;
 
@@ -69,7 +70,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 				from);
 		for (Method m : p.getClass().getMethods()) {
 			log.debug("Checking method {}", m);
-			if (ParameterInjection.isQueueSetter(m)) {
+			if (DependencyInjection.isSetter(m, Queue.class)) {
 				final String qsn = getQueueSetterName(m);
 				String prop = qsn.substring(0, 1).toLowerCase()
 						+ qsn.substring(1);
@@ -81,11 +82,11 @@ public class QueueInjection implements ProcessorCreationHandler {
 					continue;
 				}
 
-				log.info(
+				log.debug(
 						"Found queue-setter for property {} (property value: '{}')",
 						prop, params.get(prop));
 
-				if (isQueueArraySetter(m)) {
+				if (DependencyInjection.isArraySetter(m, Queue.class)) {
 					String[] names = params.get(prop).split(",");
 
 					List<QueueWrapper> wrapper = new ArrayList<QueueWrapper>();
@@ -105,7 +106,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 					String name = params.get(prop);
 					subscriptions
 							.add(new Subscription(name.trim(), this.boltId));
-					log.info("Injecting a single queue... using method {}", m);
+					log.debug("Injecting a single queue... using method {}", m);
 					m.invoke(p, new QueueWrapper(collector, name));
 				}
 			} else {

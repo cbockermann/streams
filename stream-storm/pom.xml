@@ -11,6 +11,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<storm.scope>provided</storm.scope>
 	</properties>
 
 	<repositories>
@@ -29,18 +30,18 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-api</artifactId>
-			<version>0.9.10-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-core</artifactId>
-			<version>0.9.10-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>storm</groupId>
 			<artifactId>storm</artifactId>
 			<version>0.8.2</version>
-			<scope>provided</scope>
+			<scope>${storm.scope}</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
@@ -50,7 +51,13 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>[1.6,)</version>
+			<version>[1.5,)</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

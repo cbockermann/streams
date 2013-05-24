@@ -157,7 +157,7 @@ public class ProcessBolt extends AbstractBolt {
 		}
 
 		subscriptions.addAll(queueInjection.getSubscriptions());
-		log.info("Found {} subscribers for bolt '{}': " + subscriptions,
+		log.debug("Found {} subscribers for bolt '{}': " + subscriptions,
 				subscriptions.size(), uuid);
 		return process;
 	}
@@ -211,9 +211,9 @@ public class ProcessBolt extends AbstractBolt {
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
 
-		log.info("Preparing ProcessBolt {}", this.uuid);
+		log.debug("Preparing ProcessBolt {}", this.uuid);
 		this.output = collector;
-		log.info("   output collector: {}", output);
+		log.debug("   output collector: {}", output);
 
 		try {
 
@@ -231,7 +231,7 @@ public class ProcessBolt extends AbstractBolt {
 	 */
 	@Override
 	public void execute(Tuple input) {
-		log.info("Tuple received: {}", input);
+		log.debug("Tuple received: {}", input);
 
 		Data item = null;
 

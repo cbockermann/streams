@@ -51,12 +51,12 @@ public class QueueBolt extends AbstractBolt {
 	 */
 	@Override
 	public void execute(Tuple input) {
-		log.info("Executing for tuple {}", input);
+		log.debug("Executing for tuple {}", input);
 		if (output != null) {
-			log.info("   emitting tuple...");
+			log.debug("   emitting tuple...");
 			output.emit(input.getValues());
 		} else {
-			log.info("   no output defined, discarding tuple...");
+			log.debug("   no output defined, discarding tuple...");
 		}
 	}
 }

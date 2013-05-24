@@ -76,6 +76,41 @@ public class DependencyInjectionTest {
 			e.printStackTrace();
 			fail("Test failed: " + e.getMessage());
 		}
+	}
 
+	@Test
+	public void testIsSinkSetter() throws Exception {
+		Method m = getMethod(SimpleMockProcessor.class, "setOutput");
+		Assert.assertTrue(DependencyInjection.isSinkSetter(m));
+	}
+
+	@Test
+	public void testIsSinkArraySetter() throws Exception {
+		Method m = getMethod(SimpleMockProcessor.class, "setOutputs");
+		Assert.assertTrue(DependencyInjection.isArraySetter(m, Sink.class));
+
+		Assert.assertFalse(DependencyInjection.isArraySetter(m, Source.class));
+	}
+
+	/**
+	 * This method simply returns the first method of the given class which
+	 * matches the provided method name.
+	 * 
+	 * @param clazz
+	 * @param name
+	 * @return
+	 */
+	public static Method getMethod(Class<?> clazz, String name) {
+		try {
+			for (Method m : clazz.getMethods()) {
+				if (m.getName().equals(name))
+					return m;
+			}
+
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

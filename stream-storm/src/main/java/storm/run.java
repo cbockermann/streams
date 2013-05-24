@@ -183,6 +183,8 @@ public class run {
 			System.exit(-1);
 		}
 
+		stream.runtime.StreamRuntime.setupLogging();
+
 		File file = new File(params.get(0));
 		main(file.toURI().toURL());
 	}

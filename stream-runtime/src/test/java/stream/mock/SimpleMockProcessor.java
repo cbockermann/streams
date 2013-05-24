@@ -77,4 +77,6 @@ public class SimpleMockProcessor implements StatefulProcessor {
 		this.output = output;
 	}
 
+	public void setOutputs(Sink[] outputs) {
+	}
 }

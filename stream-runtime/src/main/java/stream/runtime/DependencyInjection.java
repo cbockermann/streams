@@ -258,6 +258,38 @@ public class DependencyInjection {
 		return Source.class.isAssignableFrom(paramTypes[0]);
 	}
 
+	public static boolean isSinkSetter(Method m) {
+		return isSetter(m, Sink.class);
+	}
+
+	public static boolean isSinkArraySetter(Method m) {
+		return isArraySetter(m, Sink.class);
+	}
+
+	public static boolean isSetter(Method m, Class<?> type) {
+		if (!m.getName().startsWith("set")) {
+			return false;
+		}
+
+		Class<?>[] paramTypes = m.getParameterTypes();
+		if (paramTypes.length != 1) {
+			return false;
+		}
+
+		if (paramTypes[0].isArray()) {
+			return type.isAssignableFrom(paramTypes[0].getComponentType());
+		} else {
+			return type.isAssignableFrom(paramTypes[0]);
+		}
+	}
+
+	public static boolean isArraySetter(Method m, Class<?> type) {
+		if (isSetter(m, type)) {
+			return m.getParameterTypes()[0].isArray();
+		}
+		return false;
+	}
+
 	/**
 	 * This method checks whether the given class implements the Service
 	 * interface.

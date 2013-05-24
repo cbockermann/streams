@@ -33,7 +33,7 @@ public class QueueWrapper implements Queue, Sink, Serializable {
 	public QueueWrapper(OutputCollector collector, String name) {
 		this.collector = collector;
 		this.name = name;
-		log.info("Creating QueueWrapper for queue '{}'", name);
+		log.debug("Creating QueueWrapper for queue '{}'", name);
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class QueueWrapper implements Queue, Sink, Serializable {
 	 */
 	@Override
 	public boolean write(Data item) throws Exception {
-		log.info("Writing to queue '{}'  (item is: {})", name, item);
-		log.info("   using collector {}", collector);
+		log.debug("Writing to queue '{}'  (item is: {})", name, item);
+		log.debug("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
 		tuple.add(item);
 		collector.emit(name, tuple);

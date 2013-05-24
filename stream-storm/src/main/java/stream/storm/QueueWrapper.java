@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.io.Queue;
 import stream.io.Sink;
 import backtype.storm.task.OutputCollector;
 
@@ -19,7 +20,7 @@ import backtype.storm.task.OutputCollector;
  * @author chris
  * 
  */
-public class QueueWrapper implements Sink, Serializable {
+public class QueueWrapper implements Queue, Sink, Serializable {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 5528349910849921579L;
@@ -48,24 +49,29 @@ public class QueueWrapper implements Sink, Serializable {
 	 */
 	@Override
 	public boolean write(Data item) throws Exception {
-		log.info("Writing to queue '{}' item {} to '{}'", name, item);
+		log.info("Writing to queue '{}'  (item is: {})", name, item);
 		log.info("   using collector {}", collector);
 		List<Object> tuple = new ArrayList<Object>();
 		tuple.add(item);
-		collector.emit(tuple);
+		collector.emit(name, tuple);
 		return true;
 	}
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean write(Collection<Data> data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+
+		for (Data item : data) {
+			List<Object> tuple = new ArrayList<Object>();
+			tuple.add(item);
+			collector.emit(tuple);
+		}
+
+		return true;
 	}
 
 	/**
@@ -81,5 +87,36 @@ public class QueueWrapper implements Sink, Serializable {
 	@Override
 	public void init() throws Exception {
 
+	}
+
+	/**
+	 * @see stream.io.Barrel#clear()
+	 */
+	@Override
+	public int clear() {
+		return 0;
+	}
+
+	/**
+	 * @see stream.io.Source#read()
+	 */
+	@Override
+	public Data read() throws Exception {
+		return null;
+	}
+
+	/**
+	 * @see stream.io.Queue#setSize(java.lang.Integer)
+	 */
+	@Override
+	public void setSize(Integer limit) {
+	}
+
+	/**
+	 * @see stream.io.Queue#getSize()
+	 */
+	@Override
+	public Integer getSize() {
+		return Integer.MAX_VALUE;
 	}
 }

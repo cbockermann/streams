@@ -5,9 +5,12 @@ package stream;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +51,8 @@ public class StreamTopology {
 	public final Map<String, SpoutDeclarer> spouts = new LinkedHashMap<String, SpoutDeclarer>();
 	public final Variables variables = new Variables();
 
+	final Set<Subscription> subscriptions = new LinkedHashSet<Subscription>();
+
 	/**
 	 * 
 	 * @param builder
@@ -62,6 +67,10 @@ public class StreamTopology {
 
 	public Variables getVariables() {
 		return variables;
+	}
+
+	public void addSubscription(Subscription sub) {
+		subscriptions.add(sub);
 	}
 
 	/**
@@ -163,6 +172,36 @@ public class StreamTopology {
 					}
 				}
 			}
+		}
+
+		//
+		// resolve subscriptions
+		//
+		Iterator<Subscription> it = st.subscriptions.iterator();
+		while (it.hasNext()) {
+			Subscription subscription = it.next();
+			log.info("Resolving subscription {}", subscription);
+
+			BoltDeclarer subscriber = st.bolts.get(subscription.subscriber());
+			if (subscriber != null) {
+				log.info("Found subscriber '{}' (subscriber-id: '{}')",
+						subscriber, subscription.subscriber());
+				String source = subscription.source();
+				String stream = subscription.subscriber();
+				log.info("connecting {} to none-group '{}' (stream id '"
+						+ stream + "')", subscriber, source);
+				subscriber.noneGrouping(source);
+				it.remove();
+			} else {
+				log.error("No subscriber found for id '{}'",
+						subscription.subscriber());
+			}
+		}
+
+		if (!st.subscriptions.isEmpty()) {
+			log.info("Unresolved subscriptions: {}", st.subscriptions);
+			throw new Exception("Found " + st.subscriptions.size()
+					+ " unresolved subscription references!");
 		}
 
 		return st;

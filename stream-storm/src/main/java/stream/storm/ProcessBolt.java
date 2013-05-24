@@ -7,8 +7,10 @@ import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +26,7 @@ import stream.Data;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.StormRunner;
+import stream.Subscription;
 import stream.data.DataFactory;
 import stream.io.Sink;
 import stream.runtime.Variables;
@@ -67,6 +70,12 @@ public class ProcessBolt extends AbstractBolt {
 	final BoltContext ctx = new BoltContext();
 
 	/**
+	 * The list of subscribers (e.g. output queues,...) that need to be
+	 * connected to this bolt
+	 */
+	final Set<Subscription> subscriptions = new LinkedHashSet<Subscription>();
+
+	/**
 	 * The bolt implementation requires an XML configuration (the complete
 	 * container XML as string) and the ID that identifies the corresponding
 	 * process within that XML.
@@ -85,6 +94,18 @@ public class ProcessBolt extends AbstractBolt {
 		// processors - this is required to determine any references to
 		// sinks/services
 		//
+		createProcess();
+	}
+
+	/**
+	 * This method returns the list (set) of queues ('sinks') that are
+	 * referenced by any of the processors of this process bolt. These need to
+	 * artificially be connected to this bolt (subscription model).
+	 * 
+	 * @return
+	 */
+	public Set<Subscription> getSubscriptions() {
+		return subscriptions;
 	}
 
 	/**
@@ -115,7 +136,8 @@ public class ProcessBolt extends AbstractBolt {
 		// The handler injects wrappers for any QueueService accesses, thus
 		// effectively doing the queue-flow injection
 		//
-		pf.addCreationHandler(new QueueInjection(output));
+		QueueInjection queueInjection = new QueueInjection(uuid, output);
+		pf.addCreationHandler(queueInjection);
 
 		log.debug("Creating processor-list from element {}", element);
 		List<Processor> list = pf.createNestedProcessors(element);
@@ -134,6 +156,9 @@ public class ProcessBolt extends AbstractBolt {
 			}
 		}
 
+		subscriptions.addAll(queueInjection.getSubscriptions());
+		log.info("Found {} subscribers for bolt '{}': " + subscriptions,
+				subscriptions.size(), uuid);
 		return process;
 	}
 

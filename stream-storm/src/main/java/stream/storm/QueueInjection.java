@@ -5,8 +5,10 @@ package stream.storm;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.w3c.dom.Element;
 
 import stream.Processor;
 import stream.ProcessorList;
+import stream.Subscription;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ParameterInjection;
 import stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler;
@@ -28,8 +31,11 @@ public class QueueInjection implements ProcessorCreationHandler {
 	static Logger log = LoggerFactory.getLogger(QueueInjection.class);
 
 	final OutputCollector collector;
+	final String boltId;
+	final Set<Subscription> subscriptions = new LinkedHashSet<Subscription>();
 
-	public QueueInjection(OutputCollector c) {
+	public QueueInjection(String boltId, OutputCollector c) {
+		this.boltId = boltId;
 		this.collector = c;
 	}
 
@@ -67,7 +73,17 @@ public class QueueInjection implements ProcessorCreationHandler {
 				final String qsn = getQueueSetterName(m);
 				String prop = qsn.substring(0, 1).toLowerCase()
 						+ qsn.substring(1);
-				log.debug("Found queue-setter for property {}", prop);
+
+				if (params.get(prop) == null) {
+					log.info(
+							"Found null-value for property '{}', skipping injection for this property.",
+							prop);
+					continue;
+				}
+
+				log.info(
+						"Found queue-setter for property {} (property value: '{}')",
+						prop, params.get(prop));
 
 				if (isQueueArraySetter(m)) {
 					String[] names = params.get(prop).split(",");
@@ -75,6 +91,8 @@ public class QueueInjection implements ProcessorCreationHandler {
 					List<QueueWrapper> wrapper = new ArrayList<QueueWrapper>();
 					for (String name : names) {
 						if (!name.trim().isEmpty()) {
+							subscriptions.add(new Subscription(name.trim(),
+									this.boltId));
 							wrapper.add(new QueueWrapper(collector, name));
 						}
 					}
@@ -85,12 +103,18 @@ public class QueueInjection implements ProcessorCreationHandler {
 
 				} else {
 					String name = params.get(prop);
-					log.debug("Injecting a single queue...");
+					subscriptions
+							.add(new Subscription(name.trim(), this.boltId));
+					log.info("Injecting a single queue... using method {}", m);
 					m.invoke(p, new QueueWrapper(collector, name));
 				}
 			} else {
 				log.debug("Skipping method {} => not a queue-setter", m);
 			}
 		}
+	}
+
+	public Set<Subscription> getSubscriptions() {
+		return subscriptions;
 	}
 }

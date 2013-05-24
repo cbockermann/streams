@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.StreamTopology;
+import stream.Subscription;
 import stream.runtime.setup.ObjectFactory;
 import stream.storm.ProcessBolt;
 import backtype.storm.topology.BoltDeclarer;
@@ -109,6 +110,11 @@ public class ProcessHandler extends ATopologyElementHandler {
 				log.warn("No input defined for process '{}'!", id);
 			}
 			st.addBolt(id, cur);
+
+			for (Subscription subscription : bolt.getSubscriptions()) {
+				log.info("Adding subscription:  {}", subscription);
+				st.addSubscription(subscription);
+			}
 		}
 	}
 }

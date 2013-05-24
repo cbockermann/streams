@@ -4,10 +4,13 @@
 package storm;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,6 +45,7 @@ public class run {
 
 	static Logger log = LoggerFactory.getLogger(run.class);
 	public final static String UUID_ATTRIBUTE = "id";
+	private static LocalCluster localCluster;
 
 	public static void addUUIDAttributes(Element element) {
 
@@ -98,19 +102,12 @@ public class run {
 		return null;
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(URL url) throws Exception {
 
-		List<String> params = storm.deploy.handleArgs(args);
+		ShutdownHook shutdown = new ShutdownHook();
+		Runtime.getRuntime().addShutdownHook(shutdown);
 
-		if (params.isEmpty()) {
-			System.err.println("You need to specify an XML configuration!");
-			System.exit(-1);
-		}
-
-		InputStream in = new FileInputStream(params.get(0));
+		InputStream in = url.openStream();
 
 		String xml = createIDs(in);
 		Document doc = DocumentBuilderFactory.newInstance()
@@ -140,7 +137,7 @@ public class run {
 		StormTopology storm = st.createTopology();
 
 		log.info("Starting local cluster...");
-		LocalCluster cluster = new LocalCluster();
+		LocalCluster cluster = startLocalCluster();
 
 		log.info("########################################################################");
 		log.info("submitting topology...");
@@ -150,11 +147,68 @@ public class run {
 		log.info("########################################################################");
 
 		log.info("Topology submitted.");
-		Utils.sleep(10000000);
 
-		log.info("########################################################################");
-		log.info("killing topology...");
-		cluster.killTopology("test");
-		cluster.shutdown();
+		Utils.sleep(Long.MAX_VALUE);
+	}
+
+	public static LocalCluster getLocalCluster() {
+		return localCluster;
+	}
+
+	public static LocalCluster startLocalCluster() {
+		if (localCluster != null) {
+			log.info("Local cluster {} already running...", localCluster);
+			return localCluster;
+		}
+
+		localCluster = new LocalCluster();
+		return localCluster;
+	}
+
+	public static void stopLocalCluster() {
+		if (localCluster != null) {
+			localCluster.shutdown();
+		}
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) throws Exception {
+
+		List<String> params = storm.deploy.handleArgs(args);
+
+		if (params.isEmpty()) {
+			System.err.println("You need to specify an XML configuration!");
+			System.exit(-1);
+		}
+
+		File file = new File(params.get(0));
+		main(file.toURI().toURL());
+	}
+
+	public static class ShutdownHook extends Thread {
+
+		private Set<String> topologies = new LinkedHashSet<String>();
+
+		public void addTopology(String name) {
+			topologies.add(name);
+		}
+
+		public void run() {
+
+			if (storm.run.getLocalCluster() == null) {
+				log.info("No local cluster started, nothing to shut down...");
+				return;
+			}
+
+			for (String topo : topologies) {
+				log.info("Killing topology '{}'", topo);
+				storm.run.getLocalCluster().killTopology(topo);
+			}
+
+			log.info("Shutting down local cluster...");
+			storm.run.stopLocalCluster();
+		}
 	}
 }

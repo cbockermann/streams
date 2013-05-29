@@ -66,9 +66,6 @@ public class BlockingQueue extends AbstractQueue {
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 
-	/** The capacity bound, or Integer.MAX_VALUE if none */
-	private final int capacity;
-
 	/** Current number of elements */
 	private final AtomicInteger count = new AtomicInteger(0);
 
@@ -99,8 +96,8 @@ public class BlockingQueue extends AbstractQueue {
 	 * {@link Integer#MAX_VALUE}.
 	 */
 	public BlockingQueue() {
-		this(1000000);
-		// this(Integer.MAX_VALUE);
+		last = head = new Node<Data>(null);
+
 	}
 
 	/**
@@ -112,10 +109,11 @@ public class BlockingQueue extends AbstractQueue {
 	 *             if {@code capacity} is not greater than zero
 	 */
 	public BlockingQueue(int capacity) {
+		super();
 		if (capacity <= 0)
 			throw new IllegalArgumentException();
 		this.capacity = capacity;
-		last = head = new Node<Data>(null);
+
 	}
 
 	private void signalNotEmpty() {

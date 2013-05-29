@@ -4,7 +4,7 @@
 package stream.io;
 
 /**
- * @author chris
+ * @author chris,Hendrik
  * 
  */
 public abstract class AbstractQueue implements Queue, QueueService { // TODO:
@@ -25,7 +25,8 @@ public abstract class AbstractQueue implements Queue, QueueService { // TODO:
 	// injecten...
 
 	protected String id;
-	protected Integer limit = 1000;
+
+	protected int capacity = 100000;
 
 	/**
 	 * @see stream.io.Source#getId()
@@ -48,7 +49,9 @@ public abstract class AbstractQueue implements Queue, QueueService { // TODO:
 	 */
 	@Override
 	public void setSize(Integer limit) {
-		this.limit = limit;
+		if (limit <= 0)
+			throw new IllegalArgumentException();
+		this.capacity = limit;
 	}
 
 	/**
@@ -56,6 +59,6 @@ public abstract class AbstractQueue implements Queue, QueueService { // TODO:
 	 */
 	@Override
 	public Integer getSize() {
-		return limit;
+		return capacity;
 	}
 }

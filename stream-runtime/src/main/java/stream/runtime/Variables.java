@@ -147,9 +147,7 @@ public class Variables implements Map<String, String>, Serializable {
 
 	protected boolean containsKey(String key) {
 		return variables.containsKey(key)
-				|| (parentContext != null && parentContext.containsKey(key)); // System.getProperty(key)
-																				// !=
-																				// null;
+				|| (parentContext != null && parentContext.containsKey(key));
 	}
 
 	public String get(String key) {

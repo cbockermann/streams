@@ -91,9 +91,15 @@ public class DocGenerator {
 	 */
 	public static void main(String[] args) {
 		try {
+
+			String output = System.getProperty("output");
+			if (output == null) {
+				output = "/tmp";
+			}
+
 			DocTree tree = DocTree.findDocs(CLASSES, args);
 			tree.print("  ");
-			tree.generateDocs(new File("/tmp"));
+			tree.generateDocs(new File(output));
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			e.printStackTrace();

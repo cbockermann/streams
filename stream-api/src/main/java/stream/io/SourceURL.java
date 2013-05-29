@@ -172,7 +172,7 @@ public class SourceURL implements Serializable {
 		}
 	}
 
-	protected boolean isGzip() {
+	public boolean isGzip() {
 		if (urlString != null && urlString.toLowerCase().endsWith(".gz"))
 			return true;
 

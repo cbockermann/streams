@@ -313,8 +313,6 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 	protected String createHeader(Data item) {
 		StringWriter s = new StringWriter();
-		s.append("# ");
-
 		Iterator<String> it = null;
 
 		if (keys != null)

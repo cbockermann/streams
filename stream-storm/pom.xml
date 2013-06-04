@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.10</version>
+		<version>0.9.11-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<name>stream-storm</name>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>stream-runtime</artifactId>
-			<version>0.9.10</version>
+			<version>0.9.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

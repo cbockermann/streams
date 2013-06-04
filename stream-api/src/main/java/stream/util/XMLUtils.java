@@ -9,9 +9,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,11 +28,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import stream.Data;
+import stream.data.DataFactory;
 
 /**
  * <p>
@@ -42,6 +50,7 @@ import org.w3c.dom.NodeList;
  */
 public class XMLUtils {
 
+	static Logger log = LoggerFactory.getLogger(XMLUtils.class);
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
 
 	public static Document parseDocument(String xmlString) throws Exception {
@@ -266,5 +275,102 @@ public class XMLUtils {
 
 		Element e = (Element) list.item(0);
 		return extract(path, level + 1, e);
+	}
+
+	public static Element getElementByPath(Document doc, String[] path) {
+
+		Element el = doc.getDocumentElement();
+		if (!path[0].equalsIgnoreCase(el.getNodeName()))
+			return null;
+
+		Element current = el;
+
+		for (int i = 1; i < path.length; i++) {
+
+			Element e = null;
+
+			NodeList ch = current.getChildNodes();
+			for (int j = 0; j < ch.getLength(); j++) {
+				Node n = ch.item(j);
+				if (n.getNodeType() == Node.ELEMENT_NODE) {
+					if (WildcardPattern.matches(path[i], n.getNodeName())) {
+						// if (n.getNodeName().equals(path[i])) {
+						e = (Element) n;
+						break;
+					}
+				}
+			}
+
+			if (e == null) {
+				log.debug("No element found for path[{}] = '{}'", i, path[i]);
+				return null;
+			} else {
+				current = e;
+			}
+		}
+
+		return current;
+	}
+
+	public static Data parseIntoDataItem(Document doc, String[] path) {
+
+		Data item = DataFactory.create();
+
+		Element el = getElementByPath(doc, path);
+		if (el == null) {
+			log.info("No element found for path '{}'", (Object[]) path);
+			return null;
+		} else {
+			Stack<String> stack = new Stack<String>();
+			parseIntoDataItem(el, item, stack);
+		}
+		return item;
+	}
+
+	public static Data parseIntoDataItem(Element elem, Data item,
+			Stack<String> path) {
+		path.push(elem.getNodeName());
+		log.info("descending into {}", path);
+
+		if (elem.getNodeType() == Node.TEXT_NODE) {
+			log.info("element is a text-node!");
+		}
+
+		List<Element> elems = new ArrayList<Element>();
+
+		NodeList ch = elem.getChildNodes();
+		for (int i = 0; i < ch.getLength(); i++) {
+			Node n = ch.item(i);
+			if (n.getNodeType() == Node.ELEMENT_NODE) {
+				Element el = (Element) n;
+				elems.add(el);
+			} else {
+				log.debug("Skipping child node '{}'", n.getNodeName());
+			}
+		}
+
+		if (elems.isEmpty()) {
+			item.put(join(path), elem.getTextContent());
+			return item;
+		}
+
+		for (Element e : elems) {
+			parseIntoDataItem(e, item, path);
+		}
+
+		path.pop();
+		return item;
+	}
+
+	protected static String join(Collection<String> strings) {
+		StringBuffer s = new StringBuffer();
+		Iterator<String> it = strings.iterator();
+		while (it.hasNext()) {
+			s.append(it.next());
+			if (it.hasNext()) {
+				s.append(":");
+			}
+		}
+		return s.toString();
 	}
 }

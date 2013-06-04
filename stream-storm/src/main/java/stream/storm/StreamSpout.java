@@ -106,7 +106,7 @@ public class StreamSpout extends BaseRichSpout {
 			Data item = stream.read();
 			log.debug("read item: {}", item);
 			if (item == null) {
-				Thread.sleep(500);
+				sleep(500);
 			} else {
 				log.debug("Emitting item as tuple...");
 				output.emit(new Values(item));
@@ -115,6 +115,13 @@ public class StreamSpout extends BaseRichSpout {
 			log.error("Failed to read next item: {}", e.getMessage());
 			if (log.isDebugEnabled())
 				e.printStackTrace();
+		}
+	}
+
+	protected void sleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (Exception e) {
 		}
 	}
 

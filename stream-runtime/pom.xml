@@ -6,12 +6,13 @@
 		<version>0.9.11-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>stream-runtime</name>
-	<artifactId>stream-runtime</artifactId>
+	<name>streams-runtime</name>
+	<artifactId>streams-runtime</artifactId>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.jwall</groupId>
-			<artifactId>stream-api</artifactId>
+			<artifactId>streams-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

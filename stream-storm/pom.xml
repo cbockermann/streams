@@ -6,14 +6,15 @@
 		<version>0.9.11-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>stream-storm</name>
-	<artifactId>stream-storm</artifactId>
+	<name>streams-storm</name>
+	<artifactId>streams-storm</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<storm.scope>provided</storm.scope>
 		<skipTests>true</skipTests>
 	</properties>
+
 
 	<repositories>
 		<repository>
@@ -30,12 +31,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jwall</groupId>
-			<artifactId>stream-api</artifactId>
+			<artifactId>streams-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
-			<artifactId>stream-core</artifactId>
+			<artifactId>streams-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -46,7 +47,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
-			<artifactId>stream-runtime</artifactId>
+			<artifactId>streams-runtime</artifactId>
 			<version>0.9.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>

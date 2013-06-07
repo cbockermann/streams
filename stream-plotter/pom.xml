@@ -6,9 +6,12 @@
     <version>0.9.11-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>stream-plotter</artifactId>
+  <artifactId>streams-plotter</artifactId>
   <name>stream-plotter</name>
   <description>A small package providing various plotter processors for the stream-api</description>
+  
+  
+  
   <dependencies>
   	<dependency>
   		<groupId>org.jfree</groupId>
@@ -29,13 +32,13 @@
   	</dependency>
   	<dependency>
   		<groupId>org.jwall</groupId>
-  		<artifactId>stream-runtime</artifactId>
+  		<artifactId>streams-runtime</artifactId>
   		<version>${project.version}</version>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.jwall</groupId>
-  		<artifactId>stream-api</artifactId>
+  		<artifactId>streams-api</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>

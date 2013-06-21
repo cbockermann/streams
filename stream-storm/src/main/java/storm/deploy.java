@@ -93,6 +93,8 @@ public class deploy {
 	 */
 	public static void main(String[] args) {
 		try {
+			stream.runtime.StreamRuntime.loadUserProperties();
+
 			StreamRuntime.setupLogging();
 			List<String> params = handleArgs(args);
 

@@ -104,6 +104,8 @@ public class run {
 
 	public static void main(URL url) throws Exception {
 
+		stream.runtime.StreamRuntime.loadUserProperties();
+
 		ShutdownHook shutdown = new ShutdownHook();
 		Runtime.getRuntime().addShutdownHook(shutdown);
 

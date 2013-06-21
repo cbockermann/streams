@@ -142,7 +142,7 @@ public class CsvStream extends AbstractLineStream {
 
 					String col = token[i];
 					if (col.startsWith("\"") && col.endsWith("\"")) {
-						col = col.substring(col.length() - 1).substring(1);
+						col = col.substring(1, col.length() - 1);
 					}
 
 					columns.add(col);

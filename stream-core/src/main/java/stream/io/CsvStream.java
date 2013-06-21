@@ -141,8 +141,11 @@ public class CsvStream extends AbstractLineStream {
 				for (int i = 0; i < token.length; i++) {
 
 					String col = token[i];
-					columns.add(col);
+					if (col.startsWith("\"") && col.endsWith("\"")) {
+						col = col.substring(col.length() - 1).substring(1);
+					}
 
+					columns.add(col);
 				}
 
 				// we advance to the next line for real data if asked for

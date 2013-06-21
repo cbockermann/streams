@@ -10,6 +10,8 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.minidev.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +35,12 @@ public class Encrypt extends AbstractProcessor {
 	public final static String DATA_KEY = "encrypted:data";
 	public final static String SERIALIZER_KEY = "serializer:class";
 
+	String serialize = "java";
 	Serializer serializer = new JavaSerializer();
 	String secret;
 	String cipher = "AES/CBC/PKCS5Padding";
+	SecretKeySpec key;
+	Cipher c;
 
 	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
@@ -43,6 +48,8 @@ public class Encrypt extends AbstractProcessor {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
+		key = new SecretKeySpec(MD5.md5(secret).getBytes(), "AES");
+		c = Cipher.getInstance(cipher);
 
 		if (secret == null) {
 			throw new Exception("No 'secret' parameter specified!");
@@ -80,16 +87,22 @@ public class Encrypt extends AbstractProcessor {
 
 		try {
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			serializer.write(input, baos);
-			baos.flush();
-			baos.close();
-			byte[] data = baos.toByteArray();
-			enc.put(SERIALIZER_KEY, serializer.getClass().getCanonicalName());
+			byte[] data;
 
-			Cipher c = Cipher.getInstance(cipher);
-			SecretKeySpec key = new SecretKeySpec(MD5.md5(secret).getBytes(),
-					"AES");
+			if ("json".equalsIgnoreCase(serialize)) {
+				String json = JSONObject.toJSONString(input);
+				data = json.getBytes(); // baos.toByteArray();
+				enc.put(SERIALIZER_KEY, "json");
+			} else {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				serializer.write(input, baos);
+				baos.flush();
+				baos.close();
+				data = baos.toByteArray();
+				enc.put(SERIALIZER_KEY, serializer.getClass()
+						.getCanonicalName());
+			}
+
 			IvParameterSpec iv = new IvParameterSpec(ivData);
 			c.init(Cipher.ENCRYPT_MODE, key, iv);
 
@@ -119,6 +132,21 @@ public class Encrypt extends AbstractProcessor {
 	 */
 	public void setSecret(String secret) {
 		this.secret = secret;
+	}
+
+	/**
+	 * @return the serializer
+	 */
+	public String getSerializer() {
+		return serialize;
+	}
+
+	/**
+	 * @param serializer
+	 *            the serializer to set
+	 */
+	public void setSerializer(String serialize) {
+		this.serialize = serialize;
 	}
 
 	public static byte[] computeIV(String id, String secret) {

@@ -4,10 +4,14 @@
 package stream.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +89,21 @@ public class Decrypt extends AbstractProcessor {
 			c.init(Cipher.DECRYPT_MODE, key, iv);
 			data = c.doFinal(data);
 
-			ByteArrayInputStream bais = new ByteArrayInputStream(data);
-			Data item = (Data) serializer.read(bais);
-			bais.close();
+			Data item;
+			if ("json".equalsIgnoreCase("" + input.get(Encrypt.SERIALIZER_KEY))) {
+				JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+				JSONObject object = (JSONObject) parser.parse(data);
+				item = DataFactory.create();
+				for (String k : object.keySet()) {
+					item.put(k, (Serializable) object.get(k));
+				}
+			} else {
+				ByteArrayInputStream bais = new ByteArrayInputStream(data);
+				item = (Data) serializer.read(bais);
+				bais.close();
+			}
 
-			// log.debug("Decrypted item: {}", item);
+			log.debug("Decrypted item: {}", item);
 			return item;
 		} catch (Exception e) {
 			log.error("Decryption failed: {}", e.getMessage());

@@ -23,9 +23,12 @@
  */
 package stream.data;
 
+import java.util.Set;
+
 import stream.Data;
 import stream.Processor;
 import stream.annotations.Description;
+import stream.util.KeyFilter;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each
@@ -64,7 +67,8 @@ public class RemoveKeys implements Processor {
 		if (keys == null)
 			return data;
 
-		for (String key : keys)
+		Set<String> ks = KeyFilter.select(data, keys);
+		for (String key : ks)
 			data.remove(key);
 		return data;
 	}

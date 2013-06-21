@@ -1,0 +1,14 @@
+<container>
+
+	<stream id="data" class="stream.test.TestStream" limit="1"/>
+
+	<process input="data">
+		<!-- 
+		 -->
+		<stream.data.Encrypt secret="verySecretPassword" />
+		<PrintJSON />
+		<stream.monitor.DataRate every="10000" />
+	
+	</process>
+
+</container>

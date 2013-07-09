@@ -63,9 +63,12 @@ public class MemoryUsage implements Processor, StatisticsService {
 	@Override
 	public Data process(Data input) {
 		Runtime rt = Runtime.getRuntime();
+		Long free = rt.freeMemory();
 		Long usedMB = (rt.totalMemory() - rt.freeMemory());
 		memoryUsed.set(usedMB);
+
 		input.put(key, usedMB);
+		input.put("@jvm:free", free);
 		return input;
 	}
 }

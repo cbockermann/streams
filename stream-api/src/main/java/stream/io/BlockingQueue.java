@@ -242,7 +242,6 @@ public class BlockingQueue extends AbstractQueue {
 			throw new IllegalArgumentException("Invalid queue-size '"
 					+ getSize() + "'!");
 		}
-
 	}
 
 	/**
@@ -405,21 +404,26 @@ public class BlockingQueue extends AbstractQueue {
 		return removed;
 	}
 
+	/**
+	 * @see stream.io.QueueService#level()
+	 */
 	@Override
 	public int level() {
-		// TODO Auto-generated method stub
-		return 0;
+		return count.get();
 	}
 
+	/**
+	 * @see stream.io.QueueService#capacity()
+	 */
 	@Override
 	public int capacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return capacity;
 	}
 
+	/**
+	 * @see stream.service.Service#reset()
+	 */
 	@Override
 	public void reset() throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 }

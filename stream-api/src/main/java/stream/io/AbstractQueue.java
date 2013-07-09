@@ -7,26 +7,11 @@ package stream.io;
  * @author chris,Hendrik
  * 
  */
-public abstract class AbstractQueue implements Queue, QueueService { // TODO:
-	// QueueService
-	// ist
-	// hier
-	// ein
-	// fieser
-	// Hack!!!
-	// Bitte
-	// wieder
-	// entfernen
-	// und
-	// Queues
-	// in
-	// prozessoren
-	// extra
-	// injecten...
+public abstract class AbstractQueue implements Queue, QueueService {
 
 	protected String id;
 
-	protected int capacity = 100000;
+	protected int capacity = Integer.MAX_VALUE;
 
 	/**
 	 * @see stream.io.Source#getId()

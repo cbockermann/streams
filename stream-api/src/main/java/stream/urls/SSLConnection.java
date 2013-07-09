@@ -149,8 +149,10 @@ public class SSLConnection extends TcpConnection {
 	 */
 	public void close() throws Exception {
 
-		if (socket != null)
+		if (socket != null) {
 			socket.close();
+			socket = null;
+		}
 	}
 
 	/**

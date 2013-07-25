@@ -14,7 +14,7 @@ import stream.Data;
  */
 public class DataObjectStream extends AbstractStream {
 
-	ObjectInputStream input;
+	protected ObjectInputStream input;
 
 	public DataObjectStream(SourceURL url) {
 		super(url);

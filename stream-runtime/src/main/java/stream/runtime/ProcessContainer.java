@@ -65,6 +65,7 @@ import stream.runtime.setup.handler.ProcessElementHandler;
 import stream.runtime.setup.handler.PropertiesHandler;
 import stream.runtime.setup.handler.QueueElementHandler;
 import stream.runtime.setup.handler.ServiceElementHandler;
+import stream.runtime.setup.handler.SinkElementHandler;
 import stream.runtime.setup.handler.StreamElementHandler;
 import stream.runtime.setup.handler.SystemPropertiesHandler;
 import stream.runtime.shutdown.LocalShutdownCondition;
@@ -225,6 +226,7 @@ public class ProcessContainer implements IContainer {
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
 		elementHandler.put("Queue", new QueueElementHandler());
+		elementHandler.put("Sink", new SinkElementHandler());
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,

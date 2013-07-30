@@ -225,8 +225,9 @@ public class ProcessContainer implements IContainer {
 
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
-		elementHandler.put("Queue", new QueueElementHandler());
 		elementHandler.put("Sink", new SinkElementHandler());
+		elementHandler.put("Queue", new QueueElementHandler());
+
 		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,

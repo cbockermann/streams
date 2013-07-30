@@ -95,7 +95,7 @@ public class StreamElementHandler implements ElementHandler {
 				if (id == null)
 					id = "" + stream;
 				stream.setId(id);
-				container.setStream(id, stream);
+				container.registerStream(id, stream);
 				computeGraph.addStream(id, stream);
 			}
 

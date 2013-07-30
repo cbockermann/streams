@@ -50,6 +50,7 @@ import stream.ProcessContext;
 import stream.data.DataFactory;
 import stream.io.BlockingQueue;
 import stream.io.Queue;
+import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
@@ -149,6 +150,9 @@ public class ProcessContainer implements IContainer {
 
 	/** The set of data streams (sources) */
 	protected final Map<String, Source> streams = new LinkedHashMap<String, Source>();
+	
+	/** The set of sinks */
+	protected final Map<String, Sink> sinks = new LinkedHashMap<String, Sink>();
 
 	/** The list of data-stream-queues, that can be fed from external instances */
 	protected final Map<String, BlockingQueue> listeners = new LinkedHashMap<String, BlockingQueue>();
@@ -459,11 +463,15 @@ public class ProcessContainer implements IContainer {
 		// if (externalListener) {
 		// listeners.put(id, queue);
 		// }
-		setStream(id, queue);
+		registerStream(id, queue);
 		// context.register(id, queue);
 	}
 
-	public void setStream(String id, Source stream) {
+	public void registerSink(String id, Sink sink) {
+		sinks.put(id, sink);
+	}
+	
+	public void registerStream(String id, Source stream) {
 		streams.put(id, stream);
 	}
 
@@ -499,6 +507,13 @@ public class ProcessContainer implements IContainer {
 			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);
 			stream.init();
+		}
+		
+		log.debug("Initializing all Sinks...");
+		for (String name : sinks.keySet()) {
+			Sink sink = sinks.get(name);
+			log.debug("Initializing sink '{}'", name);
+			sink.init();
 		}
 
 		log.debug("Creating {} active processes...", processes.size());

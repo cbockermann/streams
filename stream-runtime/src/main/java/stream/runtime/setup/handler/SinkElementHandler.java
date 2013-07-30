@@ -57,7 +57,7 @@ public class SinkElementHandler implements ElementHandler {
 		if (id == null || id.trim().isEmpty()) 
 			throw new IllegalArgumentException("No 'id' attribute defined for sink!");
 
-		Sink sink = (Queue) container.getObjectFactory().create(className,
+		Sink sink = (Sink) container.getObjectFactory().create(className,
 				params, ObjectFactory.createConfigDocument(element));
 		
 		container.registerSink(id, sink);

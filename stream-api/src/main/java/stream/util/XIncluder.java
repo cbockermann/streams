@@ -6,6 +6,7 @@ package stream.util;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,15 @@ public class XIncluder {
 	public Document perform(Document doc) throws Exception {
 
 		NodeList includes = doc.getElementsByTagName("include");
-		for (int i = 0; i < includes.getLength(); i++) {
 
-			Element include = (Element) includes.item(i);
+		// Since we remove the elements from the node directly later on, we must
+		// not iterate over the NodeList object but over a copy.
+		final List<Element> includeElements = new ArrayList<Element>();
+		for (int i = 0; i < includes.getLength(); i++) {
+			includeElements.add((Element) includes.item(i));
+		}
+		for (Element include : includeElements) {
+
 			Document included = null;
 
 			String file = include.getAttribute("file");

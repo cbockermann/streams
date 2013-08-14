@@ -363,18 +363,22 @@ public class ComputeGraph {
 	}
 
 	public void addQueue(String id, stream.io.Queue queue) {
-		if (sinks.containsKey(id)) {
+		addSource(id, queue);
+		addSink(id, queue);
+	}
+
+	public void addSink(String id, Sink sink) {
+		if (sinks.containsKey(id))
 			throw new RuntimeException("A queue with id '" + id
 					+ "' has already been defined!");
-		}
+		sinks.put(id, sink);
+	}
 
-		if (sources.containsKey(id)) {
+	public void addSource(String id, Source source) {
+		if (sources.containsKey(id))
 			throw new RuntimeException("A stream with id '" + id
 					+ "' has already been defined!");
-		}
-
-		sinks.put(id, queue);
-		sources.put(id, queue);
+		sources.put(id, source);
 	}
 
 	public Map<String, Sink> sinks() {

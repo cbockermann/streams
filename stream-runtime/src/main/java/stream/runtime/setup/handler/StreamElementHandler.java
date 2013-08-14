@@ -115,8 +115,8 @@ public class StreamElementHandler implements ElementHandler {
 					if (lid == null)
 						lid = "" + stream;
 					stream.setId(lid);
-					container.setStream(lid, stream);
 					computeGraph.addStream(lid, stream);
+					container.registerStream(lid, stream);
 				}
 
 				if (stream instanceof Service) {

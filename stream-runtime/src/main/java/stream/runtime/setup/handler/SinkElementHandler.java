@@ -1,11 +1,13 @@
 package stream.runtime.setup.handler;
 
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import org.w3c.dom.Element;
 
 import stream.ComputeGraph;
 import stream.io.Queue;
+import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
@@ -13,14 +15,14 @@ import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.service.Service;
 
-public class QueueElementHandler implements ElementHandler {
+public class SinkElementHandler implements ElementHandler {
 
 	/**
 	 * @see stream.runtime.ElementHandler#getKey()
 	 */
 	@Override
 	public String getKey() {
-		return "Queue";
+		return "Sink";
 	}
 
 	/**
@@ -44,28 +46,23 @@ public class QueueElementHandler implements ElementHandler {
 
 		String className = element.getAttribute("class");
 		if (className == null || className.trim().isEmpty())
-			className = "stream.io.BlockingQueue";
+			throw new IllegalArgumentException("class attribute is missing ");
 
 		Map<String, String> params = container.getObjectFactory()
 				.getAttributes(element);
-		if (!params.containsKey("class")) {
-			params.put("class", "stream.io.BlockingQueue");
-		}
+		if (!params.containsKey("class")) 
+			throw new IllegalArgumentException("class attribute is missing ");
 
 		String id = element.getAttribute("id");
 		if (id == null || id.trim().isEmpty()) 
-			throw new Exception("No 'id' attribute defined for queue!");
+			throw new IllegalArgumentException("No 'id' attribute defined for sink!");
 
-		// TODO Dieses erzeugen einer Queue und das erzeugen implizieter Queues
-		// sollte identisch sein....
-		Queue queue = (Queue) container.getObjectFactory().create(className,
+		Sink sink = (Sink) container.getObjectFactory().create(className,
 				params, ObjectFactory.createConfigDocument(element));
-		container.registerQueue(id, queue, true);
-		computeGraph.addQueue(id, queue);
+		
+		container.registerSink(id, sink);
+		computeGraph.addSink(id,sink);
 
-		if (queue instanceof Service) {
-			container.getContext().register(id, (Service) queue);
-			computeGraph.addService(id, (Service) queue);
-		}
+		
 	}
 }

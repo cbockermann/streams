@@ -24,6 +24,8 @@
 package stream.runtime.setup.handler;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -89,18 +91,37 @@ public class StreamElementHandler implements ElementHandler {
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
-			Stream stream = StreamFactory.createStream(objectFactory, element,
-					variables);
-			if (stream != null) {
-				if (id == null)
-					id = "" + stream;
-				stream.setId(id);
-				container.setStream(id, stream);
-				computeGraph.addStream(id, stream);
+			List<String> cp = new ArrayList<String>();
+			String copies = element.getAttribute("copies");
+			if (copies == null || copies.trim().isEmpty()) {
+				cp.add(id);
+			} else {
+				String[] t = copies.split(",");
+				for (String c : t) {
+					if (!c.trim().isEmpty()) {
+						cp.add(c.trim());
+					}
+				}
 			}
 
-			if (stream instanceof Service) {
-				container.getContext().register(id, (Service) stream);
+			for (String sid : cp) {
+				log.info("Creating stream for copy '{}'", sid);
+				Variables local = new Variables(variables);
+				local.put("copy.id", sid);
+				String lid = local.expand(sid);
+				Stream stream = StreamFactory.createStream(objectFactory,
+						element, variables);
+				if (stream != null) {
+					if (lid == null)
+						lid = "" + stream;
+					stream.setId(lid);
+					container.setStream(lid, stream);
+					computeGraph.addStream(lid, stream);
+				}
+
+				if (stream instanceof Service) {
+					container.getContext().register(lid, (Service) stream);
+				}
 			}
 		} catch (FileNotFoundException fnfe) {
 			throw new Exception("Cannot create stream from referenced file: "

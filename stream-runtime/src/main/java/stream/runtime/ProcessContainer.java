@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,7 +49,6 @@ import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
 import stream.data.DataFactory;
-import stream.io.BlockingQueue;
 import stream.io.Queue;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
@@ -71,6 +71,7 @@ import stream.runtime.shutdown.ServerShutdownCondition;
 import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.util.XIncluder;
 import stream.util.XMLUtils;
 
 /**
@@ -151,7 +152,7 @@ public class ProcessContainer implements IContainer {
 	protected final Map<String, Source> streams = new LinkedHashMap<String, Source>();
 
 	/** The list of data-stream-queues, that can be fed from external instances */
-	protected final Map<String, BlockingQueue> listeners = new LinkedHashMap<String, BlockingQueue>();
+	protected final Map<String, Queue> listeners = new LinkedHashMap<String, Queue>();
 
 	/** The list of processes running in this container */
 	protected final List<Process> processes = new ArrayList<Process>();
@@ -236,6 +237,9 @@ public class ProcessContainer implements IContainer {
 		dbf.setNamespaceAware(true);
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(url.openStream());
+
+		XIncluder includer = new XIncluder();
+		doc = includer.perform(doc);
 
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);
@@ -385,6 +389,13 @@ public class ProcessContainer implements IContainer {
 		return serviceRefs;
 	}
 
+	public void register(LifeCycle lc) {
+		if (!this.lifeCyleObjects.contains(lc)) {
+			log.debug("Registering new life-cycle object {}", lc);
+			this.lifeCyleObjects.add(lc);
+		}
+	}
+
 	private void init(Document doc) throws Exception {
 		Element root = doc.getDocumentElement();
 
@@ -456,9 +467,9 @@ public class ProcessContainer implements IContainer {
 	public void registerQueue(String id, Queue queue, boolean externalListener)
 			throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
-		// if (externalListener) {
-		// listeners.put(id, queue);
-		// }
+		if (externalListener) {
+			listeners.put(id, queue);
+		}
 		setStream(id, queue);
 		// context.register(id, queue);
 	}
@@ -499,6 +510,12 @@ public class ProcessContainer implements IContainer {
 			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);
 			stream.init();
+		}
+
+		log.info("Initializing life-cycle objects...");
+		for (LifeCycle lc : this.lifeCyleObjects) {
+			log.info("Initializing life-cycle for {}", lc);
+			lc.init(context);
 		}
 
 		log.debug("Creating {} active processes...", processes.size());
@@ -613,7 +630,26 @@ public class ProcessContainer implements IContainer {
 							e.getMessage());
 					if (log.isDebugEnabled())
 						e.printStackTrace();
+				} finally {
+					this.lifeCyleObjects.remove(lf);
 				}
+			}
+		}
+
+		Iterator<LifeCycle> it = this.lifeCyleObjects.iterator();
+		while (it.hasNext()) {
+			LifeCycle lc = it.next();
+
+			try {
+				log.info("Finishing life-cycle object {}", lc);
+				lc.finish();
+			} catch (Exception e) {
+				log.error("Failed to end life-cycle object {}: {}", lc,
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			} finally {
+				it.remove();
 			}
 		}
 	}

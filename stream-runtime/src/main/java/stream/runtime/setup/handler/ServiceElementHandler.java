@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
+import stream.runtime.LifeCycle;
 import stream.runtime.ProcessContainer;
 import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
@@ -107,6 +108,10 @@ public class ServiceElementHandler implements ElementHandler {
 					ObjectFactory.createConfigDocument(element));
 			service.reset();
 			container.getContext().register(id, service);
+			if (service instanceof LifeCycle) {
+				container.register((LifeCycle) service);
+			}
+
 		} catch (Exception e) {
 			log.error("Failed to create and register service '{}': {}", id,
 					e.getMessage());

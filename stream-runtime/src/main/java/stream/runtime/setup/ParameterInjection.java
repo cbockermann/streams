@@ -163,6 +163,12 @@ public class ParameterInjection {
 							if (t[0] == Float.TYPE)
 								po = new Float(in);
 
+							if (t[0] == Long.TYPE)
+								po = new Long(in);
+
+							if (t[0] == Character.TYPE)
+								po = new Character(in.charAt(0));
+
 						} else {
 
 							if (t[0].isArray()) {

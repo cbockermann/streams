@@ -56,8 +56,8 @@ public class ByteSizeParser {
 		String s = str.trim();
 		while (s.length() > 0) {
 
-			String[] tok = readInteger(s);
-			Integer i = new Integer(tok[0]);
+			String[] tok = readLong(s);
+			Long i = new Long(tok[0]);
 
 			s = tok[1].trim();
 			tok = readUnit(s);
@@ -86,7 +86,7 @@ public class ByteSizeParser {
 		return time;
 	}
 
-	public static String[] readInteger(String str) {
+	public static String[] readLong(String str) {
 
 		StringBuffer s = new StringBuffer();
 		int i = 0;

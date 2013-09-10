@@ -73,6 +73,8 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 
 		Data nextItem = stream.read();
 		if (nextItem == null) {
+			log.info("Stream {} has ended, removing it from the multistream.",
+					nextKey);
 			streams.remove(nextKey);
 			additionOrder.remove(nextKey);
 			return readNext(item, streams);

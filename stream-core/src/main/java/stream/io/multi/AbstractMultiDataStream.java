@@ -85,7 +85,7 @@ public abstract class AbstractMultiDataStream implements MultiDataStream {
 	public void addStream(String id, Stream stream) {
 		streams.put(id, stream);
 		additionOrder.add(id);
-		log.info("added Stream {}", stream);
+		log.debug("added Stream {}", stream);
 	}
 
 	@Override

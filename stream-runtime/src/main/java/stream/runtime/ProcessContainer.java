@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -268,10 +269,15 @@ public class ProcessContainer implements IContainer {
 				&& !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
 
-		String host = InetAddress.getLocalHost().getHostAddress(); // .getHostName();
-		name = InetAddress.getLocalHost().getHostName();
-		if (name.indexOf(".") > 0) {
-			name = name.substring(0, name.indexOf("."));
+		String host = "localhost";
+		try {
+			host = InetAddress.getLocalHost().getHostAddress(); // .getHostName();
+			name = InetAddress.getLocalHost().getHostName();
+			if (name.indexOf(".") > 0) {
+				name = name.substring(0, name.indexOf("."));
+			}
+		} catch (Exception e) {
+			name = UUID.randomUUID().toString();
 		}
 
 		log.debug("Default hostname is: {}", host);

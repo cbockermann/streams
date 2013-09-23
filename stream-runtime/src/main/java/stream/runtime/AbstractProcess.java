@@ -63,7 +63,7 @@ public abstract class AbstractProcess implements stream.Process {
 
 	protected final Map<String, String> properties = new LinkedHashMap<String, String>();
 
-	Priority priority = new Priority();
+	protected Priority priority = new Priority();
 
 	/**
 	 * @see stream.Process#setInput(stream.io.Source)
@@ -137,9 +137,8 @@ public abstract class AbstractProcess implements stream.Process {
 		processContext = new ProcessContextImpl(context);
 
 		for (Processor proc : processors) {
-			if (proc instanceof StatefulProcessor) {
+			if (proc instanceof StatefulProcessor)
 				((StatefulProcessor) proc).init(processContext);
-			}
 		}
 		log.debug("Process {} (source: {}) initialized, processors: ", this,
 				getInput());
@@ -149,23 +148,18 @@ public abstract class AbstractProcess implements stream.Process {
 	 * @see stream.DataProcessor#finish()
 	 */
 	public void finish() throws Exception {
-
 		log.debug("Finishing process {} (source: {})...", this, this.getInput());
-		try {
-			for (Processor proc : processors) {
-				if (proc instanceof StatefulProcessor) {
-					try {
-						log.debug("Finishing processor {}", proc);
-						((StatefulProcessor) proc).finish();
-					} catch (Exception e) {
-						log.error("Failed to finish processor '{}': {}", proc,
-								e.getMessage());
-						e.printStackTrace();
-					}
+		for (Processor proc : processors) {
+			if (proc instanceof StatefulProcessor) {
+				try {
+					log.debug("Finishing processor {}", proc);
+					((StatefulProcessor) proc).finish();
+				} catch (Exception e) {
+					log.error("Failed to finish processor '{}': {}", proc,
+							e.getMessage());
+					e.printStackTrace();
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -200,6 +194,7 @@ public abstract class AbstractProcess implements stream.Process {
 			log.debug("No more items could be read, exiting this process.");
 
 		} catch (Exception e) {
+			// TODO ExceptionHandling
 			log.error("Aborting process due to errors: {}", e.getMessage());
 			e.printStackTrace();
 		}

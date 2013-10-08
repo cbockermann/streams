@@ -9,7 +9,7 @@ import org.w3c.dom.Document;
 
 import stream.runtime.DependencyInjection;
 import stream.runtime.IContainer;
-import stream.runtime.Variables;
+import stream.util.Variables;
 
 /**
  * <p>

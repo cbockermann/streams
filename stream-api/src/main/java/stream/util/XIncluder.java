@@ -28,7 +28,13 @@ public class XIncluder {
 	static Logger log = LoggerFactory.getLogger(XIncluder.class);
 
 	public Document perform(Document doc) throws Exception {
+		return perform(doc, new Variables());
+	}
 
+	public Document perform(Document doc, Variables context) throws Exception {
+
+		Variables vars = XMLUtils.getProperties(doc);
+		vars.expandAndAdd(context);
 		NodeList includes = doc.getElementsByTagName("include");
 
 		// Since we remove the elements from the node directly later on, we must
@@ -45,6 +51,8 @@ public class XIncluder {
 			String url = include.getAttribute("url");
 			if (url != null && !url.trim().isEmpty()) {
 				log.debug("Found xinclude for URL {}", url);
+				url = vars.expand(url);
+				log.info("   url expanded to: '{}'", url);
 				SourceURL source = new SourceURL(url);
 				log.debug("reading document from {}", source);
 				included = XMLUtils.parseDocument(source.openStream());
@@ -52,6 +60,10 @@ public class XIncluder {
 			}
 
 			if (file != null) {
+				log.debug("including file '{}'", file);
+				file = vars.expand(file);
+				log.debug("   file expanded to '{}'", file);
+
 				File f = new File(file);
 				if (f.canRead()) {
 					log.debug("including document from {}", f.getAbsolutePath());
@@ -77,7 +89,7 @@ public class XIncluder {
 			} else {
 				log.debug("Recursively including documents... ");
 				XIncluder nested = new XIncluder();
-				included = nested.perform(included);
+				included = nested.perform(included, vars);
 			}
 
 			Element parent = (Element) include.getParentNode();

@@ -37,11 +37,11 @@ import stream.io.Stream;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.StreamFactory;
 import stream.service.Service;
+import stream.util.Variables;
 
 /**
  * @author chris
@@ -105,7 +105,7 @@ public class StreamElementHandler implements ElementHandler {
 			}
 
 			for (String sid : cp) {
-				log.info("Creating stream for copy '{}'", sid);
+				log.debug("Creating stream for copy '{}'", sid);
 				Variables local = new Variables(variables);
 				local.put("copy.id", sid);
 				String lid = local.expand(sid);

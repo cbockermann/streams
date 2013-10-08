@@ -48,10 +48,10 @@ import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
-import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
 import stream.service.Service;
+import stream.util.Variables;
 
 /**
  * @author chris

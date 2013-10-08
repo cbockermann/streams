@@ -74,6 +74,7 @@ import stream.runtime.shutdown.ServerShutdownCondition;
 import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
 import stream.service.Service;
+import stream.util.Variables;
 import stream.util.XIncluder;
 import stream.util.XMLUtils;
 

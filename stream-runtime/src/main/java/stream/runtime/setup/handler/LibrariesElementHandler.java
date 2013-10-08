@@ -19,10 +19,10 @@ import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
 import stream.runtime.dependencies.Dependency;
 import stream.runtime.dependencies.DependencyResolver;
 import stream.runtime.setup.ObjectFactory;
+import stream.util.Variables;
 
 /**
  * @author chris

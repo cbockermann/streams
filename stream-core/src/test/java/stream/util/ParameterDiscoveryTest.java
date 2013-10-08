@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.SetValue;
-import stream.runtime.Variables;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.runtime.setup.ParameterInjection;
 

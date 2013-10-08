@@ -13,9 +13,9 @@ import org.w3c.dom.Element;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
 import stream.runtime.rpc.RMIClient;
 import stream.runtime.setup.ObjectFactory;
+import stream.util.Variables;
 
 /**
  * @author chris

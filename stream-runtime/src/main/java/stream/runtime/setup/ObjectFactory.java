@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
 import stream.Configurable;
 import stream.annotations.BodyContent;
 import stream.runtime.RuntimeClassLoader;
-import stream.runtime.Variables;
+import stream.util.Variables;
 import stream.utils.FileUtils;
 
 /**

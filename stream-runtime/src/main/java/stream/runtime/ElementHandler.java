@@ -25,6 +25,8 @@ package stream.runtime;
 
 import org.w3c.dom.Element;
 
+import stream.util.Variables;
+
 
 /**
  * 

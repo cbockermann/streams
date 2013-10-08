@@ -9,9 +9,9 @@ import stream.io.Queue;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.service.Service;
+import stream.util.Variables;
 
 public class QueueElementHandler implements ElementHandler {
 

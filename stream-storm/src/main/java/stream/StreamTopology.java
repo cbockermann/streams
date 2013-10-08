@@ -20,7 +20,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.runtime.DependencyInjection;
-import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.handler.PropertiesHandler;
 import stream.storm.config.BoltHandler;
@@ -29,6 +28,7 @@ import stream.storm.config.ProcessHandler;
 import stream.storm.config.QueueHandler;
 import stream.storm.config.SpoutHandler;
 import stream.storm.config.StreamHandler;
+import stream.util.Variables;
 import stream.util.XMLUtils;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;

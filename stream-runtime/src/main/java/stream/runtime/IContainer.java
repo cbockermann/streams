@@ -10,6 +10,7 @@ import stream.ComputeGraph;
 import stream.Process;
 import stream.io.Source;
 import stream.runtime.setup.ServiceReference;
+import stream.util.Variables;
 
 /**
  * @author chris

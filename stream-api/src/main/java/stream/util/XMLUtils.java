@@ -373,4 +373,25 @@ public class XMLUtils {
 		}
 		return s.toString();
 	}
+
+	public static Variables getProperties(Document doc) {
+		Variables vars = new Variables(System.getProperties());
+
+		NodeList list = doc.getElementsByTagName("properties");
+		for (int i = 0; i < list.getLength(); i++) {
+
+			Element elem = (Element) list.item(i);
+			NodeList children = elem.getChildNodes();
+			for (int j = 0; j < children.getLength(); j++) {
+				Node node = children.item(j);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element prop = (Element) node;
+					vars.put(prop.getNodeName(),
+							vars.expand(prop.getTextContent()));
+				}
+			}
+		}
+
+		return vars;
+	}
 }

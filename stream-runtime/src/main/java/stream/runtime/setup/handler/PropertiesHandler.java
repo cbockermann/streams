@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
 
 import stream.runtime.DependencyInjection;
 import stream.runtime.IContainer;
-import stream.runtime.Variables;
+import stream.util.Variables;
 
 /**
  * <p>

@@ -38,7 +38,7 @@ import stream.io.SourceURL;
 import stream.io.Stream;
 import stream.io.multi.MultiDataStream;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
+import stream.util.Variables;
 
 /**
  * @author chris

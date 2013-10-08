@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime;
+package stream.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,6 +88,13 @@ public class Variables implements Map<String, String>, Serializable {
 
 	public void set(String key, String val) {
 		variables.put(key, val);
+	}
+
+	public void expandAndAdd(Map<String, String> vars) {
+		Map<String, String> vals = expandAll(vars);
+		for (String key : vals.keySet()) {
+			variables.put(key, vals.get(key));
+		}
 	}
 
 	public Map<String, String> expandAll(Map<String, String> vars) {

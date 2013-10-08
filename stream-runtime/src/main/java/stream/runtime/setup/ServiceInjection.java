@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.ComputeGraph;
 import stream.runtime.ContainerContext;
-import stream.runtime.Variables;
 import stream.service.Service;
+import stream.util.Variables;
 
 /**
  * This class implements the service-injection, i.e. it will check a number of

@@ -39,7 +39,7 @@ import stream.annotations.BodyContent;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
-import stream.runtime.Variables;
+import stream.util.Variables;
 
 /**
  * <p>

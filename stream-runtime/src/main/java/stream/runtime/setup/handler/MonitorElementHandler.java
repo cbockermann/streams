@@ -34,9 +34,9 @@ import stream.Processor;
 import stream.runtime.DependencyInjection;
 import stream.runtime.Monitor;
 import stream.runtime.ProcessContainer;
-import stream.runtime.Variables;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
+import stream.util.Variables;
 
 /**
  * @author chris

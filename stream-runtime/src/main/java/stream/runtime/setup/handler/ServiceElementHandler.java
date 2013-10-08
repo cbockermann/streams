@@ -105,7 +105,7 @@ public class ServiceElementHandler implements ElementHandler {
 				className);
 		try {
 			Service service = (Service) objectFactory.create(className, params,
-					ObjectFactory.createConfigDocument(element));
+					ObjectFactory.createConfigDocument(element), variables);
 			service.reset();
 			container.getContext().register(id, service);
 			if (service instanceof LifeCycle) {

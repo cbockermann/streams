@@ -21,11 +21,13 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.test;
+package stream.property;
 
 import java.net.URL;
 
 import org.junit.Test;
+
+import stream.test.DependencyTest;
 
 /**
  * @author chris

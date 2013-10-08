@@ -5,7 +5,6 @@ package stream.runtime.setup.handler;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.io.SourceURL;
 import stream.runtime.DependencyInjection;
 import stream.runtime.IContainer;
 import stream.util.Variables;
@@ -40,12 +40,18 @@ public class PropertiesHandler implements DocumentHandler {
 	public void handle(IContainer container, Document doc, Variables variables,
 			DependencyInjection depInj) throws Exception {
 
+		// add system properties, e.g defined at command line using the -D flag:
+		// java -Dproperty-name=property-value
+		//
+		Variables systemVariables = new Variables();
+		addSystemProperties(systemVariables);
+
 		// handle maven-like properties, e.g.
 		// <properties>
 		// <property-name>value-of-property</property-name>
 		// </properties>
 		//
-		findPropertiesElements(container, doc, variables);
+		findPropertiesElements(container, doc, variables, systemVariables);
 
 		// handle property elements, i.e.
 		// <property>
@@ -54,6 +60,11 @@ public class PropertiesHandler implements DocumentHandler {
 		// </property>
 		//
 		findPropertyElements(container, doc, variables);
+
+		// add system properties, e.g defined at command line using the -D flag:
+		// java -Dproperty-name=property-value
+		//
+		addSystemProperties(variables);
 
 	}
 
@@ -65,7 +76,7 @@ public class PropertiesHandler implements DocumentHandler {
 	 * @param doc
 	 */
 	private void findPropertiesElements(IContainer container, Document doc,
-			Variables variables) {
+			Variables variables, Variables systemProperties) {
 		NodeList list = doc.getElementsByTagName("properties");
 		for (int i = 0; i < list.getLength(); i++) {
 
@@ -86,14 +97,10 @@ public class PropertiesHandler implements DocumentHandler {
 
 			if (prop.hasAttribute("url")) {
 				String purl = prop.getAttribute("url");
+				// url via systemProperties;
+				purl = systemProperties.expand(purl);
 				try {
-					URL propUrl;
-					if (purl.toLowerCase().startsWith("classpath:")) {
-						propUrl = PropertiesHandler.class.getResource(purl
-								.substring("classpath:".length()));
-					} else {
-						propUrl = new URL(prop.getAttribute("url"));
-					}
+					SourceURL propUrl = new SourceURL(purl);
 
 					Properties p = new Properties();
 					p.load(propUrl.openStream());
@@ -107,7 +114,6 @@ public class PropertiesHandler implements DocumentHandler {
 							purl, e.getMessage());
 				}
 			}
-
 			if (prop.hasAttribute("file")) {
 				File file = new File(prop.getAttribute("file"));
 				try {
@@ -154,6 +160,18 @@ public class PropertiesHandler implements DocumentHandler {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * This method adds all the system properties to the container properties,
+	 * possibly overwriting pre-defined properties.
+	 * 
+	 * @param container
+	 */
+	private void addSystemProperties(Variables variables) {
+		for (Object key : System.getProperties().keySet()) {
+			variables.set(key.toString(), System.getProperty(key.toString()));
 		}
 	}
 

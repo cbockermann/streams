@@ -1,0 +1,13 @@
+<Container>
+
+	<Stream id="random" class="stream.io.RandomStream" limit="10" />
+	
+	<properties url="${container.default.properties}"/>
+	<properties url="${container.specific.properties}"/>"/>
+
+	<process id="reader" input="random">
+		<stream.test.SystemPropertyProcessor
+			property="${container.test.property1}" />
+	</process>
+
+</Container>

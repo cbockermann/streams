@@ -108,6 +108,16 @@ public class run {
 		return list;
 	}
 
+	public static void mainWithMap(URL url, Map<String, String> args)
+			throws Exception {
+		for (Map.Entry<String, String> me : args.entrySet()) {
+			System.setProperty(me.getKey(), me.getValue());
+		}
+
+		setupOutput();
+		main(url);
+	}
+
 	/**
 	 * @param args
 	 */

@@ -110,12 +110,17 @@ public class run {
 
 	public static void mainWithMap(URL url, Map<String, String> args)
 			throws Exception {
-		for (Map.Entry<String, String> me : args.entrySet()) {
-			System.setProperty(me.getKey(), me.getValue());
-		}
+		StreamRuntime.setupLogging();
 
-		setupOutput();
-		main(url);
+		StreamRuntime.loadUserProperties();
+
+		log.debug("Creating process-container from configuration at {}", url);
+		ProcessContainer container = new ProcessContainer(url, null, args);
+
+		log.info("Starting process-container...");
+		container.run();
+		log.info("Container finished.");
+
 	}
 
 	/**

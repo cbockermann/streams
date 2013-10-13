@@ -235,8 +235,21 @@ public class ProcessContainer implements IContainer {
 	 * @param url
 	 * @throws Exception
 	 */
+	public ProcessContainer(URL url) throws Exception {
+		this(url, null);
+	}
+
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
+		this(url, customElementHandler, null);
+	}
+
+	public ProcessContainer(URL url,
+			Map<String, ElementHandler> customElementHandler,
+			Map<String, String> variables) throws Exception {
+
+		if (variables != null)
+			containerVariables.addVariables(variables);
 		container.add(this);
 
 		LibrariesElementHandler libHandler = new LibrariesElementHandler(

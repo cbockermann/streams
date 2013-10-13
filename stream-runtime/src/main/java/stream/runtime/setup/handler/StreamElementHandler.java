@@ -96,10 +96,17 @@ public class StreamElementHandler implements ElementHandler {
 			if (copies == null || copies.trim().isEmpty()) {
 				cp.add(id);
 			} else {
+				copies = variables.expand(copies);
 				String[] t = copies.split(",");
-				for (String c : t) {
-					if (!c.trim().isEmpty()) {
-						cp.add(c.trim());
+				if (t.length == 1) {
+					Integer cops = new Integer(copies);
+					for (int i = 0; i < cops; i++) {
+						cp.add(Integer.valueOf(i).toString());
+					}
+				} else {
+					for (String c : t) {
+						if (!c.trim().isEmpty())
+							cp.add(c.trim());
 					}
 				}
 			}
@@ -108,9 +115,10 @@ public class StreamElementHandler implements ElementHandler {
 				log.debug("Creating stream for copy '{}'", sid);
 				Variables local = new Variables(variables);
 				local.put("copy.id", sid);
-				String lid = local.expand(sid);
+				String lid = local.expand(id);
+
 				Stream stream = StreamFactory.createStream(objectFactory,
-						element, variables);
+						element, local);
 				if (stream != null) {
 					if (lid == null)
 						lid = "" + stream;

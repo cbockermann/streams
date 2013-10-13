@@ -147,9 +147,10 @@ public class ProcessElementHandler implements ElementHandler {
 
 			for (String pid : ids) {
 				Variables local = new Variables(variables);
-				local.put("process.id", pid);
+				String idpid = id + "-" + pid;
+				local.put("process.id", idpid);
 				local.put("copy.id", pid);
-				log.debug("Creating process '{}'", pid);
+				log.debug("Creating process '{}'", idpid);
 				DefaultProcess process = createProcess(processClass, attr,
 						container, element, local, dependencyInjection);
 
@@ -168,8 +169,8 @@ public class ProcessElementHandler implements ElementHandler {
 					log.debug("Process has no output connection...");
 				}
 
-				computeGraph.addProcess(pid, process);
 				container.getProcesses().add(process);
+				computeGraph.addProcess(idpid, process);
 			}
 
 		} else {

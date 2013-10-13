@@ -41,7 +41,7 @@ public class Reset extends ConditionedProcessor {
 
 		if (service != null) {
 			try {
-				log.info("Resetting service {}", service);
+				log.debug("Resetting service {}", service);
 				service.reset();
 			} catch (Exception e) {
 				log.error("Failed to reset service: {}", e.getMessage());

@@ -55,7 +55,7 @@ public class Minima extends StatisticsLearner {
 				if (cur == null)
 					statistics.put(key, val);
 				else
-					statistics.put(key, Math.max(cur, val));
+					statistics.put(key, Math.min(cur, val));
 
 				if (prefix != null)
 					item.put(prefix + key, statistics.get(key));

@@ -224,9 +224,7 @@ public class ProcessContainer implements IContainer {
 		}
 	}
 
-	public ProcessContainer(URL url) throws Exception {
-		this(url, null);
-	}
+
 
 	/**
 	 * This constructor creates a new process-container instance by parsing an

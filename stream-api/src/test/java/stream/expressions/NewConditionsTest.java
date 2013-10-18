@@ -71,6 +71,25 @@ public class NewConditionsTest {
 	}
 
 	@Test
+	public void testSetCondition() throws Exception {
+		//
+		// Data data = DataFactory.create();
+		// data.put("aa", 4d);
+		// data.put("ab", 4d);
+		// data.put("ac", 4d);
+		// data.put("ba", 2d);
+		//
+		// assertCondition(
+		// "%{data.aa}== 4d and %{data.{a.*}+} >3 and (%{data.ab}== 4d)",
+		// data, true);
+		// data.put("ad", 2d);
+		// assertCondition(
+		// "%{data.aa}== 4d and %{data.{a.*}+} >3and (%{data.ab}== 4d)",
+		// data, false);
+
+	}
+
+	@Test
 	public void testEqualCondition() throws Exception {
 
 		MultiData md = new MultiData(rounds);
@@ -104,6 +123,11 @@ public class NewConditionsTest {
 		data.put("test", "test");
 		assertCondition("%{data.test} == 'test'", data, true);
 		assertCondition("'test' == %{data.test}", data, true);
+		data.put("type", "sensorDisagreement");
+		assertCondition("%{data.type} == 'test'", data, false);
+		assertCondition("'test' == %{data.type}", data, false);
+		assertCondition("%{data.type} == 'sensorDisagreement'", data, true);
+		assertCondition("'sensorDisagreement' == %{data.type}", data, true);
 		// ******************************
 		// Condition Null
 		data.put("test", 3);
@@ -118,6 +142,7 @@ public class NewConditionsTest {
 		data.remove("test");
 		assertCondition("%{data.test}==null", data, true);
 		assertCondition("null == %{data.test}", data, true);
+
 	}
 
 	@Test
@@ -257,14 +282,28 @@ public class NewConditionsTest {
 				"%{data.test} == 3d and %{data.test2} != nulland %{data.test2} != 1d and%{data.test2} != 5",
 				data, true);
 		assertCondition(
-				"%{data.test} == 3d and %{data.test2} != nulland (%{data.test2} != 1d) and%{data.test2} != 5",
+				"%{data.test} == 3d and %{data.test2} != nullAND (%{data.test2} != 1d) and%{data.test2} != 5",
 				data, true);
 		assertCondition(
-				"((%{data.test} == 3d) and (%{data.test2} != null)) and  %{data.test3} == null",
+				"((%{data.test} == 3d) and (%{data.test2} != null)) AND  %{data.test3} == null",
 				data, true);
 		assertCondition(
-				"(((%{data.test} == 3d) and (%{data.test2} != null)) and  %{data.test3} == null)",
+				"(((%{data.test} == 3d) and (%{data.test2} != null)) AND  %{data.test3} == null)",
 				data, true);
+
+		// **************
+		data = DataFactory.create();
+		data.put("test", "--");
+
+		assertCondition("%{data.test} != '--' AND %{data.test} != null", data,
+				false);
+		data.put("test", null);
+		assertCondition("%{data.test} != '--' AND %{data.test} != null", data,
+				false);
+		data.put("test", 123);
+		assertCondition("%{data.test} != '--' AND %{data.test} != null", data,
+				true);
+
 	}
 
 	@Test
@@ -295,6 +334,18 @@ public class NewConditionsTest {
 				true);
 		assertCondition("(%{data.test} == 3d) or (%{data.test2} != null)",
 				data, true);
+
+		assertCondition("%{data.test} == 3d OR %{data.test} != 4d", data, true);
+		assertCondition("(%{data.test} == 3d) OR (%{data.test} != 4d)", data,
+				true);
+		assertCondition("%{data.test} == 3d OR (%{data.test} != 4d)", data,
+				true);
+		assertCondition("%{data.test} == 3d OR %{data.test2} != 4d", data, true);
+		assertCondition("(%{data.test} == 3d) OR (%{data.test2} == 4d)", data,
+				true);
+		assertCondition("(%{data.test} == 3d) OR (%{data.test2} != null)",
+				data, true);
+
 	}
 
 	@Test

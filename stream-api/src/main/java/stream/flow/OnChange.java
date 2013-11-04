@@ -27,9 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.expressions.ExpressionResolver;
+import stream.expressions.version2.StringExpression;
 import stream.service.Service;
 
 /**
@@ -51,6 +53,7 @@ public class OnChange extends If implements Service {
 
 	private String from;
 	private String to;
+	private StringExpression expression;
 
 	public OnChange() {
 		try {
@@ -87,6 +90,13 @@ public class OnChange extends If implements Service {
 		return key;
 	}
 
+	@Override
+	public void init(ProcessContext context) throws Exception {
+		super.init(context);
+		if (key != null)
+			expression = new StringExpression(key);
+	}
+
 	/**
 	 * * There are 4 use cases:
 	 * <p>
@@ -109,11 +119,24 @@ public class OnChange extends If implements Service {
 	 * </p>
 	 **/
 	public boolean matches(Data item) {
-
-		if (key == null)
-			return false;
-		String value = String.valueOf(ExpressionResolver.resolve(key, context,
-				item));
+		if (condition != null) {
+			try {
+				if (!condition.get(context, item))
+					return false;
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				return false;
+			}
+		}
+		
+		String value = null;
+		try {
+			value = expression.get(context, item);
+			if(value==null)
+				value="null";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		boolean result = false;
 		// UseCase 1

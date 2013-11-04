@@ -34,7 +34,7 @@ import stream.data.DataFactory;
 import stream.data.SequenceID;
 
 /**
- * @author Christian Bockermann
+ * @author Christian Bockermann, Hendrik Blom
  * 
  */
 public abstract class AbstractStream implements Stream {
@@ -63,8 +63,9 @@ public abstract class AbstractStream implements Stream {
 	}
 
 	protected InputStream getInputStream() throws Exception {
-		if (in == null) {
+		if(url!=null){
 			in = url.openStream();
+			return in;
 		}
 		return in;
 	}
@@ -76,6 +77,15 @@ public abstract class AbstractStream implements Stream {
 	@Parameter(required = true, description = "The ID of this stream for associating it with processes.")
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	
+	public SourceURL getUrl() {
+		return url;
+	}
+
+	public void setUrl(SourceURL url) {
+		this.url = url;
 	}
 
 	/**
@@ -151,6 +161,7 @@ public abstract class AbstractStream implements Stream {
 	 */
 	@Override
 	public void init() throws Exception {
+			
 	}
 
 	/**
@@ -158,6 +169,7 @@ public abstract class AbstractStream implements Stream {
 	 */
 	@Override
 	public void close() throws Exception {
+		in.close();
 		closed = true;
 	}
 }

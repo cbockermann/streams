@@ -45,7 +45,7 @@ public class PropertiesHandler implements DocumentHandler {
 		//
 		Variables systemVariables = new Variables();
 		addSystemProperties(systemVariables);
-
+		systemVariables.addVariables(variables);
 		// handle maven-like properties, e.g.
 		// <properties>
 		// <property-name>value-of-property</property-name>

@@ -132,11 +132,11 @@ public class Discovery extends Thread {
 				}
 			} catch (SocketTimeoutException ste) {
 				// if (log.isDebugEnabled())
-				// ste.printStackTrace();
+				ste.printStackTrace();
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 				// if (log.isDebugEnabled())
-				// e.printStackTrace();
+				 e.printStackTrace();
 			}
 		}
 

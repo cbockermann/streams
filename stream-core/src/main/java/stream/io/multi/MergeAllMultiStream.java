@@ -39,17 +39,15 @@ import stream.io.Stream;
  * @author Hendrik Blom
  * 
  */
-public class MergeAllMultiDataStream extends AbstractMultiDataStream {
+public class MergeAllMultiStream extends AbstractMultiStream {
 
-	/**
-	 * @see stream.io.multi.AbstractMultiDataStream#readItem(stream.Data)
+
+	/*
+	 * @see stream.io.AbstractStream#readNext()
 	 */
 	@Override
-	protected Data readNext(Data item, Map<String, Stream> streams)
-			throws Exception {
-		if (item == null)
-			item = DataFactory.create();
-
+	public Data readNext() throws Exception {
+		Data item = DataFactory.create();
 		boolean stop = true;
 
 		for (String id : additionOrder) {

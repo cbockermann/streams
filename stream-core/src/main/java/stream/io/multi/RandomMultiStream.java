@@ -1,11 +1,13 @@
 package stream.io.multi;
 
-import java.util.Map;
-
 import stream.Data;
 import stream.io.Stream;
 
-public class RandomMultiStream extends AbstractMultiDataStream {
+/**
+ * @author chris, hendrik
+ *
+ */
+public class RandomMultiStream extends AbstractMultiStream {
 
 	Double[] weights;
 
@@ -61,8 +63,7 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 	}
 
 	@Override
-	protected Data readNext(Data item, Map<String, Stream> streams)
-			throws Exception {
+	public Data readNext() throws Exception {
 		String nextKey = selectNextStream();
 		if (nextKey == null) {
 			log.debug("No more streams found for selection!");
@@ -77,7 +78,7 @@ public class RandomMultiStream extends AbstractMultiDataStream {
 					nextKey);
 			streams.remove(nextKey);
 			additionOrder.remove(nextKey);
-			return readNext(item, streams);
+			return readNext();
 		}
 
 		return nextItem;

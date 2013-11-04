@@ -6,12 +6,13 @@ import org.junit.Test;
 
 import stream.Data;
 import stream.data.DataFactory;
+import stream.data.ProcessContextMock;
 import stream.data.SetValue;
 
 public class OnChangeTest {
 
 	@Test
-	public void testFromEqNullToEqNull() {
+	public void testFromEqNullToEqNull() throws Exception {
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
 		setValue.setValue("result1");
@@ -26,6 +27,7 @@ public class OnChangeTest {
 
 		OnChange onChange = new OnChange();
 		onChange.setKey("%{data.@test}");
+		onChange.init(new ProcessContextMock());
 		onChange.getProcessors().add(setValue);
 
 		// noChange
@@ -53,7 +55,7 @@ public class OnChangeTest {
 	}
 
 	@Test
-	public void testFromEqNullToNeqNull() {
+	public void testFromEqNullToNeqNull() throws Exception {
 
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
@@ -67,12 +69,16 @@ public class OnChangeTest {
 		data.put("@result1", null);
 		data.put("@result2", null);
 
+		
+		
 		OnChange onChange = new OnChange();
 		onChange.setKey("%{data.@test}");
-		onChange.getProcessors().add(setValue);
-
 		// noChange to = "null
 		onChange.setTo("null");
+		onChange.init(new ProcessContextMock());
+		
+		onChange.getProcessors().add(setValue);
+
 		onChange.process(data);
 		Assert.assertEquals(null, data.get("@result1"));
 
@@ -80,8 +86,10 @@ public class OnChangeTest {
 		data.put("@test", "test");
 		onChange.process(data);
 		Assert.assertEquals(null, data.get("@result1"));
+		
 		data.put("@test", null);
 		onChange.process(data);
+		
 		Assert.assertEquals("result1", data.get("@result1"));
 
 		// Change from test to "to"
@@ -96,7 +104,7 @@ public class OnChangeTest {
 	}
 
 	@Test
-	public void testFromNeqNullToeqNull() {
+	public void testFromNeqNullToeqNull() throws Exception {
 
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
@@ -112,6 +120,7 @@ public class OnChangeTest {
 
 		OnChange onChange = new OnChange();
 		onChange.setKey("%{data.@test}");
+		onChange.init(new ProcessContextMock());
 		onChange.getProcessors().add(setValue);
 
 		// noChange from = "null
@@ -131,6 +140,8 @@ public class OnChangeTest {
 		// noChange from "*" to = "*'"
 		onChange = new OnChange();
 		onChange.setKey("%{data.@test}");
+		onChange.init(new ProcessContextMock());
+		
 		onChange.getProcessors().add(setValue);
 		onChange.setFrom("test");
 		data.put("@test", "test");
@@ -140,6 +151,7 @@ public class OnChangeTest {
 		Assert.assertEquals(null, data.get("@result1"));
 		data.put("@test", "test'");
 		onChange.process(data);
+		
 		Assert.assertEquals("result1", data.get("@result1"));
 		onChange.getProcessors().add(setValue2);
 		onChange.process(data);

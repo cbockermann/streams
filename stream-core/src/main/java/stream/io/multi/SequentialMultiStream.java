@@ -1,14 +1,16 @@
 package stream.io.multi;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.io.Stream;
 
-public class SequentialMultiStream extends AbstractMultiDataStream {
+/**
+ * @author chris, hendrik
+ * 
+ */
+public class SequentialMultiStream extends AbstractMultiStream {
 
 	static Logger log = LoggerFactory.getLogger(SequentialMultiStream.class);
 
@@ -25,12 +27,11 @@ public class SequentialMultiStream extends AbstractMultiDataStream {
 	}
 
 	/**
-	 * @see stream.io.multi.AbstractMultiDataStream#readNext(stream.Data,
+	 * @see stream.io.multi.AbstractMultiStream#readNext(stream.Data,
 	 *      java.util.Map)
 	 */
 	@Override
-	protected Data readNext(Data item, Map<String, Stream> streams)
-			throws Exception {
+	public Data readNext() throws Exception {
 
 		Data data = null;
 

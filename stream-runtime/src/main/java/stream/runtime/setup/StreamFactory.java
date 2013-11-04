@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 
 import stream.io.SourceURL;
 import stream.io.Stream;
-import stream.io.multi.MultiDataStream;
+import stream.io.multi.MultiStream;
 import stream.runtime.ProcessContainer;
 import stream.util.Variables;
 
@@ -143,8 +143,8 @@ public class StreamFactory {
 		log.debug("Injecting variables {} into stream {}", params, stream);
 		ParameterInjection.inject(stream, params, variables);
 
-		if (stream instanceof MultiDataStream) {
-			MultiDataStream multiStream = (MultiDataStream) stream;
+		if (stream instanceof MultiStream) {
+			MultiStream multiStream = (MultiStream) stream;
 			log.debug("Found a multi-stream, need to add inner streams...");
 
 			NodeList nodes = node.getChildNodes();
@@ -240,7 +240,7 @@ public class StreamFactory {
 		stream.init();
 		ParameterInjection.inject(stream, params, new Variables());
 
-		if (stream instanceof MultiDataStream) {
+		if (stream instanceof MultiStream) {
 			log.debug("Found a multi-stream, need to add inner streams...");
 		}
 

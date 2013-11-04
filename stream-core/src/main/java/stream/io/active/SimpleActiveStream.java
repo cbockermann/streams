@@ -23,13 +23,14 @@
  */
 package stream.io.active;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.data.DataFactory;
+import stream.io.AbstractStream;
 import stream.io.Stream;
 
 /**
@@ -41,85 +42,59 @@ import stream.io.Stream;
  * @author Hendrik Blom
  * 
  */
-public class ActiveDataStreamImpl implements ActiveDataStream {
+public class SimpleActiveStream extends AbstractStream implements ActiveStream {
 
-	static Logger log = LoggerFactory.getLogger(ActiveDataStreamImpl.class);
+	protected Logger log = LoggerFactory.getLogger(SimpleActiveStream.class);
 	protected final LinkedBlockingQueue<Data> queue;
 
 	protected Stream stream;
 	protected StreamActivator activator;
-	protected String id;
-	protected Long limit = -1L;
-	protected Long count = 0L;
+	protected ExecutorService pool;
 
-	public ActiveDataStreamImpl(Stream stream) {
+	public SimpleActiveStream(Stream stream, ExecutorService pool) {
 		this.stream = stream;
 		this.queue = new LinkedBlockingQueue<Data>(100);
-	}
-
-	/**
-	 * @return the limit
-	 */
-	public Long getLimit() {
-		return limit;
-	}
-
-	/**
-	 * @param limit
-	 *            the limit to set
-	 */
-	public void setLimit(Long limit) {
-		this.limit = limit;
-	}
-
-	@Override
-	public String getId() {
-		return this.id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public Data read() throws Exception {
-
-		if (limit > 0 && count > limit)
-			return null;
-
-		if (queue.isEmpty())
-			return null;
-
-		Data datum = DataFactory.create();
-		Data d = queue.poll();
-		if (d != null)
-			datum.putAll(d);
-		count++;
-		return datum;
-	}
-
-	@Override
-	public void close() throws Exception {
-		stream.close();
-		this.activator.setRun(false);
+		this.pool = pool;
 	}
 
 	@Override
 	public void activate() throws Exception {
 		this.activator = new StreamActivator();
-		this.activator.start();
+		pool.execute(this.activator);
 	}
 
-	private class StreamActivator extends Thread {
-		private boolean run = true;
+	/**
+	 * @see stream.io.Stream#init()
+	 */
+	@Override
+	public void init() throws Exception {
+		stream.init();
+	}
+
+	@Override
+	public Data readNext() throws Exception {
+		return queue.poll();
+	}
+
+	
+	
+	
+	@Override
+	public void close() throws Exception {
+		pool.shutdownNow();
+		super.close();
+	}
+
+
+
+
+	private class StreamActivator implements Runnable {
 
 		public StreamActivator() {
-			run = true;
 		}
 
 		public void run() {
-			while (run) {
+			while (true) {
 				try {
 					queue.put(stream.read());
 				} catch (InterruptedException e) {
@@ -135,17 +110,6 @@ public class ActiveDataStreamImpl implements ActiveDataStream {
 			}
 		}
 
-		public void setRun(boolean run) {
-			this.run = run;
-			this.interrupt();
-		}
 	}
 
-	/**
-	 * @see stream.io.Stream#init()
-	 */
-	@Override
-	public void init() throws Exception {
-		stream.init();
-	}
 }

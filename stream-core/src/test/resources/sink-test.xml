@@ -1,0 +1,25 @@
+
+<container import="stream.learner">
+
+
+	<Stream id="input" class="stream.io.SampleStream" limit="5" />
+		    
+
+	<Sink class="stream.io." id="channel_13" size="1" />
+
+	<Process input="input">
+		<CreateID />
+		<Enqueue queue="channel_13" />
+		<Delay time="1 second" />
+		<stream.logger.Message message="Enqueued element %{data.@id} into queue..." />
+		
+	</Process>
+	
+	<Monitor interval="3 second">
+		
+		<Dequeue queue="channel_13" />
+		<AddTimestamp />
+		<PrintData />
+	</Monitor>
+	
+</container>

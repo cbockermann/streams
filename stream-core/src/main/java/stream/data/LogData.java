@@ -21,20 +21,36 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.io.multi;
+package stream.data;
 
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import stream.io.Stream;
+import stream.ConditionedProcessor;
+import stream.Data;
+import stream.annotations.Description;
 
 /**
- * @author Hendrik Blom
+ * <p>
+ * 
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public interface MultiDataStream extends Stream {
+@Description(group = "Data Stream.Monitoring", name = "Print Data")
+public class LogData extends ConditionedProcessor {
+	protected Logger log = LoggerFactory.getLogger(LogData.class);
+	/**
+	 * @see stream.DataProcessor#process(stream.Data)
+	 */
+	@Override
+	public Data processMatchingData(Data data) {
 
-	public void addStream(String id, Stream stream);
+		if (data == null)
+			return null;
 
-	public Map<String, Stream> getStreams();
-
+		log.info("data-item: " + data);
+		return data;
+	}
 }

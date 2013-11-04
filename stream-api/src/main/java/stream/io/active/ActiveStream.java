@@ -30,7 +30,7 @@ import stream.io.Stream;
  * @author Hendrik Blom
  * 
  */
-public interface ActiveDataStream extends Stream {
+public interface ActiveStream extends Stream {
 
 	public void activate() throws Exception;
 }

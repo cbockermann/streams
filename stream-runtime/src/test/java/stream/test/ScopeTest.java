@@ -41,7 +41,7 @@ public class ScopeTest {
 			p.add(sv);
 
 			If cond = new If();
-			cond.setCondition("%{data.frame:red:avg} @lt 10 AND %{data.frame:green:avg} @lt 10 AND %{data.frame:blue:avg} @lt 10");
+			cond.setCondition("%{data.frame:red:avg} < 10 AND %{data.frame:green:avg} < 10 AND %{data.frame:blue:avg} < 10");
 
 			SetValue sv2 = new SetValue();
 			sv2.setKey("kapselStart");

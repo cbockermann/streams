@@ -186,8 +186,8 @@ public class ProcessContainer implements IContainer {
 	final static String[] extensions = new String[] {
 			"stream.moa.MoaObjectFactory",
 			"stream.script.JavaScriptProcessorFactory" };
-	
-	final static Map<String,ElementHandler> autoHandlers = new LinkedHashMap<String,ElementHandler>();
+
+	final static Map<String, ElementHandler> autoHandlers = new LinkedHashMap<String, ElementHandler>();
 
 	static {
 
@@ -205,26 +205,22 @@ public class ProcessContainer implements IContainer {
 			}
 		}
 
-		String[] handlerClasses = new String[]{
-			"streams.esper.EsperEngineElementHandler"
-		};
-		
-		for( String handlerClass : handlerClasses ){
+		String[] handlerClasses = new String[] { "streams.esper.EsperEngineElementHandler" };
+
+		for (String handlerClass : handlerClasses) {
 			try {
 				Class<?> clazz = Class.forName(handlerClass);
 				ElementHandler handler = (ElementHandler) clazz.newInstance();
 				String key = handler.getKey();
-				autoHandlers.put( key, handler);
-				
+				autoHandlers.put(key, handler);
+
 			} catch (Exception e) {
-				log.debug( "Failed to register handler {}", handlerClass);
-				if( log.isTraceEnabled())
+				log.debug("Failed to register handler {}", handlerClass);
+				if (log.isTraceEnabled())
 					e.printStackTrace();
 			}
 		}
 	}
-
-
 
 	/**
 	 * This constructor creates a new process-container instance by parsing an
@@ -256,11 +252,12 @@ public class ProcessContainer implements IContainer {
 		documentHandler.add(new PropertiesHandler());
 		documentHandler.add(new SystemPropertiesHandler());
 
-		for( String elem : autoHandlers.keySet()){
-			log.debug( "Adding auto-discovered handler for element '{}': {}", elem, autoHandlers.get(elem));
+		for (String elem : autoHandlers.keySet()) {
+			log.debug("Adding auto-discovered handler for element '{}': {}",
+					elem, autoHandlers.get(elem));
 			elementHandler.put(elem, autoHandlers.get(elem));
 		}
-		
+
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
 		elementHandler.put("Sink", new SinkElementHandler());
@@ -579,7 +576,7 @@ public class ProcessContainer implements IContainer {
 			lc.init(context);
 		}
 
-		log.debug("Creating {} active processes...", processes.size());
+		log.info("Creating {} active processes...", processes.size());
 		long start = System.currentTimeMillis();
 		for (Process spu : processes) {
 

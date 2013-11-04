@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.expressions.version2;
 
 import java.io.Serializable;
@@ -9,41 +32,49 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Hendrik Blom
+ * 
+ */
 public class ConditionFactory {
 	static Logger log = LoggerFactory.getLogger(ConditionFactory.class);
 
 	private Map<String, Expression<Double>> dExps;
 	private Map<String, Expression<String>> sExps;
+	private Map<String, Expression<String>> setExps;
 	private Map<String, String> subCond;
 
 	public ConditionFactory() {
 		subCond = new HashMap<String, String>();
 		dExps = new HashMap<String, Expression<Double>>();
 		sExps = new HashMap<String, Expression<String>>();
+		setExps = new HashMap<String, Expression<String>>();
 	}
 
 	public Condition create(String ex) {
-		// Remove all whitespaces
-		ex = ex.replace(" ", "");
+
+
+
 		// Handle empty Condition
 		if (ex == null || ex.isEmpty()) {
 			log.debug("Created new Empty Condition");
 			return new EmptyCondition("EMPTY");
 		}
 
-		/*
-		 * Replace the ExpressionStrings by a Map.key and create the
-		 * corresponding Instances of Expression
-		 */
-
 		// Check brackets
-		checkBrackets(ex, "{", "}");
-		// checkBrackets(ex, "(", ")");
+		// checkBrackets(ex, "{", "}");
 
+		// Replace and Create Expressions
+//		ex = replaceAndCreateSetExpressions(ex);
 		ex = replaceAndCreateExpressions(ex);
+		// Remove all whitespaces
+		ex = ex.replace(" ", "");
 		ex = replaceAndCreateStringExpressions(ex);
+
+		// Debug Logging
 		printDoubleExpressions();
 		printStringExpressions();
+		printSetExpressions();
 		log.debug("Expression: {}", ex);
 
 		// Replace subConditions (e.g. (...)) by a Map.key
@@ -68,14 +99,20 @@ public class ConditionFactory {
 	private Condition createCondition(ConditionTree t) {
 		if (t == null)
 			throw new IllegalArgumentException("Bad ConditionTree \n" + t);
+
+		// t is LEAF
 		if (t.isLeaf()) {
 			if (t.getRoot().contains("null"))
 				return createNullCondition(t.getRoot());
 			// Hier ist die Magic
-			if (t.getRoot().contains("p10se"))
+			if (t.getRoot().contains(":p10sete_"))
+				return createSetCondition(t.getRoot());
+			if (t.getRoot().contains(":p10se"))
 				return createStringCondition(t.getRoot());
 			return createDoubleCondition(t.getRoot());
 		}
+
+		// t is no LEAF
 		if (t.getOp().equals("AND"))
 			return new AndCondition(createCondition(t.left),
 					createCondition(t.right));
@@ -86,9 +123,22 @@ public class ConditionFactory {
 		throw new IllegalArgumentException("Bad ConditionTree \n" + t);
 	}
 
+	private Condition createSetCondition(String c) {
+		// Double
+		if (c.contains(">")) {
+			String[] exps = c.split(">");
+			if (exps.length != 2)
+				throw new IllegalArgumentException("Bad ConditionString" + c);
+		}
+
+		return null;
+	}
+
 	private Condition createNullCondition(String c) {
 		if (c == null || c.isEmpty())
 			throw new IllegalArgumentException("Bad ConditionString" + c);
+
+		// Operator ==
 		if (c.contains("==")) {
 			String[] exps = c.split("==");
 			if (exps.length != 2)
@@ -104,6 +154,8 @@ public class ConditionFactory {
 				return new EmptyCondition(c);
 			return new EqualsNullCondition(c, ex);
 		}
+
+		// Operator !=
 		if (c.contains("!=")) {
 			String[] exps = c.split("!=");
 			if (exps.length != 2)
@@ -307,6 +359,34 @@ public class ConditionFactory {
 
 	}
 
+	private String replaceAndCreateSetExpressions(String ex) {
+		boolean run = true;
+		int i = 0;
+		while (run) {
+			// Find start of Expression
+			int s = ex.indexOf(".{");
+			if (s > 0) {
+				// Split String
+				String[] sub = new String[2];
+				sub[0] = ex.substring(0, s);
+				sub[1] = ex.substring(s, ex.length() - 1);
+
+				// find last %{
+				int ts = sub[0].lastIndexOf("%{");
+				// find second index of }
+				int te = sub[0].indexOf("}");
+				te = sub[0].indexOf("}", te);
+				String sube = ex.substring(ts, s + te - 1);
+				String key = ":p10sete_" + i;
+				SetExpression exp = new SetExpression(sube);
+				setExps.put(key, exp);
+				ex = ex.replace(sube, key);
+			} else
+				run = false;
+		}
+		return ex;
+	}
+
 	private String replaceAndCreateExpressions(String ex) {
 		// PRIO 10
 		boolean run = true;
@@ -339,8 +419,6 @@ public class ConditionFactory {
 				run = false;
 
 		}
-
-		// System.out.println("P10: " + ex);
 		return ex;
 
 	}
@@ -357,9 +435,9 @@ public class ConditionFactory {
 			if (s >= 0) {
 				String subString = ex.substring(s);
 				int e = subString.indexOf("'", 1);
-				System.out.println(subString);
+				log.debug(subString);
 				String se = subString.substring(0, e + 1);
-				String key = ";p10se_" + i;
+				String key = ":p10se_" + i;
 				StringExpression exp = new StringExpression(se);
 
 				sExps.put(key, exp);
@@ -480,6 +558,19 @@ public class ConditionFactory {
 		}
 	}
 
+	private void printSetExpressions() {
+		if (setExps.size() == 0)
+			log.debug("No SetExpressions created.");
+		else {
+			StringBuilder b = new StringBuilder();
+			b.append("SetExpressions created:\n");
+			for (Map.Entry<String, Expression<String>> e : setExps.entrySet()) {
+				b.append(e.getKey() + " = " + e.getValue() + "\n");
+			}
+			log.debug(b.toString());
+		}
+	}
+
 	private void print(String name, Map<String, String> m) {
 		if (m.isEmpty())
 			log.debug("{} is empty", name);
@@ -535,13 +626,13 @@ public class ConditionFactory {
 
 			StringBuilder s = new StringBuilder();
 			s.append(op + "\n");
-			s.append("left:" + left.toString() + "[" + left.leaf + "]\n");
-			s.append("right:" + right.toString() + "[" + right.leaf + "]\n");
+			s.append("left=" + left.toString() + "[" + left.leaf + "]\n");
+			s.append("right=" + right.toString() + "[" + right.leaf + "]\n");
 			return s.toString();
 		}
 
 		public void eval() {
-			String[] split = root.split("or", 2);
+			String[] split = root.split("or|OR", 2);
 			if (split.length == 2) {
 				left.root = split[0];
 				right.root = split[1];
@@ -567,7 +658,7 @@ public class ConditionFactory {
 			// eval = true;
 			// return;
 			// }
-			split = root.split("and", 2);
+			split = root.split("and|AND", 2);
 			if (split.length == 2) {
 				left.root = split[0];
 				right.root = split[1];

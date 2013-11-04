@@ -21,32 +21,35 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.expressions.version2;
+package stream.expressions.version2.set;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import stream.Context;
 import stream.Data;
+import stream.expressions.version2.Condition;
+import stream.expressions.version2.Expression;
 
 /**
+ * <p>
+ * </p>
+ * 
  * @author Hendrik Blom
  * 
  */
-public class DoubleExpression extends AbstractExpression<Double> {
+public class SetEqualsNullCondition extends Condition {
 
-	public DoubleExpression(String e) {
+	public SetEqualsNullCondition(String e) {
 		super(e);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public Double get(Context ctx, Data item) throws Exception {
- 		Serializable s = r.get(ctx, item);
-		return (s == null) ? null : (s instanceof Double) ? ((Double) s)
-				: new Double(s.toString());
+	public Boolean get(Context ctx, Data item) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public Class<Double> type() {
-		return Double.class;
-	}
 
 }

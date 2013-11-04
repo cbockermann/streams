@@ -21,32 +21,10 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.expressions.version2;
+package stream.expressions.version2.set;
 
 import java.io.Serializable;
 
-import stream.Context;
-import stream.Data;
-
-/**
- * @author Hendrik Blom
- * 
- */
-public class DoubleExpression extends AbstractExpression<Double> {
-
-	public DoubleExpression(String e) {
-		super(e);
-	}
-
-	@Override
-	public Double get(Context ctx, Data item) throws Exception {
- 		Serializable s = r.get(ctx, item);
-		return (s == null) ? null : (s instanceof Double) ? ((Double) s)
-				: new Double(s.toString());
-	}
-
-	public Class<Double> type() {
-		return Double.class;
-	}
+public interface SetCondition<I extends Serializable> extends SetOperator<I, Boolean>{
 
 }

@@ -24,6 +24,9 @@
 package stream.expressions.version2;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import stream.Context;
 import stream.Data;
@@ -39,6 +42,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 	protected String expression;
 	protected ExpressionResolver r;
 	protected String key;
+	protected String context;
 
 	protected String DATA_START = "%{";
 	protected String DATA_END = "}";
@@ -51,27 +55,55 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 			if (expression.startsWith(DATA_START)
 					&& expression.endsWith(DATA_END)) {
-
-				expression = expression.substring(DATA_START.length(),
-						expression.length() - 1);
-				if (expression.indexOf(".") >= 0) {
-					key = expression.split("\\.", 2)[1];
-					r = new DataExpressionResolver(key);
-				}
-			} else {
-				if (expression.equals("null"))
-					r = new StaticNullExpressionResolver(expression);
-				else
-					try {
-						Double.parseDouble(expression);
-						r = new StaticDoubleExpressionResolver(expression);
-					} catch (Exception exc) {
-						r = new StaticStringExpressionResolver(expression);
-					}
-
+				createContextExpression();
+				return;
+			}
+			if (expression.equalsIgnoreCase("null")) {
+				r = new StaticNullExpressionResolver(expression);
+				return;
+			}
+			try {
+				Double.parseDouble(expression);
+				r = new StaticDoubleExpressionResolver(expression);
+			} catch (Exception exc) {
+				r = new StaticStringExpressionResolver(expression);
 			}
 		}
+	}
 
+	private void createContextExpression() {
+		expression = expression.substring(DATA_START.length(),
+				expression.length() - 1);
+
+		// Correct Format
+		if (expression.indexOf(".") >= 0) {
+			String[] vals = expression.split("\\.", 2);
+			// TODO select Context
+			context = vals[0];
+			key = vals[1];
+
+			// // SetExpressions
+			// if (key.startsWith("{")) {
+			// // Extract Regexp
+			// key = key.substring(1);
+			// if (key.endsWith("+") || key.endsWith("*"))
+			// key = key.substring(0, key.length() - 1);
+			// if (key.endsWith("}"))
+			// key = key.substring(0, key.length() - 1);
+			// else {
+			// throw new IllegalArgumentException("Bad Set Definition");
+			// }
+			// r = new SetExpressionResolver(key);
+			// return;
+			// }
+
+			if (context.equals(Context.DATA_CONTEXT_NAME))
+				r = new DataExpressionResolver(key);
+			else if (context.equals(Context.PROCESS_CONTEXT_NAME) && context.equals(Context.CONTAINER_CONTEXT_NAME)){
+				r = new ContextExpressionResolver(key);
+			}
+
+		}
 	}
 
 	@Override
@@ -176,7 +208,10 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 		@Override
 		public Serializable get(Context ctx, Data item) throws Exception {
-			return "error";
+			Object o = ctx.resolve(key);
+			if (o != null && o instanceof Serializable)
+				return (Serializable) o;
+			return null;
 		}
 
 		@Override
@@ -203,4 +238,87 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 	}
 
+	public class SetExpressionResolver extends ExpressionResolver {
+
+		private DataRegExpIterator iter;
+
+		public SetExpressionResolver(String regexp) {
+			super(regexp);
+			iter = new DataRegExpIterator(key);
+		}
+
+		@Override
+		public Serializable get(Context ctx, Data item) throws Exception {
+			// Bad for parallel?
+			// TODO setContext(item)
+			iter.setData(item);
+			return iter;
+		}
+
+		@Override
+		public String toString() {
+			return "DataExpressionResolver [key=" + key + "]";
+		}
+
+	}
+
+	public class DataRegExpIterator implements Iterator<String>, Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private Iterator<String> keysIterator;
+		private Pattern pattern;
+		private String key;
+		private boolean calc;
+
+		public DataRegExpIterator(String regexp) {
+			pattern = Pattern.compile(regexp);
+			calc = false;
+		}
+
+		private void setData(Data data) {
+			if (data != null)
+				keysIterator = data.keySet().iterator();
+		}
+
+		@Override
+		public boolean hasNext() {
+
+			// Auf Key gucken?
+			if (calc)
+				return true;
+			key = calcNextKey();
+			calc = (key == null) ? false : true;
+			return calc;
+		}
+
+		@Override
+		public String next() {
+			if (calc)
+				return key;
+			key = calcNextKey();
+			calc = (key == null) ? false : true;
+			return key;
+
+		}
+
+		private String calcNextKey() {
+			for (Iterator<String> iter = keysIterator; iter.hasNext();) {
+				String tempKey = iter.next();
+				Matcher m = pattern.matcher(tempKey);
+				if (m.matches())
+					return tempKey;
+			}
+			return null;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("remove not possible");
+		}
+
+	}
 }

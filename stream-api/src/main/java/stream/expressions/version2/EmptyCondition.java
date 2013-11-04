@@ -41,8 +41,5 @@ public class EmptyCondition extends Condition {
 		return true;
 	}
 
-	public boolean isEmpty() {
-		return true;
-	}
 
 }

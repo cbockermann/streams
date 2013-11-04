@@ -37,8 +37,5 @@ public abstract class Condition extends AbstractExpression<Boolean> {
 		return Boolean.class;
 	}
 
-	public boolean isEmpty() {
-		return false;
-	}
 
 }

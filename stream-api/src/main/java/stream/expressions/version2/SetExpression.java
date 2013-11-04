@@ -23,8 +23,6 @@
  */
 package stream.expressions.version2;
 
-import java.io.Serializable;
-
 import stream.Context;
 import stream.Data;
 
@@ -32,21 +30,19 @@ import stream.Data;
  * @author Hendrik Blom
  * 
  */
-public class DoubleExpression extends AbstractExpression<Double> {
+public class SetExpression extends AbstractExpression<String> {
 
-	public DoubleExpression(String e) {
+	public SetExpression(String e) {
 		super(e);
 	}
 
 	@Override
-	public Double get(Context ctx, Data item) throws Exception {
- 		Serializable s = r.get(ctx, item);
-		return (s == null) ? null : (s instanceof Double) ? ((Double) s)
-				: new Double(s.toString());
+	public String get(Context ctx, Data item) throws Exception {
+		return expression;
 	}
 
-	public Class<Double> type() {
-		return Double.class;
+	public Class<String> type() {
+		return String.class;
 	}
 
 }

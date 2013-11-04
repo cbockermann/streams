@@ -33,11 +33,28 @@ import stream.util.parser.ParserGenerator;
  * handler. Java only allows to register a single custom protocol handler.
  * </p>
  * 
- * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;, Hendrik Blom
  * 
  */
 public class SourceURL implements Serializable {
 
+	
+	
+
+	public final static String PROTOCOL_FILE = "file";
+	public final static String PROTOCOL_TCP = "tcp";
+	public final static String PROTOCOL_SSL = "ssl";
+	public final static String PROTOCOL_FIFO = "fifo";
+	public final static String PROTOCOL_CLASSPATH = "classpath";
+	public final static String PROTOCOL_JDBC = "jdbc";
+	public final static String PROTOCOL_HTTP = "http";
+	public final static String PROTOCOL_HTTPS = "https";
+	public final static String PROTOCOL_STDIN = "stdin";
+	
+	protected final static String FILE_GRAMMAR = "%(protocol):%(path)";
+	protected final static String JDBC_GRAMMAR = "jdbc:%(driver):%(target)/%(path)";
+	protected final static String GRAMMAR = "%(protocol)://%(address)/%(path)";
+	
 	/** The unique class ID */
 	private static final long serialVersionUID = -7992522266824113404L;
 
@@ -45,14 +62,12 @@ public class SourceURL implements Serializable {
 
 	final static Map<String, Class<? extends Connection>> urlProvider = new LinkedHashMap<String, Class<? extends Connection>>();
 	static {
-		urlProvider.put("ssl", stream.urls.SSLConnection.class);
-		urlProvider.put("tcp", stream.urls.TcpConnection.class);
-		urlProvider.put("fifo", stream.urls.FIFOConnection.class);
+		urlProvider.put(PROTOCOL_SSL, stream.urls.SSLConnection.class);
+		urlProvider.put(PROTOCOL_TCP, stream.urls.TcpConnection.class);
+		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
 	}
 
-	final static String FILE_GRAMMAR = "%(protocol):%(path)";
-	final static String JDBC_GRAMMAR = "jdbc:%(driver):%(target)/%(path)";
-	final static String GRAMMAR = "%(protocol)://%(address)/%(path)";
+
 
 	final URL url;
 	final String urlString;
@@ -94,9 +109,9 @@ public class SourceURL implements Serializable {
 		this.url = null;
 		this.urlString = urlString;
 
-		if (urlString.toLowerCase().startsWith("file:")
-				|| urlString.toLowerCase().startsWith("classpath")
-				|| urlString.toLowerCase().startsWith("fifo")) {
+		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE)
+				|| urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
+				|| urlString.toLowerCase().startsWith(PROTOCOL_FIFO)) {
 			ParserGenerator gen = new ParserGenerator(FILE_GRAMMAR);
 			Parser<Map<String, String>> parser = gen.newParser();
 			Map<String, String> vals = parser.parse(urlString);
@@ -108,7 +123,7 @@ public class SourceURL implements Serializable {
 			path = vals.get("path");
 		} else {
 			String grammar = GRAMMAR;
-			if (urlString.toLowerCase().startsWith("jdbc")) {
+			if (urlString.toLowerCase().startsWith(PROTOCOL_JDBC)) {
 				grammar = JDBC_GRAMMAR;
 			}
 			ParserGenerator gen = new ParserGenerator(grammar);
@@ -143,11 +158,11 @@ public class SourceURL implements Serializable {
 				port = Integer.parseInt(hostname.substring(idx + 1));
 			} else {
 				host = hostname;
-				if ("http".equalsIgnoreCase(protocol)) {
+				if (PROTOCOL_HTTP.equalsIgnoreCase(protocol)) {
 					port = 80;
 				}
 
-				if ("https".equalsIgnoreCase(protocol)) {
+				if (PROTOCOL_HTTPS.equalsIgnoreCase(protocol)) {
 					port = 443;
 				}
 			}
@@ -227,22 +242,22 @@ public class SourceURL implements Serializable {
 			}
 		}
 
-		if ("stdin".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_STDIN.equalsIgnoreCase(protocol)) {
 			return System.in;
 		}
 
-		if ("classpath".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_CLASSPATH.equalsIgnoreCase(protocol)) {
 			log.debug("Returning InputStream for classpath resource '{}'",
 					getPath());
 			return SourceURL.class.getResourceAsStream(getPath());
 		}
 
-		if ("tcp".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_TCP.equalsIgnoreCase(protocol)) {
 			TcpConnection con = new TcpConnection(this);
 			return con.getInputStream();
 		}
 
-		if ("ssl".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_SSL.equalsIgnoreCase(protocol)) {
 			try {
 				SSLConnection ssl = new SSLConnection(this);
 				ssl.open();
@@ -255,7 +270,7 @@ public class SourceURL implements Serializable {
 		String theUrl = this.urlString;
 		try {
 
-			if (theUrl.startsWith("fifo:")) {
+			if (theUrl.startsWith(PROTOCOL_FIFO)) {
 
 				log.debug("Handling FIFO URL pattern...");
 				theUrl = theUrl.replace("fifo:", "file:");
@@ -338,5 +353,10 @@ public class SourceURL implements Serializable {
 
 	public Map<String, String> getParameters() {
 		return parameters;
+	}
+	
+	@Override
+	public String toString() {
+		return urlString;
 	}
 }

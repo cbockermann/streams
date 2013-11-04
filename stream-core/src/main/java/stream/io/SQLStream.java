@@ -62,12 +62,6 @@ public class SQLStream extends AbstractStream {
 		super((SourceURL) null);
 	}
 
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return url.toString();
-	}
 
 	/**
 	 * @param url
@@ -139,7 +133,7 @@ public class SQLStream extends AbstractStream {
 		try {
 
 			log.info("Opening connection to database {}", getUrl());
-			connection = DriverManager.getConnection(getUrl(), getUsername(),
+			connection = DriverManager.getConnection(getUrl().toString(), getUsername(),
 					getPassword());
 
 			PreparedStatement stmt = connection.prepareStatement(select);

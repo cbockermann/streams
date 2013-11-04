@@ -58,6 +58,10 @@ public class JSONStream extends AbstractLineStream {
 		super(url);
 	}
 
+	public JSONStream() throws Exception {
+		super();
+	}
+
 	/**
 	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */

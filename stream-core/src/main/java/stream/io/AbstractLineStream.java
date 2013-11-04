@@ -32,6 +32,9 @@ public abstract class AbstractLineStream extends AbstractStream {
 		super(in);
 	}
 
+	public AbstractLineStream() throws Exception {
+		super();
+	}
 	/**
 	 * @see stream.io.Source#close()
 	 */
@@ -46,6 +49,7 @@ public abstract class AbstractLineStream extends AbstractStream {
 	 */
 	@Override
 	public void init() throws Exception {
+		super.init();
 		attributes = new LinkedHashMap<String, Class<?>>();
 		reader = new BufferedReader(new InputStreamReader(getInputStream()));
 	}

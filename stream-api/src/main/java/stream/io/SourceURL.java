@@ -38,9 +38,6 @@ import stream.util.parser.ParserGenerator;
  */
 public class SourceURL implements Serializable {
 
-	
-	
-
 	public final static String PROTOCOL_FILE = "file";
 	public final static String PROTOCOL_TCP = "tcp";
 	public final static String PROTOCOL_SSL = "ssl";
@@ -50,11 +47,11 @@ public class SourceURL implements Serializable {
 	public final static String PROTOCOL_HTTP = "http";
 	public final static String PROTOCOL_HTTPS = "https";
 	public final static String PROTOCOL_STDIN = "stdin";
-	
+
 	protected final static String FILE_GRAMMAR = "%(protocol):%(path)";
-	protected final static String JDBC_GRAMMAR = "jdbc:%(driver):%(target)/%(path)";
+	protected final static String JDBC_GRAMMAR = "jdbc:%(driver):%(target)";
 	protected final static String GRAMMAR = "%(protocol)://%(address)/%(path)";
-	
+
 	/** The unique class ID */
 	private static final long serialVersionUID = -7992522266824113404L;
 
@@ -67,8 +64,6 @@ public class SourceURL implements Serializable {
 		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
 	}
 
-
-
 	final URL url;
 	final String urlString;
 
@@ -78,6 +73,7 @@ public class SourceURL implements Serializable {
 	final String path;
 	final String username;
 	final String password;
+	final String queryString;
 
 	final Map<String, String> parameters = new LinkedHashMap<String, String>();
 
@@ -89,6 +85,7 @@ public class SourceURL implements Serializable {
 		host = "";
 		port = 0;
 		path = "";
+		queryString = "";
 		username = null;
 		password = null;
 	}
@@ -101,6 +98,7 @@ public class SourceURL implements Serializable {
 		host = url.getHost();
 		port = url.getPort();
 		path = url.getPath();
+		queryString = url.getQuery();
 		username = null;
 		password = null;
 	}
@@ -120,8 +118,20 @@ public class SourceURL implements Serializable {
 			username = null;
 			password = null;
 			port = -1;
-			path = vals.get("path");
+			String p = vals.get("path");
+			if (p.indexOf("?") > 0) {
+				path = p.substring(0, p.indexOf("?"));
+				queryString = p.substring(p.indexOf("?") + 1);
+			} else {
+				path = p;
+				queryString = "";
+			}
 		} else {
+
+			//
+			// special handling of JDBC URLs needed as they *may* have
+			// a '://' for the host specification or not.
+			//
 			String grammar = GRAMMAR;
 			if (urlString.toLowerCase().startsWith(PROTOCOL_JDBC)) {
 				grammar = JDBC_GRAMMAR;
@@ -129,6 +139,26 @@ public class SourceURL implements Serializable {
 			ParserGenerator gen = new ParserGenerator(grammar);
 			Parser<Map<String, String>> parser = gen.newParser();
 			Map<String, String> vals = parser.parse(urlString);
+			if (grammar == JDBC_GRAMMAR) {
+				vals.put("protocol", "jdbc");
+
+				// target may be very specific according to the specific
+				// JDBC driver used
+				//
+				String target = vals.get("target");
+
+				if (target.startsWith("//")) {
+					// assume a host:port
+					ParserGenerator pg = new ParserGenerator(GRAMMAR);
+					Parser<Map<String, String>> dbparser = pg.newParser();
+					Map<String, String> values = dbparser.parse("jdbc:"
+							+ target);
+					log.info("sub-parsing jdbc-target returned: {}", values);
+					vals.putAll(values);
+				}
+
+				log.info("'target' of JDBC-URL is: {}", vals.get("target"));
+			}
 			protocol = vals.get("protocol");
 
 			String hostname = vals.get("address");
@@ -168,13 +198,19 @@ public class SourceURL implements Serializable {
 			}
 			this.port = port;
 
-			path = vals.get("path");
+			String p = vals.get("path");
+			if (p.indexOf("?") > 0) {
+				path = p.substring(0, p.indexOf("?"));
+				queryString = p.substring(p.indexOf("?") + 1);
+			} else {
+				path = p;
+				queryString = "";
+			}
 		}
 
-		if (path != null && path.indexOf("?") >= 0) {
-			String qs = path.substring(path.indexOf("?") + 1);
-			log.debug("Query string for URL is: {}", qs);
-			for (String pv : qs.split("&")) {
+		if (queryString != null && !queryString.isEmpty()) {
+			log.debug("Query string for URL is: {}", queryString);
+			for (String pv : queryString.split("&")) {
 				if (pv.indexOf("=") > 0) {
 					String[] kv = pv.split("=", 2);
 					parameters.put(kv[0], kv[1]);
@@ -344,17 +380,17 @@ public class SourceURL implements Serializable {
 	}
 
 	public String getUsername() {
-		return null;
+		return this.username;
 	}
 
 	public String getPassword() {
-		return null;
+		return this.password;
 	}
 
 	public Map<String, String> getParameters() {
 		return parameters;
 	}
-	
+
 	@Override
 	public String toString() {
 		return urlString;

@@ -99,11 +99,17 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 			if (context.equals(Context.DATA_CONTEXT_NAME))
 				r = new DataExpressionResolver(key);
-			else if (context.equals(Context.PROCESS_CONTEXT_NAME) && context.equals(Context.CONTAINER_CONTEXT_NAME)){
-				r = new ContextExpressionResolver(key);
-			}
-
+			else if (context.equals(Context.PROCESS_CONTEXT_NAME))
+				r = new ContextExpressionResolver(Context.PROCESS_CONTEXT_NAME
+						+ "." + key);
+			else if (context.equals(Context.CONTAINER_CONTEXT_NAME))
+				r = new ContextExpressionResolver(
+						Context.CONTAINER_CONTEXT_NAME + "." + key);
 		}
+	}
+
+	public String getKey() {
+		return key;
 	}
 
 	@Override

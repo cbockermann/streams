@@ -501,11 +501,11 @@ public class ProcessContainer implements IContainer {
 			throw e;
 		}
 
-		// Special Treatment for properties
-		DocumentHandler ph = new PropertiesHandler();
-		Variables pv = new Variables();
-		ph.handle(this, doc, pv, dependencyInjection);
-		context.getProperties().putAll(pv);
+//		// Special Treatment for properties
+//		DocumentHandler ph = new PropertiesHandler();
+//		Variables pv = new Variables();
+//		ph.handle(this, doc, pv, dependencyInjection);
+//		context.getProperties().putAll(pv);
 
 		context.setProperty("xml", XMLUtils.toString(doc));
 	}

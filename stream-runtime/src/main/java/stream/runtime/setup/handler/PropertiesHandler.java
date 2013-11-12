@@ -99,6 +99,8 @@ public class PropertiesHandler implements DocumentHandler {
 				String purl = prop.getAttribute("url");
 				// url via systemProperties;
 				purl = systemProperties.expand(purl);
+				if (purl.startsWith("$"))
+					purl = variables.expand(purl);
 				try {
 					SourceURL propUrl = new SourceURL(purl);
 

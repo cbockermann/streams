@@ -16,10 +16,12 @@ public class OnChangeTest {
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
 		setValue.setValue("result1");
+		setValue.init(new ProcessContextMock());
 		SetValue setValue2 = new SetValue();
 		setValue2.setKey("@result2");
 		setValue2.setValue("result2");
-
+		setValue2.init(new ProcessContextMock());
+		
 		Data data = DataFactory.create();
 		data.put("@test", null);
 		data.put("@result1", null);
@@ -60,10 +62,12 @@ public class OnChangeTest {
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
 		setValue.setValue("result1");
+		setValue.init(new ProcessContextMock());
 		SetValue setValue2 = new SetValue();
 		setValue2.setKey("@result2");
 		setValue2.setValue("result2");
-
+		setValue2.init(new ProcessContextMock());
+		
 		Data data = DataFactory.create();
 		data.put("@test", null);
 		data.put("@result1", null);
@@ -109,10 +113,12 @@ public class OnChangeTest {
 		SetValue setValue = new SetValue();
 		setValue.setKey("@result1");
 		setValue.setValue("result1");
+		setValue.init(new ProcessContextMock());
 		SetValue setValue2 = new SetValue();
 		setValue2.setKey("@result2");
 		setValue2.setValue("result2");
-
+		setValue2.init(new ProcessContextMock());
+		
 		Data data = DataFactory.create();
 		data.put("@test", null);
 		data.put("@result1", null);

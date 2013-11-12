@@ -48,7 +48,8 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.expressions.ExpressionResolver;
+import stream.expressions.version2.Expression;
+import stream.expressions.version2.StringExpression;
 import stream.service.Service;
 
 /**
@@ -74,6 +75,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	protected URL url;
 	protected File file;
 	protected String lastUrlString = null;
+	protected Expression<String> fileExpression;
 
 	public CsvWriter() {
 		super();
@@ -167,6 +169,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		lastHeader = null;
 		headerWritten = false;
 		filter = ".*";
+		fileExpression = new StringExpression(urlString);
 	}
 
 	/**
@@ -174,8 +177,12 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	 */
 	@Override
 	public Data processMatchingData(Data datum) {
-		String expandedUrlString = (String) ExpressionResolver.expand(
-				urlString, context, datum);
+		String expandedUrlString=null;
+		try {
+			expandedUrlString = fileExpression.get(context, datum);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		if (expandedUrlString == null) {
 			log.error("can't find the file! {}", urlString);
 			return datum;

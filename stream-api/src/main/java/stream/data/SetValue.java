@@ -23,6 +23,7 @@
  */
 package stream.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,9 +34,12 @@ import org.slf4j.LoggerFactory;
 import stream.ConditionedProcessor;
 import stream.Context;
 import stream.Data;
+import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
 import stream.expressions.ExpressionResolver;
+import stream.expressions.version2.Expression;
+import stream.expressions.version2.SerializableExpression;
 
 /**
  * <p>
@@ -52,6 +56,7 @@ public class SetValue extends ConditionedProcessor {
 
 	protected String key;
 	protected String value;
+	protected Expression<Serializable> exp;
 	protected List<String> scope;
 
 	public SetValue() {
@@ -59,13 +64,25 @@ public class SetValue extends ConditionedProcessor {
 		scope = new ArrayList<String>();
 	}
 
+	
+	
+	@Override
+	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
+		exp = new SerializableExpression(value);
+		
+	}
+
+
+
 	/**
      * 
      */
 	@Override
 	public Data processMatchingData(Data data) {
+		
 		if (key != null && value != null) {
-			String val = "";
+			Serializable val = null;
 			if (value == "null") {
 				if (scope.contains(Context.DATA_CONTEXT_NAME)
 						|| scope.isEmpty())
@@ -73,8 +90,11 @@ public class SetValue extends ConditionedProcessor {
 				else if (scope.contains(Context.PROCESS_CONTEXT_NAME))
 					context.set(key, null);
 			} else
-				val = String.valueOf(ExpressionResolver.resolve(value, context,
-						data));
+				try {
+					val = exp.get(context, data);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			if (scope.contains(Context.DATA_CONTEXT_NAME) || scope.isEmpty())
 				data.put(key, val);

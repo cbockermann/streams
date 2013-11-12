@@ -32,8 +32,8 @@ public class MultiGaussStreamTest {
 	public void test() throws Exception {
 
 		CsvWriter writer = new CsvWriter();
-		writer.init(null);
 		writer.setUrl("file:/tmp/cluster-stream.csv.gz");
+		writer.init(null);
 
 		streams.put("cluster1", create(2.0, 1.0, 2.0, 0.5, -2.0, 0.25));
 		streams.put("cluster2", create(3.0, 1.0, 3.0, 1.0, 5.0, 1.0));
@@ -65,8 +65,8 @@ public class MultiGaussStreamTest {
 	public void outlierTestData() throws Exception {
 
 		CsvWriter writer = new CsvWriter();
-		writer.init(null);
 		writer.setUrl("file:/tmp/outlier-stream.csv.gz");
+		writer.init(null);
 
 		double fraction = 0.01;
 

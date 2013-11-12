@@ -5,6 +5,8 @@ package stream.io;
 
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,40 +29,45 @@ public class DirectoryStream extends AbstractStream {
 	Logger log = LoggerFactory.getLogger(DirectoryStream.class);
 
 	private File dir;
-	private String[] files;
+	private static String[] files;
 	private String dirPath;
-	private int counter;
+	private static AtomicInteger counter;
+	private static AtomicBoolean filesAreRead;
 
 	public DirectoryStream(SourceURL url) throws Exception {
 		super(url);
+		if (filesAreRead == null)
+			filesAreRead = new AtomicBoolean(false);
 	}
 
 	@Override
 	public void init() throws Exception {
+		if (filesAreRead.getAndSet(false)) {
+			log.debug("Initializing directory stream with URL '{}'",
+					url.toString());
+			log.debug("   file path of URL is: {}", url.getFile());
+			dir = new File(url.getFile());
+			// dir = new File(new URI(url.toString()));
+			if (!dir.isDirectory())
+				throw new IllegalArgumentException("Directory not found");
+			dirPath = dir.getAbsolutePath();
+			files = dir.list();
+			counter = new AtomicInteger(0);
+		}
 
-		log.debug("Initializing directory stream with URL '{}'", url.toString());
-		log.debug("   file path of URL is: {}", url.getFile());
-		dir = new File(url.getFile());
-		// dir = new File(new URI(url.toString()));
-		if (!dir.isDirectory())
-			throw new IllegalArgumentException("Directory not found");
-		dirPath = dir.getAbsolutePath();
-		files = dir.list();
-		counter = 0;
 	}
 
 	@Override
 	public Data readNext() throws Exception {
 		Data data = DataFactory.create();
-		if (counter < files.length) {
+		int c = counter.getAndIncrement();
+		if (c < files.length) {
 			data.put(
 					"@url",
 					new URL("file:" + dirPath
-							+ System.getProperty("file.separator")
-							+ files[counter]));
+							+ System.getProperty("file.separator") + files[c]));
 			data.put("@directory", dirPath);
-			data.put("@filename", files[counter]);
-			counter++;
+			data.put("@filename", files[c]);
 			return data;
 		}
 		return null;

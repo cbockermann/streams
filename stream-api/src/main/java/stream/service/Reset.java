@@ -17,6 +17,15 @@ public class Reset extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Reset.class);
 	protected Service service;
+	protected Service[] services;
+
+	public Service[] getServices() {
+		return services;
+	}
+
+	public void setServices(Service[] services) {
+		this.services = services;
+	}
 
 	/**
 	 * @return the service
@@ -49,7 +58,20 @@ public class Reset extends ConditionedProcessor {
 					e.printStackTrace();
 			}
 		} else {
-			log.info("No service to reset! ");
+			if (services != null) {
+				for (Service s : services) {
+					if (s != null) {
+						log.debug("Resetting service {}", s);
+						try {
+							s.reset();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			} else
+				log.info("No service to reset! ");
 		}
 
 		return data;

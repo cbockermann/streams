@@ -62,7 +62,7 @@ public class BlockingQueue extends AbstractQueue {
 		}
 	}
 
-	static Logger log = LoggerFactory.getLogger(BlockingQueue.class);
+	private static final Logger log = LoggerFactory.getLogger(BlockingQueue.class);
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 

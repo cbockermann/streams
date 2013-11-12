@@ -55,7 +55,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 			if (expression.startsWith(DATA_START)
 					&& expression.endsWith(DATA_END)) {
-				createContextExpression();
+				r = createContextExpression(expression);
 				return;
 			}
 			if (expression.equalsIgnoreCase("null")) {
@@ -66,18 +66,26 @@ public abstract class AbstractExpression<T extends Serializable> implements
 				Double.parseDouble(expression);
 				r = new StaticDoubleExpressionResolver(expression);
 			} catch (Exception exc) {
-				r = new StaticStringExpressionResolver(expression);
+				r = createStringExpression();
 			}
 		}
 	}
 
-	private void createContextExpression() {
-		expression = expression.substring(DATA_START.length(),
-				expression.length() - 1);
+	private ExpressionResolver createStringExpression() {
+		if (expression.contains(DATA_START)
+				&& expression.contains(DATA_END)
+				&& expression.indexOf(DATA_START) < expression
+						.indexOf(DATA_END))
+			return new StringBuilderExpressionResolver(expression);
+		return new StaticStringExpressionResolver(expression);
+	}
+
+	private ExpressionResolver createContextExpression(String expr) {
+		expr = expr.substring(DATA_START.length(), expr.length() - 1);
 
 		// Correct Format
-		if (expression.indexOf(".") >= 0) {
-			String[] vals = expression.split("\\.", 2);
+		if (expr.indexOf(".") >= 0) {
+			String[] vals = expr.split("\\.", 2);
 			// TODO select Context
 			context = vals[0];
 			key = vals[1];
@@ -98,14 +106,14 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			// }
 
 			if (context.equals(Context.DATA_CONTEXT_NAME))
-				r = new DataExpressionResolver(key);
-			else if (context.equals(Context.PROCESS_CONTEXT_NAME))
-				r = new ContextExpressionResolver(Context.PROCESS_CONTEXT_NAME
-						+ "." + key);
-			else if (context.equals(Context.CONTAINER_CONTEXT_NAME))
-				r = new ContextExpressionResolver(
-						Context.CONTAINER_CONTEXT_NAME + "." + key);
+				return new DataExpressionResolver(key);
+			if (context.equals(Context.PROCESS_CONTEXT_NAME))
+				return new ContextExpressionResolver(expr);
+			if (context.equals(Context.CONTAINER_CONTEXT_NAME))
+				return new ContextExpressionResolver(expr);
+
 		}
+		return null;
 	}
 
 	public String getKey() {
@@ -168,6 +176,35 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		@Override
 		public String toString() {
 			return "StaticDoubleExpressionResolver [key=" + key + "]";
+		}
+	}
+
+	public class StringBuilderExpressionResolver extends ExpressionResolver {
+
+		private final String prefix;
+		private final String suffix;
+		private ExpressionResolver r;
+		private StringBuilder sb;
+
+		public StringBuilderExpressionResolver(String key) {
+			super(key);
+			int i1 = key.indexOf(DATA_START);
+			int i2 = key.indexOf(DATA_END);
+			prefix = key.substring(0, i1);
+			if (i2 + 1 < key.length())
+				suffix = key.substring(i2 + 1, key.length());
+			else
+				suffix = "";
+			r = createContextExpression(key.substring(i1, i2 + 1));
+		}
+
+		@Override
+		public Serializable get(Context ctx, Data item) throws Exception {
+			sb = new StringBuilder();
+			sb.append(prefix);
+			sb.append(r.get(ctx, item));
+			sb.append(suffix);
+			return sb.toString();
 		}
 	}
 

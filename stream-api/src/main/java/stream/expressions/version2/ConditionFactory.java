@@ -53,8 +53,6 @@ public class ConditionFactory {
 
 	public Condition create(String ex) {
 
-
-
 		// Handle empty Condition
 		if (ex == null || ex.isEmpty()) {
 			log.debug("Created new Empty Condition");
@@ -65,7 +63,7 @@ public class ConditionFactory {
 		// checkBrackets(ex, "{", "}");
 
 		// Replace and Create Expressions
-//		ex = replaceAndCreateSetExpressions(ex);
+		// ex = replaceAndCreateSetExpressions(ex);
 		ex = replaceAndCreateExpressions(ex);
 		// Remove all whitespaces
 		ex = ex.replace(" ", "");
@@ -295,7 +293,7 @@ public class ConditionFactory {
 		if (e == null) {
 			Expression<Double> d = dExps.get(key);
 			if (d != null)
-				key = "%{" + d.getExpression() + "}";
+				key = d.getExpression();
 			e = new StringExpression(key);
 		}
 		return e;

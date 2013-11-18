@@ -43,8 +43,9 @@ import stream.data.DataFactory;
 @Description(group = "Data Stream.Sources")
 public class JSONStream extends AbstractLineStream {
 
-	static Logger log = LoggerFactory.getLogger(JSONStream.class);
-	JSONParser parser = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE);
+	private final Logger log = LoggerFactory.getLogger(JSONStream.class);
+	private final JSONParser parser = new JSONParser(
+			JSONParser.DEFAULT_PERMISSIVE_MODE);
 
 	/**
 	 * @param in
@@ -60,6 +61,11 @@ public class JSONStream extends AbstractLineStream {
 
 	public JSONStream() throws Exception {
 		super();
+	}
+
+	@Override
+	public void init() throws Exception {
+		super.init();
 	}
 
 	/**

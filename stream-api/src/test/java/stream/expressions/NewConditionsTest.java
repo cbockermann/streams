@@ -143,6 +143,15 @@ public class NewConditionsTest {
 		assertCondition("%{data.test}==null", data, true);
 		assertCondition("null == %{data.test}", data, true);
 
+		data = DataFactory.create();
+		assertCondition("%{data.test}!=null AND %{data.test}!='--'", data,
+				false);
+		data.put("test", "--");
+		assertCondition("%{data.test}!=null AND %{data.test}!='--'", data,
+				false);
+		data.put("test", 3);
+		assertCondition("%{data.test}!=null AND %{data.test}!='--'", data, true);
+
 	}
 
 	@Test

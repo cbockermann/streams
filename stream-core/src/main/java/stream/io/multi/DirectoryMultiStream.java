@@ -42,7 +42,7 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 		if (filesAreRead == null)
 			filesAreRead = new AtomicBoolean(false);
 		if (files == null)
-			files = new LinkedBlockingQueue<String>(100);
+			files = new LinkedBlockingQueue<String>();
 	}
 
 	public DirectoryMultiStream(InputStream in) {

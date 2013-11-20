@@ -87,7 +87,7 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 						"Given URL is no local directory");
 			else {
 				String[] f = null;
-				if (suffix != null || !suffix.isEmpty()) {
+				if (suffix != null && !suffix.isEmpty()) {
 					f = dir.list(new FilenameFilter() {
 
 						@Override
@@ -112,29 +112,6 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 			}
 
 		}
-
-		// Stream tmpStream = streams.get(additionOrder.get(0));
-		// if (!(tmpStream instanceof AbstractStream))
-		// throw new IllegalArgumentException(
-		// "Only Subclasses of AbstractStream are supported!");
-		//
-		// stream = (AbstractStream) tmpStream;
-		// stream.close();
-		//
-		// if (files.length > 0) {
-		// int c = counter.getAndIncrement();
-		// if (c < files.length) {
-		// SourceURL surl = createUrl(files[c]);
-		// if (surl == null)
-		// throw new IllegalArgumentException(
-		// "Directory doesnt contain files");
-		// log.info(surl.toString());
-		// stream.setUrl(surl);
-		// } else
-		// noStream = true;
-		// } else
-		// throw new IllegalArgumentException("Directory is empty");
-		// stream.init();
 
 	}
 

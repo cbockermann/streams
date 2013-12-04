@@ -42,6 +42,10 @@ public interface Expression<T extends Serializable> {
 
 	public String getExpression();
 
+	public String getKey();
+
+	public String getContext();
+
 	public Expression<Serializable> toSerializableExpression();
 
 }

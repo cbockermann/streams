@@ -28,11 +28,13 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ConditionedProcessor;
+import stream.AbstractProcessor;
 import stream.Context;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
+import stream.expressions.version2.Condition;
+import stream.expressions.version2.ConditionFactory;
 import stream.expressions.version2.Expression;
 import stream.expressions.version2.SerializableExpression;
 
@@ -46,7 +48,7 @@ import stream.expressions.version2.SerializableExpression;
  * 
  */
 @Description(group = "Data Stream.Processing.Transformations.Data")
-public class CopyValues extends ConditionedProcessor {
+public class CopyValues extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(CopyValues.class);
 
@@ -54,6 +56,9 @@ public class CopyValues extends ConditionedProcessor {
 	protected Expression<Serializable>[] expressions;
 	protected String sourceCtx;
 	protected String targetCtx;
+	protected Data localCtx;
+	protected String conditionString;
+	protected Condition condition;
 
 	public CopyValues() {
 		super();
@@ -83,31 +88,46 @@ public class CopyValues extends ConditionedProcessor {
 		this.targetCtx = targetCtx;
 	}
 
+	public String getCondition() {
+		return conditionString;
+	}
+
+	public void setCondition(String condition) {
+		this.conditionString = condition;
+	}
+
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
+		localCtx = DataFactory.create();
+		expressions = new SerializableExpression[keys.length];
 		if (keys == null)
 			throw new IllegalArgumentException("Keys are not set!");
 		for (int i = 0; i < keys.length; i++) {
 			String key = keys[i];
+
 			Expression<Serializable> e = null;
-			if (Context.DATA_CONTEXT_NAME.equals(sourceCtx))
-				e = new SerializableExpression("%{" + Context.DATA_CONTEXT_NAME
-						+ "." + key + "}");
-			if (Context.PROCESS_CONTEXT_NAME.equals(sourceCtx))
-				e = new SerializableExpression("%{" + Context.DATA_CONTEXT_NAME
-						+ "." + key + "}");
+			e = new SerializableExpression("%{" + sourceCtx + "." + key + "}");
 			if (e != null)
 				expressions[i] = e;
+		}
+
+		if (conditionString != null && !conditionString.isEmpty()) {
+			String s = conditionString.replace("sourceCtx.key", sourceCtx
+					+ ".key");
+			ConditionFactory cf = new ConditionFactory();
+			condition = cf.create(s);
 		}
 	}
 
 	/**
      * 
      */
-	@Override
-	public Data processMatchingData(Data data) {
 
+	@Override
+	public Data process(Data data) {
+		localCtx.clear();
+		localCtx.putAll(data);
 		if (keys != null) {
 			for (int i = 0; i < keys.length; i++) {
 				String key = keys[i];
@@ -123,9 +143,21 @@ public class CopyValues extends ConditionedProcessor {
 				}
 				if (val == null)
 					continue;
-				if (Context.DATA_CONTEXT_NAME.equals(targetCtx))
+
+				localCtx.put("key", val);
+				boolean b = false;
+				try {
+					b = condition == null ? true : condition.get(context,
+							localCtx);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
+				if (b && Context.DATA_CONTEXT_NAME.equals(targetCtx)) {
 					data.put(key, val);
-				if (Context.PROCESS_CONTEXT_NAME.equals(targetCtx))
+					continue;
+				}
+				if (b && Context.PROCESS_CONTEXT_NAME.equals(targetCtx))
 					context.set(key, val);
 			}
 

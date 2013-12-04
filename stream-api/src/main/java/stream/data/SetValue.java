@@ -37,7 +37,6 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.expressions.ExpressionResolver;
 import stream.expressions.version2.Expression;
 import stream.expressions.version2.SerializableExpression;
 
@@ -64,23 +63,19 @@ public class SetValue extends ConditionedProcessor {
 		scope = new ArrayList<String>();
 	}
 
-	
-	
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		exp = new SerializableExpression(value);
-		
+
 	}
-
-
 
 	/**
      * 
      */
 	@Override
 	public Data processMatchingData(Data data) {
-		
+
 		if (key != null && value != null) {
 			Serializable val = null;
 			if (value == "null") {

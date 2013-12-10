@@ -63,10 +63,13 @@ public abstract class AbstractStream implements Stream {
 	}
 
 	protected InputStream getInputStream() throws Exception {
-		if(url!=null){
+		if (closed)
+			throw new IllegalStateException("Stream must be closed first!");
+		if (in == null) {
 			in = url.openStream();
 			return in;
 		}
+
 		return in;
 	}
 
@@ -79,7 +82,6 @@ public abstract class AbstractStream implements Stream {
 		this.id = id;
 	}
 
-	
 	public SourceURL getUrl() {
 		return url;
 	}
@@ -161,7 +163,7 @@ public abstract class AbstractStream implements Stream {
 	 */
 	@Override
 	public void init() throws Exception {
-			
+		closed = false;
 	}
 
 	/**
@@ -169,7 +171,10 @@ public abstract class AbstractStream implements Stream {
 	 */
 	@Override
 	public void close() throws Exception {
-		in.close();
+		if (in != null)
+			in.close();
+		in = null;
+
 		closed = true;
 	}
 }

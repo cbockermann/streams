@@ -24,7 +24,9 @@
 package stream.expressions.version2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +42,14 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		Expression<T> {
 
 	protected String expression;
-	protected ExpressionResolver r;
+	protected ContextResolver r;
 	protected String key;
 	protected String context;
 
 	protected String DATA_START = "%{";
+	protected String DATA_START_REGEXP = "%\\{";
 	protected String DATA_END = "}";
+	protected String DATA_END_REGEXP = "}";
 
 	public AbstractExpression(String e) {
 		if (e == null)
@@ -64,24 +68,25 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			}
 			try {
 				Double.parseDouble(expression);
-				r = new StaticDoubleExpressionResolver(expression);
+				r = new StaticDoubleContextResolver(expression);
 			} catch (Exception exc) {
 				r = createStringExpression();
 			}
 		}
 	}
 
-	private ExpressionResolver createStringExpression() {
+	private ContextResolver createStringExpression() {
 		if (expression.contains(DATA_START)
 				&& expression.contains(DATA_END)
 				&& expression.indexOf(DATA_START) < expression
 						.indexOf(DATA_END))
-			return new StringBuilderExpressionResolver(expression);
-		return new StaticStringExpressionResolver(expression);
+			return new StringBuilderContextResolver(expression);
+		return new StaticStringContextResolver(expression);
 	}
 
-	private ExpressionResolver createContextExpression(String expr) {
-		expr = expr.substring(DATA_START.length(), expr.length() - 1);
+	private ContextResolver createContextExpression(String expr) {
+		expr = expr.substring(DATA_START.length(),
+				expr.length() - DATA_END.length());
 
 		// Correct Format
 		if (expr.indexOf(".") >= 0) {
@@ -108,9 +113,9 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			if (context.equals(Context.DATA_CONTEXT_NAME))
 				return new DataExpressionResolver(key);
 			if (context.equals(Context.PROCESS_CONTEXT_NAME))
-				return new ContextExpressionResolver(expr);
+				return new ObjectContextResolver(expr);
 			if (context.equals(Context.CONTAINER_CONTEXT_NAME))
-				return new ContextExpressionResolver(expr);
+				return new ObjectContextResolver(expr);
 
 		}
 		return null;
@@ -118,6 +123,10 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 	public String getKey() {
 		return key;
+	}
+
+	public String getContext() {
+		return context;
 	}
 
 	@Override
@@ -135,12 +144,12 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		return expression;
 	}
 
-	protected abstract class ExpressionResolver implements
+	protected abstract class ContextResolver implements
 			Expression<Serializable> {
 
 		protected final String key;
 
-		public ExpressionResolver(String key) {
+		public ContextResolver(String key) {
 			this.key = key;
 		}
 
@@ -157,13 +166,23 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		public String getExpression() {
 			return key;
 		}
+
+		@Override
+		public String getKey() {
+			return key;
+		}
+
+		@Override
+		public String getContext() {
+			return null;
+		}
 	}
 
-	private class StaticDoubleExpressionResolver extends ExpressionResolver {
+	private class StaticDoubleContextResolver extends ContextResolver {
 
 		private final Double d;
 
-		public StaticDoubleExpressionResolver(String key) {
+		public StaticDoubleContextResolver(String key) {
 			super(key);
 			d = new Double(key);
 		}
@@ -177,40 +196,88 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		public String toString() {
 			return "StaticDoubleExpressionResolver [key=" + key + "]";
 		}
+
 	}
 
-	public class StringBuilderExpressionResolver extends ExpressionResolver {
+	public class StringBuilderContextResolver extends ContextResolver {
 
-		private final String prefix;
-		private final String suffix;
-		private ExpressionResolver r;
+		// private final String prefix;
+		// private final String suffix;
+		// private ExpressionResolver r;
 		private StringBuilder sb;
+		int[] starts;
+		int[] ends;
+		String[] nonExps;
+		List<ContextResolver> ers;
 
-		public StringBuilderExpressionResolver(String key) {
+		public StringBuilderContextResolver(String key) {
 			super(key);
-			int i1 = key.indexOf(DATA_START);
-			int i2 = key.indexOf(DATA_END);
-			prefix = key.substring(0, i1);
-			if (i2 + 1 < key.length())
-				suffix = key.substring(i2 + 1, key.length());
-			else
-				suffix = "";
-			r = createContextExpression(key.substring(i1, i2 + 1));
+			String[] mids = this.key.split(DATA_START_REGEXP);
+
+			nonExps = new String[mids.length + 1];
+			ers = new ArrayList<AbstractExpression<T>.ContextResolver>();
+			int exps = 0;
+			for (int i = 0; i < mids.length; i++) {
+				String s = mids[i];
+				// FIRST NONEXP
+				if (s.isEmpty())
+					continue;
+
+				String[] r = s.split(DATA_END_REGEXP);
+				// END OR TO EXPS WITHOUT TEXT
+				if (r.length == 1) {
+					if (s.contains(DATA_END)) {
+						ers.add(createContextExpression(DATA_START + r[0]
+								+ DATA_END));
+						nonExps[i] = null;
+						continue;
+					}
+					nonExps[i] = r[0];
+					continue;
+				}
+				if (r.length == 2) {
+					ers.add(createContextExpression(DATA_START + r[0]
+							+ DATA_END));
+					nonExps[i] = r[1];
+					continue;
+				}
+			}
+
+			// int i1 = key.indexOf(DATA_START);
+			// int i2 = key.indexOf(DATA_END);
+			// prefix = key.substring(0, i1);
+			// if (i2 + 1 < key.length())
+			// suffix = key.substring(i2 + 1, key.length());
+			// else
+			// suffix = "";
+			// r = createContextExpression(key.substring(i1, i2 + 1));
 		}
 
 		@Override
 		public Serializable get(Context ctx, Data item) throws Exception {
 			sb = new StringBuilder();
-			sb.append(prefix);
-			sb.append(r.get(ctx, item));
-			sb.append(suffix);
+			int i = 0;
+			for (ContextResolver er : ers) {
+				String s = nonExps[i];
+				if (s != null)
+					sb.append(s);
+				sb.append(er.get(ctx, item));
+				i++;
+			}
+			String s = nonExps[i];
+			if (s != null)
+				sb.append(s);
+
+			// sb.append(prefix);
+			// sb.append(r.get(ctx, item));
+			// sb.append(suffix);
 			return sb.toString();
 		}
 	}
 
-	public class StaticStringExpressionResolver extends ExpressionResolver {
+	public class StaticStringContextResolver extends ContextResolver {
 
-		public StaticStringExpressionResolver(String key) {
+		public StaticStringContextResolver(String key) {
 			super(key);
 		}
 
@@ -225,7 +292,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		}
 	}
 
-	public class StaticNullExpressionResolver extends ExpressionResolver {
+	public class StaticNullExpressionResolver extends ContextResolver {
 
 		public StaticNullExpressionResolver(String key) {
 			super(key);
@@ -243,9 +310,9 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 	}
 
-	public class ContextExpressionResolver extends ExpressionResolver {
+	public class ObjectContextResolver extends ContextResolver {
 
-		public ContextExpressionResolver(String key) {
+		public ObjectContextResolver(String key) {
 			super(key);
 		}
 
@@ -263,7 +330,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		}
 	}
 
-	public class DataExpressionResolver extends ExpressionResolver {
+	public class DataExpressionResolver extends ContextResolver {
 
 		public DataExpressionResolver(String key) {
 			super(key);
@@ -281,7 +348,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 	}
 
-	public class SetExpressionResolver extends ExpressionResolver {
+	public class SetExpressionResolver extends ContextResolver {
 
 		private DataRegExpIterator iter;
 

@@ -52,6 +52,7 @@ public abstract class AbstractLineStream extends AbstractStream {
 	public void close() throws Exception {
 		if (reader != null)
 			reader.close();
+		super.close();
 	}
 
 	/**

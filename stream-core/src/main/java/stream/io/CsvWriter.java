@@ -76,6 +76,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	protected File file;
 	protected String lastUrlString = null;
 	protected Expression<String> fileExpression;
+	protected boolean header = true;
 
 	public CsvWriter() {
 		super();
@@ -161,6 +162,14 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		this.keys = str;
 	}
 
+	public boolean isHeader() {
+		return header;
+	}
+
+	public void setHeader(boolean header) {
+		this.header = header;
+	}
+
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
@@ -177,7 +186,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	 */
 	@Override
 	public Data processMatchingData(Data datum) {
-		String expandedUrlString=null;
+		String expandedUrlString = null;
 		try {
 			expandedUrlString = fileExpression.get(context, datum);
 		} catch (Exception e1) {
@@ -247,8 +256,8 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			log.error("DataStreamWriter is closed! Not writing any more data items!");
 			return datum;
 		}
-
-		writeHeader(datum);
+		if (header)
+			writeHeader(datum);
 
 		// write the datum elements (attribute values)
 		//

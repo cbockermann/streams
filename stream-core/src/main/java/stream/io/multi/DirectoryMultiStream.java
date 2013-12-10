@@ -3,6 +3,8 @@ package stream.io.multi;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +33,7 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 	private static AtomicInteger counter;
 	private static AtomicBoolean filesAreRead;
 	// TODO order
-	private String order;
+	private String[] order;
 	private AbstractStream stream;
 	private boolean noStream = false;
 
@@ -40,7 +42,7 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 		if (filesAreRead == null)
 			filesAreRead = new AtomicBoolean(false);
 		if (files == null)
-			files = new LinkedBlockingQueue<String>(100);
+			files = new LinkedBlockingQueue<String>();
 	}
 
 	public DirectoryMultiStream(InputStream in) {
@@ -49,6 +51,14 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 
 	public DirectoryMultiStream() {
 		super();
+	}
+
+	public String[] getOrder() {
+		return order;
+	}
+
+	public void setOrder(String[] order) {
+		this.order = order;
 	}
 
 	public String getSuffix() {
@@ -76,45 +86,32 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 				throw new IllegalArgumentException(
 						"Given URL is no local directory");
 			else {
-				// TODO File order
-				String[] f = dir.list(new FilenameFilter() {
+				String[] f = null;
+				if (suffix != null && !suffix.isEmpty()) {
+					f = dir.list(new FilenameFilter() {
 
-					@Override
-					public boolean accept(File dir, String name) {
-						if (name.startsWith(".") || !name.endsWith(suffix))
-							return false;
-						return true;
+						@Override
+						public boolean accept(File dir, String name) {
+							if (name.startsWith(".") || !name.endsWith(suffix))
+								return false;
+							return true;
+						}
+					});
+					for (String file : f) {
+						files.add(file);
 					}
-				});
-				for (String fn : f) {
-					files.add(fn);
+				} else {
+					f = dir.list();
+					List<String> fil = Arrays.asList(f);
+
+					for (String file : order) {
+						if (fil.contains(file))
+							files.add(file);
+					}
 				}
 			}
 
 		}
-
-		// Stream tmpStream = streams.get(additionOrder.get(0));
-		// if (!(tmpStream instanceof AbstractStream))
-		// throw new IllegalArgumentException(
-		// "Only Subclasses of AbstractStream are supported!");
-		//
-		// stream = (AbstractStream) tmpStream;
-		// stream.close();
-		//
-		// if (files.length > 0) {
-		// int c = counter.getAndIncrement();
-		// if (c < files.length) {
-		// SourceURL surl = createUrl(files[c]);
-		// if (surl == null)
-		// throw new IllegalArgumentException(
-		// "Directory doesnt contain files");
-		// log.info(surl.toString());
-		// stream.setUrl(surl);
-		// } else
-		// noStream = true;
-		// } else
-		// throw new IllegalArgumentException("Directory is empty");
-		// stream.init();
 
 	}
 

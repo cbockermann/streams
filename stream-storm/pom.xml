@@ -31,11 +31,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jwall</groupId>
-			<artifactId>streams-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jwall</groupId>
 			<artifactId>streams-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -48,7 +43,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
-			<version>0.9.13-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

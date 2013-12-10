@@ -86,12 +86,14 @@ public class MacroExpander {
 				log.trace("   content is: {}", content);
 				String val = get(variable.replace("data.", ""), evt);
 
-				if (val != null)
+				if (val != null) {
 					content = content.substring(0, start) + val
 							+ content.substring(end + 1);
-				else
+				} else {
 					content = content.substring(0, start) + ""
 							+ content.substring(end + 1);
+				}
+				end = start + val.length();
 
 				if (end < content.length())
 					start = content.indexOf(VAR_PREFIX, end);

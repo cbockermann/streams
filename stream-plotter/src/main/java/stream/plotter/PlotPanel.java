@@ -180,7 +180,6 @@ public class PlotPanel extends JPanel {
 		add(p, BorderLayout.CENTER);
 
 		this.setSteps(stepSlider.getValue());
-
 	}
 
 	public XYPlot getPlot() {
@@ -208,19 +207,27 @@ public class PlotPanel extends JPanel {
 	}
 
 	public void setSteps(Integer steps) {
+		log.info("Setting steps to {}", steps);
 		ValueAxis range = plot.getDomainAxis();
 		range.setFixedAutoRange(steps.doubleValue());
-		plot.axisChanged(new AxisChangeEvent(range));
 
 		for (int i = 0; i < series.getSeriesCount(); i++) {
 			series.getSeries(i).setMaximumItemCount(steps);
 		}
 		stepField.setText(steps + "");
+
+		stepSlider.setMinimum(10);
 		stepSlider.setValue(steps);
+		plot.axisChanged(new AxisChangeEvent(range));
 	}
 
 	public Integer getSteps() {
 		return this.stepSlider.getValue();
+	}
+
+	public void setHistory(Integer steps) {
+		stepSlider.setMaximum(steps);
+		setSteps(steps);
 	}
 
 	public void setYRange(Double ymin, Double ymax) {

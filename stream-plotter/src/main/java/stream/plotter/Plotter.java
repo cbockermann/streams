@@ -143,9 +143,6 @@ public class Plotter extends DataVisualizer {
 	@Parameter(required = false, description = "The number of samples displayed in the plot (i.e. the 'window size' of the plot)")
 	public void setHistory(Integer history) {
 		this.history = history;
-		if (plotPanel != null) {
-			plotPanel.setSteps(history);
-		}
 	}
 
 	/**
@@ -162,8 +159,6 @@ public class Plotter extends DataVisualizer {
 			ymax = new Double(range[1]);
 		}
 
-		plotPanel.setSteps(Math.max(5, history));
-
 		if (ymin != null && ymax != null) {
 			plotPanel.plot.getRangeAxis().setRange(ymin, ymax);
 		}
@@ -175,7 +170,9 @@ public class Plotter extends DataVisualizer {
 		frame.getContentPane().add(plotPanel, BorderLayout.CENTER);
 		frame.setSize(width, height);
 		frame.setVisible(true);
-		plotPanel.setSteps(history);
+
+		log.info("History is {} steps", history);
+		plotPanel.setHistory(Math.max(5, history));
 	}
 
 	/**

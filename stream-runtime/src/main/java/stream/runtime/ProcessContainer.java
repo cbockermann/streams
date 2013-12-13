@@ -99,7 +99,7 @@ public class ProcessContainer implements IContainer {
 
 	final static List<ProcessContainer> container = new ArrayList<ProcessContainer>();
 
-	private static Boolean runShutdownHook = true;
+	private Boolean runShutdownHook = true;
 
 	static {
 		// The rescue-shutdown handler in case the VM was killed by a signal...
@@ -107,10 +107,6 @@ public class ProcessContainer implements IContainer {
 		log.debug("Adding container shutdown-hook");
 		Thread t = new Thread() {
 			public void run() {
-
-				if (!runShutdownHook) {
-					return;
-				}
 
 				if ("disabled".equalsIgnoreCase(System
 						.getProperty("container.shutdown-hook"))) {
@@ -501,11 +497,11 @@ public class ProcessContainer implements IContainer {
 			throw e;
 		}
 
-//		// Special Treatment for properties
-//		DocumentHandler ph = new PropertiesHandler();
-//		Variables pv = new Variables();
-//		ph.handle(this, doc, pv, dependencyInjection);
-//		context.getProperties().putAll(pv);
+		// // Special Treatment for properties
+		// DocumentHandler ph = new PropertiesHandler();
+		// Variables pv = new Variables();
+		// ph.handle(this, doc, pv, dependencyInjection);
+		// context.getProperties().putAll(pv);
 
 		context.setProperty("xml", XMLUtils.toString(doc));
 	}
@@ -622,7 +618,7 @@ public class ProcessContainer implements IContainer {
 
 		// if the shutdown condition has properly been reached (no Ctrl+C), then
 		// we do not require the shutdown hook to be run...
-		ProcessContainer.runShutdownHook = false;
+		runShutdownHook = false;
 
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);

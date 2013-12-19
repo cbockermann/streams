@@ -3,6 +3,8 @@
  */
 package stream.util;
 
+import java.io.Serializable;
+
 import stream.util.parser.TimeFormat;
 import stream.util.parser.TimeParser;
 
@@ -14,7 +16,10 @@ import stream.util.parser.TimeParser;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class Time {
+public class Time implements Serializable {
+
+	/** The unique class ID */
+	private static final long serialVersionUID = 5508820209522304182L;
 
 	final Long millis;
 

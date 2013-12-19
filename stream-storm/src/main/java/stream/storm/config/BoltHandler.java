@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 import stream.StreamTopology;
 import stream.runtime.setup.ObjectFactory;
 import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.IBasicBolt;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.TopologyBuilder;
 
@@ -68,11 +69,32 @@ public class BoltHandler extends ATopologyElementHandler {
 		// className, params);
 		log.info("  >   Creating bolt-instance from class {}, parameters: {}",
 				className, params);
-		IRichBolt bolt = (IRichBolt) objectFactory.create(className, params,
+
+		Object obj = objectFactory.create(className, params,
 				ObjectFactory.createConfigDocument(el));
 
-		log.info("  > Registering bolt '{}' with instance {}", id, bolt);
-		BoltDeclarer boltDeclarer = builder.setBolt(id, bolt);
+		BoltDeclarer boltDeclarer = null;
+
+		if (obj instanceof IRichBolt) {
+			IRichBolt bolt = (IRichBolt) obj;
+			log.info("  > Registering bolt '{}' with instance {}", id, bolt);
+			boltDeclarer = builder.setBolt(id, bolt);
+		}
+
+		if (obj instanceof IBasicBolt) {
+			IBasicBolt bolt = (IBasicBolt) obj;
+			log.info("  > Registering bolt '{}' with instance {}", id, bolt);
+			boltDeclarer = builder.setBolt(id, bolt);
+		}
+
+		if (boltDeclarer == null) {
+			log.debug(
+					"Bolt-class '{}' does not implement supported interface (only IRichBolt/IBasicBolt are supported)!",
+					className);
+			throw new Exception(
+					"Bolt-class does not implement supported interface (only IRichBolt/IBasicBolt are supported)!");
+		}
+
 		BoltDeclarer cur = boltDeclarer;
 		List<String> inputs = getInputNames(el);
 		if (!inputs.isEmpty()) {

@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -335,8 +336,17 @@ public class SourceURL implements Serializable {
 
 			log.debug("The URL string is: '{}'", theUrl);
 			URL url = new URL(theUrl);
-
-			return url.openStream();
+			URLConnection conn = url.openConnection();
+			if (url.getUserInfo() != null) {
+				String basicAuth = "Basic "
+						+ new String(
+								javax.xml.bind.DatatypeConverter
+										.printBase64Binary(url.getUserInfo()
+												.getBytes()));
+				conn.setRequestProperty("Authorization", basicAuth);
+			}
+			return conn.getInputStream();
+			// return url.openStream();
 		} catch (Exception e) {
 			log.error(
 					"Failed to open '{}' with default Java URL mechanism: {}",

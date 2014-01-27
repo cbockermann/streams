@@ -45,6 +45,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 	protected ContextResolver r;
 	protected String key;
 	protected String context;
+	protected boolean statics;
 
 	protected String DATA_START = "%{";
 	protected String DATA_START_REGEXP = "%\\{";
@@ -52,8 +53,10 @@ public abstract class AbstractExpression<T extends Serializable> implements
 	protected String DATA_END_REGEXP = "}";
 
 	public AbstractExpression(String e) {
-		if (e == null)
+		statics = false;
+		if (e == null) {
 			return;
+		}
 		expression = e.trim();
 		if (expression != null) {
 
@@ -64,15 +67,31 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			}
 			if (expression.equalsIgnoreCase("null")) {
 				r = new StaticNullExpressionResolver(expression);
+				statics = true;
 				return;
 			}
 			try {
 				Double.parseDouble(expression);
 				r = new StaticDoubleContextResolver(expression);
+				statics = true;
+				return;
 			} catch (Exception exc) {
 				r = createStringExpression();
 			}
+
 		}
+	}
+
+	public T get(Context ctx) throws Exception {
+		return get(ctx, null);
+	}
+
+	public T get(Data data) throws Exception {
+		return get(null, data);
+	}
+
+	public boolean isStatic() {
+		return statics;
 	}
 
 	private ContextResolver createStringExpression() {
@@ -81,6 +100,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 				&& expression.indexOf(DATA_START) < expression
 						.indexOf(DATA_END))
 			return new StringBuilderContextResolver(expression);
+		statics = true;
 		return new StaticStringContextResolver(expression);
 	}
 
@@ -151,6 +171,14 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 		public ContextResolver(String key) {
 			this.key = key;
+		}
+
+		public Serializable get(Context ctx) throws Exception {
+			return get(ctx, null);
+		}
+
+		public Serializable get(Data data) throws Exception {
+			return get(null, data);
 		}
 
 		public Class<Serializable> type() {

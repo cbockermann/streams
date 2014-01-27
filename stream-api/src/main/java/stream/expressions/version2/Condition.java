@@ -36,6 +36,6 @@ public abstract class Condition extends AbstractExpression<Boolean> {
 	public Class<Boolean> type() {
 		return Boolean.class;
 	}
-
+	
 
 }

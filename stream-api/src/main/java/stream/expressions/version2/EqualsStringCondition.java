@@ -40,9 +40,11 @@ public class EqualsStringCondition extends OperatorCondition<String> {
 	@Override
 	public Boolean get(Context ctx, Data item) throws Exception {
 		String l = left.get(ctx, item);
-		String r = right.get(ctx, item);
 		if (l == null)
-			return r == null;
+			return null;
+		String r = right.get(ctx, item);
+		if (r == null)
+			return null;
 		return l.equals(r);
 	}
 

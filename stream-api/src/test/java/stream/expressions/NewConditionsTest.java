@@ -23,6 +23,8 @@
  */
 package stream.expressions;
 
+import java.util.Arrays;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -37,6 +39,7 @@ import stream.data.DataFactory;
 import stream.data.ProcessContextMock;
 import stream.data.StatisticsTest;
 import stream.expressions.version2.ConditionFactory;
+import stream.expressions.version2.StringArrayExpression;
 import stream.flow.If;
 import stream.flow.Skip;
 import stream.util.MultiData;
@@ -65,8 +68,29 @@ public class NewConditionsTest {
 	@Test
 	public void testEmptyCondition() throws Exception {
 		Data data = DataFactory.create();
-		testTime("", data);
+		// testTime("", data);
 		assertCondition("", data, true);
+
+	}
+
+	@Test
+	public void testNullCondition() throws Exception {
+		Data data = DataFactory.create();
+		data.put("b", 3d);
+		stream.expressions.version2.Condition c = cf
+				.create("%{data.b}>%{data.a}");
+		Assert.assertNull(c.get(data));
+		c = cf.create("%{data.a}>%{data.b}");
+		Assert.assertNull(c.get(data));
+		c = cf.create("%{data.a}>=%{data.b}");
+		Assert.assertNull(c.get(data));
+		c = cf.create("%{data.a}<%{data.b}");
+		Assert.assertNull(c.get(data));
+		c = cf.create("%{data.a}<=%{data.b}");
+		Assert.assertNull(c.get(data));
+
+		c = cf.create("%{data.a}=='svv'");
+		Assert.assertNull(c.get(data));
 
 	}
 
@@ -86,6 +110,25 @@ public class NewConditionsTest {
 		// assertCondition(
 		// "%{data.aa}== 4d and %{data.{a.*}+} >3and (%{data.ab}== 4d)",
 		// data, false);
+
+	}
+
+	@Test
+	public void testStringArrayExpression() throws Exception {
+		StringArrayExpression e = new StringArrayExpression("blah1,blah2,blah3");
+
+		String[] test = e.get(null, null);
+		Assert.assertTrue(e.isStatic());
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < rounds; i++) {
+
+		}
+		long stop = System.currentTimeMillis();
+		System.out.println((stop - start) + ":" + Arrays.toString(test));
+	}
+
+	@Test
+	public void testSourceURLExpression() throws Exception {
 
 	}
 

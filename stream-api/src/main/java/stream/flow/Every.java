@@ -23,6 +23,7 @@ public class Every extends ProcessorList {
 		count++;
 
 		if (n != null && count % n == 0) {
+			count = 0l;
 			return super.process(input);
 		}
 

@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import stream.annotations.Parameter;
 import stream.data.DataFactory;
 import stream.io.sql.HsqlDialect;
 import stream.io.sql.MysqlDialect;
+import stream.util.KeyFilter;
 
 /**
  * @author chris
@@ -197,11 +199,10 @@ public class SQLWriter extends AbstractSQLProcessor {
 				log.debug("Creating new table {} from first item {}",
 						getTable(), input);
 				Data sample = DataFactory.create();
-				if (keys != null) {
-					for (String key : keys)
-						sample.put(key, input.get(key));
-				} else {
-					sample.putAll(input);
+
+				Set<String> ks = KeyFilter.select(input, keys);
+				for (String k : ks) {
+					sample.put(k, input.get(k));
 				}
 
 				Map<String, Class<?>> schema = dialect.getColumnTypes(sample);

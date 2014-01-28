@@ -38,6 +38,8 @@ import stream.annotations.Description;
 @Description(group = "Data Stream.Monitoring", name = "Print Data")
 public class PrintData extends ConditionedProcessor {
 
+	String prefix = "data-item: ";
+
 	/**
 	 * @see stream.DataProcessor#process(stream.Data)
 	 */
@@ -47,7 +49,25 @@ public class PrintData extends ConditionedProcessor {
 		if (data == null)
 			return null;
 
-		System.out.println("data-item: " + data);
+		if (prefix != null)
+			System.out.print(prefix);
+
+		System.out.println(data.toString());
 		return data;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix
+	 *            the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

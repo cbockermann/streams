@@ -38,6 +38,10 @@ public interface Expression<T extends Serializable> {
 
 	public T get(Context ctx, Data item) throws Exception;
 
+	public T get(Context ctx) throws Exception;
+
+	public T get(Data item) throws Exception;
+
 	public Class<T> type();
 
 	public String getExpression();

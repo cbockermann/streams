@@ -86,7 +86,9 @@ public class SetValue extends ConditionedProcessor {
 					context.set(key, null);
 			} else
 				try {
-					val = exp.get(context, data);
+					Serializable s = (exp == null) ? null : exp.get(context,
+							data);
+					val = s == null ? value : s;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

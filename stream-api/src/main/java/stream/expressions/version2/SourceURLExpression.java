@@ -27,40 +27,26 @@ import java.io.Serializable;
 
 import stream.Context;
 import stream.Data;
+import stream.io.SourceURL;
 
 /**
  * @author Hendrik Blom
  * 
  */
-public class StringExpression extends AbstractExpression<String> {
+public class SourceURLExpression extends AbstractExpression<SourceURL> {
 
-	public final String result;
-
-	public StringExpression(String e) {
+	public SourceURLExpression(String e) {
 		super(e.replace("'", ""));
-		String st = "";
-		if (this.isStatic()) {
-			Serializable s;
-			try {
-				s = r.get(null, null);
-				st = (s == null) ? null : s.toString();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		}
-		result = st;
 	}
 
 	@Override
-	public String get(Context ctx, Data item) throws Exception {
-		if (statics)
-			return result;
+	public SourceURL get(Context ctx, Data item) throws Exception {
 		Serializable s = r.get(ctx, item);
-		return (s == null) ? null : s.toString();
+		return (s == null) ? null : new SourceURL(s.toString());
 	}
 
-	public Class<String> type() {
-		return String.class;
+	public Class<SourceURL> type() {
+		return SourceURL.class;
 	}
 
 }

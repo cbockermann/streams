@@ -33,14 +33,29 @@ import stream.Data;
  * 
  */
 public class DoubleExpression extends AbstractExpression<Double> {
+	public final Double result;
 
 	public DoubleExpression(String e) {
 		super(e);
+		Double d = 0d;
+		if (this.isStatic()) {
+			Serializable s;
+			try {
+				s = r.get(null, null);
+				d = (s == null) ? null : (s instanceof Double) ? ((Double) s)
+						: new Double(s.toString());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		result = d;
 	}
 
 	@Override
 	public Double get(Context ctx, Data item) throws Exception {
- 		Serializable s = r.get(ctx, item);
+		if (statics)
+			return result;
+		Serializable s = r.get(ctx, item);
 		return (s == null) ? null : (s instanceof Double) ? ((Double) s)
 				: new Double(s.toString());
 	}

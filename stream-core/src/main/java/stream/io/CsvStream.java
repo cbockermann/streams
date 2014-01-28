@@ -47,7 +47,7 @@ public class CsvStream extends AbstractLineStream {
 	final ArrayList<String> columns = new ArrayList<String>();
 	String[] keys;
 	String splitExpression = "(;|,)";
-	long lineNo = 0L;
+	long lineNo;
 	boolean header = true;
 
 	/**
@@ -79,6 +79,12 @@ public class CsvStream extends AbstractLineStream {
 		super(url);
 		this.url = url;
 		this.splitExpression = splitExp;
+	}
+
+	@Override
+	public void init() throws Exception {
+		super.init();
+		lineNo = 0L;
 	}
 
 	/**

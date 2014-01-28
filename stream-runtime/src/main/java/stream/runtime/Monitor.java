@@ -34,16 +34,25 @@ import stream.io.SourceURL;
 import stream.util.parser.TimeParser;
 
 /**
- * @author chris
+ * @author chris,Hendrik
  * 
  */
 public class Monitor extends DefaultProcess {
 
 	static Logger log = LoggerFactory.getLogger(Monitor.class);
-	Long interval = 1000L;
-	String intervalString = "1000ms";
+	private Long interval = 1000L;
+	private String intervalString = "1000ms";
+	private Long limit = -1l;
 
 	public Monitor() {
+	}
+
+	public Long getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Long limit) {
+		this.limit = limit;
 	}
 
 	/**
@@ -73,11 +82,18 @@ public class Monitor extends DefaultProcess {
 			log.debug("Monitor-interval is {} ms", interval);
 
 			source = new AbstractStream((SourceURL) null) {
+				long count = 0;
+
 				@Override
 				public Data readNext() throws Exception {
-					return DataFactory.create();
+					if (limit < 0 || count < limit) {
+						count++;
+						return DataFactory.create();
+					}
+					return null;
 				}
 			};
+			((AbstractStream) source).setLimit(limit);
 
 		} catch (Exception e) {
 			interval = 1000L;

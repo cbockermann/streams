@@ -43,9 +43,11 @@ public class EqualsDoubleCondition extends OperatorCondition<Double> {
 	@Override
 	public Boolean get(Context ctx, Data item) throws Exception {
 		Double l = left.get(ctx, item);
-		Double r = right.get(ctx, item);
 		if (l == null)
-			return r == null;
+			return null;
+		Double r = right.get(ctx, item);
+		if (r == null)
+			return null;
 		return (doubleToLongBits(l.doubleValue()) == doubleToLongBits(r
 				.doubleValue()));
 	}

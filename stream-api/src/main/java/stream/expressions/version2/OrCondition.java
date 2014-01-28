@@ -38,7 +38,14 @@ public class OrCondition extends OperatorCondition<Boolean> {
 
 	@Override
 	public Boolean get(Context ctx, Data item) throws Exception {
+		Boolean l = left.get(ctx, item);
+		Boolean r = right.get(ctx, item);
+		if (l == null && r == null)
+			return null;
+		if (l == null)
+			return right.get(ctx, item);
+		if (r == null)
+			return left.get(ctx, item);
 		return left.get(ctx, item) || right.get(ctx, item);
 	}
-
 }

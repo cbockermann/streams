@@ -157,6 +157,7 @@ public class PropertiesHandler implements DocumentHandler {
 							&& !"".equals(value.trim())) {
 						String k = key.trim();
 						String v = value.trim();
+						variables.expand(v);
 						// log.info("Setting property {} = {}", k, v);
 						variables.set(k, v);
 					}

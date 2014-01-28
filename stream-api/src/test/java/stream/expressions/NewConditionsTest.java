@@ -37,6 +37,7 @@ import stream.ProcessContext;
 import stream.Processor;
 import stream.data.DataFactory;
 import stream.data.ProcessContextMock;
+import stream.data.SetValue;
 import stream.data.StatisticsTest;
 import stream.expressions.version2.ConditionFactory;
 import stream.expressions.version2.StringArrayExpression;
@@ -435,6 +436,16 @@ public class NewConditionsTest {
 		MultiData md = new MultiData(rounds);
 		md.put("test", 3d);
 		testTime(ifP, md);
+
+		SetValue set = new SetValue();
+		set.setKey("@if");
+		set.setValue("'true'");
+		ifP.add(set);
+		Data d = DataFactory.create();
+		d = ifP.process(d);
+		Assert.assertFalse(d.containsKey("@if"));
+		d.put("test", 3d);
+		Assert.assertTrue(d.containsKey("@if"));
 	}
 
 	@Test

@@ -443,9 +443,17 @@ public class NewConditionsTest {
 		ifP.add(set);
 		Data d = DataFactory.create();
 		d = ifP.process(d);
-		Assert.assertFalse(d.containsKey("@if"));
-		d.put("test", 3d);
 		Assert.assertTrue(d.containsKey("@if"));
+
+		d = DataFactory.create();
+		d.put("test", 3d);
+		d = ifP.process(d);
+		Assert.assertTrue(d.containsKey("@if"));
+
+		d = DataFactory.create();
+		d.put("test", 4d);
+		d = ifP.process(d);
+		Assert.assertFalse(d.containsKey("@if"));
 	}
 
 	@Test

@@ -134,11 +134,17 @@ public class ProcessElementHandler implements ElementHandler {
 			if (copies.indexOf(",") >= 0) {
 				ids = copies.split(",");
 			} else {
-				Integer times = new Integer(copies);
-				ids = new String[times];
-				for (int i = 0; i < times; i++) {
-					ids[i] = "" + i;
+				try {
+					Integer times = new Integer(copies);
+					ids = new String[times];
+					for (int i = 0; i < times; i++) {
+						ids[i] = "" + i;
+					}
+				} catch (NumberFormatException e) {
+					ids = new String[1];
+					ids[0] = copies;
 				}
+
 			}
 			log.debug("Creating {} processes due to copies='{}'", ids.length,
 					copies);

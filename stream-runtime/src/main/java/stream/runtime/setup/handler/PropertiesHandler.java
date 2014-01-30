@@ -144,6 +144,13 @@ public class PropertiesHandler implements DocumentHandler {
 			Variables variables) {
 
 		NodeList ch = doc.getElementsByTagName("property");
+		handlePropertyElements(ch, variables);
+		ch = doc.getElementsByTagName("Property");
+		handlePropertyElements(ch, variables);
+	}
+
+	private void handlePropertyElements(NodeList ch, Variables variables) {
+
 		for (int i = 0; i < ch.getLength(); i++) {
 			Node child = ch.item(i);
 			if (child instanceof Element) {

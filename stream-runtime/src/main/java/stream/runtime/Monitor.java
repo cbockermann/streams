@@ -30,7 +30,6 @@ import stream.Context;
 import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
-import stream.io.SourceURL;
 import stream.util.parser.TimeParser;
 
 /**
@@ -81,19 +80,7 @@ public class Monitor extends DefaultProcess {
 			interval = TimeParser.parseTime(getInterval());
 			log.debug("Monitor-interval is {} ms", interval);
 
-			source = new AbstractStream((SourceURL) null) {
-				long count = 0;
-
-				@Override
-				public Data readNext() throws Exception {
-					if (limit < 0 || count < limit) {
-						count++;
-						return DataFactory.create();
-					}
-					return null;
-				}
-			};
-			((AbstractStream) source).setLimit(limit);
+			source = new MonitorStream();
 
 		} catch (Exception e) {
 			interval = 1000L;
@@ -103,7 +90,9 @@ public class Monitor extends DefaultProcess {
 	}
 
 	public Data process(Data item) {
+
 		Data data = super.process(item);
+
 		try {
 			Thread.sleep(interval);
 		} catch (InterruptedException e) {
@@ -115,5 +104,13 @@ public class Monitor extends DefaultProcess {
 
 	public String toString() {
 		return "Monitor[" + super.toString() + "]";
+	}
+
+	public class MonitorStream extends AbstractStream {
+
+		@Override
+		public Data readNext() throws Exception {
+			return DataFactory.create();
+		}
 	}
 }

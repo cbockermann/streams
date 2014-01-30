@@ -118,8 +118,9 @@ public class Variables implements Map<String, String>, Serializable {
 		int start = content.indexOf(VAR_PREFIX, 0);
 		while (start >= 0) {
 			int end = content.indexOf(VAR_SUFFIX, start + 1);
-			if (end >= start + 2) {
-				String variable = content.substring(start + 2, end);
+			if (end >= start + VAR_PREFIX.length()) {
+				String variable = content.substring(
+						start + VAR_PREFIX.length(), end);
 				log.debug("Found variable: {}", variable);
 				log.trace("   content is: {}", content);
 				int len = variable.length();

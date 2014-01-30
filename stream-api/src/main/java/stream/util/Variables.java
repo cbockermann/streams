@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author chris
+ * @author chris, Hendrik
  * 
  */
 public class Variables implements Map<String, String>, Serializable {
@@ -115,40 +115,39 @@ public class Variables implements Map<String, String>, Serializable {
 
 	private String substitute(String str, boolean emptyStrings) {
 		String content = str;
-		int start = content.indexOf(VAR_PREFIX, 0);
-		while (start >= 0) {
+		// ${p1.${p2}_${p3.${p4}}}
+		int t = 0;
+		while (content.indexOf(VAR_PREFIX, 0) > -1) {
+			int start = content.indexOf(VAR_PREFIX, t);
+			int start2 = content.indexOf(VAR_PREFIX,
+					start + VAR_PREFIX.length());
 			int end = content.indexOf(VAR_SUFFIX, start + 1);
+			if (start2 >= 0 && start2 < end) {
+				t = start2;
+				continue;
+			}
 			if (end >= start + VAR_PREFIX.length()) {
 				String variable = content.substring(
 						start + VAR_PREFIX.length(), end);
 				log.debug("Found variable: {}", variable);
 				log.trace("   content is: {}", content);
-				int len = variable.length();
 				if (containsKey(variable)) {
 					String repl = get(variable);
 					if (repl == null)
 						log.info("lookup of '{}' revealed: {}", variable, repl);
 					content = content.substring(0, start) + get(variable)
 							+ content.substring(end + 1);
-					len = repl.length();
 				} else {
-					if (emptyStrings) {
+					if (emptyStrings)
 						content = content.substring(0, start) + ""
 								+ content.substring(end + 1);
-						len = 0;
-					} else {
+					else
 						content = content.substring(0, start) + VAR_PREFIX
 								+ variable + VAR_SUFFIX
 								+ content.substring(end + 1);
-					}
 				}
-
-				if (end < content.length())
-					start = content.indexOf(VAR_PREFIX, start + len);
-				else
-					start = -1;
-			} else
-				start = -1;
+			}
+			t = 0;
 		}
 		return content;
 	}

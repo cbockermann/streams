@@ -9,7 +9,20 @@ public class VariablesTest {
 	@Test
 	public void test() {
 		Variables v = new Variables();
-		//
+		v.set("p1", "result");
+		Assert.assertEquals("result", v.expand("${p1}"));
+
+		v = new Variables();
+		v.set("p1", "result");
+		try {
+			v.expand("${p2}");
+			Assert.fail("Expected IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
+			// no-op (pass)
+		}
+
+		// Hierachical Parameter
+		v = new Variables();
 		v.set("p1.v2_v5", "result");
 		v.set("p3.v4", "v5");
 		v.set("p2", "v2");

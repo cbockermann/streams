@@ -138,13 +138,13 @@ public class Variables implements Map<String, String>, Serializable {
 					content = content.substring(0, start) + get(variable)
 							+ content.substring(end + 1);
 				} else {
+
 					if (emptyStrings)
 						content = content.substring(0, start) + ""
 								+ content.substring(end + 1);
 					else
-						content = content.substring(0, start) + VAR_PREFIX
-								+ variable + VAR_SUFFIX
-								+ content.substring(end + 1);
+						throw new IllegalArgumentException("Property "
+								+ variable + " does is not set.");
 				}
 			}
 			t = 0;

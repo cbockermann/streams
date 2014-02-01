@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
 import stream.runtime.setup.ObjectCreator;
+import stream.util.Variables;
 
 /**
  * @author chris
@@ -33,8 +34,8 @@ public class JavaScriptProcessorFactory implements ObjectCreator {
 	 *      java.util.Map)
 	 */
 	@Override
-	public Object create(String className, Map<String, String> parameters)
-			throws Exception {
+	public Object create(String className, Map<String, String> parameters,
+			Variables local) throws Exception {
 
 		log.info("Request for creating {}", className);
 		String res = className.substring(3);

@@ -244,18 +244,29 @@ public class ProcessContainer implements IContainer {
 
 		LibrariesElementHandler libHandler = new LibrariesElementHandler(
 				objectFactory);
-		documentHandler.add(libHandler);
-		documentHandler.add(new PropertiesHandler());
-		documentHandler.add(new SystemPropertiesHandler());
 
+		// DocumentHandler ORDER IS VERY IMPORTANT!!!
+		// "Default" Parameter first. Property-Files from System-properties.
+		documentHandler.add(new PropertiesHandler());
+		// Add System-properties
+		documentHandler.add(new SystemPropertiesHandler());
+		documentHandler.add(libHandler);
+
+		// auto-discovered handler
 		for (String elem : autoHandlers.keySet()) {
 			log.debug("Adding auto-discovered handler for element '{}': {}",
 					elem, autoHandlers.get(elem));
 			elementHandler.put(elem, autoHandlers.get(elem));
 		}
 
+		// ElementHandler
+		// Container-Ref
 		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
 				objectFactory));
+
+		// IO
+		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
+
 		elementHandler.put("Sink", new SinkElementHandler());
 		elementHandler.put("Queue", new QueueElementHandler());
 
@@ -263,13 +274,14 @@ public class ProcessContainer implements IContainer {
 				processorFactory));
 		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
 				processorFactory));
-		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
+
 		elementHandler.put("Service", new ServiceElementHandler(objectFactory));
 		elementHandler.put("Libs", libHandler);
 
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
 
+		// Get Document
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -278,6 +290,7 @@ public class ProcessContainer implements IContainer {
 		XIncluder includer = new XIncluder();
 		doc = includer.perform(doc);
 
+		// Container
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);
 
@@ -298,6 +311,7 @@ public class ProcessContainer implements IContainer {
 				&& !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
 
+		// Container Adress
 		String host = "localhost";
 		try {
 			host = InetAddress.getLocalHost().getHostAddress(); // .getHostName();

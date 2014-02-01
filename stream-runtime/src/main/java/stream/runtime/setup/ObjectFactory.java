@@ -189,24 +189,32 @@ public class ObjectFactory extends Variables {
 	}
 
 	public Object create(Element node) throws Exception {
-		return create(node, new HashMap<String, String>());
+		return create(node, new HashMap<String, String>(), new Variables());
 	}
 
-	public Object create(Element node, Map<String, String> variables)
-			throws Exception {
-		Map<String, String> params = getAttributes(node);
+	/**
+	 * @param node
+	 * @param variables
+	 * @return
+	 * @throws Exception
+	 */
+	public Object create(Element node, Map<String, String> params,
+			Variables local) throws Exception {
+
+		//
+		// Map<String, String> params = getAttributes(node);
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
 
 		String name = node.getNodeName();
 		for (ObjectCreator creator : objectCreators) {
 			if (name.startsWith(creator.getNamespace())) {
-				return creator.create(name, params);
+				return creator.create(name, params, local);
 			}
 		}
 
 		Object obj = create(this.findClassForElement(node), params,
-				createConfigDocument(node), new Variables(variables));
+				createConfigDocument(node), local);
 		return obj;
 	}
 
@@ -216,18 +224,10 @@ public class ObjectFactory extends Variables {
 	}
 
 	public Object create(String className, Map<String, String> parameter,
-			org.w3c.dom.Element config, Variables extraVariables)
-			throws Exception {
+			org.w3c.dom.Element config, Variables local) throws Exception {
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.putAll(variables);
-		params.putAll(parameter);
-
-		Variables ctx = new Variables(this);
-		ctx.addVariables(extraVariables);
-
-		log.debug("Parameters for new class: {}", params);
-		log.debug("extra.variables: {}", ctx);
+		log.debug("Parameters for new class: {}", parameter);
+		log.debug("local variables: {}", local);
 
 		Map<String, String> p = new HashMap<String, String>();
 		for (String key : parameter.keySet()) {
@@ -236,12 +236,12 @@ public class ObjectFactory extends Variables {
 			//
 			if (parameter.get(key).indexOf("%{container") >= 0) {
 				String orig = parameter.get(key);
-				String expanded = ctx.expand(orig);
+				String expanded = local.expand(orig);
 				p.put(key, expanded);
 				log.debug("Expanded {} to {}", orig, expanded);
 			} else {
 				String orig = parameter.get(key);
-				String expanded = ctx.expand(orig);
+				String expanded = local.expand(orig);
 				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);
 			}
@@ -256,7 +256,7 @@ public class ObjectFactory extends Variables {
 				log.debug("Found object-creator {} for class {}", creator,
 						className);
 
-				object = creator.create(className, params);
+				object = creator.create(className, parameter, local);
 				return object;
 			}
 		}
@@ -284,6 +284,10 @@ public class ObjectFactory extends Variables {
 		return object;
 	}
 
+	/**
+	 * @param node
+	 * @return
+	 */
 	public Map<String, String> getAttributes(Node node) {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		NamedNodeMap att = node.getAttributes();

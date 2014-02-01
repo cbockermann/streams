@@ -25,7 +25,7 @@ import stream.util.Variables;
  * the process container.
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @author Christian Bockermann, Hendrik Blom
  * 
  */
 public class PropertiesHandler implements DocumentHandler {
@@ -40,18 +40,18 @@ public class PropertiesHandler implements DocumentHandler {
 	public void handle(IContainer container, Document doc, Variables variables,
 			DependencyInjection depInj) throws Exception {
 
-		// add system properties, e.g defined at command line using the -D flag:
+		// ${Home}/streams.properties already added.(streams.run())
+
+		// Read system properties, e.g defined at command line using the -D
+		// flag:
 		// java -Dproperty-name=property-value
 		//
 		Variables systemVariables = new Variables();
 		addSystemProperties(systemVariables);
-		systemVariables.addVariables(variables);
-		// handle maven-like properties, e.g.
-		// <properties>
-		// <property-name>value-of-property</property-name>
-		// </properties>
-		//
-		findPropertiesElements(container, doc, variables, systemVariables);
+
+		// // Add variables to systemVariables to have original state (Not
+		// Needed)
+		// systemVariables.addVariables(variables);
 
 		// handle property elements, i.e.
 		// <property>
@@ -59,30 +59,47 @@ public class PropertiesHandler implements DocumentHandler {
 		// <value>property-value</value>
 		// </property>
 		//
-		findPropertyElements(container, doc, variables);
+		// find
+		NodeList list = doc.getElementsByTagName("property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			handlePropertyElement(prop, variables, systemVariables);
+		}
+		// handle maven-like properties, e.g.
+		// <properties>
+		// <property-name>value-of-property</property-name>
+		// </properties>
+		// and <properties url="${urlToProperties}"
+
+		// find
+		list = doc.getElementsByTagName("properties");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element e = (Element) list.item(i);
+			handlePropertiesElement(e, variables, systemVariables);
+		}
 
 		// add system properties, e.g defined at command line using the -D flag:
 		// java -Dproperty-name=property-value
 		//
 		addSystemProperties(variables);
 
+		// process-local properties at processElementHandler
 	}
 
 	/**
-	 * This method finds and adds properties defined in the format as provided
-	 * by maven's <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
+	 * This method adds properties defined in the format as provided by maven's
+	 * <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
 	 * 
 	 * @param container
 	 * @param doc
 	 */
-	private void findPropertiesElements(IContainer container, Document doc,
-			Variables variables, Variables systemProperties) {
-		NodeList list = doc.getElementsByTagName("properties");
-		for (int i = 0; i < list.getLength(); i++) {
-
-			Element prop = (Element) list.item(i);
-
-			NodeList children = prop.getChildNodes();
+	private void handlePropertiesElement(Element prop, Variables variables,
+			Variables systemProperties) {
+		NodeList children = prop.getChildNodes();
+		if (children.getLength() > 0) {
+			// TextNodes
 			for (int k = 0; k < children.getLength(); k++) {
 
 				Node ch = children.item(k);
@@ -95,80 +112,60 @@ public class PropertiesHandler implements DocumentHandler {
 				}
 			}
 
-			if (prop.hasAttribute("url")) {
-				String purl = prop.getAttribute("url");
-				// url via systemProperties;
+		}
+		// Properties from URL
+		else if (prop.hasAttribute("url")) {
+			String purl = prop.getAttribute("url");
+			try {
 				purl = systemProperties.expand(purl);
-				if (purl.startsWith("$"))
-					purl = variables.expand(purl);
-				try {
-					SourceURL propUrl = new SourceURL(purl);
+				purl = variables.expand(purl);
 
-					Properties p = new Properties();
-					p.load(propUrl.openStream());
-					for (Object k : p.keySet()) {
-						variables
-								.set(k.toString(), p.getProperty(k.toString()));
-					}
+				SourceURL propUrl = new SourceURL(purl);
 
-				} catch (Exception e) {
-					log.error("Failed to read properties from url {}: {}",
-							purl, e.getMessage());
+				Properties p = new Properties();
+				p.load(propUrl.openStream());
+				for (Object k : p.keySet()) {
+					variables.set(k.toString(), p.getProperty(k.toString()));
 				}
+
+			} catch (Exception e) {
+				log.error("Failed to read properties from url {}: {}", purl,
+						e.getMessage());
 			}
-			if (prop.hasAttribute("file")) {
-				File file = new File(prop.getAttribute("file"));
-				try {
-					Properties p = new Properties();
-					p.load(new FileInputStream(file));
-					for (Object k : p.keySet()) {
-						variables
-								.set(k.toString(), p.getProperty(k.toString()));
-					}
-				} catch (Exception e) {
-					log.error("Failed to read properties from file {}: {}",
-							file, e.getMessage());
+			// Properties from URL
+		} else if (prop.hasAttribute("file")) {
+			File file = new File(prop.getAttribute("file"));
+			try {
+				Properties p = new Properties();
+				p.load(new FileInputStream(file));
+				for (Object k : p.keySet()) {
+					variables.set(k.toString(), p.getProperty(k.toString()));
 				}
+			} catch (Exception e) {
+				log.error("Failed to read properties from file {}: {}", file,
+						e.getMessage());
 			}
 		}
+
 	}
 
-	/**
-	 * Check for property elements in the document and add all the defined
-	 * properties to the container.
-	 * 
-	 * @param container
-	 * @param doc
-	 */
-	private void findPropertyElements(IContainer container, Document doc,
-			Variables variables) {
+	private void handlePropertyElement(Element prop, Variables variables,
+			Variables systemVariables) {
+		if (prop.getNodeName().equalsIgnoreCase("property")) {
 
-		NodeList ch = doc.getElementsByTagName("property");
-		handlePropertyElements(ch, variables);
-		ch = doc.getElementsByTagName("Property");
-		handlePropertyElements(ch, variables);
-	}
+			String key = prop.getAttribute("name");
+			String value = prop.getAttribute("value");
 
-	private void handlePropertyElements(NodeList ch, Variables variables) {
-
-		for (int i = 0; i < ch.getLength(); i++) {
-			Node child = ch.item(i);
-			if (child instanceof Element) {
-				Element el = (Element) child;
-				if (el.getNodeName().equalsIgnoreCase("property")) {
-
-					String key = el.getAttribute("name");
-					String value = el.getAttribute("value");
-
-					if (key != null && !"".equals(key.trim()) && value != null
-							&& !"".equals(value.trim())) {
-						String k = key.trim();
-						String v = value.trim();
-						variables.expand(v);
-						// log.info("Setting property {} = {}", k, v);
-						variables.set(k, v);
-					}
-				}
+			if (key != null && !"".equals(key.trim()) && value != null
+					&& !"".equals(value.trim())) {
+				String k = key.trim();
+				String v = value.trim();
+				// ORDER
+				// // All found variables ()
+				v = systemVariables.expand(v);
+				v = variables.expand(v);
+				// log.info("Setting property {} = {}", k, v);
+				variables.set(k, v);
 			}
 		}
 	}

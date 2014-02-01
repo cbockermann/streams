@@ -167,10 +167,10 @@ public class Variables implements Map<String, String>, Serializable {
 		if (parentContext != null) {
 			val = parentContext.get(key);
 		}
-
-		if (val == null) {
-			val = System.getProperty(key);
-		}
+		//
+		// if (val == null) {
+		// val = System.getProperty(key);
+		// }
 
 		return val;
 	}

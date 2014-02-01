@@ -7,7 +7,7 @@ import org.junit.Test;
 public class VariablesTest {
 
 	@Test
-	public void test() {
+	public void baseTest() {
 		Variables v = new Variables();
 		v.set("p1", "result");
 		Assert.assertEquals("result", v.expand("${p1}"));
@@ -35,4 +35,5 @@ public class VariablesTest {
 		Assert.assertEquals("blah_result_blah",
 				v.expand("blah_${p1.${p2}_${p3.${p4}}}_blah"));
 	}
+
 }

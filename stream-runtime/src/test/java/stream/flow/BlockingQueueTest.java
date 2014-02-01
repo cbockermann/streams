@@ -25,9 +25,6 @@ public class BlockingQueueTest {
 	@Test
 	public void test() throws Exception {
 
-		Integer limit = 110;
-		System.setProperty("limit", limit.toString());
-
 		URL url = BlockingQueueTest.class
 				.getResource("/test-blocking-queue.xml");
 		ProcessContainer c = new ProcessContainer(url);
@@ -52,6 +49,6 @@ public class BlockingQueueTest {
 		// }
 		// log.info("cnt = {}", cnt);
 
-		Assert.assertEquals(limit.intValue(), colSize);
+		Assert.assertEquals(110, colSize);
 	}
 }

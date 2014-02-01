@@ -90,12 +90,16 @@ public class StreamElementHandler implements ElementHandler {
 			final ComputeGraph computeGraph = container.computeGraph();
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
+			id = variables.expand(id);
 
 			List<String> cp = new ArrayList<String>();
 			String copies = element.getAttribute("copies");
+			// Single stream
 			if (copies == null || copies.trim().isEmpty()) {
 				cp.add(id);
-			} else {
+			}
+			// multiple streams
+			else {
 				copies = variables.expand(copies);
 				String[] t = copies.split(",");
 				if (t.length == 1) {

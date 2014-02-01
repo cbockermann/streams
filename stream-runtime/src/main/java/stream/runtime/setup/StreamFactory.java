@@ -41,7 +41,7 @@ import stream.runtime.ProcessContainer;
 import stream.util.Variables;
 
 /**
- * @author chris
+ * @author chris,Hendrik
  * 
  */
 public class StreamFactory {
@@ -101,7 +101,7 @@ public class StreamFactory {
 	}
 
 	public static Stream createStream(ObjectFactory objectFactory,
-			Element node, Variables variables) throws Exception {
+			Element node, Variables local) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
 		Class<?> clazz = Class.forName(params.get("class"));
@@ -117,7 +117,7 @@ public class StreamFactory {
 			SourceURL url = null;
 
 			String urlString = params.get("url");
-			urlString = variables.expand(urlString);
+			urlString = local.expand(urlString);
 
 			if (urlString.startsWith("classpath:")) {
 				String resource = urlParam.substring("classpath:".length());
@@ -139,9 +139,9 @@ public class StreamFactory {
 			stream = (Stream) constr.newInstance(new Object[0]);
 		}
 
-		params = variables.expandAll(params);
+		params = local.expandAll(params);
 		log.debug("Injecting variables {} into stream {}", params, stream);
-		ParameterInjection.inject(stream, params, variables);
+		ParameterInjection.inject(stream, params, local);
 
 		if (stream instanceof MultiStream) {
 			MultiStream multiStream = (MultiStream) stream;
@@ -158,7 +158,7 @@ public class StreamFactory {
 				if (child.getNodeName().equalsIgnoreCase("stream")
 						|| child.getNodeName().equalsIgnoreCase("datastream")) {
 					Stream innerStream = createStream(objectFactory, child,
-							variables);
+							local);
 					log.debug("Created inner stream {}", innerStream);
 					String id = child.getAttribute("id");
 					if (id == null || "".equals(id.trim()))

@@ -66,6 +66,13 @@ public class PropertiesHandler implements DocumentHandler {
 			Element prop = (Element) list.item(i);
 			handlePropertyElement(prop, variables, systemVariables);
 		}
+		// find
+		list = doc.getElementsByTagName("Property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			handlePropertyElement(prop, variables, systemVariables);
+		}
 		// handle maven-like properties, e.g.
 		// <properties>
 		// <property-name>value-of-property</property-name>
@@ -74,6 +81,13 @@ public class PropertiesHandler implements DocumentHandler {
 
 		// find
 		list = doc.getElementsByTagName("properties");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element e = (Element) list.item(i);
+			handlePropertiesElement(e, variables, systemVariables);
+		}
+		// find
+		list = doc.getElementsByTagName("Properties");
 		// handle
 		for (int i = 0; i < list.getLength(); i++) {
 			Element e = (Element) list.item(i);

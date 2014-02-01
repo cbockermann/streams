@@ -470,7 +470,11 @@ public class ProcessContainer implements IContainer {
 		for (DocumentHandler handle : documentHandler) {
 			handle.handle(this, doc, containerVariables, dependencyInjection);
 		}
+		// for (Entry<String, String> b : containerVariables.entrySet()) {
+		// System.out.println(b.getKey() + ":" + b.getValue());
+		// }
 		objectFactory.addVariables(context.getProperties());
+		objectFactory.addVariables(containerVariables);
 
 		NodeList children = root.getChildNodes();
 

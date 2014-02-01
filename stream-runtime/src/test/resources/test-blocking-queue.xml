@@ -2,8 +2,12 @@
     This simple container experiment checks whether the ServiceInjection is working properly.
  -->
 
-<Container>
 
+
+
+<Container>
+	
+	<Property name="limit" value="110"/>
 	<Stream id="random" class="stream.io.RandomStream" limit="${limit}" sequenceKey="@source:item" />
 	<queue id="ordered" class="stream.io.BlockingQueue" size="100" />
 <!-- 

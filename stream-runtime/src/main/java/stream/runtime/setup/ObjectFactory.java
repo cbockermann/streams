@@ -293,7 +293,7 @@ public class ObjectFactory extends Variables {
 		NamedNodeMap att = node.getAttributes();
 		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);
-			String value = expand(attr.getNodeValue(), false);
+			String value = attr.getNodeValue();
 			map.put(attr.getNodeName(), value);
 		}
 

@@ -98,6 +98,7 @@ public class ProcessElementHandler implements ElementHandler {
 		final ComputeGraph computeGraph = container.computeGraph();
 
 		Map<String, String> attr = objectFactory.getAttributes(element);
+
 		String src = attr.get("source");
 		if (src == null)
 			src = attr.get("input");
@@ -128,9 +129,8 @@ public class ProcessElementHandler implements ElementHandler {
 		if (copies != null && !"".equals(copies.trim())) {
 
 			// Take original properties
-			Variables var = new Variables(variables);
 			log.debug("Expanding '{}'", copies);
-			copies = var.expand(copies);
+			copies = variables.expand(copies);
 
 			// incrementing ids or predefinied copies?
 			String[] ids;
@@ -158,14 +158,16 @@ public class ProcessElementHandler implements ElementHandler {
 
 			// create process-local properties
 			for (String pid : ids) {
-				Variables local = new Variables(var);
+				Variables local = new Variables(variables);
 				String idpid = id + "-" + pid;
 				local.put("process.id", idpid);
 				local.put("copy.id", pid);
 				log.debug("Creating process '{}'", idpid);
 				DefaultProcess process = createProcess(processClass, attr,
 						container, element, local, dependencyInjection);
-
+				// for (Map.Entry<String, String> b : local.entrySet()) {
+				// System.out.println(b.getKey() + ":" + b.getValue());
+				// }
 				String input = local.expand(src);
 				log.debug("Setting source for process {} to {}", process, input);
 

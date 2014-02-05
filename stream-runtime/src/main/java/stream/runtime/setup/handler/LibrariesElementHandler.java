@@ -21,7 +21,7 @@ import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.dependencies.Dependency;
 import stream.runtime.dependencies.DependencyResolver;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.util.Variables;
 
 /**

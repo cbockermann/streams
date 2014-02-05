@@ -37,9 +37,9 @@ import stream.io.Stream;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessorFactory;
-import stream.runtime.setup.StreamFactory;
+import stream.runtime.setup.factory.ObjectFactory;
+import stream.runtime.setup.factory.ProcessorFactory;
+import stream.runtime.setup.factory.StreamFactory;
 import stream.service.Service;
 import stream.util.Variables;
 

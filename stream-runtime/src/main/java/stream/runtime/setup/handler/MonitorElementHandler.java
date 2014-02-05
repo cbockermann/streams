@@ -23,19 +23,16 @@
  */
 package stream.runtime.setup.handler;
 
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import stream.Processor;
 import stream.runtime.DependencyInjection;
-import stream.runtime.Monitor;
 import stream.runtime.ProcessContainer;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.factory.MonitorFactory;
+import stream.runtime.setup.factory.ObjectFactory;
+import stream.runtime.setup.factory.ProcessConfiguration;
+import stream.runtime.setup.factory.ProcessorFactory;
 import stream.util.Variables;
 
 /**
@@ -80,76 +77,84 @@ public class MonitorElementHandler extends ProcessElementHandler {
 	public void handleElement(ProcessContainer container, Element element,
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
-		Map<String, String> params = objectFactory.getAttributes(element);
-
-		// the default Monitor class is stream.runtime.Monitor
-		//
-		Map<String, String> attr = objectFactory.getAttributes(element);
-
-		// List<Processor> procs = createNestedProcessors(container, element,
-		// variables);
-		// for (Processor p : procs)
-		// monitor.add(p);
-		//
-		// container.getProcesses().add(monitor);
-
-		String copies = attr.get("copies");
-		if (attr.containsKey("multiply")) {
-			copies = attr.get("multiply");
-			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
-			log.warn("Please use 'copies' instead of 'multiply'.");
-		}
-
-		if (copies != null && !"".equals(copies.trim())) {
-
-			Variables var = new Variables(variables);
-			log.debug("Expanding '{}'", copies);
-			copies = var.expand(copies);
-
-			String[] ids;
-			if (copies.indexOf(",") >= 0) {
-				ids = copies.split(",");
-			} else {
-				Integer times = new Integer(copies);
-				ids = new String[times];
-				for (int i = 0; i < times; i++) {
-					ids[i] = "" + i;
-				}
-			}
-			log.debug("Creating {} processes due to copies='{}'", ids.length,
-					copies);
-
-			for (String pid : ids) {
-				Variables local = new Variables(variables);
-				local.put("monitor.id", pid);
-				local.put("copy.id", pid);
-
-				String className = "stream.runtime.Monitor";
-				Monitor monitor = (Monitor) objectFactory.create(className,
-						params, ObjectFactory.createConfigDocument(element));
-				List<Processor> procs = createNestedProcessors(container,
-						element, local, dependencyInjection);
-				for (Processor p : procs)
-					monitor.add(p);
-				log.debug("Created Monitor object: {}", monitor);
-				container.getProcesses().add(monitor);
-			}
-
-		} else {
-			Variables local = new Variables(variables);
-			objectFactory.set("monitor.id", "0");
-			local.put("monitor.id", "0");
-
-			String className = "stream.runtime.Monitor";
-			Monitor monitor = (Monitor) objectFactory.create(className, params,
-					ObjectFactory.createConfigDocument(element));
-			List<Processor> procs = createNestedProcessors(container, element,
-					local, dependencyInjection);
-			for (Processor p : procs)
-				monitor.add(p);
-			log.debug("Created Monitor object: {}", monitor);
-			container.getProcesses().add(monitor);
-		}
-
+		MonitorFactory mf = new MonitorFactory(container, objectFactory, dependencyInjection);
+		ProcessConfiguration[] configs = mf.createConfigurations(element, variables);
+		mf.createAndRegisterProcesses(configs);
 	}
+		
+		
+		
+//		
+//		Map<String, String> params = objectFactory.getAttributes(element);
+//
+//		// the default Monitor class is stream.runtime.Monitor
+//		//
+//		Map<String, String> attr = objectFactory.getAttributes(element);
+//
+//		// List<Processor> procs = createNestedProcessors(container, element,
+//		// variables);
+//		// for (Processor p : procs)
+//		// monitor.add(p);
+//		//
+//		// container.getProcesses().add(monitor);
+//
+//		String copies = attr.get("copies");
+//		if (attr.containsKey("multiply")) {
+//			copies = attr.get("multiply");
+//			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
+//			log.warn("Please use 'copies' instead of 'multiply'.");
+//		}
+//
+//		if (copies != null && !"".equals(copies.trim())) {
+//
+//			Variables var = new Variables(variables);
+//			log.debug("Expanding '{}'", copies);
+//			copies = var.expand(copies);
+//
+//			String[] ids;
+//			if (copies.indexOf(",") >= 0) {
+//				ids = copies.split(",");
+//			} else {
+//				Integer times = new Integer(copies);
+//				ids = new String[times];
+//				for (int i = 0; i < times; i++) {
+//					ids[i] = "" + i;
+//				}
+//			}
+//			log.debug("Creating {} processes due to copies='{}'", ids.length,
+//					copies);
+//
+//			for (String pid : ids) {
+//				Variables local = new Variables(variables);
+//				local.put("monitor.id", pid);
+//				local.put("copy.id", pid);
+//
+//				String className = "stream.runtime.Monitor";
+//				Monitor monitor = (Monitor) objectFactory.create(className,
+//						params, ObjectFactory.createConfigDocument(element));
+//				List<Processor> procs = createNestedProcessors(container,
+//						element, local, dependencyInjection);
+//				for (Processor p : procs)
+//					monitor.add(p);
+//				log.debug("Created Monitor object: {}", monitor);
+//				container.getProcesses().add(monitor);
+//			}
+//
+//		} else {
+//			Variables local = new Variables(variables);
+//			objectFactory.set("monitor.id", "0");
+//			local.put("monitor.id", "0");
+//
+//			String className = "stream.runtime.Monitor";
+//			Monitor monitor = (Monitor) objectFactory.create(className, params,
+//					ObjectFactory.createConfigDocument(element));
+//			List<Processor> procs = createNestedProcessors(container, element,
+//					local, dependencyInjection);
+//			for (Processor p : procs)
+//				monitor.add(p);
+//			log.debug("Created Monitor object: {}", monitor);
+//			container.getProcesses().add(monitor);
+//		}
+//
+//	}
 }

@@ -32,7 +32,7 @@ import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.util.Variables;
 
 public class SinkElementHandler implements ElementHandler {

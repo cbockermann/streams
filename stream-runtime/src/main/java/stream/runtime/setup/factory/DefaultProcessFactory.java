@@ -23,7 +23,6 @@ import stream.runtime.DefaultProcess;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
-import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.handler.ProcessElementHandler;
 import stream.service.Service;
 import stream.util.Variables;
@@ -39,8 +38,9 @@ public class DefaultProcessFactory implements ProcessFactory {
 	private final ProcessContainer processContainer;
 	private final ObjectFactory objectFactory;
 	private final ComputeGraph computeGraph;
-	private final String defaultProcessImplementation = "stream.runtime.DefaultProcess";
+	protected String defaultProcessImplementation = "stream.runtime.DefaultProcess";
 	private final DependencyInjection dependencyInjection;
+	protected String processType;
 
 	public DefaultProcessFactory(ProcessContainer processContainer,
 			ObjectFactory objectFactory, DependencyInjection dependencyInjection) {
@@ -48,6 +48,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 		this.objectFactory = objectFactory;
 		this.computeGraph = processContainer.computeGraph();
 		this.dependencyInjection = dependencyInjection;
+		this.processType="process";
 	}
 
 	@Override
@@ -60,6 +61,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 		
 		config.setAttributes(attr);
 		config.setElement(e);
+		config.setProcessType(this.processType);
 		
 		// Get Input Output
 		String src = attr.get("source");
@@ -259,7 +261,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Processor> createNestedProcessors(Element child, Variables local)
+	protected List<Processor> createNestedProcessors(Element child, Variables local)
 			throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 

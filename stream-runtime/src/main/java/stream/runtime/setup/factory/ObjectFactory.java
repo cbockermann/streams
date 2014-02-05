@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.factory;
 
 import java.io.File;
 import java.net.URL;
@@ -46,6 +46,9 @@ import org.w3c.dom.Node;
 import stream.Configurable;
 import stream.annotations.BodyContent;
 import stream.runtime.RuntimeClassLoader;
+import stream.runtime.setup.ObjectCreator;
+import stream.runtime.setup.ParameterInjection;
+import stream.runtime.setup.UserSettings;
 import stream.util.Variables;
 import stream.utils.FileUtils;
 

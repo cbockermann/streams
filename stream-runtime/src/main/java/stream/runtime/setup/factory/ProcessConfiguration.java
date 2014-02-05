@@ -11,6 +11,7 @@ public class ProcessConfiguration implements Cloneable {
 
 	private String id;
 	private String copyId;
+	private String processType;
 
 	private String processClass;
 	private Map<String, String> attributes;
@@ -20,6 +21,7 @@ public class ProcessConfiguration implements Cloneable {
 	private Element element;
 
 	public ProcessConfiguration() {
+		processType ="process";
 	}
 
 	public String getId() {
@@ -29,7 +31,7 @@ public class ProcessConfiguration implements Cloneable {
 	public void setId(String id) {
 		this.id = id;
 		if (variables != null)
-			variables.put("process.id", id);
+			variables.put(processType+".id", id);
 
 	}
 
@@ -41,6 +43,16 @@ public class ProcessConfiguration implements Cloneable {
 		this.copyId = copyId;
 		if (variables != null)
 			variables.put("copy.id", copyId);
+	}
+	
+	
+
+	public String getProcessType() {
+		return processType;
+	}
+
+	public void setProcessType(String processType) {
+		this.processType = processType;
 	}
 
 	public String getProcessClass() {

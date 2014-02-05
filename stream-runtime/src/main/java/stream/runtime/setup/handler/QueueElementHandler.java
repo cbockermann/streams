@@ -9,7 +9,7 @@ import stream.io.Queue;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.service.Service;
 import stream.util.Variables;
 

@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.runtime.setup;
+package stream.runtime.setup.factory;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -38,6 +38,7 @@ import stream.io.SourceURL;
 import stream.io.Stream;
 import stream.io.multi.MultiStream;
 import stream.runtime.ProcessContainer;
+import stream.runtime.setup.ParameterInjection;
 import stream.util.Variables;
 
 /**

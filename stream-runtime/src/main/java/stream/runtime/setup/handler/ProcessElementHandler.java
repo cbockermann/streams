@@ -43,11 +43,11 @@ import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessorFactory;
 import stream.runtime.setup.factory.DefaultProcessFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.runtime.setup.factory.ProcessConfiguration;
 import stream.runtime.setup.factory.ProcessFactory;
+import stream.runtime.setup.factory.ProcessorFactory;
 import stream.service.Service;
 import stream.util.Variables;
 

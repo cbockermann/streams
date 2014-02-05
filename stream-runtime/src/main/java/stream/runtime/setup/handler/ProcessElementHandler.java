@@ -26,7 +26,6 @@ package stream.runtime.setup.handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +36,18 @@ import org.w3c.dom.NodeList;
 import stream.ComputeGraph;
 import stream.ComputeGraph.ServiceRef;
 import stream.ComputeGraph.SinkRef;
-import stream.ComputeGraph.SourceRef;
-import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.io.Sink;
-import stream.runtime.DefaultProcess;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
-import stream.runtime.ProcessContextImpl;
 import stream.runtime.setup.ObjectFactory;
 import stream.runtime.setup.ProcessorFactory;
+import stream.runtime.setup.factory.DefaultProcessFactory;
+import stream.runtime.setup.factory.ProcessConfiguration;
+import stream.runtime.setup.factory.ProcessFactory;
 import stream.service.Service;
 import stream.util.Variables;
 
@@ -94,181 +92,186 @@ public class ProcessElementHandler implements ElementHandler {
 	public void handleElement(ProcessContainer container, Element element,
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
-
-		final ComputeGraph computeGraph = container.computeGraph();
-
-		Map<String, String> attr = objectFactory.getAttributes(element);
-
-		String src = attr.get("source");
-		if (src == null)
-			src = attr.get("input");
-
-		String out = attr.get("output");
-
-		// Create the default data-stream process
-		//
-		String processClass = defaultProcessImplementation;
-		if (attr.containsKey("class")) {
-			processClass = attr.get("class");
-			log.debug("Using custom process class '{}'", processClass);
-		}
-
-		String id = attr.get("id");
-		if (id == null || "".equals(id.trim())) {
-			id = "process-" + UUID.randomUUID().toString();
-		}
-
-		// Create copies and set process-local Properties
-		String copies = attr.get("copies");
-		if (attr.containsKey("multiply")) {
-			copies = attr.get("multiply");
-			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
-			log.warn("Please use 'copies' instead of 'multiply'.");
-		}
-
-		if (copies != null && !"".equals(copies.trim())) {
-
-			// Take original properties
-			log.debug("Expanding '{}'", copies);
-			copies = variables.expand(copies);
-
-			// incrementing ids or predefinied copies?
-			String[] ids;
-
-			// predefinied
-			if (copies.indexOf(",") >= 0) {
-				ids = copies.split(",");
-			}
-			// incrementing ids
-			else {
-				try {
-					Integer times = new Integer(copies);
-					ids = new String[times];
-					for (int i = 0; i < times; i++) {
-						ids[i] = "" + i;
-					}
-				} catch (NumberFormatException e) {
-					ids = new String[1];
-					ids[0] = copies;
-				}
-
-			}
-			log.debug("Creating {} processes due to copies='{}'", ids.length,
-					copies);
-
-			// create process-local properties
-			for (String pid : ids) {
-				Variables local = new Variables(variables);
-				String idpid = id + "-" + pid;
-				local.put("process.id", idpid);
-				local.put("copy.id", pid);
-				log.debug("Creating process '{}'", idpid);
-				DefaultProcess process = createProcess(processClass, attr,
-						container, element, local, dependencyInjection);
-				// for (Map.Entry<String, String> b : local.entrySet()) {
-				// System.out.println(b.getKey() + ":" + b.getValue());
-				// }
-				String input = local.expand(src);
-				log.debug("Setting source for process {} to {}", process, input);
-
-				dependencyInjection.add(new SourceRef(process, "input", input));
-
-				if (out != null) {
-					String processOut = local.expand(out);
-					log.debug("Setting process output for process {} to {}",
-							process, processOut);
-					dependencyInjection.add(new SinkRef(process, "output",
-							processOut));
-				} else {
-					log.debug("Process has no output connection...");
-				}
-
-				container.getProcesses().add(process);
-				computeGraph.addProcess(idpid, process);
-			}
-
-		} else {
-			Variables local = new Variables(variables);
-			objectFactory.set("process.id", id);
-			local.put("process.id", id);
-			DefaultProcess process = createProcess(processClass, attr,
-					container, element, local, dependencyInjection);
-			log.debug("Created Process object: {}", process);
-			container.getProcesses().add(process);
-			computeGraph.addProcess(id, process);
-		}
+		ProcessFactory pf = new DefaultProcessFactory(container, objectFactory, dependencyInjection);
+		ProcessConfiguration[] configs = pf.createConfigurations(element, variables);
+		pf.createAndRegisterProcesses(configs);
+		
 	}
 
-	protected DefaultProcess createProcess(String processClass,
-			Map<String, String> attr, ProcessContainer container,
-			Element element, Variables local,
-			DependencyInjection dependencyInjection) throws Exception {
-
-		final ComputeGraph computeGraph = container.computeGraph();
-
-		log.trace("Creating 'process' element, variable context is:");
-		for (String key : local.keySet()) {
-			log.trace("  '{}' = '{}'", key, local.get(key));
-		}
-
-		DefaultProcess process = (DefaultProcess) objectFactory.create(
-				processClass, attr,
-				ObjectFactory.createConfigDocument(element), local);
-		// process local source
-		String inputId = local.expand(attr.get("input"));
-		log.debug("Created Process object: {}", process);
-		log.debug("Process input is: '{}'", inputId);
-
-		// add to local properties
-		process.getProperties().putAll(attr);
-		process.getProperties().putAll(local);
-
-		// Add a source-reference for later dependency injection. The source
-		// is injected into the processes as property 'source'.
-		//
-		SourceRef sourceRef = new SourceRef(process, "input", inputId);
-		dependencyInjection.add(sourceRef);
-
-		// this should not be required in the future - handled
-		// by dependencyInjection class
-		computeGraph.addReference(sourceRef);
-
-		// check if a sink is referenced with the 'output'
-		//
-
-		String outputId = attr.get("output");
-		if (outputId != null && !outputId.trim().isEmpty()) {
-			outputId = local.expand(outputId);
-
-			SinkRef sinkRef = new SinkRef(process, "output", outputId);
-			log.debug("Adding output reference for process {} to {}", process,
-					outputId);
-			dependencyInjection.add(sinkRef);
-
-			// this should not be required in the future - handled
-			// by dependencyInjection class
-			computeGraph.addReference(sinkRef);
-		}
-
-		ProcessContext ctx = new ProcessContextImpl(container.getContext());
-		for (String key : attr.keySet()) {
-			ctx.set(key, attr.get(key));
-		}
-		// add to local process context
-		for (String key : local.keySet()) {
-			ctx.set(key, local.get(key));
-		}
-		container.setProcessContext(process, ctx);
-
-		List<Processor> procs = createNestedProcessors(container, element,
-				local, dependencyInjection);
-		for (Processor p : procs) {
-			process.add(p);
-			container.computeGraph().add(process, p);
-		}
-		return process;
-	}
-
+//		final ComputeGraph computeGraph = container.computeGraph();
+//
+//		Map<String, String> attr = objectFactory.getAttributes(element);
+//
+//		String src = attr.get("source");
+//		if (src == null)
+//			src = attr.get("input");
+//
+//		String out = attr.get("output");
+//
+//		// Create the default data-stream process
+//		//
+//		String processClass = defaultProcessImplementation;
+//		if (attr.containsKey("class")) {
+//			processClass = attr.get("class");
+//			log.debug("Using custom process class '{}'", processClass);
+//		}
+//
+//		String id = attr.get("id");
+//		if (id == null || "".equals(id.trim())) {
+//			id = "process-" + UUID.randomUUID().toString();
+//		}
+//
+//		// Create copies and set process-local Properties
+//		String copies = attr.get("copies");
+//		if (attr.containsKey("multiply")) {
+//			copies = attr.get("multiply");
+//			log.warn("The attribute 'multiply' is deprecated for element 'Process'");
+//			log.warn("Please use 'copies' instead of 'multiply'.");
+//		}
+//
+//		if (copies != null && !"".equals(copies.trim())) {
+//
+//			// Take original properties
+//			log.debug("Expanding '{}'", copies);
+//			copies = variables.expand(copies);
+//
+//			// incrementing ids or predefinied copies?
+//			String[] ids;
+//
+//			// predefinied
+//			if (copies.indexOf(",") >= 0) {
+//				ids = copies.split(",");
+//			}
+//			// incrementing ids
+//			else {
+//				try {
+//					Integer times = new Integer(copies);
+//					ids = new String[times];
+//					for (int i = 0; i < times; i++) {
+//						ids[i] = "" + i;
+//					}
+//				} catch (NumberFormatException e) {
+//					ids = new String[1];
+//					ids[0] = copies;
+//				}
+//
+//			}
+//			log.debug("Creating {} processes due to copies='{}'", ids.length,
+//					copies);
+//
+//			// create process-local properties
+//			for (String pid : ids) {
+//				Variables local = new Variables(variables);
+//				String idpid = id + "-" + pid;
+//				local.put("process.id", idpid);
+//				local.put("copy.id", pid);
+//				log.debug("Creating process '{}'", idpid);
+//				DefaultProcess process = createProcess(processClass, attr,
+//						container, element, local, dependencyInjection);
+//				// for (Map.Entry<String, String> b : local.entrySet()) {
+//				// System.out.println(b.getKey() + ":" + b.getValue());
+//				// }
+//				String input = local.expand(src);
+//				log.debug("Setting source for process {} to {}", process, input);
+//
+//				dependencyInjection.add(new SourceRef(process, "input", input));
+//
+//				if (out != null) {
+//					String processOut = local.expand(out);
+//					log.debug("Setting process output for process {} to {}",
+//							process, processOut);
+//					dependencyInjection.add(new SinkRef(process, "output",
+//							processOut));
+//				} else {
+//					log.debug("Process has no output connection...");
+//				}
+//
+//				container.getProcesses().add(process);
+//				computeGraph.addProcess(idpid, process);
+//			}
+//
+//		} else {
+//			Variables local = new Variables(variables);
+//			objectFactory.set("process.id", id);
+//			local.put("process.id", id);
+//			DefaultProcess process = createProcess(processClass, attr,
+//					container, element, local, dependencyInjection);
+//			log.debug("Created Process object: {}", process);
+//			container.getProcesses().add(process);
+//			computeGraph.addProcess(id, process);
+//		}
+//	}
+//
+//	protected DefaultProcess createProcess(String processClass,
+//			Map<String, String> attr, ProcessContainer container,
+//			Element element, Variables local,
+//			DependencyInjection dependencyInjection) throws Exception {
+//
+//		final ComputeGraph computeGraph = container.computeGraph();
+//
+//		log.trace("Creating 'process' element, variable context is:");
+//		for (String key : local.keySet()) {
+//			log.trace("  '{}' = '{}'", key, local.get(key));
+//		}
+//
+//		DefaultProcess process = (DefaultProcess) objectFactory.create(
+//				processClass, attr,
+//				ObjectFactory.createConfigDocument(element), local);
+//		// process local source
+//		String inputId = local.expand(attr.get("input"));
+//		log.debug("Created Process object: {}", process);
+//		log.debug("Process input is: '{}'", inputId);
+//
+//		// add to local properties
+//		process.getProperties().putAll(attr);
+//		process.getProperties().putAll(local);
+//
+//		// Add a source-reference for later dependency injection. The source
+//		// is injected into the processes as property 'source'.
+//		//
+//		SourceRef sourceRef = new SourceRef(process, "input", inputId);
+//		dependencyInjection.add(sourceRef);
+//
+//		// this should not be required in the future - handled
+//		// by dependencyInjection class
+//		computeGraph.addReference(sourceRef);
+//
+//		// check if a sink is referenced with the 'output'
+//		//
+//
+//		String outputId = attr.get("output");
+//		if (outputId != null && !outputId.trim().isEmpty()) {
+//			outputId = local.expand(outputId);
+//
+//			SinkRef sinkRef = new SinkRef(process, "output", outputId);
+//			log.debug("Adding output reference for process {} to {}", process,
+//					outputId);
+//			dependencyInjection.add(sinkRef);
+//
+//			// this should not be required in the future - handled
+//			// by dependencyInjection class
+//			computeGraph.addReference(sinkRef);
+//		}
+//
+//		ProcessContext ctx = new ProcessContextImpl(container.getContext());
+//		for (String key : attr.keySet()) {
+//			ctx.set(key, attr.get(key));
+//		}
+//		// add to local process context
+//		for (String key : local.keySet()) {
+//			ctx.set(key, local.get(key));
+//		}
+//		container.setProcessContext(process, ctx);
+//
+//		List<Processor> procs = createNestedProcessors(container, element,
+//				local, dependencyInjection);
+//		for (Processor p : procs) {
+//			process.add(p);
+//			container.computeGraph().add(process, p);
+//		}
+//		return process;
+//	}
+//
 	protected Processor createProcessor(IContainer container, Element child,
 			Variables local, DependencyInjection dependencyInjection)
 			throws Exception {

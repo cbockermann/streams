@@ -7,11 +7,11 @@ import org.w3c.dom.Element;
 
 import stream.util.Variables;
 
-public class ProcessConfiguration implements Cloneable{
+public class ProcessConfiguration implements Cloneable {
 
 	private String id;
 	private String copyId;
-	
+
 	private String processClass;
 	private Map<String, String> attributes;
 	private String input;
@@ -28,17 +28,19 @@ public class ProcessConfiguration implements Cloneable{
 
 	public void setId(String id) {
 		this.id = id;
-		variables.put("process.id", id);
-		
+		if (variables != null)
+			variables.put("process.id", id);
+
 	}
-	
+
 	public String getCopyId() {
 		return copyId;
 	}
 
 	public void setCopyId(String copyId) {
 		this.copyId = copyId;
-		variables.put("copy.id", copyId);
+		if (variables != null)
+			variables.put("copy.id", copyId);
 	}
 
 	public String getProcessClass() {
@@ -78,9 +80,9 @@ public class ProcessConfiguration implements Cloneable{
 	}
 
 	public void setVariables(Variables variables) {
-		this.variables = variables;
+		this.variables = new Variables(variables);
 	}
-	
+
 	public Element getElement() {
 		return element;
 	}
@@ -92,19 +94,18 @@ public class ProcessConfiguration implements Cloneable{
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		ProcessConfiguration c = new ProcessConfiguration();
-		c.setAttributes(new HashMap<String,String>(this.getAttributes()));
-		c.setId(new String(this.getId()));
-		c.setInput(new String(this.getInput()));
-		c.setOutput(new String(this.getOutput()));
-		c.setProcessClass(new String(this.getProcessClass()));
-		c.setVariables(new Variables(this.getVariables()));
-		c.setCopyId(new String(this.getCopyId()));
+		c.setAttributes(new HashMap<String, String>(this.getAttributes()));
+
+		c.setId(this.getId());
+		c.setInput(this.getInput());
+		c.setOutput(this.getOutput());
+		c.setProcessClass(this.getProcessClass());
+		c.setVariables(this.getVariables());
+		c.setCopyId(this.getCopyId());
 		c.setElement(this.element);
-		
+
 		return c;
-		
+
 	}
-	
-	
 
 }

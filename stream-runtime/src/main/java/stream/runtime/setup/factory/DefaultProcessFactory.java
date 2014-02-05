@@ -60,6 +60,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 		
 		config.setAttributes(attr);
 		config.setElement(e);
+		
 		// Get Input Output
 		String src = attr.get("source");
 		if (src == null)
@@ -81,11 +82,12 @@ public class DefaultProcessFactory implements ProcessFactory {
 		config.setProcessClass(processClass);
 
 		String id = attr.get("id");
-		id = v.expand(id);
+		
 
 		if (id == null || "".equals(id.trim())) {
 			id = "process-" + UUID.randomUUID().toString();
 		}
+		id = v.expand(id);
 
 		// Create copies and set process-local Properties
 		String copies = attr.get("copies");
@@ -138,8 +140,10 @@ public class DefaultProcessFactory implements ProcessFactory {
 				}
 				configs[i] = configi;
 
-				Variables local = new Variables(v);
-				configi.setVariables(local);
+				
+				configi.setVariables(v);
+				Variables local = configi.getVariables();
+				
 				String idpid = id + "-" + pid;
 				idpid = local.expand(idpid);
 				configi.setId(idpid);
@@ -158,6 +162,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 				} else
 					log.debug("Process has no output connection...");
+				i++;
 			}
 
 			return configs;

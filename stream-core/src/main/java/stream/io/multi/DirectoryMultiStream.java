@@ -136,9 +136,9 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 							"Only Subclasses of AbstractStream are supported!");
 
 				stream = (AbstractStream) tmpStream;
-				stream.close();
 				SourceURL surl = createUrl(f);
 				stream.setUrl(surl);
+				log.info("Set Url:{}", surl.toString());
 				stream.init();
 			}
 		}

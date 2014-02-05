@@ -37,7 +37,8 @@ public class DirectoryStream extends AbstractStream {
 	public DirectoryStream(SourceURL url) throws Exception {
 		super(url);
 		if (filesAreRead == null)
-			filesAreRead = new AtomicBoolean(false);
+			filesAreRead = new AtomicBoolean(true);
+	
 	}
 
 	@Override
@@ -70,6 +71,7 @@ public class DirectoryStream extends AbstractStream {
 			data.put("@filename", files[c]);
 			return data;
 		}
+		filesAreRead.getAndSet(true);
 		return null;
 	}
 }

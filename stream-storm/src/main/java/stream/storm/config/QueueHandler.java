@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.StreamTopology;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.storm.QueueBolt;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;

@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 
 /**
  * @author chris

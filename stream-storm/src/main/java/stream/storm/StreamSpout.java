@@ -13,8 +13,8 @@ import org.w3c.dom.Element;
 
 import stream.Data;
 import stream.io.Stream;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.StreamFactory;
+import stream.runtime.setup.factory.ObjectFactory;
+import stream.runtime.setup.factory.StreamFactory;
 import stream.storm.config.StreamHandler.StreamFinder;
 import stream.util.Variables;
 import stream.util.XMLUtils;

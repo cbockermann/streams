@@ -20,7 +20,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import stream.runtime.DependencyInjection;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.runtime.setup.handler.PropertiesHandler;
 import stream.storm.config.BoltHandler;
 import stream.storm.config.ConfigHandler;

@@ -19,8 +19,8 @@ import stream.ProcessorList;
 import stream.Subscription;
 import stream.io.Queue;
 import stream.runtime.DependencyInjection;
-import stream.runtime.setup.ObjectFactory;
-import stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler;
+import stream.runtime.setup.factory.ObjectFactory;
+import stream.runtime.setup.factory.ProcessorFactory.ProcessorCreationHandler;
 import backtype.storm.task.OutputCollector;
 
 /**
@@ -61,7 +61,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 	}
 
 	/**
-	 * @see stream.runtime.setup.ProcessorFactory.ProcessorCreationHandler#processorCreated(stream.Processor,
+	 * @see stream.runtime.setup.factory.ProcessorFactory.ProcessorCreationHandler#processorCreated(stream.Processor,
 	 *      org.w3c.dom.Element)
 	 */
 	@Override

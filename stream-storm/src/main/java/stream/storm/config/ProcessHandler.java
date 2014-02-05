@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 
 import stream.StreamTopology;
 import stream.Subscription;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import stream.storm.ProcessBolt;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;

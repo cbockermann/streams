@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.StreamTopology;
-import stream.runtime.setup.ObjectFactory;
+import stream.runtime.setup.factory.ObjectFactory;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;

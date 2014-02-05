@@ -298,6 +298,7 @@ public class ProcessElementHandler implements ElementHandler {
 					}
 				}
 			}
+			return (Processor) o;
 		} else if (o instanceof Processor) {
 			// Services
 			// expand and handle id

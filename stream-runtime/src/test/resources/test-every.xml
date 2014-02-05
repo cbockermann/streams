@@ -1,0 +1,21 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+
+
+
+<Container>
+	
+	<Property name="limit" value="1000"/>
+	
+	<Stream id="random" class="stream.io.RandomStream" limit="${limit}"/>
+
+	<process input="random">
+		<PrintData/>
+		<stream.flow.Every n="100">
+			<stream.test.CounterTestProcessor/>
+		</stream.flow.Every> 
+	</process>
+	
+</Container>

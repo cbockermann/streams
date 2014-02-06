@@ -207,13 +207,14 @@ public class DefaultProcessFactory implements ProcessFactory {
 			// Add a source-reference for later dependency injection. The source
 			// is injected into the processes as property 'source'.
 			//
-			SourceRef sourceRef = new SourceRef(process, "input",
-					config.getInput());
-			dependencyInjection.add(sourceRef);
-
-			// this should not be required in the future - handled
-			// by dependencyInjection class
-			computeGraph.addReference(sourceRef);
+			String input = config.getInput();
+			if (input != null && !input.trim().isEmpty()) {
+				SourceRef sourceRef = new SourceRef(process, "input", input);
+				dependencyInjection.add(sourceRef);
+				// this should not be required in the future - handled
+				// by dependencyInjection class
+				computeGraph.addReference(sourceRef);
+			}
 
 			// check if a sink is referenced with the 'output'
 			//

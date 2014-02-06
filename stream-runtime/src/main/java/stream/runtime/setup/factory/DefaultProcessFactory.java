@@ -48,21 +48,21 @@ public class DefaultProcessFactory implements ProcessFactory {
 		this.objectFactory = objectFactory;
 		this.computeGraph = processContainer.computeGraph();
 		this.dependencyInjection = dependencyInjection;
-		this.processType="process";
+		this.processType = "process";
 	}
 
 	@Override
 	public ProcessConfiguration[] createConfigurations(Element e, Variables v) {
 
 		ProcessConfiguration[] configs;
-		
+
 		ProcessConfiguration config = new ProcessConfiguration();
 		Map<String, String> attr = objectFactory.getAttributes(e);
-		
+
 		config.setAttributes(attr);
 		config.setElement(e);
 		config.setProcessType(this.processType);
-		
+
 		// Get Input Output
 		String src = attr.get("source");
 		if (src == null)
@@ -84,7 +84,6 @@ public class DefaultProcessFactory implements ProcessFactory {
 		config.setProcessClass(processClass);
 
 		String id = attr.get("id");
-		
 
 		if (id == null || "".equals(id.trim())) {
 			id = "process-" + UUID.randomUUID().toString();
@@ -142,10 +141,9 @@ public class DefaultProcessFactory implements ProcessFactory {
 				}
 				configs[i] = configi;
 
-				
 				configi.setVariables(v);
 				Variables local = configi.getVariables();
-				
+
 				String idpid = id + "-" + pid;
 				idpid = local.expand(idpid);
 				configi.setId(idpid);
@@ -180,7 +178,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 	}
 
 	@Override
-	public void createAndRegisterProcesses(ProcessConfiguration[] configs) throws Exception {
+	public void createAndRegisterProcesses(ProcessConfiguration[] configs)
+			throws Exception {
 
 		for (ProcessConfiguration config : configs) {
 
@@ -195,7 +194,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 			processContainer.getProcesses().add(process);
 			computeGraph.addProcess(config.getId(), process);
-			
+
 			// process local source
 			log.debug("Created Process object: {}", process);
 
@@ -261,8 +260,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	protected List<Processor> createNestedProcessors(Element child, Variables local)
-			throws Exception {
+	protected List<Processor> createNestedProcessors(Element child,
+			Variables local) throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -308,8 +307,10 @@ public class DefaultProcessFactory implements ProcessFactory {
 					}
 				}
 			}
-			return (Processor) o;
-		} else if (o instanceof Processor) {
+			// return (Processor) o;
+		}
+		// A processorList is also a processor
+		if (o instanceof Processor) {
 			// Services
 			// expand and handle id
 			if (params.containsKey("id") && !"".equals(params.get("id").trim())) {
@@ -389,6 +390,5 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 		return null;
 	}
-
 
 }

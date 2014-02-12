@@ -213,6 +213,11 @@ public class ComputeGraph {
 			return lifeObjects;
 		}
 
+		if (finished.contains(o)) {
+			log.debug("Object {} already finished.", o);
+			return lifeObjects;
+		}
+
 		if (o instanceof LifeCycle) {
 			lifeObjects.add((LifeCycle) o);
 		}

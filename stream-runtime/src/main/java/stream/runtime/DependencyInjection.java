@@ -123,6 +123,8 @@ public class DependencyInjection {
 				log.info("Created new Queue: {}", queue);
 				sources[i] = queue;
 			}
+
+			graph.add(sources[i], ref.object());
 		}
 
 		return injectResolvedReferences(ref.object(), ref.property(), sources);

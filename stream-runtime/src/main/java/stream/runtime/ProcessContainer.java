@@ -610,6 +610,7 @@ public class ProcessContainer implements IContainer {
 
 				@Override
 				public void processFinished(Process p) {
+					log.info("Process {} finished!", p);
 					depGraph.remove(p);
 				}
 			});

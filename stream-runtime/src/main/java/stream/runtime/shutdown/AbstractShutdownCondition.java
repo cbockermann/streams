@@ -14,11 +14,9 @@ public abstract class AbstractShutdownCondition implements ShutdownCondition {
 	static Logger log = LoggerFactory
 			.getLogger(AbstractShutdownCondition.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.ShutdownCondition#waitForCondition(stream.runtime.
-	 * DependencyGraph)
+	 *      DependencyGraph)
 	 */
 	public void waitForCondition(ComputeGraph graph) {
 		synchronized (graph) {

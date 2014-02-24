@@ -218,6 +218,8 @@ public class BlockingQueue extends AbstractQueue {
 					return false;
 				enqueue(node);
 				c = count.getAndIncrement();
+				// TODO
+				log.info("put size:" + c);
 				if (c + 1 < capacity)
 					notFull.signal();
 			} finally {
@@ -286,6 +288,8 @@ public class BlockingQueue extends AbstractQueue {
 			}
 			item = dequeue();
 			c = count.getAndDecrement();
+			// TODO
+			log.info("take size:" + c);
 			log.trace("took item from queue: {}", item);
 
 			if (c > 1)
@@ -421,6 +425,11 @@ public class BlockingQueue extends AbstractQueue {
 		return capacity;
 	}
 
+	@Override
+	public Integer getSize() {
+		return count.get();
+	}
+
 	/**
 	 * @see stream.service.Service#reset()
 	 */
@@ -431,4 +440,5 @@ public class BlockingQueue extends AbstractQueue {
 	public String toString() {
 		return "stream.io.BlockingQueue['" + id + "']";
 	}
+
 }

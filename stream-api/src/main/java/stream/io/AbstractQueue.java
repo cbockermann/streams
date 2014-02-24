@@ -33,17 +33,14 @@ public abstract class AbstractQueue implements Queue, QueueService {
 	 * @see stream.io.Queue#setSize(java.lang.Integer)
 	 */
 	@Override
-	public void setSize(Integer limit) {
+	public void setCapacity(Integer limit) {
 		if (limit <= 0)
 			throw new IllegalArgumentException();
 		this.capacity = limit;
 	}
 
-	/**
-	 * @see stream.io.Queue#getSize()
-	 */
 	@Override
-	public Integer getSize() {
+	public Integer getCapacity() {
 		return capacity;
 	}
 }

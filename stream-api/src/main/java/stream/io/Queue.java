@@ -20,7 +20,7 @@ public interface Queue extends Barrel {
 	 * 
 	 * @param limit
 	 */
-	public void setSize(Integer limit);
+	public void setCapacity(Integer limit);
 
 	/**
 	 * Returns the maximum size of this queue implementation.
@@ -28,4 +28,6 @@ public interface Queue extends Barrel {
 	 * @return
 	 */
 	public Integer getSize();
+
+	public Integer getCapacity();
 }

@@ -154,13 +154,6 @@ public class Hub implements QueueService, HubService {
 	}
 
 	/**
-	 * @see stream.io.Queue#setSize(java.lang.Integer)
-	 */
-	@Override
-	public void setSize(Integer limit) {
-	}
-
-	/**
 	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
@@ -182,5 +175,14 @@ public class Hub implements QueueService, HubService {
 	@Override
 	public Data read() throws Exception {
 		return null;
+	}
+
+	@Override
+	public void setCapacity(Integer limit) {
+	}
+
+	@Override
+	public Integer getCapacity() {
+		return 0;
 	}
 }

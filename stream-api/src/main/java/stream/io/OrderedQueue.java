@@ -183,15 +183,6 @@ public class OrderedQueue implements Queue {
 	}
 
 	/**
-	 * @see stream.io.Queue#setSize(java.lang.Integer)
-	 */
-	@Override
-	public void setSize(Integer limit) {
-		this.limit = limit;
-		this.queue = new ArrayList<Data>(limit);
-	}
-
-	/**
 	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
@@ -203,5 +194,16 @@ public class OrderedQueue implements Queue {
 	public boolean write(Collection<Data> data) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void setCapacity(Integer limit) {
+		this.limit = limit;
+		this.queue = new ArrayList<Data>(limit);
+	}
+
+	@Override
+	public Integer getCapacity() {
+		return limit;
 	}
 }

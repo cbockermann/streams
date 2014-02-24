@@ -12,6 +12,7 @@ import stream.expressions.version2.ConditionedProcessor;
 import stream.expressions.version2.DoubleExpression;
 import stream.expressions.version2.Expression;
 import stream.expressions.version2.StringExpression;
+import stream.io.Queue;
 import stream.io.Sink;
 
 public class Emitter extends ConditionedProcessor {
@@ -184,11 +185,28 @@ public class Emitter extends ConditionedProcessor {
 			return;
 		}
 		log.debug("Closing all Sinks...");
-		for (int i = 0; i < sinks.length; i++) {
-			if (sinks[i] != null) {
-				sinks[i].close();
+
+		boolean[] isEmpty = new boolean[sinks.length];
+		int sum = 0;
+		while (sum < sinks.length) {
+			sum = 0;
+			for (int i = 0; i < sinks.length; i++) {
+				if (isEmpty[i])
+					sum++;
+				else {
+					Sink s = sinks[i];
+
+					if (s == null)
+						isEmpty[i] = true;
+					else {
+						if (s instanceof Queue && ((Queue) s).getSize() > 0)
+							continue;
+						s.close();
+						isEmpty[i] = true;
+						sum++;
+					}
+				}
 			}
 		}
 	}
-
 }

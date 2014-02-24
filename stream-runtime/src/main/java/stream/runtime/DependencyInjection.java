@@ -117,7 +117,7 @@ public class DependencyInjection {
 				if (queue instanceof Service) {
 					graph.addService(refs[i], (Service) queue);
 				}
-				log.info("Created new Queue: {}", queue);
+				log.info("Created new Queue:{} {}", queue.getId(), queue);
 				sources[i] = queue;
 			}
 		}

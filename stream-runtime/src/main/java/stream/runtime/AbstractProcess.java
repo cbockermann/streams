@@ -52,7 +52,6 @@ public abstract class AbstractProcess implements stream.Process {
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
 	private String id;
-
 	protected Context parentContext;
 	protected ProcessContext processContext;
 
@@ -116,7 +115,6 @@ public abstract class AbstractProcess implements stream.Process {
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	public Data process(Data data) {
-
 		log.debug("processing data {}", data);
 
 		for (Processor proc : processors) {
@@ -124,7 +122,6 @@ public abstract class AbstractProcess implements stream.Process {
 			if (data == null)
 				return null;
 		}
-
 		return data;
 	}
 

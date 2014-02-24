@@ -6,6 +6,8 @@ package stream.net;
 import static org.junit.Assert.fail;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -33,13 +35,14 @@ public class TcpStreamTest {
 			log.info("Server address is {}", server.getLocalAddress());
 			log.info("Waiting a second for the server to start... ");
 
-			System.setProperty("server.address", server.getLocalAddress());
-			System.setProperty("server.port", server.getLocalPort() + "");
+			Map<String, String> props = new HashMap<String, String>();
+			props.put("server.address", server.getLocalAddress());
+			props.put("server.port", server.getLocalPort() + "");
 
 			URL url = TcpStreamTest.class.getResource("/tcp-stream-test.xml");
 			log.info("Starting test-container from {}", url);
 
-			ProcessContainer container = new ProcessContainer(url);
+			ProcessContainer container = new ProcessContainer(url, null, props);
 			log.info("Starting container...");
 			container.run();
 

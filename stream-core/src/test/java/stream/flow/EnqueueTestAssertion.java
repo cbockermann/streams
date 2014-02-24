@@ -122,13 +122,6 @@ public class EnqueueTestAssertion implements QueueService {
 	}
 
 	/**
-	 * @see stream.io.Queue#setSize(java.lang.Integer)
-	 */
-	@Override
-	public void setSize(Integer limit) {
-	}
-
-	/**
 	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
@@ -154,5 +147,14 @@ public class EnqueueTestAssertion implements QueueService {
 		if (collection.isEmpty())
 			return null;
 		return collection.get(0);
+	}
+
+	@Override
+	public void setCapacity(Integer limit) {
+	}
+
+	@Override
+	public Integer getCapacity() {
+		return Integer.MAX_VALUE;
 	}
 }

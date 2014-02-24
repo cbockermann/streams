@@ -62,7 +62,8 @@ public class BlockingQueue extends AbstractQueue {
 		}
 	}
 
-	private static final Logger log = LoggerFactory.getLogger(BlockingQueue.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(BlockingQueue.class);
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -196,7 +197,7 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
 	public boolean enqueue(Data item) {
-		log.debug("Queue {}: Enqueuing event {}", getId(), item);
+		log.trace("Queue {}: Enqueuing event {}", getId(), item);
 		try {
 			if (item == null)
 				return false;
@@ -269,7 +270,7 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public Data read() throws Exception {
-		log.debug("Reading from queue {}", getId());
+		log.trace("Reading from queue {}", getId());
 		Data item = null;
 		int c = -1;
 		final AtomicInteger count = this.count;
@@ -285,7 +286,7 @@ public class BlockingQueue extends AbstractQueue {
 			}
 			item = dequeue();
 			c = count.getAndDecrement();
-			log.debug("took item from queue: {}", item);
+			log.trace("took item from queue: {}", item);
 
 			if (c > 1)
 				notEmpty.signal();
@@ -340,7 +341,7 @@ public class BlockingQueue extends AbstractQueue {
 
 	@Override
 	public boolean write(Collection<Data> data) throws Exception {
-		log.debug("Queue {}: Enqueuing event {}", getId(), data);
+		log.trace("Queue {}: Enqueuing event {}", getId(), data);
 		try {
 			if (data == null)
 				return false;
@@ -425,5 +426,9 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void reset() throws Exception {
+	}
+
+	public String toString() {
+		return "stream.io.BlockingQueue['" + id + "']";
 	}
 }

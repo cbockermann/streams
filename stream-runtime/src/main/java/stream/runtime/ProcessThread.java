@@ -140,8 +140,8 @@ public class ProcessThread extends Thread {
 			} catch (Exception e) {
 				log.error("Failed to call process listeners: {}",
 						e.getMessage());
-				if (log.isDebugEnabled())
-					e.printStackTrace();
+				// if (log.isDebugEnabled())
+				e.printStackTrace();
 			}
 
 			running = false;

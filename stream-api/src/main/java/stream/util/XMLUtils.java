@@ -72,7 +72,11 @@ public class XMLUtils {
 
 	public static String toString(Document doc) throws Exception {
 
-		Transformer trans = TransformerFactory.newInstance().newTransformer();
+		TransformerFactory tf = TransformerFactory.newInstance();
+		tf.setAttribute("indent-number", new Integer(4));
+		Transformer trans = tf.newTransformer();
+		trans.setOutputProperty(OutputKeys.METHOD, "xml");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
 		Source source = new DOMSource(doc);
 		StringWriter out = new StringWriter();
 		Result output = new StreamResult(out);

@@ -11,13 +11,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.io.Stream;
@@ -71,6 +71,8 @@ public class ComputeGraph {
 	/** The process nodes of the graph */
 	final Map<String, Process> processes = new LinkedHashMap<String, Process>();
 
+	final Set<Object> finished = new LinkedHashSet<Object>();
+
 	public synchronized void add(Object from, Object to) {
 		add(from);
 		add(to);
@@ -95,6 +97,9 @@ public class ComputeGraph {
 		Iterator<Object> it = sources.iterator();
 		while (it.hasNext()) {
 			Object source = it.next();
+			if (finished.contains(source))
+				continue;
+
 			if (source instanceof Source) {
 				if (!getSourcesFor(source).isEmpty()) {
 					it.remove();
@@ -108,6 +113,10 @@ public class ComputeGraph {
 	public synchronized Set<Object> getSources() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
+			if (finished.contains(edge.getFrom())
+					|| finished.contains(edge.getTo()))
+				continue;
+
 			nodes.add(edge.getFrom());
 		}
 		return nodes;
@@ -116,6 +125,10 @@ public class ComputeGraph {
 	public synchronized Set<Object> getTargets(Object from) {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
+			if (finished.contains(edge.getFrom())
+					|| finished.contains(edge.getTo()))
+				continue;
+
 			if (edge.getFrom() == from)
 				nodes.add(edge.getTo());
 		}
@@ -125,6 +138,10 @@ public class ComputeGraph {
 	public synchronized Set<Object> getReferencedObjects() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
+			if (finished.contains(edge.getFrom())
+					|| finished.contains(edge.getTo()))
+				continue;
+
 			nodes.add(edge.getTo());
 		}
 		return nodes;
@@ -133,6 +150,10 @@ public class ComputeGraph {
 	public synchronized Set<Object> getSourcesFor(Object target) {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Edge edge : edges) {
+			if (finished.contains(edge.getFrom())
+					|| finished.contains(edge.getTo()))
+				continue;
+
 			if (edge.getTo() == target)
 				nodes.add(edge.getFrom());
 		}
@@ -142,18 +163,34 @@ public class ComputeGraph {
 	public synchronized Set<Object> getIsolated() {
 		Set<Object> nodes = new LinkedHashSet<Object>();
 		for (Object node : this.nodes) {
+			if (finished.contains(node))
+				continue;
+
 			if (getSourcesFor(node).isEmpty())
 				nodes.add(node);
 		}
 		return nodes;
 	}
 
-	public Set<Object> nodes() {
+	public Set<Object> allNodes() {
 		return Collections.unmodifiableSet(nodes);
+	}
+
+	public Set<Object> nodes() {
+
+		Set<Object> ns = new LinkedHashSet<Object>();
+		for (Object node : nodes) {
+			if (!finished.contains(node)) {
+				ns.add(node);
+			}
+		}
+
+		return Collections.unmodifiableSet(ns);
 	}
 
 	public synchronized void clear() {
 		nodes.clear();
+		finished.clear();
 		edges.clear();
 		this.notify();
 	}
@@ -170,8 +207,14 @@ public class ComputeGraph {
 
 	private synchronized List<LifeCycle> remove(Object o, boolean notify) {
 		log.debug("Removing {} from dependency-graph...", o);
+		log.debug("   {} references:  {}", o, this.getTargets(o));
 		List<LifeCycle> lifeObjects = new ArrayList<LifeCycle>();
 		if (!nodes.contains(o)) {
+			return lifeObjects;
+		}
+
+		if (finished.contains(o)) {
+			log.debug("Object {} already finished.", o);
 			return lifeObjects;
 		}
 
@@ -180,15 +223,37 @@ public class ComputeGraph {
 		}
 
 		if (o instanceof Source) {
+			finished.add(o);
 			try {
-				log.info("Removing and closing source {}", o);
+				log.debug("Removing and closing source {}",
+						((Source) o).getId());
 				synchronized (o) {
 					((Source) o).close();
 				}
+
 			} catch (Exception e) {
-				log.error("Failed to close source '{}': ", o, e.getMessage());
+				log.error("Failed to close source '{}': ",
+						((Source) o).getId(), e.getMessage());
 				if (log.isDebugEnabled())
 					e.printStackTrace();
+			}
+		}
+
+		if (o instanceof Queue) {
+			int refs = this.getSourcesFor(o).size();
+			log.debug(
+					"Trying to remove queue {}, which is being fed by {} elements",
+					o, refs);
+			if (refs == 0) {
+				try {
+					log.debug("Closing queue {}", o);
+
+					((Queue) o).close();
+				} catch (Exception e) {
+					if (log.isDebugEnabled())
+						e.printStackTrace();
+				}
+				finished.add(o);
 			}
 		}
 
@@ -205,6 +270,27 @@ public class ComputeGraph {
 			for (Processor p : processors) {
 				remove(p, notify);
 			}
+
+			finished.add(o);
+			Source source = ((AbstractProcess) o).getInput();
+
+			Set<Object> refs = this.getTargets(source);
+			log.debug("Source {} is referenced by {} nodes.", source.getId(),
+					refs.size());
+			if (refs.size() == 0) {
+				log.debug("Removing source {}", source.getId());
+				remove(source, notify);
+			}
+
+			Sink sink = ((AbstractProcess) o).getOutput();
+			if (sink != null) {
+				refs = getTargets(sink);
+				if (refs.size() == 0) {
+					log.debug("sink {} does not have any more feeders",
+							sink.getId());
+					remove(sink, notify);
+				}
+			}
 		}
 
 		Iterator<Edge> it = (new ArrayList<Edge>(edges)).iterator();
@@ -214,8 +300,9 @@ public class ComputeGraph {
 			if (edge.getFrom() == o) {
 				log.debug("[graph-shutdown]   Removing edge ( {} => {} )",
 						edge.getFrom(), edge.getTo());
-				this.nodes.remove(o);
-				this.edges.remove(edge);
+				finished.add(o);
+				// this.nodes.remove(o);
+				// this.edges.remove(edge);
 				Object target = edge.getTo();
 				if (this.getSourcesFor(target).isEmpty()) {
 					log.debug(
@@ -229,15 +316,17 @@ public class ComputeGraph {
 			}
 
 			if (edge.getTo() == o) {
-
+				log.debug("Removing edge   {} => {} (this)", edge.getFrom(), o);
+				it.remove();
+				edges.remove(edge);
 			}
 		}
 
-		log.debug("[dep-graph]  Reference counts: ");
-		for (Object node : this.nodes) {
-			log.debug("[dep-graph]     * {}  is referenced by {} ", node,
-					this.getSourcesFor(node));
-		}
+		// log.debug("[dep-graph]  Reference counts: ");
+		// for (Object node : this.nodes) {
+		// log.debug("[dep-graph]     * {}  is referenced by {} ", node,
+		// this.getSourcesFor(node));
+		// }
 		return lifeObjects;
 	}
 
@@ -247,7 +336,7 @@ public class ComputeGraph {
 		all.addAll(this.nodes);
 
 		Set<Object> finished = new LinkedHashSet<Object>();
-		Queue<Object> waiting = new LinkedBlockingQueue<Object>();
+		java.util.Queue<Object> waiting = new LinkedBlockingQueue<Object>();
 		waiting.addAll(getIsolated());
 
 		while (!waiting.isEmpty()) {
@@ -329,6 +418,7 @@ public class ComputeGraph {
 			throw new RuntimeException("A stream with id '" + id
 					+ "' has already been defined!");
 		this.sources.put(id, stream);
+		nodes.add(stream);
 	}
 
 	public Map<String, Source> sources() {
@@ -365,6 +455,7 @@ public class ComputeGraph {
 	public void addQueue(String id, stream.io.Queue queue) {
 		addSource(id, queue);
 		addSink(id, queue);
+		nodes.add(queue);
 	}
 
 	public void addSink(String id, Sink sink) {
@@ -403,6 +494,10 @@ public class ComputeGraph {
 		public Object getTo() {
 			return to;
 		}
+	}
+
+	public boolean isFinished(Object n) {
+		return finished.contains(n);
 	}
 
 	public final static class SinkRef extends Reference {

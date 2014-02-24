@@ -91,6 +91,7 @@ public class DependencyInjection {
 			sinks[i] = graph.sinks().get(refs[i]);
 			if (sinks[i] == null) {
 				Queue queue = new stream.io.BlockingQueue();
+				queue.setId(refs[i]);
 				graph.addQueue(refs[i], queue);
 
 				if (queue instanceof Service) {
@@ -99,6 +100,7 @@ public class DependencyInjection {
 				log.debug("Creating implicitly defined queue: {}", queue);
 				sinks[i] = queue;
 			}
+			graph.add(ref.object(), sinks[i]);
 		}
 		return injectResolvedReferences(ref.object(), ref.property(), sinks);
 	}
@@ -112,6 +114,7 @@ public class DependencyInjection {
 			// TODO Create Queue
 			if (sources[i] == null) {
 				Queue queue = new stream.io.BlockingQueue();
+				queue.setId(refs[i]);
 				graph.addQueue(refs[i], queue);
 
 				if (queue instanceof Service) {
@@ -120,6 +123,8 @@ public class DependencyInjection {
 				log.info("Created new Queue:{} {}", queue.getId(), queue);
 				sources[i] = queue;
 			}
+
+			graph.add(sources[i], ref.object());
 		}
 
 		return injectResolvedReferences(ref.object(), ref.property(), sources);

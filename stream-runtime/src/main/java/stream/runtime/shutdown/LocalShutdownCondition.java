@@ -15,6 +15,7 @@ import stream.Processor;
 import stream.io.Source;
 import stream.runtime.AbstractProcess;
 import stream.runtime.Monitor;
+import stream.utils.XMLFormatter;
 
 /**
  * @author chris
@@ -67,6 +68,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 			// for (Object root : graph.getRootSources()) {
 			// log.info("Root source: {}", root);
 			// }
+			log.debug("config:\n{}", XMLFormatter.createXMLString(graph));
 
 			for (Object node : graph.nodes()) {
 				if (node instanceof Source) {
@@ -78,9 +80,9 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 				}
 				if (node instanceof Processor
 						&& (!(node instanceof AbstractProcess))) {
-					log.debug(
-							"Ignoring dependency-condition for processor '{}'",
-							node);
+					// log.debug(
+					// "Ignoring dependency-condition for processor '{}'",
+					// node);
 					// continue;
 					hangon++;
 				}

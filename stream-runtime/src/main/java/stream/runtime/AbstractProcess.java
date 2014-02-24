@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,8 @@ public abstract class AbstractProcess implements stream.Process {
 
 	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
-	private String id;
+	private String id = UUID.randomUUID().toString();
+
 	protected Context parentContext;
 	protected ProcessContext processContext;
 
@@ -115,13 +117,15 @@ public abstract class AbstractProcess implements stream.Process {
 	 * @see stream.Processor#process(stream.Data)
 	 */
 	public Data process(Data data) {
-		log.debug("processing data {}", data);
+
+		log.debug("{}: processing data {}", this, data);
 
 		for (Processor proc : processors) {
 			data = proc.process(data);
 			if (data == null)
 				return null;
 		}
+
 		return data;
 	}
 
@@ -179,7 +183,7 @@ public abstract class AbstractProcess implements stream.Process {
 				item = process(item);
 
 				if (item != null && getOutput() != null) {
-					log.debug("Sending process output to connected sink {}",
+					log.trace("Sending process output to connected sink {}",
 							getOutput());
 					getOutput().write(item);
 				}
@@ -244,9 +248,8 @@ public abstract class AbstractProcess implements stream.Process {
 
 	public String toString() {
 		if (id != null)
-			return getClass().getCanonicalName() + "[" + id + "]";
+			return getClass().getSimpleName() + "['" + id + "']";
 
-		return this.getClass().getCanonicalName() + "[" + super.toString()
-				+ "]";
+		return this.getClass().getSimpleName() + "['" + super.toString() + "']";
 	}
 }

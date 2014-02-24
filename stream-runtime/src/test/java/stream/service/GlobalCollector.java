@@ -140,17 +140,6 @@ public class GlobalCollector implements QueueService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see stream.io.Queue#setSize(java.lang.Integer)
-	 */
-	@Override
-	public void setSize(Integer limit) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
@@ -173,5 +162,17 @@ public class GlobalCollector implements QueueService {
 	@Override
 	public Data read() throws Exception {
 		return take();
+	}
+
+	@Override
+	public void setCapacity(Integer limit) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Integer getCapacity() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

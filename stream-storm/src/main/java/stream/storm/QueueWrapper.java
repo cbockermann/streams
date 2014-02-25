@@ -106,17 +106,19 @@ public class QueueWrapper implements Queue, Sink, Serializable {
 	}
 
 	/**
-	 * @see stream.io.Queue#setSize(java.lang.Integer)
-	 */
-	@Override
-	public void setSize(Integer limit) {
-	}
-
-	/**
 	 * @see stream.io.Queue#getSize()
 	 */
 	@Override
 	public Integer getSize() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public void setCapacity(Integer limit) {
+	}
+
+	@Override
+	public Integer getCapacity() {
 		return Integer.MAX_VALUE;
 	}
 }

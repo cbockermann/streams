@@ -1,13 +1,22 @@
 <container>
 
-	<property name="test-name" value="test-value" />
-	<property name="copies" value="4" />
 
-	<stream id="test" class="stream.test.TestStream" limit="16"/>
+	<property name="test.name" value="test.value" />
+	<property name="test.properties" value="classpath:/property-test.properties" />
+	<property name="copies.names" value="${test.name}-1,${test.name}-2,${test.name}-3,${test.name}-4 " />
+	
+	<property name="streams.limit" value="10" />
+	<property name="streams.central" value="s.central" />
+	<properties url="${test.properties}" />
+	
 
-	<process input="test" copies="${copies}">
-		<stream.test.LogData />
-		<stream.flow.Delay time="1second" />
+	<stream id="${streams.central}.${copy.id}" class="${streams.central.class}" limit="${streams.limit}" copies="${copies.names}"/>
+
+	<process input="${streams.central}.${copy.id}"  copies="${copies.names}">
+		<PrintData/>
 	</process>
+
+	
+
 
 </container>

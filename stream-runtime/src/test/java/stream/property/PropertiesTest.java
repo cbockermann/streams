@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import stream.runtime.ProcessContainer;
 
 /**
- * @author chris
+ * @author chris, Hendrik
  * 
  */
 public class PropertiesTest {

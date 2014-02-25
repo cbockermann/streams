@@ -105,7 +105,7 @@ public class StreamFactory {
 			Element node, Variables local) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
-		Class<?> clazz = Class.forName(params.get("class"));
+		Class<?> clazz = Class.forName(local.expand(params.get("class")));
 		String urlParam = params.get("url");
 		if (urlParam != null && clazz == null) {
 

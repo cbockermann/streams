@@ -131,8 +131,10 @@ public class PropertiesHandler implements DocumentHandler {
 		else if (prop.hasAttribute("url")) {
 			String purl = prop.getAttribute("url");
 			try {
-				purl = systemProperties.expand(purl);
-				purl = variables.expand(purl);
+				// ORDER IMPORTANT
+				Variables props = new Variables(variables);
+				props.addVariables(systemProperties);
+				purl = props.expand(purl);
 
 				SourceURL propUrl = new SourceURL(purl);
 
@@ -172,12 +174,14 @@ public class PropertiesHandler implements DocumentHandler {
 
 			if (key != null && !"".equals(key.trim()) && value != null
 					&& !"".equals(value.trim())) {
+				// ORDER IMPORTANT
+				Variables props = new Variables(variables);
+				props.addVariables(systemVariables);
 				String k = key.trim();
 				String v = value.trim();
-				// ORDER
+				// ORDER IMPORTANT
 				// // All found variables ()
-				v = systemVariables.expand(v);
-				v = variables.expand(v);
+				v = props.expand(v);
 				// log.info("Setting property {} = {}", k, v);
 				variables.set(k, v);
 			}

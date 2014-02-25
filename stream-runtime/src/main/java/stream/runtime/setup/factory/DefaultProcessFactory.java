@@ -88,7 +88,6 @@ public class DefaultProcessFactory implements ProcessFactory {
 		if (id == null || "".equals(id.trim())) {
 			id = "process-" + UUID.randomUUID().toString();
 		}
-		id = v.expand(id);
 
 		// Create copies and set process-local Properties
 		String copies = attr.get("copies");

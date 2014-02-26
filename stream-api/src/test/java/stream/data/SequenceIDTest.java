@@ -92,8 +92,8 @@ public class SequenceIDTest {
 
 		for (int i = 0; i < 10240; i++) {
 			SequenceID id = seq.increment();
-			System.out.println(id.uuid().toString() + "   (toString:   "
-					+ id.toString() + " )");
+			log.trace(id.uuid().toString() + "   (toString:   " + id.toString()
+					+ " )");
 		}
 	}
 }

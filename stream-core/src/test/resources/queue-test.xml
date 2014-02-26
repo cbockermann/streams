@@ -10,12 +10,12 @@
 	<Process input="input">
 		<CreateID />
 		<Enqueue queue="channel_13" />
-		<Delay time="1 second" />
+		<Delay time="200 ms" />
 		<stream.logger.Message message="Enqueued element %{data.@id} into queue..." />
 		
 	</Process>
 	
-	<Monitor interval="3 second">
+	<Monitor interval="600ms">
 		
 		<Dequeue queue="channel_13" />
 		<AddTimestamp />

@@ -4,7 +4,7 @@
 package stream.io;
 
 /**
- * @author chris,Hendrik
+ * @author chris, Hendrik
  * 
  */
 public abstract class AbstractQueue implements Queue, QueueService {

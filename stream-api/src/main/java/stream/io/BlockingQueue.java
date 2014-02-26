@@ -241,9 +241,9 @@ public class BlockingQueue extends AbstractQueue {
 	 */
 	@Override
 	public void init() throws Exception {
-		if (getSize() < 1) {
-			throw new IllegalArgumentException("Invalid queue-size '"
-					+ getSize() + "'!");
+		if (getCapacity() < 1) {
+			throw new IllegalArgumentException("Invalid queue-capacity '"
+					+ getCapacity() + "'!");
 		}
 	}
 

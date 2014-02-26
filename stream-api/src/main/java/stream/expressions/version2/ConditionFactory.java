@@ -78,14 +78,14 @@ public class ConditionFactory {
 		// Replace subConditions (e.g. (...)) by a Map.key
 		ex = readSubConditions(ex);
 		print("SubConditions", subCond);
-		log.debug("Expression: {}", ex);
+		log.trace("Expression: {}", ex);
 
 		// Create ConditionTree
 		ConditionTree t = new ConditionTree(subCond);
 		t.init();
 		t.setRoot(ex);
 		t.eval();
-		log.debug("ConditionTree:\n {}", t);
+		log.trace("ConditionTree:\n {}", t);
 
 		// Create the condition from the given tree
 

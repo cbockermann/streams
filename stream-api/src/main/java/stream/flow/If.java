@@ -84,7 +84,7 @@ public class If extends ProcessorList {
 
 		try {
 			if (matches(input)) {
-				log.debug("processing item {}", input);
+				log.trace("processing item {}", input);
 				return super.process(input);
 			} else {
 				log.debug("skipping item {}", input);

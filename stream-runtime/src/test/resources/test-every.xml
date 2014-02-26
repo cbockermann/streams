@@ -14,7 +14,7 @@
 	<process input="random">
 		<PrintData/>
 		<stream.flow.Every n="100">
-			<stream.test.CounterTestProcessor/>
+			<stream.test.CounterTestProcessor id="counter"/>
 		</stream.flow.Every> 
 	</process>
 	

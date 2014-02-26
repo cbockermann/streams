@@ -118,7 +118,7 @@ public abstract class AbstractProcess implements stream.Process {
 	 */
 	public Data process(Data data) {
 
-		log.debug("{}: processing data {}", this, data);
+		log.trace("{}: processing data {}", this, data);
 
 		for (Processor proc : processors) {
 			data = proc.process(data);

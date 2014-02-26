@@ -532,53 +532,53 @@ public class ConditionFactory {
 
 	private void printDoubleExpressions() {
 		if (dExps.size() == 0)
-			log.debug("No DoubleExpressions created.");
+			log.trace("No DoubleExpressions created.");
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("DoubleExpression created:\n");
 			for (Map.Entry<String, Expression<Double>> e : dExps.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.debug(b.toString());
+			log.trace(b.toString());
 		}
 	}
 
 	private void printStringExpressions() {
 		if (sExps.size() == 0)
-			log.debug("No StringExpressions created.");
+			log.trace("No StringExpressions created.");
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("StringExpressions created:\n");
 			for (Map.Entry<String, Expression<String>> e : sExps.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.debug(b.toString());
+			log.trace(b.toString());
 		}
 	}
 
 	private void printSetExpressions() {
 		if (setExps.size() == 0)
-			log.debug("No SetExpressions created.");
+			log.trace("No SetExpressions created.");
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("SetExpressions created:\n");
 			for (Map.Entry<String, Expression<String>> e : setExps.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.debug(b.toString());
+			log.trace(b.toString());
 		}
 	}
 
 	private void print(String name, Map<String, String> m) {
 		if (m.isEmpty())
-			log.debug("{} is empty", name);
+			log.trace("{} is empty", name);
 		else {
 			StringBuilder b = new StringBuilder();
 			b.append("{} contains:\n");
 			for (Map.Entry<String, String> e : m.entrySet()) {
 				b.append(e.getKey() + " = " + e.getValue() + "\n");
 			}
-			log.debug(b.toString());
+			log.trace(b.toString());
 		}
 	}
 

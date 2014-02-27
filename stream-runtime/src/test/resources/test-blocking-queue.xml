@@ -11,9 +11,9 @@
 	<Stream id="random" class="stream.io.RandomStream" limit="${limit}"
 		sequenceKey="@source:item" />
 
-<!-- 
-	<queue id="ordered" class="stream.io.BlockingQueue" size="100" />
- -->
+
+	<queue id="ordered" class="stream.io.BlockingQueue" capacity="88" />
+
 
 	<process id="reader" input="random">
 		<stream.test.AddTimeSinceLastItem />
@@ -22,9 +22,7 @@
 
 	<process id="orderedQueue" input="ordered">
 		<PrintData />
-		<!-- 
-		<stream.test.AddDelayAfter100Items />
-		 -->
+		<!-- <stream.test.AddDelayAfter100Items /> -->
 		<stream.test.Collector id="collected" />
 	</process>
 

@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.runtime.ProcessContextImpl;
+import stream.test.TestStream;
 
 /**
  * @author chris
@@ -26,23 +28,26 @@ public class SQLStreamTest {
 	@Before
 	public void setup() throws Exception {
 
-		/*
-		 * dbUrl = "jdbc:hsqldb:res:/test.db";
-		 * log.info("Creating test database at url {}", dbUrl);
-		 * 
-		 * TestStream stream = new TestStream();
-		 * 
-		 * SQLStreamWriter writer = new SQLStreamWriter(); writer.setUrl(dbUrl);
-		 * writer.setUsername(dbUser); writer.setPassword(dbPass);
-		 * writer.setTable("TEST_TABLE");
-		 * 
-		 * writer.init(new ProcessContextImpl());
-		 * 
-		 * for (int i = 0; i < 100; i++) { Data item = stream.readNext();
-		 * writer.process(item); }
-		 * 
-		 * writer.finish();
-		 */
+		dbUrl = "jdbc:hsqldb:res:/test.db";
+		log.info("Creating test database at url {}", dbUrl);
+
+		TestStream stream = new TestStream();
+
+		SQLWriter writer = new SQLWriter();
+		writer.setUrl(dbUrl);
+		writer.setUsername(dbUser);
+		writer.setPassword(dbPass);
+		writer.setTable("TEST_TABLE");
+
+		writer.init(new ProcessContextImpl());
+
+		for (int i = 0; i < 100; i++) {
+			Data item = stream.readNext();
+			writer.process(item);
+		}
+
+		writer.finish();
+
 	}
 
 	/**
@@ -53,7 +58,7 @@ public class SQLStreamTest {
 
 		try {
 			SQLStream stream = new SQLStream();
-			stream.setUrl(dbUrl);
+			stream.setUrl(new SourceURL(dbUrl));
 			stream.setUsername(dbUser);
 			stream.setPassword(dbPass);
 			stream.setSelect("SELECT * FROM TEST_TABLE");

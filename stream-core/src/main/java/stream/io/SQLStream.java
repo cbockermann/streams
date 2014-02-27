@@ -50,7 +50,6 @@ public class SQLStream extends AbstractStream {
 	String select;
 	Connection connection;
 	ResultSet result;
-	String url;
 	String[] columns = null;
 	DatabaseDialect dialect = new HsqlDialect();
 
@@ -60,21 +59,6 @@ public class SQLStream extends AbstractStream {
 
 	public SQLStream() {
 		super((SourceURL) null);
-	}
-
-
-	/**
-	 * @param url
-	 *            the url to set
-	 */
-	@Parameter(required = true, description = "The JDBC database url to connect to.")
-	public void setUrl(String url) {
-		try {
-			this.url = url;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Invalid URL: " + e.getMessage());
-		}
 	}
 
 	/**
@@ -133,8 +117,10 @@ public class SQLStream extends AbstractStream {
 		try {
 
 			log.info("Opening connection to database {}", getUrl());
-			connection = DriverManager.getConnection(getUrl().toString(), getUsername(),
-					getPassword());
+
+			SourceURL url = this.getUrl();
+			connection = DriverManager.getConnection(url.toString(),
+					getUsername(), getPassword());
 
 			PreparedStatement stmt = connection.prepareStatement(select);
 			result = stmt.executeQuery();

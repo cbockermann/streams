@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.data.ProcessContextMock;
 import stream.generator.RandomStream;
 import stream.logger.Message;
 
@@ -49,8 +50,10 @@ public class MessageTest {
 
 		int i = 0;
 		Message m = new Message();
-		m.setMessage("%{x1} ist kleiner als 0.5 und groesser als 0.1");
-		m.setCondition("x1 < 0.5  and  x1 >= 0.1");
+		m.setMessage("%{data.x1} ist kleiner als 0.5 und groesser als 0.1");
+		m.setCondition("%{data.x1} < 0.5  and  %{data.x1} >= 0.1");
+
+		m.init(new ProcessContextMock());
 
 		Data item = stream.read();
 		while (item != null && i++ < 10) {

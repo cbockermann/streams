@@ -7,19 +7,18 @@
 
 	<Queue id="channel_13" size="1" />
 
-	<Process input="input">
+	<process id="rapido" input="input">
 		<CreateID />
 		<Enqueue queue="channel_13" />
 		<Delay time="200 ms" />
 		<stream.logger.Message message="Enqueued element %{data.@id} into queue..." />
 		
-	</Process>
+	</process>
 	
-	<Monitor interval="600ms">
-		
-		<Dequeue queue="channel_13" />
+	<process id="lento" input="channel_13">
 		<AddTimestamp />
 		<PrintData />
-	</Monitor>
+		<Delay time="600ms" />
+	</process>
 	
 </container>

@@ -30,7 +30,6 @@ import stream.ConditionedProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.expressions.Expression;
 import stream.expressions.ExpressionResolver;
 
 /**
@@ -42,9 +41,7 @@ public class Message extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Message.class);
 
-	protected Expression filter;
 	protected String txt;
-	protected String condition;
 
 	public void setMessage(String msg) {
 		if (msg == null)
@@ -71,11 +68,9 @@ public class Message extends ConditionedProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 
-		if (filter == null || filter.matches(context, data)) {
-			Object o = ExpressionResolver.expand(getMessage(), context, data);
-			if (o != null)
-				log.info(o.toString());
-		}
+		Object o = ExpressionResolver.expand(getMessage(), context, data);
+		if (o != null)
+			log.info(o.toString());
 
 		return data;
 	}

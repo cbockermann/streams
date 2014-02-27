@@ -30,11 +30,11 @@ import stream.ConditionedProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.expressions.Expression;
-import stream.expressions.ExpressionResolver;
+import stream.expressions.version2.Expression;
+import stream.expressions.version2.StringExpression;
 
 /**
- * @author chris
+ * @author chris,Hendrik
  * 
  */
 @Description(text = "", group = "Streams.Monitoring")
@@ -42,9 +42,10 @@ public class Message extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Message.class);
 
-	protected Expression filter;
+	protected Expression<String> filter;
 	protected String txt;
 	protected String condition;
+	protected String level = "debug";
 
 	public void setMessage(String msg) {
 		if (msg == null)
@@ -57,12 +58,21 @@ public class Message extends ConditionedProcessor {
 		return txt;
 	}
 
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
 	/**
 	 * @see stream.AbstractProcessor#init(stream.Context)
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
+		filter = new StringExpression(txt);
 	}
 
 	/**
@@ -71,12 +81,21 @@ public class Message extends ConditionedProcessor {
 	@Override
 	public Data processMatchingData(Data data) {
 
-		if (filter == null || filter.matches(context, data)) {
-			Object o = ExpressionResolver.expand(getMessage(), context, data);
-			if (o != null)
-				log.info(o.toString());
+		try {
+			switch (level) {
+			case "debug":
+				log.debug(filter.get(context, data));
+				break;
+			case "info":
+				log.info(filter.get(context, data));
+				break;
+			case "trace":
+				log.trace(filter.get(context, data));
+				break;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 		return data;
 	}
 }

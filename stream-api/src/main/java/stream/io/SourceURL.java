@@ -163,43 +163,53 @@ public class SourceURL implements Serializable {
 			protocol = vals.get("protocol");
 
 			String hostname = vals.get("address");
+			if (hostname != null) {
+				int at = hostname.indexOf("@");
+				if (at >= 0) {
+					String auth = hostname.substring(0, at);
+					String[] tok = auth.split(":", 2);
+					if (tok.length > 1) {
+						username = tok[0];
+						password = tok[1];
+					} else {
+						username = auth;
+						password = "";
+					}
 
-			int at = hostname.indexOf("@");
-			if (at >= 0) {
-				String auth = hostname.substring(0, at);
-				String[] tok = auth.split(":", 2);
-				if (tok.length > 1) {
-					username = tok[0];
-					password = tok[1];
+					hostname = hostname.substring(at + 1);
 				} else {
-					username = auth;
-					password = "";
+					username = null;
+					password = null;
 				}
 
-				hostname = hostname.substring(at + 1);
+				int idx = hostname.indexOf(":");
+				int port = 80;
+				if (idx > 0) {
+					host = hostname.substring(0, idx);
+					port = Integer.parseInt(hostname.substring(idx + 1));
+				} else {
+					host = hostname;
+					if (PROTOCOL_HTTP.equalsIgnoreCase(protocol)) {
+						port = 80;
+					}
+
+					if (PROTOCOL_HTTPS.equalsIgnoreCase(protocol)) {
+						port = 443;
+					}
+				}
+				this.port = port;
 			} else {
-				username = null;
-				password = null;
+				// username = null;
+				// password = null;
+				this.username = null;
+				this.password = null;
+				this.port = -1;
+				this.host = "";
 			}
-
-			int idx = hostname.indexOf(":");
-			int port = 80;
-			if (idx > 0) {
-				host = hostname.substring(0, idx);
-				port = Integer.parseInt(hostname.substring(idx + 1));
-			} else {
-				host = hostname;
-				if (PROTOCOL_HTTP.equalsIgnoreCase(protocol)) {
-					port = 80;
-				}
-
-				if (PROTOCOL_HTTPS.equalsIgnoreCase(protocol)) {
-					port = 443;
-				}
-			}
-			this.port = port;
-
 			String p = vals.get("path");
+			if (p == null)
+				p = vals.get("target");
+
 			if (p.indexOf("?") > 0) {
 				path = p.substring(0, p.indexOf("?"));
 				queryString = p.substring(p.indexOf("?") + 1);

@@ -10,7 +10,7 @@ import stream.data.DataFactory;
 import stream.data.ProcessContextMock;
 import stream.data.SetValue;
 
-public class EveryTest {
+public class EveryTest2 {
 
 	@Test
 	public void test() throws Exception {

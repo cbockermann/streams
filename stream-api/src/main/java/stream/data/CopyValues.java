@@ -111,7 +111,7 @@ public class CopyValues extends AbstractProcessor {
 			if (e != null)
 				expressions[i] = e;
 		}
-
+		// KeySetConditions...
 		if (conditionString != null && !conditionString.isEmpty()) {
 			String s = conditionString.replace("sourceCtx.key", sourceCtx
 					+ ".key");
@@ -128,6 +128,11 @@ public class CopyValues extends AbstractProcessor {
 	public Data process(Data data) {
 		localCtx.clear();
 		localCtx.putAll(data);
+		Data copyCtx = null;
+		boolean copy = Context.COPY_CONTEXT_NAME.equals(targetCtx);
+		if (copy)
+			copyCtx = DataFactory.create();
+
 		if (keys != null) {
 			for (int i = 0; i < keys.length; i++) {
 				String key = keys[i];
@@ -157,12 +162,16 @@ public class CopyValues extends AbstractProcessor {
 					data.put(key, val);
 					continue;
 				}
+				if (b && copy) {
+					copyCtx.put(key, val);
+					continue;
+				}
 				if (b && Context.PROCESS_CONTEXT_NAME.equals(targetCtx))
 					context.set(key, val);
 			}
 
 		}
 
-		return data;
+		return copy ? copyCtx : data;
 	}
 }

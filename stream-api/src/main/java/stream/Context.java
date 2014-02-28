@@ -51,6 +51,8 @@ public interface Context {
 	 */
 	public final static String PROCESS_CONTEXT_NAME = "process";
 
+	public final static String COPY_CONTEXT_NAME = "copy";
+
 	/**
 	 * This constant defines the name of the container context, i.e. when
 	 * referring to elements as <code>%{container.element-name}</code>.

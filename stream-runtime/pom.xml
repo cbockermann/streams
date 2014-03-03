@@ -77,7 +77,7 @@
 							<mainClass>stream.run</mainClass>
 						</manifest>
 						<manifestEntries>
-							<Quantiles-Version>${pom.version}</Quantiles-Version>
+							<Quantiles-Version>${project.version}</Quantiles-Version>
 						</manifestEntries>
 					</archive>
 				</configuration>

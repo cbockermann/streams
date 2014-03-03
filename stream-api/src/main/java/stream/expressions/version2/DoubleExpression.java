@@ -56,8 +56,13 @@ public class DoubleExpression extends AbstractExpression<Double> {
 		if (statics)
 			return result;
 		Serializable s = r.get(ctx, item);
-		return (s == null) ? null : (s instanceof Double) ? ((Double) s)
-				: new Double(s.toString());
+		if (s == null)
+			return null;
+		if (s instanceof Double)
+			return ((Double) s);
+		if (s instanceof Boolean)
+			return ((Boolean) s) == true ? 1d : 0d;
+		return new Double(s.toString());
 	}
 
 	public Class<Double> type() {

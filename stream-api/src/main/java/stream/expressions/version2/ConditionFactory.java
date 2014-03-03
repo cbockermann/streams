@@ -41,6 +41,7 @@ public class ConditionFactory {
 
 	private Map<String, Expression<Double>> dExps;
 	private Map<String, Expression<String>> sExps;
+
 	private Map<String, Expression<String>> setExps;
 	private Map<String, String> subCond;
 
@@ -67,6 +68,7 @@ public class ConditionFactory {
 		ex = replaceAndCreateExpressions(ex);
 		// Remove all whitespaces
 		ex = ex.replace(" ", "");
+
 		ex = replaceAndCreateStringExpressions(ex);
 
 		// Debug Logging
@@ -102,6 +104,12 @@ public class ConditionFactory {
 		if (t.isLeaf()) {
 			if (t.getRoot().contains("null"))
 				return createNullCondition(t.getRoot());
+			if (t.getRoot().contains("true") || t.getRoot().contains("TRUE")
+					|| t.getRoot().contains("false")
+					|| t.getRoot().contains("FALSE")) {
+				return createBooleanCondition(t.getRoot());
+			}
+
 			// Hier ist die Magic
 			if (t.getRoot().contains(":p10sete_"))
 				return createSetCondition(t.getRoot());
@@ -130,6 +138,74 @@ public class ConditionFactory {
 		}
 
 		return null;
+	}
+
+	private Condition createBooleanCondition(String c) {
+		Expression<Boolean> ex = null;
+		// ==
+		if (c.contains("==")) {
+			String[] exps = c.split("==");
+			if (exps.length != 2)
+				throw new IllegalArgumentException("Bad ConditionString" + c);
+
+			if (exps[0].contains("TRUE") || exps[0].contains("true")) {
+
+				Expression<Double> de = dExps.get(exps[1]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsTrueCondition(ex);
+			}
+			if (exps[1].contains("TRUE") || exps[1].contains("true")) {
+				Expression<Double> de = dExps.get(exps[0]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsTrueCondition(ex);
+			}
+			if (exps[0].contains("FALSE") || exps[0].contains("false")) {
+				Expression<Double> de = dExps.get(exps[1]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsFalseCondition(ex);
+			}
+			if (exps[1].contains("FALSE") || exps[1].contains("false")) {
+				Expression<Double> de = dExps.get(exps[0]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsFalseCondition(ex);
+			}
+		}
+		// !=
+		if (c.contains("!=")) {
+			String[] exps = c.split("!=");
+			if (exps.length != 2)
+				throw new IllegalArgumentException("Bad ConditionString" + c);
+
+			if (exps[0].contains("TRUE") || exps[0].contains("true")) {
+				Expression<Double> de = dExps.get(exps[0]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsFalseCondition(ex);
+			}
+			if (exps[1].contains("TRUE") || exps[1].contains("true")) {
+				Expression<Double> de = dExps.get(exps[0]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsFalseCondition(ex);
+			}
+			if (exps[0].contains("FALSE") || exps[0].contains("false")) {
+				Expression<Double> de = dExps.get(exps[1]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsTrueCondition(ex);
+			}
+			if (exps[1].contains("FALSE") || exps[1].contains("false")) {
+				Expression<Double> de = dExps.get(exps[0]);
+				if (de != null)
+					ex = new BooleanExpression(de.getExpression());
+				return ex == null ? null : new EqualsTrueCondition(ex);
+			}
+		}
+		throw new IllegalArgumentException("Bad ConditionString" + c);
 	}
 
 	private Condition createNullCondition(String c) {
@@ -299,6 +375,7 @@ public class ConditionFactory {
 		return e;
 	}
 
+	@SuppressWarnings("unused")
 	private void checkBrackets(String ex, String bracketOpen,
 			String bracketClose) {
 		// Test brackets
@@ -357,6 +434,7 @@ public class ConditionFactory {
 
 	}
 
+	@SuppressWarnings("unused")
 	private String replaceAndCreateSetExpressions(String ex) {
 		boolean run = true;
 		int i = 0;

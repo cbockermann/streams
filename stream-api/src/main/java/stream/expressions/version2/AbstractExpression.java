@@ -70,6 +70,16 @@ public abstract class AbstractExpression<T extends Serializable> implements
 				statics = true;
 				return;
 			}
+			if (expression.equalsIgnoreCase("true")) {
+				r = new StaticTrueExpressionResolver(expression);
+				statics = true;
+				return;
+			}
+			if (expression.equalsIgnoreCase("false")) {
+				r = new StaticFalseExpressionResolver(expression);
+				statics = true;
+				return;
+			}
 			try {
 				Double.parseDouble(expression);
 				r = new StaticDoubleContextResolver(expression);
@@ -334,6 +344,42 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		@Override
 		public String toString() {
 			return "StaticNullExpressionResolver [key=" + key + "]";
+		}
+
+	}
+
+	public class StaticTrueExpressionResolver extends ContextResolver {
+
+		public StaticTrueExpressionResolver(String key) {
+			super(key);
+		}
+
+		@Override
+		public Serializable get(Context ctx, Data item) throws Exception {
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "StaticTrueExpressionResolver [key=" + key + "]";
+		}
+
+	}
+
+	public class StaticFalseExpressionResolver extends ContextResolver {
+
+		public StaticFalseExpressionResolver(String key) {
+			super(key);
+		}
+
+		@Override
+		public Serializable get(Context ctx, Data item) throws Exception {
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "StaticFalseExpressionResolver [key=" + key + "]";
 		}
 
 	}

@@ -44,6 +44,7 @@ import stream.expressions.version2.StringArrayExpression;
 import stream.flow.If;
 import stream.flow.Skip;
 import stream.util.MultiData;
+import stream.util.Variables;
 
 /**
  * @author Hendrik Blom
@@ -71,6 +72,130 @@ public class NewConditionsTest {
 		Data data = DataFactory.create();
 		// testTime("", data);
 		assertCondition("", data, true);
+
+	}
+
+	@Test
+	public void testBooleanExpressions() throws Exception {
+
+		Data data = DataFactory.create();
+
+		data.put("test1", true);
+		data.put("test2", false);
+
+		assertCondition("%{data.test1}==%{data.test2}", data, false);
+		assertCondition("%{data.test1}!=%{data.test2}", data, true);
+
+		assertCondition("%{data.test2}==%{data.test1}", data, false);
+		assertCondition("%{data.test2}!=%{data.test1}", data, true);
+
+		data.put("test1", true);
+		data.put("test2", true);
+
+		assertCondition("%{data.test1}==%{data.test2}", data, true);
+		assertCondition("%{data.test1}!=%{data.test2}", data, false);
+
+		assertCondition("%{data.test2}==%{data.test1}", data, true);
+		assertCondition("%{data.test2}!=%{data.test1}", data, false);
+
+		data.put("test", true);
+
+		assertCondition("%{data.test}==true", data, true);
+		assertCondition("%{data.test}!=true", data, false);
+		assertCondition("%{data.test}==TRUE", data, true);
+		assertCondition("%{data.test}!=TRUE", data, false);
+
+		assertCondition("%{data.test}==false", data, false);
+		assertCondition("%{data.test}!=false", data, true);
+		assertCondition("%{data.test}==FALSE", data, false);
+		assertCondition("%{data.test}!=FALSE", data, true);
+
+		data.put("test", false);
+
+		assertCondition("%{data.test}==true", data, false);
+		assertCondition("%{data.test}!=true", data, true);
+		assertCondition("%{data.test}==TRUE", data, false);
+		assertCondition("%{data.test}!=TRUE", data, true);
+
+		assertCondition("%{data.test}==false", data, true);
+		assertCondition("%{data.test}!=false", data, false);
+		assertCondition("%{data.test}==FALSE", data, true);
+		assertCondition("%{data.test}!=FALSE", data, false);
+
+		// Integer
+		data.put("test", 1);
+
+		assertCondition("%{data.test}==true", data, true);
+		assertCondition("%{data.test}!=true", data, false);
+		assertCondition("%{data.test}==TRUE", data, true);
+		assertCondition("%{data.test}!=TRUE", data, false);
+
+		assertCondition("%{data.test}==false", data, false);
+		assertCondition("%{data.test}!=false", data, true);
+		assertCondition("%{data.test}==FALSE", data, false);
+		assertCondition("%{data.test}!=FALSE", data, true);
+
+		data.put("test", 0);
+
+		assertCondition("%{data.test}==true", data, false);
+		assertCondition("%{data.test}!=true", data, true);
+		assertCondition("%{data.test}==TRUE", data, false);
+		assertCondition("%{data.test}!=TRUE", data, true);
+
+		assertCondition("%{data.test}==false", data, true);
+		assertCondition("%{data.test}!=false", data, false);
+		assertCondition("%{data.test}==FALSE", data, true);
+		assertCondition("%{data.test}!=FALSE", data, false);
+
+		// Double
+		data.put("test", 1d);
+
+		assertCondition("%{data.test}==true", data, true);
+		assertCondition("%{data.test}!=true", data, false);
+		assertCondition("%{data.test}==TRUE", data, true);
+		assertCondition("%{data.test}!=TRUE", data, false);
+
+		assertCondition("%{data.test}==false", data, false);
+		assertCondition("%{data.test}!=false", data, true);
+		assertCondition("%{data.test}==FALSE", data, false);
+		assertCondition("%{data.test}!=FALSE", data, true);
+
+		data.put("test", 0d);
+
+		assertCondition("%{data.test}==true", data, false);
+		assertCondition("%{data.test}!=true", data, true);
+		assertCondition("%{data.test}==TRUE", data, false);
+		assertCondition("%{data.test}!=TRUE", data, true);
+
+		assertCondition("%{data.test}==false", data, true);
+		assertCondition("%{data.test}!=false", data, false);
+		assertCondition("%{data.test}==FALSE", data, true);
+		assertCondition("%{data.test}!=FALSE", data, false);
+
+		// String
+		data.put("test", "1");
+
+		assertCondition("%{data.test}==true", data, true);
+		assertCondition("%{data.test}!=true", data, false);
+		assertCondition("%{data.test}==TRUE", data, true);
+		assertCondition("%{data.test}!=TRUE", data, false);
+
+		assertCondition("%{data.test}==false", data, false);
+		assertCondition("%{data.test}!=false", data, true);
+		assertCondition("%{data.test}==FALSE", data, false);
+		assertCondition("%{data.test}!=FALSE", data, true);
+
+		data.put("test", "0");
+
+		assertCondition("%{data.test}==true", data, false);
+		assertCondition("%{data.test}!=true", data, true);
+		assertCondition("%{data.test}==TRUE", data, false);
+		assertCondition("%{data.test}!=TRUE", data, true);
+
+		assertCondition("%{data.test}==false", data, true);
+		assertCondition("%{data.test}!=false", data, false);
+		assertCondition("%{data.test}==FALSE", data, true);
+		assertCondition("%{data.test}!=FALSE", data, false);
 
 	}
 
@@ -317,6 +442,14 @@ public class NewConditionsTest {
 		Data data = DataFactory.create();
 		data.put("test2", 4d);
 		data.put("test", 3d);
+
+		Variables props = new Variables();
+		props.put("exp.test", "(%{data.test} == 3d)");
+
+		assertCondition(
+				"${exp.test} and (%{data.test2} != null)and (%{data.test2} != 1d) and(%{data.test2} != 5)",
+				data, props, true);
+
 		assertCondition("%{data.test} == 3d and %{data.test} != 4d", data, true);
 		assertCondition("(%{data.test} == 3d) and (%{data.test} != 4d)", data,
 				true);
@@ -457,6 +590,22 @@ public class NewConditionsTest {
 	}
 
 	@Test
+	public void testSetValue() throws Exception {
+		ProcessContext ctx = new ProcessContextMock();
+		Data data = DataFactory.create();
+
+		data.put("test", 3);
+
+		SetValue set = new SetValue();
+		set.setScope(new String[] { "process" });
+		set.setValue("%{data.test}");
+		set.setKey("test");
+		set.init(ctx);
+		set.process(data);
+		Assert.assertEquals(3, ctx.get("test"));
+	}
+
+	@Test
 	public void testNotEqualConditionSkip() throws Exception {
 		String condition = "%{data.test} == 3d";
 		Skip skip = new Skip();
@@ -512,7 +661,12 @@ public class NewConditionsTest {
 
 		stream.expressions.version2.Condition c = cf.create(condition);
 
-		Assert.assertEquals(c.get(ctx, data), result);
+		Assert.assertEquals(result, c.get(ctx, data));
+	}
+
+	private void assertCondition(String condition, Data data, Variables props,
+			Boolean result) throws Exception {
+		assertCondition(props.expand(condition), data, result);
 	}
 
 	@SuppressWarnings("unused")

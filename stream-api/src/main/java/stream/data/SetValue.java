@@ -95,7 +95,7 @@ public class SetValue extends ConditionedProcessor {
 
 			if (scope.contains(Context.DATA_CONTEXT_NAME) || scope.isEmpty())
 				data.put(key, val);
-			else if (scope.contains(Context.PROCESS_CONTEXT_NAME))
+			if (scope.contains(Context.PROCESS_CONTEXT_NAME))
 				context.set(key, val);
 
 		}

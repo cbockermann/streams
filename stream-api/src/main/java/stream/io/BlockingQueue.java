@@ -219,7 +219,7 @@ public class BlockingQueue extends AbstractQueue {
 				enqueue(node);
 				c = count.getAndIncrement();
 				// TODO
-				log.info("put size:" + c);
+				log.debug("put size: {}", c);
 				if (c + 1 < capacity)
 					notFull.signal();
 			} finally {
@@ -289,7 +289,7 @@ public class BlockingQueue extends AbstractQueue {
 			item = dequeue();
 			c = count.getAndDecrement();
 			// TODO
-			log.info("take size:" + c);
+			log.debug("take size: {}", c);
 			log.trace("took item from queue: {}", item);
 
 			if (c > 1)
@@ -370,7 +370,7 @@ public class BlockingQueue extends AbstractQueue {
 					enqueue(node);
 					c = count.getAndIncrement();
 				}
-				log.info("{}:{}", id, c);
+				log.debug("{}:{}", id, c);
 				if (c + 1 < capacity)
 					notFull.signal();
 			} finally {

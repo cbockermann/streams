@@ -105,15 +105,15 @@ public class Variables implements Map<String, String>, Serializable {
 		return expanded;
 	}
 
-	public String expand(String str, boolean emptyStrings) {
-		return substitute(str, emptyStrings);
+	public String expand(String str, boolean replaceMissing) {
+		return substitute(str, replaceMissing);
 	}
 
 	public String expand(String str) {
 		return substitute(str, false);
 	}
 
-	private String substitute(String str, boolean emptyStrings) {
+	private String substitute(String str, boolean replaceMissing) {
 		String content = str;
 		// ${p1.${p2}_${p3.${p4}}}
 		int t = 0;
@@ -139,12 +139,12 @@ public class Variables implements Map<String, String>, Serializable {
 							+ content.substring(end + 1);
 				} else {
 
-					if (emptyStrings)
+					if (replaceMissing)
 						content = content.substring(0, start) + ""
 								+ content.substring(end + 1);
 					else
 						throw new IllegalArgumentException("Property "
-								+ variable + " does is not set.");
+								+ variable + " is not set.");
 				}
 			}
 			t = 0;

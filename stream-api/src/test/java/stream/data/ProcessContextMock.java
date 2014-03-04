@@ -52,4 +52,9 @@ public class ProcessContextMock implements ProcessContext {
 		if (key != null)
 			ctx.put(key, o);
 	}
+
+	@Override
+	public void clear() {
+		ctx.clear();
+	}
 }

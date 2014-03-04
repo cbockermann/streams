@@ -91,4 +91,9 @@ public class BoltContext implements ProcessContext, Serializable {
 		}
 		return this;
 	}
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+	}
 }

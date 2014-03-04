@@ -99,4 +99,9 @@ public class LocalContext implements ProcessContext {
 		throw new Exception(
 				"Addition of remote naming services is not supported by local context!");
 	}
+
+	@Override
+	public void clear() {
+		context.clear();
+	}
 }

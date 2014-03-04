@@ -56,4 +56,6 @@ public interface ProcessContext extends Context {
 	 * @param o
 	 */
 	public void set(String key, Object o);
+
+	public void clear();
 }

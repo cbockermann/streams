@@ -21,8 +21,17 @@ public abstract class Index extends AbstractProcessor implements Service {
 	protected String indexId;
 	protected String indexKey;
 
+	public String getIndexId() {
+		return indexId;
+	}
+
+	public void setIndexId(String indexId) {
+		this.indexId = indexId;
+	}
+
 	public Index() {
 		id = "";
+		indexId = null;
 		try {
 			reset();
 		} catch (Exception e) {
@@ -49,7 +58,9 @@ public abstract class Index extends AbstractProcessor implements Service {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
-		indexId = "@index:" + id;
+		if (indexId == null) {
+			indexId = "@index:" + id;
+		}
 	}
 
 }

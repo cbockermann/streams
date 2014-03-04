@@ -5,13 +5,13 @@ import stream.Data;
 
 /**
  * @author Hendrik Blom
- *
+ * 
  */
-public class ResetContext extends AbstractProcessor{
+public class ResetContext extends AbstractProcessor {
 
 	protected String[] keys;
 	protected String regexp;
-	
+
 	public String[] getKeys() {
 		return keys;
 	}
@@ -22,11 +22,13 @@ public class ResetContext extends AbstractProcessor{
 
 	@Override
 	public Data process(Data data) {
-		for (String key : keys) {
+		if (keys == null)
+			context.clear();
+		else
+			for (String key : keys) {
 				context.set(key, null);
-		}
+			}
 		return data;
 	}
-
 
 }

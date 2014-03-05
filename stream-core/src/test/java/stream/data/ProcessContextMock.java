@@ -23,7 +23,9 @@ public class ProcessContextMock implements ProcessContext {
 	 */
 	@Override
 	public Object resolve(String variable) {
-		return ctx.get(variable);
+		if (variable.startsWith("process."))
+			return get(variable.substring("process.".length()));
+		return null;
 	}
 
 	// /**

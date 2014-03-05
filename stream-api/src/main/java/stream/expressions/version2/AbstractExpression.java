@@ -143,7 +143,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 			if (context.equals(Context.DATA_CONTEXT_NAME))
 				return new DataExpressionResolver(key);
 			if (context.equals(Context.PROCESS_CONTEXT_NAME))
-				return new ObjectContextResolver(key);
+				return new ObjectContextResolver(expr);
 			if (context.equals(Context.CONTAINER_CONTEXT_NAME))
 				return new ObjectContextResolver(expr);
 

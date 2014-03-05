@@ -1,9 +1,31 @@
 package stream.annotations;
 
+import java.lang.reflect.Field;
+
 /**
- * Exception that should occur when a nonoptional field is not set in the xml file
+ * Exception that should occur when a nonoptional field is not set in the xml file.
+ * Or a field annotated as xmlparameter doesnt have a setter method
  * Created by bruegge on 3/5/14.
  */
 public class XMLParameterException extends RuntimeException {
-    String parameterName;
+
+    private Field missingField;
+
+    public XMLParameterException(String message){
+        super(message);
+    }
+
+    public XMLParameterException(String message, Field missingField){
+        super(message);
+    }
+
+
+
+    public Field getMissingField() {
+        return missingField;
+    }
+
+    public void setMissingField(Field missingField) {
+        this.missingField = missingField;
+    }
 }

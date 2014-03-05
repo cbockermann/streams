@@ -110,6 +110,8 @@ public class CopyValues extends AbstractProcessor {
 			e = new SerializableExpression("%{" + sourceCtx + "." + key + "}");
 			if (e != null)
 				expressions[i] = e;
+
+			log.info("key{}:exp{e}");
 		}
 		// KeySetConditions...
 		if (conditionString != null && !conditionString.isEmpty()) {

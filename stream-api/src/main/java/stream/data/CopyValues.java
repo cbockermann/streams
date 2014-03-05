@@ -57,6 +57,7 @@ public class CopyValues extends AbstractProcessor {
 	protected String sourceCtx;
 	protected String targetCtx;
 	protected Data localCtx;
+	protected ProcessContext localProcessContext;
 	protected String conditionString;
 	protected Condition condition;
 
@@ -100,6 +101,8 @@ public class CopyValues extends AbstractProcessor {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		localCtx = DataFactory.create();
+		localProcessContext = new ProcessContextMock2();
+
 		expressions = new SerializableExpression[keys.length];
 		if (keys == null)
 			throw new IllegalArgumentException("Keys are not set!");
@@ -111,7 +114,6 @@ public class CopyValues extends AbstractProcessor {
 			if (e != null)
 				expressions[i] = e;
 
-			log.info("key{}:exp{}", key, e);
 		}
 		// KeySetConditions...
 		if (conditionString != null && !conditionString.isEmpty()) {
@@ -128,7 +130,10 @@ public class CopyValues extends AbstractProcessor {
 
 	@Override
 	public Data process(Data data) {
+
+		localProcessContext.clear();
 		localCtx.clear();
+
 		localCtx.putAll(data);
 		Data copyCtx = null;
 		boolean copy = Context.COPY_CONTEXT_NAME.equals(targetCtx);
@@ -152,10 +157,12 @@ public class CopyValues extends AbstractProcessor {
 					continue;
 
 				localCtx.put("key", val);
+				localProcessContext.set("key", val);
+
 				boolean b = false;
 				try {
-					b = condition == null ? true : condition.get(context,
-							localCtx);
+					b = condition == null ? true : condition.get(
+							localProcessContext, localCtx);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

@@ -49,9 +49,18 @@ public class AnnotationsTest {
     @Test
     public void testInvalidParameters() throws Exception {
         thrown.expect(XMLParameterException.class);
-
+        thrown.expectMessage("missing parameter");
         System.setProperty("process.multiply", "true");
         URL url = DiscoveryTest.class.getResource("/annotations_invalid_test.xml");
+        stream.run.main(url);
+    }
+
+    @Test
+    public void testMissingSetter() throws Exception {
+        thrown.expect(XMLParameterException.class);
+        thrown.expectMessage("missing setter");
+        System.setProperty("process.multiply", "true");
+        URL url = DiscoveryTest.class.getResource("/missing_setter_test.xml");
         stream.run.main(url);
     }
 }

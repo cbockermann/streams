@@ -17,14 +17,12 @@ public class AnnotationTestProcessor implements Processor {
     @XMLParameter(optional=true)
     private String optional;
 
-    private String unannotated;
 
     @Override
     public Data process(Data input) {
         System.out.println("Annotation test processor:  ");
         System.out.println("nonoptional: " + nonoptional);
         System.out.println("optional: " + optional);
-        System.out.println("unannotated: " + unannotated);
         return input;
      }
 
@@ -47,11 +45,4 @@ public class AnnotationTestProcessor implements Processor {
         this.optional = optional;
     }
 
-    public String getUnannotated() {
-        return unannotated;
-    }
-
-    public void setUnannotated(String unannotated) {
-        this.unannotated = unannotated;
-    }
 }

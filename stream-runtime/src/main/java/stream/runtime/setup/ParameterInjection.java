@@ -26,6 +26,7 @@ package stream.runtime.setup;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
+import stream.annotations.XMLParameter;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -76,6 +78,16 @@ public class ParameterInjection {
 		Set<String> alreadySet = new HashSet<String>();
 
 		Object embedded = params.get(BodyContent.KEY);
+
+        //get annotations  for all fields and save them in a map
+        //TODO: add annotated fields to a map and check for entries in this map a few lines down where the
+        // actual values are injected
+        for ( Field field : o.getClass().getFields() ){
+            if ( field.isAnnotationPresent( XMLParameter.class ) ){
+                log.debug("Has XMLParameter annotation " + field.toString());
+             }
+        }
+
 
 		// now, walk over all methods and check if one of these is a setter of a
 		// corresponding
@@ -150,6 +162,7 @@ public class ParameterInjection {
 
 						if (t[0].isPrimitive()) {
 							String in = params.get(k).toString();
+
 
 							if (t[0] == Double.TYPE)
 								po = new Double(in);

@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.runtime.setup.UserSettings;
+import stream.util.Variables;
 
 /**
  * @author chris
@@ -91,12 +92,17 @@ public class StreamRuntime {
 		}
 	}
 
-	public static void loadUserProperties() {
+	public static Variables loadUserProperties() {
+		Variables vars = new Variables();
 		File file = new File(System.getProperty("user.home") + File.separator
 				+ ".streams.properties");
 		try {
 
 			if (file.canRead()) {
+				log.debug(
+						"Reading user properties from $HOME/.streams.properties => {}",
+						file);
+
 				Properties p = new Properties();
 				p.load(new FileInputStream(file));
 
@@ -105,6 +111,8 @@ public class StreamRuntime {
 							p.getProperty(k.toString()));
 					System.setProperty(k.toString(),
 							p.getProperty(k.toString()));
+
+					vars.set(k.toString(), p.getProperty(k.toString()));
 				}
 			} else {
 				log.debug("No $HOME/.streams.properties file found!");
@@ -116,5 +124,31 @@ public class StreamRuntime {
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 		}
+
+		File local = new File("streams.properties");
+		if (file.canRead()) {
+			log.debug("Reading local properties from {}", file);
+			try {
+				Properties p = new Properties();
+				p.load(new FileInputStream(local));
+
+				for (Object k : p.keySet()) {
+					log.debug("Adding property '{}' = '{}'", k,
+							p.getProperty(k.toString()));
+					System.setProperty(k.toString(),
+							p.getProperty(k.toString()));
+					vars.set(k.toString(), p.getProperty(k.toString()));
+				}
+			} catch (Exception e) {
+				log.error("Failed to read local properties from {}: {}", file,
+						e.getMessage());
+				if (log.isDebugEnabled())
+					e.printStackTrace();
+			}
+		} else {
+			log.debug("No local properties file exists at {}", file);
+		}
+
+		return vars;
 	}
 }

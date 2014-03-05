@@ -24,3 +24,4 @@ stream-api/pom.xml.releaseBackup
 stream-core/pom.xml.releaseBackup
 #intellij stuff
 .idea/
+*.iml

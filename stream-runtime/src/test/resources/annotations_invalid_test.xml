@@ -1,0 +1,12 @@
+<container>
+
+    <Stream id="input" class="stream.test.TestStream" limit = "2" />
+
+   <process input="input">
+
+     <PrintData />
+       <!-- invalid parameters should throw exception -->
+      <stream.annotations.AnnotationTestProcessor optional="Hello"  />
+   </process>
+
+</container>

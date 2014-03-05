@@ -1,6 +1,6 @@
 <container>
 
-    <Stream id="input" class="stream.test.TestStream" limit = "2" />
+    <Stream id="input" class="stream.test.TestStream" limit = "10" />
 
    <process input="input">
 

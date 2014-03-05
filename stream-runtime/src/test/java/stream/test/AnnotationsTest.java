@@ -32,7 +32,7 @@ import java.net.URL;
 
 
 /**
- * @author chris
+ * @author Kai
  * 
  */
 public class AnnotationsTest {
@@ -49,7 +49,6 @@ public class AnnotationsTest {
     @Test
     public void testInvalidParameters() throws Exception {
         thrown.expect(XMLParameterException.class);
-        thrown.expectMessage("Missing parameter");
 
         System.setProperty("process.multiply", "true");
         URL url = DiscoveryTest.class.getResource("/annotations_invalid_test.xml");

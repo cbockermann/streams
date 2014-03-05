@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
 import stream.annotations.XMLParameter;
+import stream.annotations.XMLParameterException;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -79,15 +80,27 @@ public class ParameterInjection {
 
 		Object embedded = params.get(BodyContent.KEY);
 
-        //get annotations  for all fields and save them in a map
-        //TODO: add annotated fields to a map and check for entries in this map a few lines down where the
-        // actual values are injected
-        for ( Field field : o.getClass().getFields() ){
+        //iterate through all fields and get their annotations. If annotation is present check for
+        // parameters from xml file
+        for ( Field field : o.getClass().getDeclaredFields() ){
             if ( field.isAnnotationPresent( XMLParameter.class ) ){
                 log.debug("Has XMLParameter annotation " + field.toString());
+                boolean optional = field.getAnnotation(XMLParameter.class).optional();
+
+                //if field is nonoptional it has to have a value defined in the .xml file
+                if (!optional){
+                    boolean xmlHasParameter = params.containsKey(field.getName())
+                            && (  params.get(field.getName()) != null  );
+                    if (!xmlHasParameter){
+                        throw new XMLParameterException("XML is missing parameter " + field.getName()
+                                + " for processor " + o.getClass().getSimpleName());
+                    }
+                }
+
+                //TODO: check if setter method exists
+
              }
         }
-
 
 		// now, walk over all methods and check if one of these is a setter of a
 		// corresponding

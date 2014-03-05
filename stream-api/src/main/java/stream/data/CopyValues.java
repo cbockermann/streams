@@ -111,7 +111,7 @@ public class CopyValues extends AbstractProcessor {
 			if (e != null)
 				expressions[i] = e;
 
-			log.info("key{}:exp{e}");
+			log.info("key{}:exp{}", key, e);
 		}
 		// KeySetConditions...
 		if (conditionString != null && !conditionString.isEmpty()) {

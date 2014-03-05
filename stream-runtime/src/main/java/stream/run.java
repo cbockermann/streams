@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import stream.runtime.ElementHandler;
 import stream.runtime.ProcessContainer;
 import stream.runtime.StreamRuntime;
+import stream.util.Variables;
 
 /**
  * @author chris
@@ -112,10 +113,11 @@ public class run {
 			throws Exception {
 		StreamRuntime.setupLogging();
 
-		StreamRuntime.loadUserProperties();
+		Variables props = StreamRuntime.loadUserProperties();
+		props.addVariables(args);
 
 		log.debug("Creating process-container from configuration at {}", url);
-		ProcessContainer container = new ProcessContainer(url, null, args);
+		ProcessContainer container = new ProcessContainer(url, null, props);
 
 		log.info("Starting process-container...");
 		container.run();
@@ -151,10 +153,10 @@ public class run {
 
 		StreamRuntime.setupLogging();
 
-		StreamRuntime.loadUserProperties();
+		final Variables vars = StreamRuntime.loadUserProperties();
 
 		log.debug("Creating process-container from configuration at {}", url);
-		ProcessContainer container = new ProcessContainer(url);
+		ProcessContainer container = new ProcessContainer(url, null, vars);
 
 		log.info("Starting process-container...");
 		// if (true) {
@@ -179,10 +181,11 @@ public class run {
 
 		StreamRuntime.setupLogging();
 
-		StreamRuntime.loadUserProperties();
+		Variables vars = StreamRuntime.loadUserProperties();
 
 		log.debug("Creating process-container from configuration at {}", url);
-		ProcessContainer container = new ProcessContainer(url, elementHandler);
+		ProcessContainer container = new ProcessContainer(url, elementHandler,
+				vars);
 
 		log.info("Starting process-container...");
 		container.run();

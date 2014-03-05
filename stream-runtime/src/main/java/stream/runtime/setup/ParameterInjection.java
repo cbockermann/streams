@@ -80,29 +80,10 @@ public class ParameterInjection {
 
 		Object embedded = params.get(BodyContent.KEY);
 
-        //iterate through all fields and get their annotations. If annotation is present check for
-        // parameters from xml file
-        for ( Field field : o.getClass().getDeclaredFields() ){
-            if ( field.isAnnotationPresent( XMLParameter.class ) ){
-                log.debug("Has XMLParameter annotation " + field.toString());
-                boolean optional = field.getAnnotation(XMLParameter.class).optional();
+        checkForMissingParametersAndSetters(o, params);
 
-                //if field is nonoptional it has to have a value defined in the .xml file
-                if (!optional){
-                    boolean xmlHasParameter = params.containsKey(field.getName())
-                            && (  params.get(field.getName()) != null  );
-                    if (!xmlHasParameter){
-                        throw new XMLParameterException("XML is missing parameter " + field.getName()
-                                + " for processor " + o.getClass().getSimpleName());
-                    }
-                }
 
-                //TODO: check if setter method exists
-
-             }
-        }
-
-		// now, walk over all methods and check if one of these is a setter of a
+        // now, walk over all methods and check if one of these is a setter of a
 		// corresponding
 		// key value in the parameter map
 		//
@@ -241,7 +222,49 @@ public class ParameterInjection {
 		return alreadySet;
 	}
 
-	public static void injectSystemProperties(Object object, String prefix)
+    /**
+     * This methods checks for the XMLParameter annotation in the processor and if the corresponindg parameters
+     * or setter methods are missing. A new XMLParameterException will be thrown in both cases
+     *
+     * @param o the processor instance
+     * @param params the params map from the xml file
+     *
+     * @throws stream.annotations.XMLParameterException in case parameter or setter is missing
+     */
+    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws XMLParameterException {
+        //iterate through all fields and get their annotations. If annotation is present check for
+        // parameters from xml file
+        for ( Field field : o.getClass().getDeclaredFields() ){
+            if ( field.isAnnotationPresent( XMLParameter.class ) ){
+                log.debug("Has XMLParameter annotation " + field.toString());
+                boolean optional = field.getAnnotation(XMLParameter.class).optional();
+
+                //if field is nonoptional it has to have a value defined in the .xml file
+                if (!optional){
+                    boolean xmlHasParameter = params.containsKey(field.getName())
+                            && (  params.get(field.getName()) != null  );
+                    if (!xmlHasParameter){
+                        throw new XMLParameterException("XML is missing parameter " + field.getName()
+                                + " for processor " + o.getClass().getSimpleName());
+                    }
+                }
+
+                boolean setterMissing = true;
+                for(Method m : o.getClass().getDeclaredMethods()){
+                    if (m.getName().toLowerCase().equalsIgnoreCase("set" + field.getName())){
+                        setterMissing = false;
+                        break;
+                    }
+                }
+                if (setterMissing){
+                    throw new XMLParameterException("Processor " + o.getClass().getSimpleName()
+                            + " is missing setter method for field " + field.getName());
+                }
+             }
+        }
+    }
+
+    public static void injectSystemProperties(Object object, String prefix)
 			throws Exception {
 		Map<String, String> params = ParameterDiscovery
 				.getSystemProperties(prefix);

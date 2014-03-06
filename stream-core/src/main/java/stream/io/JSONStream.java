@@ -77,28 +77,39 @@ public class JSONStream extends AbstractLineStream {
 		Data instance = DataFactory.create();
 
 		String line = readLine();
-		log.debug("line: {}", line);
 		if (line == null) {
 			return null;
 		}
 
-		log.debug("Parsing item from {}", line);
-		JSONObject object = parser.parse(line, JSONObject.class);
-		if (object != null) {
-			for (String key : object.keySet()) {
-				Object val = object.get(key);
-				if (val == null)
-					continue;
-				if (val instanceof Serializable)
-					instance.put(key, (Serializable) val);
-				else
-					instance.put(key, val.toString());
+		while (line != null) {
+			try {
+				log.debug("line: {}", line);
+
+				log.debug("Parsing item from {}", line);
+				JSONObject object = parser.parse(line, JSONObject.class);
+				if (object != null) {
+					for (String key : object.keySet()) {
+						Object val = object.get(key);
+						if (val == null)
+							continue;
+						if (val instanceof Serializable)
+							instance.put(key, (Serializable) val);
+						else
+							instance.put(key, val.toString());
+					}
+				} else {
+					log.debug("Failed to parse item, object = {}", object);
+				}
+
+				log.debug("returning instance: {}", instance);
+				return instance;
+			} catch (Exception e) {
+				log.error("Failed to parse line: {}", line);
+				e.printStackTrace();
+				line = readLine();
 			}
-		} else {
-			log.debug("Failed to parse item, object = {}", object);
 		}
 
-		log.debug("returning instance: {}", instance);
-		return instance;
+		return null;
 	}
 }

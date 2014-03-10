@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.15-SNAPSHOT</version>
+		<version>0.9.16-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<name>streams-storm</name>

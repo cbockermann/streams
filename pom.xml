@@ -3,7 +3,7 @@
 	<groupId>org.jwall</groupId>
 	<artifactId>streams</artifactId>
 	<name>streams</name>
-	<version>0.9.15-SNAPSHOT</version>
+	<version>0.9.16-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>The streams library is a multi-module library for processing data from data streams</description>
 

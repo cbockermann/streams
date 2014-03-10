@@ -26,7 +26,7 @@ package stream.test;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import stream.annotations.XMLParameterException;
+import stream.annotations.ParameterException;
 
 import java.net.URL;
 
@@ -48,7 +48,7 @@ public class AnnotationsTest {
 
     @Test
     public void testInvalidParameters() throws Exception {
-        thrown.expect(XMLParameterException.class);
+        thrown.expect(ParameterException.class);
         thrown.expectMessage("missing parameter");
         System.setProperty("process.multiply", "true");
         URL url = DiscoveryTest.class.getResource("/annotations_invalid_test.xml");
@@ -57,7 +57,7 @@ public class AnnotationsTest {
 
     @Test
     public void testMissingSetter() throws Exception {
-        thrown.expect(XMLParameterException.class);
+        thrown.expect(ParameterException.class);
         thrown.expectMessage("missing setter");
         System.setProperty("process.multiply", "true");
         URL url = DiscoveryTest.class.getResource("/missing_setter_test.xml");

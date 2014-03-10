@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-@Target({ ElementType.METHOD })
+@Target({ ElementType.METHOD , ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Parameter {
 

@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
+import stream.annotations.ParameterException;
 import stream.annotations.XMLParameter;
-import stream.annotations.XMLParameterException;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -224,14 +224,14 @@ public class ParameterInjection {
 
     /**
      * This methods checks for the XMLParameter annotation in the processor and if the corresponindg parameters
-     * or setter methods are missing. A new XMLParameterException will be thrown in both cases
+     * or setter methods are missing. A new ParameterException will be thrown in both cases
      *
      * @param o the processor instance
      * @param params the params map from the xml file
      *
-     * @throws stream.annotations.XMLParameterException in case parameter or setter is missing
+     * @throws stream.annotations.ParameterException in case parameter or setter is missing
      */
-    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws XMLParameterException {
+    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws ParameterException {
         //iterate through all fields and get their annotations. If annotation is present check for
         // parameters from xml file
         for ( Field field : o.getClass().getDeclaredFields() ){
@@ -244,7 +244,7 @@ public class ParameterInjection {
                     boolean xmlHasParameter = params.containsKey(field.getName())
                             && (  params.get(field.getName()) != null  );
                     if (!xmlHasParameter){
-                        throw new XMLParameterException("XML is missing parameter " + field.getName()
+                        throw new ParameterException("XML is missing parameter " + field.getName()
                                 + " for processor " + o.getClass().getSimpleName());
                     }
                 }
@@ -257,7 +257,7 @@ public class ParameterInjection {
                     }
                 }
                 if (setterMissing){
-                    throw new XMLParameterException("Processor " + o.getClass().getSimpleName()
+                    throw new ParameterException("Processor " + o.getClass().getSimpleName()
                             + " is missing setter method for field " + field.getName());
                 }
              }

@@ -21,12 +21,11 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.test;
+package stream.annotations;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import stream.annotations.ParameterException;
 
 import java.net.URL;
 
@@ -42,7 +41,7 @@ public class AnnotationsTest {
 	@Test
 	public void testValidParameters() throws Exception {
 		System.setProperty("process.multiply", "true");
-		URL url = DiscoveryTest.class.getResource("/annotations_test.xml");
+		URL url = AnnotationsTest.class.getResource("/annotations_test.xml");
 		stream.run.main(url);
 	}
 
@@ -51,7 +50,7 @@ public class AnnotationsTest {
         thrown.expect(ParameterException.class);
         thrown.expectMessage("missing parameter");
         System.setProperty("process.multiply", "true");
-        URL url = DiscoveryTest.class.getResource("/annotations_invalid_test.xml");
+        URL url = AnnotationsTest.class.getResource("/annotations_invalid_test.xml");
         stream.run.main(url);
     }
 
@@ -60,7 +59,7 @@ public class AnnotationsTest {
         thrown.expect(ParameterException.class);
         thrown.expectMessage("missing setter");
         System.setProperty("process.multiply", "true");
-        URL url = DiscoveryTest.class.getResource("/missing_setter_test.xml");
+        URL url = AnnotationsTest.class.getResource("/missing_setter_test.xml");
         stream.run.main(url);
     }
 }

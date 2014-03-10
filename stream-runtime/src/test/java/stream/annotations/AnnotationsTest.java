@@ -62,4 +62,15 @@ public class AnnotationsTest {
         URL url = AnnotationsTest.class.getResource("/missing_setter_test.xml");
         stream.run.main(url);
     }
+
+    @Test
+    public void testConflictingFlags() throws Exception {
+        thrown.expect(ParameterException.class);
+        thrown.expectMessage("flags");
+        System.setProperty("process.multiply", "true");
+        URL url = AnnotationsTest.class.getResource("/annotations_conflicting_flags_test.xml");
+        stream.run.main(url);
+    }
+
+
 }

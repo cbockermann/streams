@@ -33,6 +33,7 @@ public class AnnotationTestProcessor implements Processor {
         return nonoptional;
     }
 
+    @Parameter(required = true)
     public void setNonoptional(String nonoptional) {
         this.nonoptional = nonoptional;
     }

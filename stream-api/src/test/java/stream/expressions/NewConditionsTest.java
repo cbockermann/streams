@@ -587,6 +587,29 @@ public class NewConditionsTest {
 		d.put("test", 4d);
 		d = ifP.process(d);
 		Assert.assertFalse(d.containsKey("@if"));
+
+		// NEW
+		condition = "%{data.test} == 3d AND %{process.test}==3d";
+		ifP = new If();
+		ifP.setCondition(condition);
+		ifP.add(set);
+
+		ProcessContext pc = new ProcessContextMock();
+		ifP.init(pc);
+		d.put("test", 3d);
+		pc.set("test", 3d);
+		d = ifP.process(d);
+		Assert.assertTrue(d.containsKey("@if"));
+
+		ifP = new If();
+		ifP.setCondition(condition);
+		ifP.add(set);
+		d.clear();
+		d.put("test", 3d);
+		pc.set("test", 4d);
+		ifP.init(pc);
+		d = ifP.process(d);
+		Assert.assertFalse(d.containsKey("@if"));
 	}
 
 	@Test

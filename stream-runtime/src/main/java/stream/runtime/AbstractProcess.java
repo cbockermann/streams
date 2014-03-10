@@ -66,6 +66,8 @@ public abstract class AbstractProcess implements stream.Process {
 
 	protected Priority priority = new Priority();
 
+	protected String onError = "exit";
+
 	/**
 	 * @see stream.Process#setInput(stream.io.Source)
 	 */
@@ -180,17 +182,29 @@ public abstract class AbstractProcess implements stream.Process {
 			while (item != null) {
 				// process the item
 				//
-				item = process(item);
+				try {
+					item = process(item);
 
-				if (item != null && getOutput() != null) {
-					log.trace("Sending process output to connected sink {}",
-							getOutput());
-					getOutput().write(item);
+					if (item != null && getOutput() != null) {
+						log.trace(
+								"Sending process output to connected sink {}",
+								getOutput());
+						getOutput().write(item);
+					}
+
+					// obtain the next item to be processed
+					//
+					item = getInput().read();
+
+				} catch (Exception e) {
+					if ("continue".equalsIgnoreCase(onError)) {
+						log.error("Error while processing data: {}",
+								e.getMessage());
+						log.error("   continuing with next item...");
+					} else {
+						throw e;
+					}
 				}
-
-				// obtain the next item to be processed
-				//
-				item = getInput().read();
 			}
 			log.debug("No more items could be read, exiting this process.");
 
@@ -244,6 +258,21 @@ public abstract class AbstractProcess implements stream.Process {
 	 */
 	public void setPriority(Priority priority) {
 		this.priority = priority;
+	}
+
+	/**
+	 * @return the onError
+	 */
+	public String getOnError() {
+		return onError;
+	}
+
+	/**
+	 * @param onError
+	 *            the onError to set
+	 */
+	public void setOnError(String onError) {
+		this.onError = onError;
 	}
 
 	public String toString() {

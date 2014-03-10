@@ -252,6 +252,15 @@ public class ParameterInjection {
                 boolean setterMissing = true;
                 for(Method m : o.getClass().getDeclaredMethods()){
                     if (m.getName().toLowerCase().equalsIgnoreCase("set" + field.getName())){
+                        // we found the matching setter for our parameter. Now lets see if there is another annotation
+                        // and if the required flag is the same as the one in the field annotation
+                        if(m.isAnnotationPresent(Parameter.class)){
+                            if(required != m.getAnnotation(Parameter.class).required()){
+                                throw new ParameterException("The required flags in the annotations for the parameter" +
+                                        field.getName() + " fields and setter do not match ");
+                            }
+                        }
+
                         setterMissing = false;
                         break;
                     }

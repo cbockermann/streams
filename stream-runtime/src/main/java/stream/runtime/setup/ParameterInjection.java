@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
+import stream.annotations.Parameter;
 import stream.annotations.ParameterException;
-import stream.annotations.XMLParameter;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -235,12 +235,12 @@ public class ParameterInjection {
         //iterate through all fields and get their annotations. If annotation is present check for
         // parameters from xml file
         for ( Field field : o.getClass().getDeclaredFields() ){
-            if ( field.isAnnotationPresent( XMLParameter.class ) ){
+            if ( field.isAnnotationPresent( Parameter.class ) ){
                 log.debug("Has XMLParameter annotation " + field.toString());
-                boolean optional = field.getAnnotation(XMLParameter.class).optional();
+                boolean required = field.getAnnotation(Parameter.class).required();
 
                 //if field is nonoptional it has to have a value defined in the .xml file
-                if (!optional){
+                if (required){
                     boolean xmlHasParameter = params.containsKey(field.getName())
                             && (  params.get(field.getName()) != null  );
                     if (!xmlHasParameter){

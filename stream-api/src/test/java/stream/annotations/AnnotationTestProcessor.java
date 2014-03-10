@@ -11,10 +11,10 @@ import stream.Processor;
 public class AnnotationTestProcessor implements Processor {
 
 
-    @XMLParameter
+    @Parameter
     private String nonoptional;
 
-    @XMLParameter(optional=true)
+    @Parameter(required=false)
     private String optional;
 
 

@@ -53,7 +53,7 @@ public @interface Parameter {
 	 * 
 	 * @return <code>true</code> if this parameter is required to be provided.
 	 */
-	boolean required() default false;
+	boolean required() default true;
 
 	/**
 	 * The default minimum for an numerical parameters

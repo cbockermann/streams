@@ -71,9 +71,11 @@ public class If extends ProcessorList {
 
 	public boolean matches(Data item) throws Exception {
 		if (condition == null)
-			return true;
-		final Boolean r = condition.get(context, item);
-		return r == null ? true : r;
+			return false;
+		final Boolean b = condition.get(context, item);
+		if (b == null)
+			return false;
+		return b;
 	}
 
 	/**

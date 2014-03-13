@@ -24,6 +24,8 @@
 package stream.expressions;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
@@ -32,6 +34,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
@@ -222,6 +225,35 @@ public class NewConditionsTest {
 
 	@Test
 	public void testSetCondition() throws Exception {
+		Pattern pattern = Pattern.compile("\bblah1\b|\bblah2\b");
+
+		int n = 100000;
+		String[] test = new String[n];
+		for (int i = 0; i < n; i++) {
+			test[i] = "blah" + i;
+		}
+
+		long start = System.currentTimeMillis();
+		for (String s : test) {
+			Matcher matcher = pattern.matcher(s);
+			boolean b = matcher.find();
+			if (b)
+				System.out.println(s);
+		}
+		long stop = System.currentTimeMillis();
+		System.out.println(stop - start);
+
+		String[] testString = new String[] { "blah1", "blah2" };
+		start = System.currentTimeMillis();
+		for (String s : test) {
+			for (String s2 : testString) {
+				boolean b = s2.equals(s);
+				if (b)
+					System.out.println(s);
+			}
+		}
+		stop = System.currentTimeMillis();
+		System.out.println(stop - start);
 		//
 		// Data data = DataFactory.create();
 		// data.put("aa", 4d);
@@ -250,7 +282,7 @@ public class NewConditionsTest {
 
 		}
 		long stop = System.currentTimeMillis();
-		System.out.println((stop - start) + ":" + Arrays.toString(test));
+		log.info((stop - start) + ":" + Arrays.toString(test));
 	}
 
 	@Test
@@ -576,7 +608,7 @@ public class NewConditionsTest {
 		ifP.add(set);
 		Data d = DataFactory.create();
 		d = ifP.process(d);
-		Assert.assertTrue(d.containsKey("@if"));
+		Assert.assertFalse(d.containsKey("@if"));
 
 		d = DataFactory.create();
 		d.put("test", 3d);
@@ -630,14 +662,25 @@ public class NewConditionsTest {
 
 	@Test
 	public void testNotEqualConditionSkip() throws Exception {
-		String condition = "%{data.test} == 3d";
+		// FunctionTest
+		ProcessContext ctx = new ProcessContextMock();
+		String condition = "%{process.test} == 3d";
 		Skip skip = new Skip();
+		skip.setCondition(condition);
+		skip.init(ctx);
+
+		Data d = DataFactory.create();
+		skip.process(d);
+
+		condition = "%{data.test} == 3d";
+		skip = new Skip();
 		skip.setCondition(condition);
 		skip.init(new ProcessContextMock());
 
 		MultiData md = new MultiData(rounds);
 		md.put("test", 3d);
 		testTime(skip, md);
+
 	}
 
 	@Test

@@ -35,7 +35,7 @@ import stream.Data;
  * <code>null</code>) all data items matching a given condition.
  * </p>
  * 
- * @author Hendrik
+ * @author Hendrik Blom
  * 
  */
 //@Description(group = "Data Stream.Flow")
@@ -47,18 +47,24 @@ public class Skip extends ConditionedProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-//		log.debug(condition.toString());
 		try {
 			if (this.matches(data))
 				return null;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return data;
 	}
 
+	public boolean matches(Data item) throws Exception {
+		if(condition==null)
+			return true;
+		final Boolean b=  condition.get(context, item);
+		if(b == null)
+			return false;
+		return b;
+	}
+	
 	/**
 	 * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
 	 */

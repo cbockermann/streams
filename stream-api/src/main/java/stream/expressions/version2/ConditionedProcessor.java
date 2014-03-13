@@ -41,7 +41,8 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 
 	/** The expression to check before processing an event */
 	protected Condition condition;
-
+	
+	
 	/**
 	 * @return the condition
 	 */
@@ -71,7 +72,10 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	public boolean matches(Data item) throws Exception {
 		if(condition==null)
 			return true;
-		return condition.get(context, item);
+		final Boolean b=  condition.get(context, item);
+		if(b == null)
+			return true;
+		return b;
 	}
 
 	/**

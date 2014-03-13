@@ -34,7 +34,7 @@ import stream.annotations.Parameter;
  * language.
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @author Hendrik Blom, Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
 public abstract class ConditionedProcessor extends AbstractProcessor {
@@ -69,7 +69,9 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	}
 
 	public boolean matches(Data item) throws Exception {
-		return condition == null ? true : condition.get(context, item);
+		if(condition==null)
+			return true;
+		return condition.get(context, item);
 	}
 
 	/**

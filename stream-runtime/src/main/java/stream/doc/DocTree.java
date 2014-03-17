@@ -363,9 +363,9 @@ public class DocTree implements Comparable<DocTree> {
 								docs.add(doc);
 							else {
 								missing.add(doc);
-								log.error(
-										"No documentation provided for class '{}'",
-										clazz.getCanonicalName());
+								// log.error(
+								// "No documentation provided for class '{}'",
+								// clazz.getCanonicalName());
 							}
 						} else {
 							log.debug("Skipping class '{}' due to patterns {}",

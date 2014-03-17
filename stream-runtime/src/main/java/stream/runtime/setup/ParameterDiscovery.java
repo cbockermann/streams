@@ -102,9 +102,7 @@ public class ParameterDiscovery {
 	public static Parameter getParameterAnnotation(Class<?> clazz, String key) {
 
 		for (Method m : clazz.getMethods()) {
-			if (ParameterDiscovery.isSetter(m)
-					&& m.getName().toLowerCase()
-							.equals("set" + key.toLowerCase())) {
+			if (m.getName().toLowerCase().equals("set" + key.toLowerCase())) {
 				Parameter p = m.getAnnotation(Parameter.class);
 				log.debug("Found parameter annotation for class {}, key {}: "
 						+ p, clazz, key);

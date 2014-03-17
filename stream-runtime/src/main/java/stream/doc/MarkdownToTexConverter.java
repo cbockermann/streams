@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
+import stream.io.Sink;
 import stream.runtime.setup.ParameterDiscovery;
 
 /**
@@ -31,7 +33,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 	int level = 0;
 
 	/**
-	 * @see stream.doc.DocConverter#convert(java.io.InputStream,
+	 * @see stream.util.doc.DocConverter#convert(java.io.InputStream,
 	 *      java.io.OutputStream)
 	 */
 	@Override
@@ -67,7 +69,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#createTableOfContents(java.util.Collection,
+	 * @see stream.util.doc.DocConverter#createTableOfContents(java.util.Collection,
 	 *      java.io.OutputStream)
 	 */
 	@Override
@@ -91,7 +93,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 	}
 
 	/**
-	 * @see stream.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
+	 * @see stream.util.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
 	 *      .Class, java.io.PrintStream)
 	 */
 	@Override
@@ -99,6 +101,31 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 		out.println();
 		Map<String, Class<?>> tmp = ParameterDiscovery
 				.discoverParameters(clazz);
+
+		for (Method m : clazz.getMethods()) {
+			if (m.getName().startsWith("set")) {
+
+				@SuppressWarnings("rawtypes")
+				Class[] pt = m.getParameterTypes();
+				if (pt.length == 1) {
+					Class<?> ct = pt[0];
+					if (pt[0].isArray()) {
+						ct = pt[0].getComponentType();
+					}
+
+					if (Sink.class.isAssignableFrom(ct)) {
+						String name = m.getName().substring(3);
+						name = Character.toLowerCase(name.charAt(0))
+								+ name.substring(1);
+
+						log.info("Found additional Sink setter '{}' => {}",
+								m.getName(), name);
+						tmp.put(name, m.getParameterTypes()[0]);
+					}
+				}
+
+			}
+		}
 
 		if (tmp.isEmpty())
 			return;
@@ -169,7 +196,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#sectionDown()
+	 * @see stream.util.doc.DocConverter#sectionDown()
 	 */
 	@Override
 	public void sectionDown() {
@@ -177,7 +204,7 @@ public class MarkdownToTexConverter extends AbstractDocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#sectionUp()
+	 * @see stream.util.doc.DocConverter#sectionUp()
 	 */
 	@Override
 	public void sectionUp() {

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
+import stream.io.Sink;
 import stream.runtime.setup.ParameterDiscovery;
 import stream.service.Service;
 
@@ -76,8 +77,15 @@ public class ParameterTableCreator {
 				if (Service.class.isAssignableFrom(argType)) {
 					log.info("Found service-setter!");
 					infos.add(new ParameterInfo(m.getName().substring(3)
-							.toLowerCase()
-							+ "-ref", argType, ""));
+							.toLowerCase(), argType, ""));
+					continue;
+				}
+
+				if (Sink.class.isAssignableFrom(argType)) {
+					log.info("Found sink setter!");
+					infos.add(new ParameterInfo(m.getName().substring(3)
+							.toLowerCase(), argType, ""));
+					continue;
 				}
 			}
 		}

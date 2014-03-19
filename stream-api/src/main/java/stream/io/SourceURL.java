@@ -5,6 +5,7 @@ package stream.io;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -317,6 +318,15 @@ public class SourceURL implements Serializable {
 		String theUrl = this.urlString;
 		try {
 
+			if (theUrl.startsWith(PROTOCOL_FILE)) {
+				File f = new File(theUrl);
+				if (!f.canRead()) {
+					log.error("Cannot open file '{}' for reading!", f);
+					throw new FileNotFoundException("Cannot open file '"
+							+ f.getAbsolutePath() + "' for reading!");
+				}
+			}
+
 			if (theUrl.startsWith(PROTOCOL_FIFO)) {
 
 				log.debug("Handling FIFO URL pattern...");
@@ -357,6 +367,8 @@ public class SourceURL implements Serializable {
 			}
 			return conn.getInputStream();
 			// return url.openStream();
+		} catch (FileNotFoundException fnf) {
+			throw fnf;
 		} catch (Exception e) {
 			log.error(
 					"Failed to open '{}' with default Java URL mechanism: {}",

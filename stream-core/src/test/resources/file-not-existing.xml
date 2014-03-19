@@ -1,0 +1,10 @@
+<container>
+    
+    <stream id="does-not-exist" class="stream.io.JSONStream"
+           url="file:/this-does-not-exist-123.json" />
+    
+    <process input="does-not-exist">
+		<PrintData />        
+    </process>
+    
+</container>

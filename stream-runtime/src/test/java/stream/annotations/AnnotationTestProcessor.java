@@ -10,6 +10,8 @@ import stream.Processor;
 
 public class AnnotationTestProcessor implements Processor {
 
+    @Parameter(name = "differentXMLName")
+    private String namedParameter;
 
     @Parameter
     private String nonoptional;
@@ -33,7 +35,6 @@ public class AnnotationTestProcessor implements Processor {
         return nonoptional;
     }
 
-    @Parameter(required = true)
     public void setNonoptional(String nonoptional) {
         this.nonoptional = nonoptional;
     }
@@ -45,5 +46,15 @@ public class AnnotationTestProcessor implements Processor {
     public void setOptional(String optional) {
         this.optional = optional;
     }
+
+
+    public String getNamedParameter() {
+        return namedParameter;
+    }
+
+    public void setNamedParameter(String namedParameter) {
+        this.namedParameter = namedParameter;
+    }
+
 
 }

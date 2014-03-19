@@ -56,7 +56,7 @@ import stream.util.Variables;
 public class ParameterInjection {
 
 	/* A global logger for this class */
-	static Logger log = LoggerFactory.getLogger(ParameterInjection.class);
+	public static Logger log = LoggerFactory.getLogger(ParameterInjection.class);
 
 	/**
 	 * This method injects a set of parameters to the given object.
@@ -79,6 +79,7 @@ public class ParameterInjection {
 		Set<String> alreadySet = new HashSet<String>();
 
 		Object embedded = params.get(BodyContent.KEY);
+
 
         checkForMissingParametersAndSetters(o, params);
 
@@ -236,16 +237,25 @@ public class ParameterInjection {
         // parameters from xml file
         for ( Field field : o.getClass().getDeclaredFields() ){
             if ( field.isAnnotationPresent( Parameter.class ) ){
-                log.debug("Has XMLParameter annotation " + field.toString());
+                log.debug("Has Parameter annotation " + field.toString());
                 boolean required = field.getAnnotation(Parameter.class).required();
+
+                String xmlName = field.getName();
+
+                //check if annotation has a value for name. If thats the case the parameter will be named differently
+                // in the xml file.
+                if (!field.getAnnotation(Parameter.class).name().isEmpty()){
+                    xmlName = field.getAnnotation(Parameter.class).name();
+                }
 
                 //if field is nonoptional it has to have a value defined in the .xml file
                 if (required){
-                    boolean xmlHasParameter = params.containsKey(field.getName())
-                            && (  params.get(field.getName()) != null  );
+                    boolean xmlHasParameter = params.containsKey(xmlName)
+                            && (  params.get(xmlName) != null  );
                     if (!xmlHasParameter){
-                        throw new ParameterException("XML is missing parameter " + field.getName()
-                                + " for processor " + o.getClass().getSimpleName());
+                        throw new ParameterException("XML is missing parameter " + xmlName + " for field "
+                                + field.getName()
+                                + " in processor " + o.getClass().getSimpleName());
                     }
                 }
 
@@ -255,12 +265,9 @@ public class ParameterInjection {
                         // we found the matching setter for our parameter. Now lets see if there is another annotation
                         // and if the required flag is the same as the one in the field annotation
                         if(m.isAnnotationPresent(Parameter.class)){
-                            if(required != m.getAnnotation(Parameter.class).required()){
-                                throw new ParameterException("The required flags in the annotations for the parameter" +
-                                        field.getName() + " fields and setter do not match ");
-                            }
+                            log.warn("There are conflicting annotations for the field " + field.getName()
+                            + ". Remove annotation from method " + m.getName() + ".");
                         }
-
                         setterMissing = false;
                         break;
                     }

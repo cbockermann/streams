@@ -22,7 +22,7 @@ public abstract class AbstractDocConverter implements DocConverter {
 	}
 
 	/**
-	 * @see stream.doc.helper.ParameterTableWriter#writeParameterTable(java.lang.
+	 * @see stream.util.doc.helper.ParameterTableWriter#writeParameterTable(java.lang.
 	 *      Class, java.io.PrintStream)
 	 */
 	@Override
@@ -32,7 +32,7 @@ public abstract class AbstractDocConverter implements DocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#sectionDown()
+	 * @see stream.util.doc.DocConverter#sectionDown()
 	 */
 	@Override
 	public void sectionDown() {
@@ -40,7 +40,7 @@ public abstract class AbstractDocConverter implements DocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#sectionUp()
+	 * @see stream.util.doc.DocConverter#sectionUp()
 	 */
 	@Override
 	public void sectionUp() {
@@ -48,7 +48,7 @@ public abstract class AbstractDocConverter implements DocConverter {
 	}
 
 	/**
-	 * @see stream.doc.DocConverter#createTableOfContents(java.util.Collection,
+	 * @see stream.util.doc.DocConverter#createTableOfContents(java.util.Collection,
 	 *      java.io.OutputStream)
 	 */
 	@Override

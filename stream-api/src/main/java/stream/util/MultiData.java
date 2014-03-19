@@ -8,6 +8,7 @@ import stream.data.DataFactory;
 
 public class MultiData {
 
+	
 	protected Data[] data;
 	protected int size;
 
@@ -59,5 +60,17 @@ public class MultiData {
 	public Data[] get() {
 		return data;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("#Data=");
+		sb.append(data.length);
+		sb.append(" : ");
+		if(data.length>0)
+			sb.append(data[0].toString());
+		return sb.toString();
+	}
+
 
 }

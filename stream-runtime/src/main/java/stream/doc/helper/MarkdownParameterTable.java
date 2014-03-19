@@ -19,7 +19,7 @@ import stream.runtime.setup.ParameterDiscovery;
 public class MarkdownParameterTable implements ParameterTableWriter {
 
 	/**
-	 * @see stream.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
+	 * @see stream.util.doc.helper.ParameterTableWriter#writeParameterTable(java.lang
 	 *      .Class, java.io.PrintStream)
 	 */
 	@Override

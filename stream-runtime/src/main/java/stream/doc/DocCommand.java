@@ -44,22 +44,26 @@ public class DocCommand implements ShellCommand {
 			String txt = URLUtilities.readContentOrEmpty(result.url);
 			System.out.println(txt);
 			System.out.println();
-			List<Parameter> params = ParameterDiscovery
-					.discoverParameterAnnotations(Class.forName(result
-							.getClassName()));
-			System.out.println("Parameters");
-			System.out.println("----------");
-			for (Parameter p : params) {
-				if (p.name() == null || p.name().trim().isEmpty())
-					continue;
-				System.out.print("  \"" + p.name() + "\"  (");
-				if (p.required())
-					System.out.print("required");
-				else
-					System.out.print("optional");
-				System.out.println(")");
-				System.out.println("\t" + p.description());
-				System.out.println();
+			try {
+				List<Parameter> params = ParameterDiscovery
+						.discoverParameterAnnotations(Class.forName(result
+								.getClassName()));
+				System.out.println("Parameters");
+				System.out.println("----------");
+				for (Parameter p : params) {
+					if (p.name() == null || p.name().trim().isEmpty())
+						continue;
+					System.out.print("  \"" + p.name() + "\"  (");
+					if (p.required())
+						System.out.print("required");
+					else
+						System.out.print("optional");
+					System.out.println(")");
+					System.out.println("\t" + p.description());
+					System.out.println();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 

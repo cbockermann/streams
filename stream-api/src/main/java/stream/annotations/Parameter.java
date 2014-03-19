@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-@Target({ ElementType.METHOD })
+@Target({ ElementType.METHOD , ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Parameter {
 
@@ -53,7 +53,7 @@ public @interface Parameter {
 	 * 
 	 * @return <code>true</code> if this parameter is required to be provided.
 	 */
-	boolean required() default false;
+	boolean required() default true;
 
 	/**
 	 * The default minimum for an numerical parameters

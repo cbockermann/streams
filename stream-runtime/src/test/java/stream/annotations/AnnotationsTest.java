@@ -21,12 +21,11 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.test;
+package stream.annotations;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import stream.annotations.XMLParameterException;
 
 import java.net.URL;
 
@@ -42,25 +41,36 @@ public class AnnotationsTest {
 	@Test
 	public void testValidParameters() throws Exception {
 		System.setProperty("process.multiply", "true");
-		URL url = DiscoveryTest.class.getResource("/annotations_test.xml");
+		URL url = AnnotationsTest.class.getResource("/annotations_test.xml");
 		stream.run.main(url);
 	}
 
     @Test
     public void testInvalidParameters() throws Exception {
-        thrown.expect(XMLParameterException.class);
+        thrown.expect(ParameterException.class);
         thrown.expectMessage("missing parameter");
         System.setProperty("process.multiply", "true");
-        URL url = DiscoveryTest.class.getResource("/annotations_invalid_test.xml");
+        URL url = AnnotationsTest.class.getResource("/annotations_invalid_test.xml");
         stream.run.main(url);
     }
 
     @Test
     public void testMissingSetter() throws Exception {
-        thrown.expect(XMLParameterException.class);
+        thrown.expect(ParameterException.class);
         thrown.expectMessage("missing setter");
         System.setProperty("process.multiply", "true");
-        URL url = DiscoveryTest.class.getResource("/missing_setter_test.xml");
+        URL url = AnnotationsTest.class.getResource("/missing_setter_test.xml");
         stream.run.main(url);
     }
+
+    @Test
+    public void testConflictingFlags() throws Exception {
+        thrown.expect(ParameterException.class);
+        thrown.expectMessage("flags");
+        System.setProperty("process.multiply", "true");
+        URL url = AnnotationsTest.class.getResource("/annotations_conflicting_flags_test.xml");
+        stream.run.main(url);
+    }
+
+
 }

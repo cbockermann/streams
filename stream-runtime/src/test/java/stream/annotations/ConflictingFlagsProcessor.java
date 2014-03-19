@@ -8,38 +8,44 @@ import stream.Processor;
  * Created by bruegge on 3/5/14.
  */
 
-public class MissingSetterProcessor implements Processor {
+public class ConflictingFlagsProcessor implements Processor {
 
 
     @Parameter
     private String nonoptional;
 
     @Parameter(required=false)
-    private String optional;
+    private String conflicting;
 
 
     @Override
     public Data process(Data input) {
-        optional = "Hello teh foo";
+        conflicting = "Hello teh foo";
         System.out.println("Annotation test processor:  ");
         System.out.println("nonoptional: " + nonoptional);
-        System.out.println("optional: " + optional);
+        System.out.println("conflicting: " + conflicting);
         return input;
     }
 
 
     //getter and setter crap for our fields
-
+    @Parameter(required = true)
     public String getNonoptional() {
         return nonoptional;
     }
 
-    public void setNonoptional(String nonoptional) {
-        this.nonoptional = nonoptional;
+    public String getConflicting() {
+        return conflicting;
     }
 
-    public String getOptional() {
-        return optional;
+    @Parameter(required=true)
+    public void setConflicting(String conflicting) {
+        this.conflicting = conflicting;
+    }
+
+
+    public void setNonoptional(String nonoptional) {
+        this.nonoptional = nonoptional;
     }
 
 }

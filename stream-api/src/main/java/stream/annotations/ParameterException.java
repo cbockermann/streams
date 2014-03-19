@@ -7,15 +7,15 @@ import java.lang.reflect.Field;
  * Or a field annotated as xmlparameter doesnt have a setter method
  * Created by bruegge on 3/5/14.
  */
-public class XMLParameterException extends RuntimeException {
+public class ParameterException extends RuntimeException {
 
     private Field missingField;
 
-    public XMLParameterException(String message){
+    public ParameterException(String message){
         super(message);
     }
 
-    public XMLParameterException(String message, Field missingField){
+    public ParameterException(String message, Field missingField){
         super(message);
     }
 

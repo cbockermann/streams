@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
-import stream.annotations.XMLParameter;
-import stream.annotations.XMLParameterException;
+import stream.annotations.Parameter;
+import stream.annotations.ParameterException;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -224,27 +224,27 @@ public class ParameterInjection {
 
     /**
      * This methods checks for the XMLParameter annotation in the processor and if the corresponindg parameters
-     * or setter methods are missing. A new XMLParameterException will be thrown in both cases
+     * or setter methods are missing. A new ParameterException will be thrown in both cases
      *
      * @param o the processor instance
      * @param params the params map from the xml file
      *
-     * @throws stream.annotations.XMLParameterException in case parameter or setter is missing
+     * @throws stream.annotations.ParameterException in case parameter or setter is missing
      */
-    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws XMLParameterException {
+    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws ParameterException {
         //iterate through all fields and get their annotations. If annotation is present check for
         // parameters from xml file
         for ( Field field : o.getClass().getDeclaredFields() ){
-            if ( field.isAnnotationPresent( XMLParameter.class ) ){
+            if ( field.isAnnotationPresent( Parameter.class ) ){
                 log.debug("Has XMLParameter annotation " + field.toString());
-                boolean optional = field.getAnnotation(XMLParameter.class).optional();
+                boolean required = field.getAnnotation(Parameter.class).required();
 
                 //if field is nonoptional it has to have a value defined in the .xml file
-                if (!optional){
+                if (required){
                     boolean xmlHasParameter = params.containsKey(field.getName())
                             && (  params.get(field.getName()) != null  );
                     if (!xmlHasParameter){
-                        throw new XMLParameterException("XML is missing parameter " + field.getName()
+                        throw new ParameterException("XML is missing parameter " + field.getName()
                                 + " for processor " + o.getClass().getSimpleName());
                     }
                 }
@@ -252,12 +252,21 @@ public class ParameterInjection {
                 boolean setterMissing = true;
                 for(Method m : o.getClass().getDeclaredMethods()){
                     if (m.getName().toLowerCase().equalsIgnoreCase("set" + field.getName())){
+                        // we found the matching setter for our parameter. Now lets see if there is another annotation
+                        // and if the required flag is the same as the one in the field annotation
+                        if(m.isAnnotationPresent(Parameter.class)){
+                            if(required != m.getAnnotation(Parameter.class).required()){
+                                throw new ParameterException("The required flags in the annotations for the parameter" +
+                                        field.getName() + " fields and setter do not match ");
+                            }
+                        }
+
                         setterMissing = false;
                         break;
                     }
                 }
                 if (setterMissing){
-                    throw new XMLParameterException("Processor " + o.getClass().getSimpleName()
+                    throw new ParameterException("Processor " + o.getClass().getSimpleName()
                             + " is missing setter method for field " + field.getName());
                 }
              }

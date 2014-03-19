@@ -56,7 +56,7 @@ import stream.util.Variables;
 public class ParameterInjection {
 
 	/* A global logger for this class */
-	public static Logger log = LoggerFactory.getLogger(ParameterInjection.class);
+	static Logger log = LoggerFactory.getLogger(ParameterInjection.class);
 
 	/**
 	 * This method injects a set of parameters to the given object.
@@ -80,7 +80,7 @@ public class ParameterInjection {
 
 		Object embedded = params.get(BodyContent.KEY);
 
-
+        //check annotations for parameters
         checkForMissingParametersAndSetters(o, params);
 
 
@@ -166,7 +166,7 @@ public class ParameterInjection {
 								po = new Integer(in);
 
 							if (t[0] == Boolean.TYPE)
-								po = new Boolean(in);
+								po = Boolean.valueOf(in);
 
 							if (t[0] == Float.TYPE)
 								po = new Float(in);
@@ -248,7 +248,7 @@ public class ParameterInjection {
                     xmlName = field.getAnnotation(Parameter.class).name();
                 }
 
-                //if field is nonoptional it has to have a value defined in the .xml file
+                //if field is required it has to have a value defined in the .xml file
                 if (required){
                     boolean xmlHasParameter = params.containsKey(xmlName)
                             && (  params.get(xmlName) != null  );
@@ -263,7 +263,7 @@ public class ParameterInjection {
                 for(Method m : o.getClass().getDeclaredMethods()){
                     if (m.getName().toLowerCase().equalsIgnoreCase("set" + field.getName())){
                         // we found the matching setter for our parameter. Now lets see if there is another annotation
-                        // and if the required flag is the same as the one in the field annotation
+                        // and create a warning if so
                         if(m.isAnnotationPresent(Parameter.class)){
                             log.warn("There are conflicting annotations for the field " + field.getName()
                             + ". Remove annotation from method " + m.getName() + ".");

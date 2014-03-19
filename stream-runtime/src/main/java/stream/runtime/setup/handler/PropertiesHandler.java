@@ -130,18 +130,23 @@ public class PropertiesHandler implements DocumentHandler {
 		// Properties from URL
 		else if (prop.hasAttribute("url")) {
 			String purl = prop.getAttribute("url");
+			log.debug("Reading properties from URL {}", purl);
 			try {
 				// ORDER IMPORTANT
 				Variables props = new Variables(variables);
 				props.addVariables(systemProperties);
 				purl = props.expand(purl);
+				log.debug("Properties URL is: {}", purl);
 
 				SourceURL propUrl = new SourceURL(purl);
 
 				Properties p = new Properties();
 				p.load(propUrl.openStream());
 				for (Object k : p.keySet()) {
-					variables.set(k.toString(), p.getProperty(k.toString()));
+					String key = k.toString();
+					String value = p.getProperty(key);
+					log.debug("Adding property '{}' = '{}'", key, value);
+					variables.set(key, value);
 				}
 
 			} catch (Exception e) {

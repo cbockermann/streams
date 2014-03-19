@@ -44,11 +44,19 @@ public class PropertiesTest {
 	@Test
 	public void testProperty3() throws Exception {
 
+		log.info("");
+		log.info("");
+		log.info("");
+		log.info("");
+		log.info("Running testProperty3()");
+		log.info("");
+		log.info("");
 		URL url = PropertiesTest.class.getResource("/test-property3.xml");
 		System.setProperty("container.default.properties", PropertiesTest.class
 				.getResource("/propertyglobaltest.properties").toString());
-		System.setProperty("container.default.properties", PropertiesTest.class
-				.getResource("/propertytest.properties").toString());
+		System.setProperty("container.specific.properties",
+				PropertiesTest.class.getResource("/propertytest.properties")
+						.toString());
 		ProcessContainer c = new ProcessContainer(url);
 
 		c.run();

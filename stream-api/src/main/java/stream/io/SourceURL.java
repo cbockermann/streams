@@ -260,6 +260,7 @@ public class SourceURL implements Serializable {
 
 	private InputStream createStream() throws IOException {
 
+		log.debug("Opening URL {}", this.urlString);
 		if (this.url != null) {
 			return url.openStream();
 		}
@@ -318,8 +319,8 @@ public class SourceURL implements Serializable {
 		String theUrl = this.urlString;
 		try {
 
-			if (theUrl.startsWith(PROTOCOL_FILE)) {
-				File f = new File(theUrl);
+			if (theUrl.startsWith(PROTOCOL_FILE + ":")) {
+				File f = new File(theUrl.substring(PROTOCOL_FILE.length() + 1));
 				if (!f.canRead()) {
 					log.error("Cannot open file '{}' for reading!", f);
 					throw new FileNotFoundException("Cannot open file '"

@@ -1,0 +1,11 @@
+<container>
+
+    <Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+   <process input="input">
+
+     <PrintData />
+      <stream.annotations.AnnotationTestProcessor optional="Hello " nonoptional="Bar" differentXMLName="awesome Foo!" />
+   </process>
+
+</container>

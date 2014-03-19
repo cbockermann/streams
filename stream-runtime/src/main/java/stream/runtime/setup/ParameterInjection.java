@@ -26,6 +26,7 @@ package stream.runtime.setup;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.BodyContent;
+import stream.annotations.Parameter;
+import stream.annotations.ParameterException;
 import stream.expressions.Condition;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -77,7 +80,11 @@ public class ParameterInjection {
 
 		Object embedded = params.get(BodyContent.KEY);
 
-		// now, walk over all methods and check if one of these is a setter of a
+        //check annotations for parameters
+        checkForMissingParametersAndSetters(o, params);
+
+
+        // now, walk over all methods and check if one of these is a setter of a
 		// corresponding
 		// key value in the parameter map
 		//
@@ -151,6 +158,7 @@ public class ParameterInjection {
 						if (t[0].isPrimitive()) {
 							String in = params.get(k).toString();
 
+
 							if (t[0] == Double.TYPE)
 								po = new Double(in);
 
@@ -158,7 +166,7 @@ public class ParameterInjection {
 								po = new Integer(in);
 
 							if (t[0] == Boolean.TYPE)
-								po = new Boolean(in);
+								po = Boolean.valueOf(in);
 
 							if (t[0] == Float.TYPE)
 								po = new Float(in);
@@ -215,7 +223,64 @@ public class ParameterInjection {
 		return alreadySet;
 	}
 
-	public static void injectSystemProperties(Object object, String prefix)
+    /**
+     * This methods checks for the XMLParameter annotation in the processor and if the corresponindg parameters
+     * or setter methods are missing. A new ParameterException will be thrown in both cases
+     *
+     * @param o the processor instance
+     * @param params the params map from the xml file
+     *
+     * @throws stream.annotations.ParameterException in case parameter or setter is missing
+     */
+    private static void checkForMissingParametersAndSetters(Object o, Map<String, ?> params) throws ParameterException {
+        //iterate through all fields and get their annotations. If annotation is present check for
+        // parameters from xml file
+        for ( Field field : o.getClass().getDeclaredFields() ){
+            if ( field.isAnnotationPresent( Parameter.class ) ){
+                log.debug("Has Parameter annotation " + field.toString());
+                boolean required = field.getAnnotation(Parameter.class).required();
+
+                String xmlName = field.getName();
+
+                //check if annotation has a value for name. If thats the case the parameter will be named differently
+                // in the xml file.
+                if (!field.getAnnotation(Parameter.class).name().isEmpty()){
+                    xmlName = field.getAnnotation(Parameter.class).name();
+                }
+
+                //if field is required it has to have a value defined in the .xml file
+                if (required){
+                    boolean xmlHasParameter = params.containsKey(xmlName)
+                            && (  params.get(xmlName) != null  );
+                    if (!xmlHasParameter){
+                        throw new ParameterException("XML is missing parameter " + xmlName + " for field "
+                                + field.getName()
+                                + " in processor " + o.getClass().getSimpleName());
+                    }
+                }
+
+                boolean setterMissing = true;
+                for(Method m : o.getClass().getDeclaredMethods()){
+                    if (m.getName().toLowerCase().equalsIgnoreCase("set" + field.getName())){
+                        // we found the matching setter for our parameter. Now lets see if there is another annotation
+                        // and create a warning if so
+                        if(m.isAnnotationPresent(Parameter.class)){
+                            log.warn("There are conflicting annotations for the field " + field.getName()
+                            + ". Remove annotation from method " + m.getName() + ".");
+                        }
+                        setterMissing = false;
+                        break;
+                    }
+                }
+                if (setterMissing){
+                    throw new ParameterException("Processor " + o.getClass().getSimpleName()
+                            + " is missing setter method for field " + field.getName());
+                }
+             }
+        }
+    }
+
+    public static void injectSystemProperties(Object object, String prefix)
 			throws Exception {
 		Map<String, String> params = ParameterDiscovery
 				.getSystemProperties(prefix);

@@ -114,9 +114,9 @@ public class ProcessContainer implements IContainer {
 					return;
 				}
 
-				log.info("Running shutdown-hook...");
+				log.debug("Running shutdown-hook...");
 				for (ProcessContainer pc : container) {
-					log.info("Sending shutdown signal to {}", pc);
+					log.debug("Sending shutdown signal to {}", pc);
 					pc.shutdown();
 				}
 			}
@@ -696,7 +696,7 @@ public class ProcessContainer implements IContainer {
 			List<LifeCycle> lifeCycles = depGraph.remove(source);
 			for (LifeCycle lf : lifeCycles) {
 				try {
-					log.info("Finishing LifeCycle object {}", lf);
+					log.debug("Finishing LifeCycle object {}", lf);
 					lf.finish();
 				} catch (Exception e) {
 					log.error("Failed to end LifeCycle object {}: {}", lf,

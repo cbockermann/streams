@@ -94,59 +94,50 @@ public class StreamRuntime {
 
 	public static Variables loadUserProperties() {
 		Variables vars = new Variables();
-		File file = new File(System.getProperty("user.home") + File.separator
+
+		List<String> propFiles = new ArrayList<String>();
+		propFiles.add(System.getProperty("user.home") + File.separator
 				+ ".streams.properties");
-		try {
+		propFiles.add(new File("streams.properties").getAbsolutePath());
 
-			if (file.canRead()) {
-				log.debug(
-						"Reading user properties from $HOME/.streams.properties => {}",
-						file);
+		if (System.getProperty("streams.properties") != null) {
 
-				Properties p = new Properties();
-				p.load(new FileInputStream(file));
-
-				for (Object k : p.keySet()) {
-					log.debug("Adding property '{}' = '{}'", k,
-							p.getProperty(k.toString()));
-					System.setProperty(k.toString(),
-							p.getProperty(k.toString()));
-
-					vars.set(k.toString(), p.getProperty(k.toString()));
-				}
-			} else {
-				log.debug("No $HOME/.streams.properties file found!");
+			String ps = System.getProperty("streams.properties");
+			String[] locs = new String[] { ps };
+			if (ps.indexOf(",") >= 0) {
+				locs = ps.split(",");
 			}
 
-		} catch (Exception e) {
-			log.error("Failed to read properties from {}: {}", file,
-					e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+			log.debug("Ignoring default properties, reading only from {}",
+					System.getProperty("streams.properties"));
+
+			propFiles.clear();
+			for (String loc : locs) {
+				propFiles.add(loc.trim());
+			}
 		}
 
-		File local = new File("streams.properties");
-		if (file.canRead()) {
-			log.debug("Reading local properties from {}", file);
-			try {
-				Properties p = new Properties();
-				p.load(new FileInputStream(local));
+		for (String location : propFiles) {
+			File f = new File(location);
+			if (f.canRead()) {
+				log.debug("Reading properties from {}", f);
+				try {
+					Properties p = new Properties();
+					p.load(new FileInputStream(f));
 
-				for (Object k : p.keySet()) {
-					log.debug("Adding property '{}' = '{}'", k,
-							p.getProperty(k.toString()));
-					System.setProperty(k.toString(),
-							p.getProperty(k.toString()));
-					vars.set(k.toString(), p.getProperty(k.toString()));
+					for (Object k : p.keySet()) {
+						log.debug("Adding property '{}' = '{}'", k,
+								p.getProperty(k.toString()));
+						System.setProperty(k.toString(),
+								p.getProperty(k.toString()));
+
+						vars.set(k.toString(), p.getProperty(k.toString()));
+					}
+				} catch (Exception e) {
+					log.error("Failed to read properties from {}: {}", f,
+							e.getMessage());
 				}
-			} catch (Exception e) {
-				log.error("Failed to read local properties from {}: {}", file,
-						e.getMessage());
-				if (log.isDebugEnabled())
-					e.printStackTrace();
 			}
-		} else {
-			log.debug("No local properties file exists at {}", file);
 		}
 
 		return vars;

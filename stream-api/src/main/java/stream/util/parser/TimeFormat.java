@@ -61,8 +61,7 @@ public class TimeFormat {
 
 	static final String[] UNIT_NAME = { " year", " day", "h", "m" };
 
-	static final String[] UNIT_LONG_NAMES = { " year", " day", " hour",
-			" minute" };
+	static final String[] UNIT_LONG_NAMES = { "year", "day", "hour", "minute" };
 
 	private String[] format = UNIT_NAME;
 	private int style = 0;
@@ -124,8 +123,10 @@ public class TimeFormat {
 					s.append(" ");
 
 				s.append(format[i]);
-				// if( units > 1 && i > 0 )
-				// s.append("s");
+
+				if (style == TimeFormat.LONG_FORMAT && units > 1 && i > 0)
+					s.append("s");
+
 				s.append(" ");
 				ms = left;
 			}

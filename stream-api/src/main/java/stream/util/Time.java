@@ -21,6 +21,14 @@ public class Time implements Serializable {
 	/** The unique class ID */
 	private static final long serialVersionUID = 5508820209522304182L;
 
+	public final static long SECOND = 1000L;
+	public final static long MINUTE = 60 * SECOND;
+	public final static long HOUR = 60 * MINUTE;
+	public final static long DAY = 24 * HOUR;
+	public final static long WEEK = 7 * DAY;
+	public final static long MONTH = 30 * DAY + DAY / 2;
+	public final static long YEAR = 12 * MONTH;
+
 	final Long millis;
 
 	public Time(String time) throws Exception {

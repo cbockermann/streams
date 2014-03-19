@@ -1,0 +1,11 @@
+<container>
+
+    <Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+   <process input="input">
+
+     <PrintData />
+      <stream.annotations.MissingSetterProcessor optional="Hello " nonoptional="Bar"  />
+   </process>
+
+</container>

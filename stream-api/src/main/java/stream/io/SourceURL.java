@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
@@ -109,6 +110,9 @@ public class SourceURL implements Serializable {
 		this.url = null;
 		this.urlString = urlString;
 
+		if(!hasProtocol(urlString))
+			throw new MalformedURLException("Missing Protocol in: "+ urlString);
+		
 		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_FIFO)) {
@@ -235,6 +239,12 @@ public class SourceURL implements Serializable {
 		}
 	}
 
+	private boolean hasProtocol(String urlString){
+		String[] p = urlString.split(":");
+		if(p.length<2 || (p.length>1 && (p[0]==null||p[0].length()==0 )))
+				return false;
+		return true;
+	}
 	public boolean isGzip() {
 		if (urlString != null && urlString.toLowerCase().endsWith(".gz"))
 			return true;

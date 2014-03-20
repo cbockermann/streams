@@ -292,7 +292,7 @@ public class ObjectFactory extends Variables {
 	 * @return
 	 */
 	public Map<String, String> getAttributes(Node node) {
-		Map<String, String> map = new LinkedHashMap<String, String>();
+	Map<String, String> map = new LinkedHashMap<String, String>();
 		NamedNodeMap att = node.getAttributes();
 		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);

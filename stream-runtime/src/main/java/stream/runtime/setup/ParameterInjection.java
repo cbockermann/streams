@@ -202,13 +202,18 @@ public class ParameterInjection {
 								try {
 									Constructor<?> c = t[0]
 											.getConstructor(String.class);
-									po = c.newInstance(params.get(k).toString());
+									String s = params.get(k).toString();
+									System.out.println(s);
+									po = c.newInstance(s);
 									log.debug("Invoking {}({})", m.getName(),
 											po);
 								} catch (NoSuchMethodException nsm) {
 									log.error(
 											"No String-constructor found for type {} of method {}",
 											t, m.getName());
+								}
+								catch (Exception e) {
+									throw new IllegalArgumentException("Error in Object:" + o.toString() + " method:"+m + " key:" +k, e);
 								}
 							}
 						}

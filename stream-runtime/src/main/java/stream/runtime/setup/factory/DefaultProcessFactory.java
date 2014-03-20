@@ -284,9 +284,13 @@ public class DefaultProcessFactory implements ProcessFactory {
 			Variables local) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
-
-		Object o = objectFactory.create(child, params, local);
-
+		
+		Object o=null;
+		try{
+		o = objectFactory.create(child, params, local);
+		}catch(IllegalArgumentException e){
+			throw new IllegalArgumentException("Error in:"+child.getNodeName(),e);
+		}
 		if (o instanceof ProcessorList) {
 
 			NodeList children = child.getChildNodes();

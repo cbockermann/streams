@@ -203,7 +203,6 @@ public class ParameterInjection {
 									Constructor<?> c = t[0]
 											.getConstructor(String.class);
 									String s = params.get(k).toString();
-									System.out.println(s);
 									po = c.newInstance(s);
 									log.debug("Invoking {}({})", m.getName(),
 											po);

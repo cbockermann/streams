@@ -138,6 +138,16 @@ public class DependencyInjection {
 		Service[] services = new Service[refs.length];
 		for (int i = 0; i < services.length; i++) {
 			services[i] = namingService.lookup(refs[i], ref.type());
+			if (services[i] == null) {
+				log.error("Referenced service '{}' not found!", refs[i]);
+				String obj = ref.object() + "";
+				if (ref.object() != null) {
+					obj = ref.object().getClass().getName();
+				}
+
+				throw new Exception("Service '" + refs[i] + "' referenced by "
+						+ obj + " can not be found!");
+			}
 		}
 
 		return injectResolvedReferences(ref.object(), ref.property(), services);

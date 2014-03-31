@@ -205,6 +205,10 @@ public class ConditionFactory {
 				return ex == null ? null : new EqualsTrueCondition(ex);
 			}
 		}
+		if("FALSE".equals(c.trim()) || "false".equals(c.trim()))
+			return new FalseCondition(c);
+		if("TRUE".equals(c.trim()) || "true".equals(c.trim()))
+			return new TrueCondition(c);
 		throw new IllegalArgumentException("Bad ConditionString" + c);
 	}
 

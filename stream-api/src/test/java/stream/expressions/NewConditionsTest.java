@@ -80,9 +80,18 @@ public class NewConditionsTest {
 
 	@Test
 	public void testBooleanExpressions() throws Exception {
-
 		Data data = DataFactory.create();
-
+		
+		// CONSTANTS
+			
+		assertCondition("true", data, true);
+		assertCondition("TRUE", data, true);
+		
+		assertCondition("false", data, false);
+		assertCondition("FALSE", data, false);
+		
+		// Dynamic
+		
 		data.put("test1", true);
 		data.put("test2", false);
 
@@ -305,6 +314,10 @@ public class NewConditionsTest {
 		// ******************************
 		// Condition Double
 		Data data = DataFactory.create();
+		data.put("@mbp_status",Integer.valueOf(0));
+		assertCondition("%{data.@mbp_status}==1", data, false);
+
+		data = DataFactory.create();
 		data.put("test", 3d);
 		assertCondition("%{data.test} == 3d", data, true);
 		assertCondition("3d == %{data.test}", data, true);

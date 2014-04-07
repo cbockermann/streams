@@ -1,0 +1,7 @@
+<module>
+	
+	<process input="output.module${copy.id}" copies="${include.copies}" >
+		<stream.flow.Emitter sink="output.module${include.id}"/>
+	</process>
+	
+</module>

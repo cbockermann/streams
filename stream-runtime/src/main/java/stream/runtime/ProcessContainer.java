@@ -288,8 +288,15 @@ public class ProcessContainer implements IContainer {
 		Document doc = db.parse(url.openStream());
 
 		XIncluder includer = new XIncluder();
-		doc = includer.perform(doc);
-
+		
+		Variables v = new Variables(containerVariables);
+		
+		doc = includer.perform(doc,v);
+		
+		log.debug(XMLUtils.toString(doc));
+		
+		
+		
 		// Container
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);

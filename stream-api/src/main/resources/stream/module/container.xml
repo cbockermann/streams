@@ -1,0 +1,7 @@
+<container>
+	
+	<properties url="${container.properties}"/>
+	
+	<include url="${include.root.url}" id="${include.root.id}" copies="${include.root.copies}"/>
+		
+</container>

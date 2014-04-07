@@ -33,8 +33,9 @@ public class XIncluder {
 
 	public Document perform(Document doc, Variables context) throws Exception {
 
-		Variables vars = XMLUtils.getProperties(doc);
-		vars.expandAndAdd(context);
+		Variables vars = handleProperties(doc, context);
+
+		// vars.expandAndAdd(context);
 		NodeList includes = doc.getElementsByTagName("include");
 
 		// Since we remove the elements from the node directly later on, we must
@@ -49,13 +50,36 @@ public class XIncluder {
 
 			String file = include.getAttribute("file");
 			String url = include.getAttribute("url");
+
+			// New Context
+			String includeId = include.getAttribute("id");
+			includeId = context.expand(includeId, true);
+
+			String includeCopies = include.getAttribute("copies");
+			includeCopies = context.expand(includeCopies, true);
+
+			Variables includeProperties = new Variables(vars);
+
+			if (!includeId.isEmpty()) {
+				includeProperties.put("include.id", includeId);
+			}
+
+			if (!includeCopies.isEmpty()) {
+				includeProperties.put("include.copies", includeId);
+			}
+
 			if (url != null && !url.trim().isEmpty()) {
 				log.debug("Found xinclude for URL {}", url);
-				url = vars.expand(url);
+
+				url = includeProperties.expand(url);
 				log.info("   url expanded to: '{}'", url);
 				SourceURL source = new SourceURL(url);
 				log.debug("reading document from {}", source);
 				included = XMLUtils.parseDocument(source.openStream());
+				String tmpIncluded = XMLUtils.toString(included);
+				tmpIncluded =tmpIncluded.replace("${include.id}", includeId);
+				tmpIncluded = tmpIncluded.replace("${include.copies}", includeCopies);
+				included = XMLUtils.parseDocument(tmpIncluded);
 				file = null;
 			}
 
@@ -68,6 +92,10 @@ public class XIncluder {
 				if (f.canRead()) {
 					log.debug("including document from {}", f.getAbsolutePath());
 					included = XMLUtils.parseDocument(f);
+					String tmpIncluded = XMLUtils.toString(included);
+					tmpIncluded.replace("${include.id}", includeId);
+					tmpIncluded.replace("${include.copies}", includeCopies);
+					included = XMLUtils.parseDocument(tmpIncluded);
 				} else {
 					log.debug("No file found for {}, checking classpath...",
 							file);
@@ -77,6 +105,10 @@ public class XIncluder {
 					log.debug("   found resource {} instead!", rurl);
 					if (rurl != null) {
 						included = XMLUtils.parseDocument(rurl.openStream());
+						String tmpIncluded = XMLUtils.toString(included);
+						tmpIncluded.replace("${include.id}", includeId);
+						tmpIncluded.replace("${include.copies}", includeCopies);
+						included = XMLUtils.parseDocument(tmpIncluded);
 					}
 				}
 			}
@@ -89,7 +121,7 @@ public class XIncluder {
 			} else {
 				log.debug("Recursively including documents... ");
 				XIncluder nested = new XIncluder();
-				included = nested.perform(included, vars);
+				included = nested.perform(included, includeProperties);
 			}
 
 			Element parent = (Element) include.getParentNode();
@@ -130,5 +162,66 @@ public class XIncluder {
 		}
 
 		return doc;
+	}
+
+	private Variables handleProperties(Document doc, Variables variables) {
+		PropertiesHandler pHandle = new PropertiesHandler();
+
+		Variables systemVariables = new Variables();
+		pHandle.addSystemProperties(systemVariables);
+
+		// // Add variables to systemVariables to have original state (Not
+		// Needed)
+		// systemVariables.addVariables(variables);
+
+		// handle property elements, i.e.
+		// <property>
+		// <name>property-name</name>
+		// <value>property-value</value>
+		// </property>
+		//
+		// find
+		NodeList list = doc.getElementsByTagName("property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			pHandle.handlePropertyElement(prop, variables, systemVariables);
+		}
+		// find
+		list = doc.getElementsByTagName("Property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			pHandle.handlePropertyElement(prop, variables, systemVariables);
+		}
+		// handle maven-like properties, e.g.
+		// <properties>
+		// <property-name>value-of-property</property-name>
+		// </properties>
+		// and <properties url="${urlToProperties}"
+
+		// find
+		list = doc.getElementsByTagName("properties");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element e = (Element) list.item(i);
+			pHandle.handlePropertiesElement(e, variables, systemVariables);
+		}
+		// find
+		list = doc.getElementsByTagName("Properties");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element e = (Element) list.item(i);
+			pHandle.handlePropertiesElement(e, variables, systemVariables);
+		}
+
+		// add system properties, e.g defined at command line using the -D flag:
+		// java -Dproperty-name=property-value
+		//
+		pHandle.addSystemProperties(variables);
+
+		// process-local properties at processElementHandler
+
+		return variables;
 	}
 }

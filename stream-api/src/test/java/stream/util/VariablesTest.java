@@ -4,6 +4,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+/**
+ * @author hendrik
+ *
+ */
 public class VariablesTest {
 
 	@Test

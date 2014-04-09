@@ -32,8 +32,17 @@ public class XIncluder {
 	}
 
 	public Document perform(Document doc, Variables context) throws Exception {
+		return perform(doc, context, false);
+	}
 
-		Variables vars = handleProperties(doc, context);
+	public Document perform(Document doc, Variables context,
+			boolean ignoreProperties) throws Exception {
+
+		Variables vars = null;
+		if (ignoreProperties)
+			vars = new Variables(context);
+		else
+			vars = handleProperties(doc, context);
 
 		// vars.expandAndAdd(context);
 		NodeList includes = doc.getElementsByTagName("include");
@@ -77,8 +86,9 @@ public class XIncluder {
 				log.debug("reading document from {}", source);
 				included = XMLUtils.parseDocument(source.openStream());
 				String tmpIncluded = XMLUtils.toString(included);
-				tmpIncluded =tmpIncluded.replace("${include.id}", includeId);
-				tmpIncluded = tmpIncluded.replace("${include.copies}", includeCopies);
+				tmpIncluded = tmpIncluded.replace("${include.id}", includeId);
+				tmpIncluded = tmpIncluded.replace("${include.copies}",
+						includeCopies);
 				included = XMLUtils.parseDocument(tmpIncluded);
 				file = null;
 			}
@@ -121,7 +131,7 @@ public class XIncluder {
 			} else {
 				log.debug("Recursively including documents... ");
 				XIncluder nested = new XIncluder();
-				included = nested.perform(included, includeProperties);
+				included = nested.perform(included, includeProperties, true);
 			}
 
 			Element parent = (Element) include.getParentNode();

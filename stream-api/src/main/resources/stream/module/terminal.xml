@@ -1,0 +1,5 @@
+<module>
+    
+    <queue id="output.module${copy.id}" class="stream.io.TerminalSink" copies="[${terminal.copies${include.id}}]:[${include.copies}]"/>
+	
+</module>

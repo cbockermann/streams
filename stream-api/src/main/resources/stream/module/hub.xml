@@ -1,11 +1,11 @@
 <module>
     
-    <queue id="output.module${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]"/>
+    <queue id="${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]"/>
     
-	<process input="output.module${copy.id}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]">
-	    <stream.flow.Emitter sinks="input.module[${hub.output.copies${include.id}}]:[${include.copies}]" />
+	<process input="${copy.id}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]">
+	    <stream.flow.Emitter sinks="[${hub.output.copies${include.id}}]:[${include.copies}]" />
 	</process>
 	
-	<queue id="input.module${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.output.copies${include.id}}]:[${include.copies}]"/>
+	<queue id="${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.output.copies${include.id}}]:[${include.copies}]"/>
     
 </module>

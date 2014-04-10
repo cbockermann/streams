@@ -6,6 +6,6 @@
 	    <stream.flow.Emitter sinks="input.module[${hub.output.copies${include.id}}]:[${include.copies}]" />
 	</process>
 	
-	<queue id="input.module${queuecopy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.output.copies${include.id}}]:[${include.copies}]"/>
+	<queue id="input.module${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.output.copies${include.id}}]:[${include.copies}]"/>
     
 </module>

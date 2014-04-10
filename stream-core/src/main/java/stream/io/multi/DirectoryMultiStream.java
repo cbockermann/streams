@@ -101,11 +101,16 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 					f = dir.list();
 
 				List<String> fil = Arrays.asList(f);
-
-				for (String file : order) {
-					if (fil.contains(file))
+				if (order != null)
+					for (String file : order) {
+						if (fil.contains(file))
+							files.add(file);
+					}
+				else
+					for (String file : f) {
 						files.add(file);
-				}
+					}
+
 			}
 
 		}

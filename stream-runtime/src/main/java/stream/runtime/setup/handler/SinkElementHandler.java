@@ -82,8 +82,10 @@ public class SinkElementHandler implements ElementHandler {
 		
 		String copiesString = element.getAttribute("copies");
 		Copy[] copies = null;
-		if (copiesString != null && !copiesString.isEmpty())
+		if (copiesString != null && !copiesString.isEmpty()){
 			copies = CopiesUtils.parse(copiesString);
+			copiesString = variables.expand(copiesString);
+		}
 		else {
 			Copy c = new Copy();
 			c.setId(id);
@@ -91,10 +93,11 @@ public class SinkElementHandler implements ElementHandler {
 		}
 
 		for (Copy copy : copies) {
-			CopiesUtils.addCopyIds(variables, copy);
-			String cid = variables.expand(id);
+			Variables local = new Variables(variables);
+			CopiesUtils.addCopyIds(local, copy);
+			String cid = local.expand(id);
 			Sink sink = (Sink) container.getObjectFactory().create(className,
-					params, ObjectFactory.createConfigDocument(element), variables);
+					params, ObjectFactory.createConfigDocument(element), local);
 
 			container.registerSink(cid, sink);
 			computeGraph.addSink(cid, sink);

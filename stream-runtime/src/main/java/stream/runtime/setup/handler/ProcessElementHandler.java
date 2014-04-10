@@ -36,6 +36,7 @@ import org.w3c.dom.NodeList;
 import stream.ComputeGraph;
 import stream.ComputeGraph.ServiceRef;
 import stream.ComputeGraph.SinkRef;
+import stream.CopiesUtils;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.io.Sink;
@@ -344,7 +345,8 @@ public class ProcessElementHandler implements ElementHandler {
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value,true);
 					SinkRef sinkRefs = new SinkRef(o, key, refs);
 					computeGraph.addReference(sinkRefs);
 					dependencyInjection.add(sinkRefs);
@@ -360,7 +362,8 @@ public class ProcessElementHandler implements ElementHandler {
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value,true);
 					log.debug("Adding ServiceRef to '{}' for object {}", refs,
 							o);
 					ServiceRef serviceRef = new ServiceRef(o, key, refs,

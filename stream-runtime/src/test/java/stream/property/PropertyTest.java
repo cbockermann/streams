@@ -27,8 +27,6 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import stream.test.DependencyTest;
-
 /**
  * @author chris
  * 
@@ -37,7 +35,7 @@ public class PropertyTest {
 
 	@Test
 	public void test() throws Exception {
-		URL url = DependencyTest.class.getResource("/property-test.xml");
+		URL url = PropertyTest.class.getResource("/property-test2.xml");
 		stream.run.main(url);
 	}
 }

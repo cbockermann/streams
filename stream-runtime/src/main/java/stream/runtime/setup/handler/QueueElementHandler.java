@@ -5,6 +5,8 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 import stream.ComputeGraph;
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.io.Queue;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -53,19 +55,34 @@ public class QueueElementHandler implements ElementHandler {
 		}
 
 		String id = element.getAttribute("id");
-		if (id == null || id.trim().isEmpty()) 
+		if (id == null || id.trim().isEmpty())
 			throw new Exception("No 'id' attribute defined for queue!");
 
-		// TODO Dieses erzeugen einer Queue und das erzeugen implizieter Queues
-		// sollte identisch sein....
-		Queue queue = (Queue) container.getObjectFactory().create(className,
-				params, ObjectFactory.createConfigDocument(element));
-		container.registerQueue(id, queue, true);
-		computeGraph.addQueue(id, queue);
+		String copiesString = element.getAttribute("copies");
+		Copy[] copies = null;
+		if (copiesString != null && !copiesString.isEmpty())
+			copies = CopiesUtils.parse(copiesString);
+		else {
+			Copy c = new Copy();
+			c.setId(id);
+			copies = new Copy[]{c};
+		}
 
-		if (queue instanceof Service) {
-			container.getContext().register(id, (Service) queue);
-			computeGraph.addService(id, (Service) queue);
+		for (Copy copy : copies) {
+
+			CopiesUtils.addCopyIds(variables, copy);
+			String cid = variables.expand(id);
+
+			Queue queue = (Queue) container.getObjectFactory().create(
+					className, params,
+					ObjectFactory.createConfigDocument(element), variables);
+			container.registerQueue(copy.getId(), queue, true);
+			computeGraph.addQueue(cid, queue);
+
+			if (queue instanceof Service) {
+				container.getContext().register(cid, (Service) queue);
+				computeGraph.addService(cid, (Service) queue);
+			}
 		}
 	}
 }

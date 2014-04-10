@@ -15,6 +15,8 @@ import stream.ComputeGraph;
 import stream.ComputeGraph.ServiceRef;
 import stream.ComputeGraph.SinkRef;
 import stream.ComputeGraph.SourceRef;
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
@@ -57,6 +59,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 		ProcessConfiguration[] configs;
 
 		ProcessConfiguration config = new ProcessConfiguration();
+		config.setCopy(new Copy());
+		
 		Map<String, String> attr = objectFactory.getAttributes(e);
 
 		config.setAttributes(attr);
@@ -103,34 +107,14 @@ public class DefaultProcessFactory implements ProcessFactory {
 			log.debug("Expanding '{}'", copies);
 			copies = v.expand(copies);
 
-			// incrementing ids or predefinied copies?
-			String[] ids;
-
-			// predefinied
-			if (copies.indexOf(",") >= 0) {
-				ids = copies.split(",");
-			}
-			// incrementing ids
-			else {
-				try {
-					Integer times = new Integer(copies);
-					ids = new String[times];
-					for (int i = 0; i < times; i++) {
-						ids[i] = "" + i;
-					}
-				} catch (NumberFormatException ex) {
-					ids = new String[1];
-					ids[0] = copies;
-				}
-
-			}
+			Copy[] ids = CopiesUtils.parse(copies);
 			log.debug("Creating {} processes due to copies='{}'", ids.length,
 					copies);
 
 			configs = new ProcessConfiguration[ids.length];
 			int i = 0;
 			// create process-local properties
-			for (String pid : ids) {
+			for (Copy copy : ids) {
 
 				ProcessConfiguration configi = null;
 				try {
@@ -143,10 +127,10 @@ public class DefaultProcessFactory implements ProcessFactory {
 				configi.setVariables(v);
 				Variables local = configi.getVariables();
 
-				String idpid = id + "-" + pid;
+				String idpid = id + "-" + copy.getId();
 				idpid = local.expand(idpid);
 				configi.setId(idpid);
-				configi.setCopyId(pid);
+				configi.setCopy(copy);
 
 				// input output
 				String input = local.expand(src);
@@ -356,7 +340,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value);
 					SinkRef sinkRefs = new SinkRef(o, key, refs);
 					computeGraph.addReference(sinkRefs);
 					dependencyInjection.add(sinkRefs);
@@ -372,7 +357,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value);
 					log.debug("Adding ServiceRef to '{}' for object {}", refs,
 							o);
 					ServiceRef serviceRef = new ServiceRef(o, key, refs,

@@ -33,7 +33,7 @@ public class PropertiesHandler implements DocumentHandler {
 	static Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
 
 	private stream.util.PropertiesHandler pHandle;
-
+	
 	public PropertiesHandler() {
 		pHandle = new stream.util.PropertiesHandler();
 	}

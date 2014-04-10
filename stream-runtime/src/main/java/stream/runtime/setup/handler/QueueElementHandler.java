@@ -61,8 +61,8 @@ public class QueueElementHandler implements ElementHandler {
 		String copiesString = element.getAttribute("copies");
 		Copy[] copies = null;
 		if (copiesString != null && !copiesString.isEmpty()){
-			copies = CopiesUtils.parse(copiesString);
 			copiesString = variables.expand(copiesString);
+			copies = CopiesUtils.parse(copiesString);
 		}
 		else {
 			Copy c = new Copy();

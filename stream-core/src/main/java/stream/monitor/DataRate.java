@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
-import stream.data.Statistics;
+import stream.statistics.Statistics;
 import stream.statistics.StatisticsService;
 
 public class DataRate extends AbstractProcessor implements StatisticsService {
@@ -154,6 +154,7 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		count = 0L;
 		windowCount = 1L;
 		last = 0L;
+		start=null;
 	}
 
 	@Override

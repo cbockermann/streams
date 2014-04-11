@@ -24,6 +24,8 @@
 package stream.data;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +35,6 @@ import stream.Context;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.expressions.version2.Condition;
-import stream.expressions.version2.ConditionFactory;
-import stream.expressions.version2.Expression;
-import stream.expressions.version2.SerializableExpression;
 
 /**
  * <p>
@@ -56,9 +54,12 @@ public class SimpleCopyValues extends AbstractProcessor {
 	protected String sourceCtx;
 	protected String targetCtx;
 	protected String[] notEqual;
+	protected Set<String> k;
 
 	public SimpleCopyValues() {
 		super();
+		k = new HashSet<String>();
+
 	}
 
 	public String[] getKeys() {
@@ -67,6 +68,9 @@ public class SimpleCopyValues extends AbstractProcessor {
 
 	public void setKeys(String[] keys) {
 		this.keys = keys;
+		for (String key : keys) {
+			k.add(key);
+		}
 	}
 
 	public String getSourceCtx() {
@@ -125,12 +129,14 @@ public class SimpleCopyValues extends AbstractProcessor {
 	}
 
 	private Data copyFromProcessCtx(Data data) {
-		for (String key : keys) {
-			Serializable s = (Serializable) this.context.get(key);
-			s = getValue(s);
-			if (s == null)
-				continue;
-			data.put(key, s);
+		for (String key : data.keySet()) {
+			if (k.contains(key)) {
+				Serializable s = (Serializable) this.context.get(key);
+				s = getValue(s);
+				if (s == null)
+					continue;
+				data.put(key, s);
+			}
 		}
 		return data;
 	}

@@ -124,6 +124,10 @@ public class SimpleCopyValues extends AbstractProcessor {
 				Data copyCtx = DataFactory.create();
 				return copyFromProcessCtx(copyCtx);
 			}
+			if (sourceCtx.equals(Context.DATA_CONTEXT_NAME)
+					&& targetCtx.equals(Context.COPY_CONTEXT_NAME)) {
+				return copyFromDataCtx(data);
+			}
 		}
 		return data;
 	}
@@ -143,8 +147,8 @@ public class SimpleCopyValues extends AbstractProcessor {
 
 	private void copyToProcessCtx(Data data) {
 
-		if (keys != null) {
-			for (String key : keys) {
+		for (String key : data.keySet()) {
+			if (k.contains(key)) {
 				Serializable s = data.get(key);
 				s = getValue(s);
 				if (s == null)
@@ -152,6 +156,20 @@ public class SimpleCopyValues extends AbstractProcessor {
 				this.context.set(key, s);
 			}
 		}
+	}
+
+	private Data copyFromDataCtx(Data data) {
+		Data copy = DataFactory.create();
+		for (String key : data.keySet()) {
+			if (k.contains(key)) {
+				Serializable s = data.get(key);
+				s = getValue(s);
+				if (s == null)
+					continue;
+				copy.put(key, s);
+			}
+		}
+		return copy;
 	}
 
 	private Serializable getValue(Serializable s) {

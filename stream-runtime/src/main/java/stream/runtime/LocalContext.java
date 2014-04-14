@@ -104,4 +104,9 @@ public class LocalContext implements ProcessContext {
 	public void clear() {
 		context.clear();
 	}
+
+	@Override
+	public boolean contains(String key) {
+		return context.containsKey(key);
+	}
 }

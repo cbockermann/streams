@@ -144,4 +144,13 @@ public class ContainerContext implements Context {
 		// remoteContainers.put(key, remoteNamingService);
 		this.namingService.addContainer(key, remoteNamingService);
 	}
+
+	@Override
+	public boolean contains(String key) {
+		if (key.startsWith("container.")) {
+			key = key.substring(CONTEXT_NAME.length() + 1);
+			return properties.containsKey(key);
+		}
+		return false;
+	}
 }

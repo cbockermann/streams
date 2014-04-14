@@ -57,4 +57,9 @@ public class ProcessContextMock2 implements ProcessContext {
 	public void clear() {
 		ctx.clear();
 	}
+
+	@Override
+	public boolean contains(String key) {
+		return ctx.containsKey(key);
+	}
 }

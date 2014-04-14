@@ -34,6 +34,12 @@ public class ComplexConditionTest {
 		public Object resolve(String variable) {
 			return null;
 		}
+
+		@Override
+		public boolean contains(String key) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	};
 
 	/**

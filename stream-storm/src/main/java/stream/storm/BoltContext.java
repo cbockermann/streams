@@ -96,4 +96,15 @@ public class BoltContext implements ProcessContext, Serializable {
 	public void clear() {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public boolean contains(String key) {
+
+		if (values.containsKey(key))
+			return true;
+
+		if (volatileValues.containsKey(key))
+			return true;
+		return false;
+	}
 }

@@ -44,7 +44,7 @@ public class ProcessContextImpl implements ProcessContext {
 	static Logger log = LoggerFactory.getLogger(ProcessContextImpl.class);
 	final ContainerContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
-
+	
 	public ProcessContextImpl() {
 		containerContext = null;
 	}
@@ -125,5 +125,10 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public void clear() {
 		context.clear();
+	}
+
+	@Override
+	public boolean contains(String key) {
+		return context.containsKey(key);
 	}
 }

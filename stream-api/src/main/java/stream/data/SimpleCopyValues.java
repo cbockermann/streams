@@ -133,8 +133,8 @@ public class SimpleCopyValues extends AbstractProcessor {
 	}
 
 	private Data copyFromProcessCtx(Data data) {
-		for (String key : data.keySet()) {
-			if (k.contains(key)) {
+		for (String key : keys) {
+			if (context.contains(key)) {
 				Serializable s = (Serializable) this.context.get(key);
 				s = getValue(s);
 				if (s == null)

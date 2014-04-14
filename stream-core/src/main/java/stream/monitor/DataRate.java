@@ -154,6 +154,7 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		count = 0L;
 		windowCount = 1L;
 		last = 0L;
+		start = null;
 	}
 
 	@Override

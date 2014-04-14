@@ -1,0 +1,15 @@
+<module>
+	
+	<include url="${include.1.url${include.id}}" id="${include.1.id${include.id}}" copies="${include.1.copies${include.id}}" />
+	
+	<include url="${include.2.url${include.id}}" id="${include.2.id${include.id}}" copies="${include.2.copies${include.id}}" />
+	
+	<include url="${include.3.url${include.id}}" id="${include.3.id${include.id}}" copies="${include.3.copies${include.id}}" />
+	
+	<include url="${include.4.url${include.id}}" id="${include.4.id${include.id}}" copies="${include.4.copies${include.id}}" />
+	
+	<include url="${include.5.url${include.id}}" id="${include.5.id${include.id}}" copies="${include.5.copies${include.id}}" />
+	
+	<include url="${include.6.url${include.id}}" id="${include.6.id${include.id}}" copies="${include.6.copies${include.id}}" />
+	
+</module>	

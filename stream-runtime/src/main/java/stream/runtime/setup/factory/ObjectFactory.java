@@ -244,6 +244,7 @@ public class ObjectFactory extends Variables {
 				log.debug("Expanded {} to {}", orig, expanded);
 			} else {
 				String orig = parameter.get(key);
+				//TODO Exception werfen
 				String expanded = local.expand(orig);
 				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);

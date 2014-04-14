@@ -52,7 +52,8 @@ public class XMLUtils {
 
 	static Logger log = LoggerFactory.getLogger(XMLUtils.class);
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
-
+	public final static PropertiesHandler propertyHandler = new PropertiesHandler(); 
+	
 	public static Document parseDocument(String xmlString) throws Exception {
 		//
 		// TODO: Enhance this!
@@ -394,6 +395,7 @@ public class XMLUtils {
 							vars.expand(prop.getTextContent()));
 				}
 			}
+			
 		}
 
 		return vars;

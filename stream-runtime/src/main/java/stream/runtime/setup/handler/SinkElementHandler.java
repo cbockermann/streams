@@ -28,6 +28,8 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 import stream.ComputeGraph;
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -77,12 +79,31 @@ public class SinkElementHandler implements ElementHandler {
 		if (id == null || id.trim().isEmpty())
 			throw new IllegalArgumentException(
 					"No 'id' attribute defined for sink!");
+		
+		String copiesString = element.getAttribute("copies");
+		Copy[] copies = null;
+		if (copiesString != null && !copiesString.isEmpty()){
+			copiesString = variables.expand(copiesString);
+			copies = CopiesUtils.parse(copiesString);
+		}
+		else {
+			Copy c = new Copy();
+			c.setId(id);
+			copies = new Copy[]{c};
+		}
 
-		Sink sink = (Sink) container.getObjectFactory().create(className,
-				params, ObjectFactory.createConfigDocument(element), variables);
+		for (Copy copy : copies) {
+			Variables local = new Variables(variables);
+			CopiesUtils.addCopyIds(local, copy);
+			String cid = local.expand(id);
+			Sink sink = (Sink) container.getObjectFactory().create(className,
+					params, ObjectFactory.createConfigDocument(element), local);
 
-		container.registerSink(id, sink);
-		computeGraph.addSink(id, sink);
+			container.registerSink(cid, sink);
+			computeGraph.addSink(cid, sink);
+		}
+		
+	
 
 	}
 }

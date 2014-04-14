@@ -5,12 +5,14 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.util.Variables;
 
 public class ProcessConfiguration implements Cloneable {
 
 	private String id;
-	private String copyId;
+	private Copy copy;
 	private String processType;
 
 	private String processClass;
@@ -21,7 +23,7 @@ public class ProcessConfiguration implements Cloneable {
 	private Element element;
 
 	public ProcessConfiguration() {
-		processType ="process";
+		processType = "process";
 	}
 
 	public String getId() {
@@ -31,21 +33,19 @@ public class ProcessConfiguration implements Cloneable {
 	public void setId(String id) {
 		this.id = id;
 		if (variables != null)
-			variables.put(processType+".id", id);
+			variables.put(processType + ".id", id);
 
 	}
 
-	public String getCopyId() {
-		return copyId;
+	public Copy getCopy() {
+		return copy;
 	}
 
-	public void setCopyId(String copyId) {
-		this.copyId = copyId;
+	public void setCopy(Copy copy) {
+		this.copy = copy;
 		if (variables != null)
-			variables.put("copy.id", copyId);
+			CopiesUtils.addCopyIds(variables, copy);
 	}
-	
-	
 
 	public String getProcessType() {
 		return processType;
@@ -113,7 +113,7 @@ public class ProcessConfiguration implements Cloneable {
 		c.setOutput(this.getOutput());
 		c.setProcessClass(this.getProcessClass());
 		c.setVariables(this.getVariables());
-		c.setCopyId(this.getCopyId());
+		c.setCopy(this.getCopy());
 		c.setElement(this.element);
 
 		return c;

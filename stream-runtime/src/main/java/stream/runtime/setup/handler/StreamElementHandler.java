@@ -25,6 +25,8 @@ package stream.runtime.setup.handler;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.ComputeGraph;
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.io.Stream;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -91,34 +95,28 @@ public class StreamElementHandler implements ElementHandler {
 			Map<String, String> attr = objectFactory.getAttributes(element);
 			String id = attr.get("id");
 
-			List<String> cp = new ArrayList<String>();
+			List<Copy> cp = new ArrayList<Copy>();
 			String copies = element.getAttribute("copies");
+
 			// Single stream
 			if (copies == null || copies.trim().isEmpty()) {
 				id = variables.expand(id);
-				cp.add(id);
+				Copy c = new Copy();
+				c.setId(id);
+				cp.add(c);
 			}
 			// multiple streams
 			else {
 				copies = variables.expand(copies);
-				String[] t = copies.split(",");
-				if (t.length == 1) {
-					Integer cops = new Integer(copies);
-					for (int i = 0; i < cops; i++) {
-						cp.add(Integer.valueOf(i).toString());
-					}
-				} else {
-					for (String c : t) {
-						if (!c.trim().isEmpty())
-							cp.add(c.trim());
-					}
-				}
+				cp = Arrays.asList(CopiesUtils.parse(copies));
 			}
 
-			for (String sid : cp) {
-				log.debug("Creating stream for copy '{}'", sid);
+			for (Copy copy : cp) {
+				log.debug("Creating stream for copy '{}'", copy.getId());
 				Variables local = new Variables(variables);
-				local.put("copy.id", sid);
+
+				CopiesUtils.addCopyIds(local, copy);
+
 				String lid = local.expand(id);
 
 				Stream stream = StreamFactory.createStream(objectFactory,

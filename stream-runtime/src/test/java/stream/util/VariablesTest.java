@@ -4,14 +4,14 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-/**
- * @author hendrik
- *
- */
 public class VariablesTest {
 
 	@Test
 	public void baseTest() {
+		// test1
+		// <properties>
+		// <property
+
 		Variables v = new Variables();
 		v.set("p1", "result");
 		Assert.assertEquals("result", v.expand("${p1}"));

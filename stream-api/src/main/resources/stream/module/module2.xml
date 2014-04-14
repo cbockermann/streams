@@ -1,0 +1,8 @@
+<module>
+	
+	<include url="${include.1.url${include.id}}" id="${include.1.id${include.id}}" copies="${include.1.copies${include.id}}" />
+	
+	<include url="${include.2.url${include.id}}" id="${include.2.id${include.id}}" copies="${include.2.copies${include.id}}" />
+	
+
+</module>	

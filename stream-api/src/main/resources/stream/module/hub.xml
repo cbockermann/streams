@@ -3,7 +3,7 @@
     <queue id="${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]"/>
     
 	<process input="${copy.id}" copies="[${hub.input.copies${include.id}}]:[${include.copies}]">
-	    <stream.flow.Emitter sinks="[${hub.output.copies${include.id}}]:[${include.copies}]" />
+	    <stream.flow.Emitter sinks="[${hub.output.copies${include.id}}]:${copy.id.1}" />
 	</process>
 	
 	<queue id="${copy.id}" capacity="${hub.queuecapacity${include.id}}" copies="[${hub.output.copies${include.id}}]:[${include.copies}]"/>

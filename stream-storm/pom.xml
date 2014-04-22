@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>streams</artifactId>
@@ -67,26 +68,49 @@
 				</property>
 			</activation>
 
+			<properties>
+				<storm.scope>compile</storm.scope>
+			</properties>
+
 			<build>
+				<finalName>streams-storm-${project.version}</finalName>
 				<plugins>
 					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>1.5</version>
 						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<mainClass />
-								</manifest>
-							</archive>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
+										<Implementation-Title>streams-storm</Implementation-Title>
+										<Implementation-URL>http://www.jwall.org/streams/</Implementation-URL>
+										<Implementation-Version>${pom.version}</Implementation-Version>
+										<Implementation-Revision>${pom.version}</Implementation-Revision>
+										<Specification-Title>streams-storm</Specification-Title>
+										<Specification-Version>1.0</Specification-Version>
+										<main-class>storm.run</main-class>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 						<executions>
 							<execution>
-								<id>make-assembly</id>
 								<phase>package</phase>
 								<goals>
-									<goal>single</goal>
+									<goal>shade</goal>
 								</goals>
 							</execution>
 						</executions>

@@ -74,7 +74,6 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 		String out = attr.get("output");
 
-		config.setInput(src);
 		config.setOutput(out);
 
 		// Set Process class
@@ -155,7 +154,9 @@ public class DefaultProcessFactory implements ProcessFactory {
 			Variables local = new Variables(v);
 			config.setVariables(local);
 			id = local.expand(id);
+			String input = local.expand(src);
 			config.setId(id);
+			config.setInput(input);
 			return new ProcessConfiguration[] { config };
 		}
 	}

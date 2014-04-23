@@ -86,6 +86,8 @@ public abstract class AbstractExpression<T extends Serializable> implements
 				statics = true;
 				return;
 			} catch (Exception exc) {
+				if( expression.startsWith("'") && expression.endsWith("'"))
+				expression = expression.substring(1,e.length()-1);
 				r = createStringExpression();
 			}
 

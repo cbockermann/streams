@@ -111,6 +111,13 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 			printDataRate(System.currentTimeMillis());
 		}
 
+		Long t = System.currentTimeMillis() - start;
+		if (t > 0 && count % 10 == 0) {
+			synchronized (rate) {
+				rate = this.count.doubleValue() / (t.doubleValue() / 1000.0d);
+			}
+		}
+
 		return input;
 	}
 
@@ -160,7 +167,9 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	@Override
 	public Statistics getStatistics() {
 		Statistics st = new Statistics();
-		st.put("dataRate", rate);
+		synchronized (rate) {
+			st.put("dataRate", new Double(rate.doubleValue()));
+		}
 		return st;
 	}
 

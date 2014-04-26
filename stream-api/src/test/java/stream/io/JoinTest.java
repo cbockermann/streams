@@ -17,8 +17,8 @@ public class JoinTest {
 	@Test
 	public void test() throws Exception {
 		// 100*10000=4.685,5.119
-		int q = 100;
-		int n =20000;
+		int q = 5;
+		int n =100;
 
 		ExecutorService pool1 = Executors.newCachedThreadPool();
 		ExecutorService pool2 = Executors.newCachedThreadPool();

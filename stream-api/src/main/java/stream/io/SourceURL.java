@@ -65,6 +65,7 @@ public class SourceURL implements Serializable {
 		urlProvider.put(PROTOCOL_SSL, stream.urls.SSLConnection.class);
 		urlProvider.put(PROTOCOL_TCP, stream.urls.TcpConnection.class);
 		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
+		urlProvider.put("files", stream.urls.FilesConnection.class);
 	}
 
 	final URL url;
@@ -110,9 +111,9 @@ public class SourceURL implements Serializable {
 		this.url = null;
 		this.urlString = urlString;
 
-		if(!hasProtocol(urlString))
-			throw new MalformedURLException("Missing Protocol in: "+ urlString);
-		
+		if (!hasProtocol(urlString))
+			throw new MalformedURLException("Missing Protocol in: " + urlString);
+
 		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_FIFO)) {
@@ -239,12 +240,14 @@ public class SourceURL implements Serializable {
 		}
 	}
 
-	private boolean hasProtocol(String urlString){
+	private boolean hasProtocol(String urlString) {
 		String[] p = urlString.split(":");
-		if(p.length<2 || (p.length>1 && (p[0]==null||p[0].length()==0 )))
-				return false;
+		if (p.length < 2
+				|| (p.length > 1 && (p[0] == null || p[0].length() == 0)))
+			return false;
 		return true;
 	}
+
 	public boolean isGzip() {
 		if (urlString != null && urlString.toLowerCase().endsWith(".gz"))
 			return true;

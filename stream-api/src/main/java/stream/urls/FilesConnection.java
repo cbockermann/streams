@@ -40,7 +40,9 @@ public class FilesConnection extends Connection {
 	public InputStream connect() throws IOException {
 
 		boolean removeAfterRead = "true".equalsIgnoreCase(url.getParameters()
-				.get("remove"));
+				.get("remove"))
+				|| "true".equalsIgnoreCase(url.getParameters().get(
+						"removeAfterRead"));
 
 		String pattern = ".*";
 		if (url.getParameters().containsKey("pattern")) {
@@ -50,6 +52,12 @@ public class FilesConnection extends Connection {
 		File file = new File(url.getPath());
 		seqFileStream = new SequentialFileInputStream(file, pattern,
 				removeAfterRead);
+
+		if (url.getParameters().containsKey("maxWaitingTime")) {
+			seqFileStream.setMaxWaitingTime(new Long(url.getParameters().get(
+					"maxWaitingTime")));
+		}
+
 		return seqFileStream;
 	}
 

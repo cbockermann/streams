@@ -25,6 +25,11 @@ public class PropertiesHandler {
 	 */
 	public void handlePropertiesElement(Element prop, Variables variables,
 			Variables systemProperties) {
+		
+		String suffix = "";
+		if(prop.hasAttribute("suffix"))
+			suffix = prop.getAttribute("suffix");	
+		
 		NodeList children = prop.getChildNodes();
 		if (children.getLength() > 0) {
 			// TextNodes
@@ -36,7 +41,7 @@ public class PropertiesHandler {
 					String key = ch.getNodeName();
 					String value = ch.getTextContent();
 
-					variables.set(key, value);
+					variables.set(key+suffix, value);
 				}
 			}
 
@@ -60,7 +65,7 @@ public class PropertiesHandler {
 					String key = k.toString();
 					String value = p.getProperty(key);
 					log.debug("Adding property '{}' = '{}'", key, value);
-					variables.set(key, value);
+					variables.set(key+suffix, value);
 				}
 
 			} catch (Exception e) {
@@ -74,7 +79,7 @@ public class PropertiesHandler {
 				Properties p = new Properties();
 				p.load(new FileInputStream(file));
 				for (Object k : p.keySet()) {
-					variables.set(k.toString(), p.getProperty(k.toString()));
+					variables.set(k.toString()+suffix, p.getProperty(k.toString()));
 				}
 			} catch (Exception e) {
 				log.error("Failed to read properties from file {}: {}", file,

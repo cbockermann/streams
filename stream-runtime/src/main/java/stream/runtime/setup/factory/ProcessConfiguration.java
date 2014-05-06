@@ -104,7 +104,7 @@ public class ProcessConfiguration implements Cloneable {
 	}
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		ProcessConfiguration c = new ProcessConfiguration();
 		c.setAttributes(new HashMap<String, String>(this.getAttributes()));
 

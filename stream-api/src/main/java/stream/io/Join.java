@@ -246,7 +246,7 @@ public class Join extends AbstractQueue {
 
 		log.trace("Reading from queue {}", getId());
 		// init (angenommen units ist String array)
-		
+
 		final AtomicInteger count = this.count;
 		final ReentrantLock takeLock = this.takeLock;
 		takeLock.lockInterruptibly();
@@ -269,8 +269,7 @@ public class Join extends AbstractQueue {
 				int r = 0;
 				Node<Data> node = new Node<Data>(dataQueue[0]);
 				last = last.next = node;
-				
-				
+
 				boolean run = true;
 				while (run) {
 					if (r + 1 < streams.size() && accs[r] == accs[r + 1]) {

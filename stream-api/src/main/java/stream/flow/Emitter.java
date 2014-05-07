@@ -111,7 +111,6 @@ public class Emitter extends ConditionedProcessor {
 	}
 
 	protected void emit(Data data) {
-		if (sinks != null) {
 			// log.error("No Sinks injected!");
 			// return;
 			// }
@@ -145,8 +144,6 @@ public class Emitter extends ConditionedProcessor {
 				// }
 
 			}
-
-		}
 	}
 
 	/**

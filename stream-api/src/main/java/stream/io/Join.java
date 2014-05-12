@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -84,7 +85,7 @@ public class Join extends AbstractQueue {
 		this.index = index;
 	}
 
-	private Map<String, LinkedBlockingQueue<Data>> queues = new ConcurrentHashMap<String, LinkedBlockingQueue<Data>>();
+	private Map<String, ArrayBlockingQueue<Data>> queues = new ConcurrentHashMap<String, ArrayBlockingQueue<Data>>();
 
 	private Swapper swapper = new Swapper() {
 		@Override
@@ -155,7 +156,7 @@ public class Join extends AbstractQueue {
 
 	public int size() {
 		int min = Integer.MAX_VALUE;
-		for (LinkedBlockingQueue<Data> queue : queues.values()) {
+		for (ArrayBlockingQueue<Data> queue : queues.values()) {
 			if (min > queue.size())
 				min = queue.size();
 		}
@@ -183,15 +184,17 @@ public class Join extends AbstractQueue {
 		String unit = null;
 		if (s2 != null)
 			unit = s2.toString();
-		if (streams.contains(unit)) {
-			try {
-				LinkedBlockingQueue<Data> queue = queues.get(unit);
+		// if (streams.contains(unit)) {
+		try {
+			ArrayBlockingQueue<Data> queue = queues.get(unit);
+			if (queue != null) {
 				queue.put(data);
 				return true;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		// }
 		return false;
 	}
 
@@ -210,7 +213,7 @@ public class Join extends AbstractQueue {
 		if (sync == null || sync.isEmpty())
 			throw new IllegalArgumentException("Index is not specified");
 		for (String unit : streams) {
-			queues.put(unit, new LinkedBlockingQueue<Data>(capacity));
+			queues.put(unit, new ArrayBlockingQueue<Data>(capacity));
 		}
 
 		reads = streams.size();
@@ -329,7 +332,7 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public int clear() {
-		for (LinkedBlockingQueue<Data> queue : queues.values()) {
+		for (ArrayBlockingQueue<Data> queue : queues.values()) {
 			queue.clear();
 		}
 		return -1;

@@ -65,7 +65,6 @@ public class Heartbeat extends Emitter {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		last = 0l;
-
 	}
 
 	/**

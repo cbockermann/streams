@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.annotations.Parameter;
 import stream.expressions.version2.ConditionedProcessor;
 import stream.io.Queue;
 import stream.io.Sink;
@@ -123,12 +124,12 @@ public class Emitter extends ConditionedProcessor {
 		// }
 		// }
 		// data.createCopy();
+
 		for (int i = 0; i < sinks.length; i++) {
 			Data d = data.createCopy();
 			// if (!sinks[i].offer(d)) {
 			try {
-				if (sinks[i] != null)
-					sinks[i].write(d);
+				sinks[i].write(d);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.ProcessContext;
-import stream.annotations.Parameter;
 import stream.expressions.version2.ConditionedProcessor;
 import stream.io.Queue;
 import stream.io.Sink;
@@ -69,7 +68,7 @@ public class Emitter extends ConditionedProcessor {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 			if(sinks == null)
-			throw new IllegalArgumentException("sinks are not set" );
+			throw new IllegalArgumentException("sinks are not set");
 		
 	}
 

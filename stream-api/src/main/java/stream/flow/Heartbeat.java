@@ -65,7 +65,7 @@ public class Heartbeat extends Emitter {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		last = 0l;
-		if(every <=0)
+		if (every <= 0)
 			throw new IllegalArgumentException("every is not set.");
 	}
 
@@ -80,6 +80,7 @@ public class Heartbeat extends Emitter {
 			Long idx = (Long) i;
 			if (idx - last > every) {
 				last = idx - (idx % every);
+//				log.info("{}:emit {} into: {}", this, last,sinks);
 				Data emit = DataFactory.create();
 				for (String key : keys) {
 					emit.put(key, data.get(key));

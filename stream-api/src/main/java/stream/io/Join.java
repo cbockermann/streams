@@ -58,11 +58,10 @@ public class Join extends AbstractQueue {
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 
-	private transient Node<Data> head;
-	private transient Node<Data> last;
-	private AtomicInteger count;
+	private int count;
 
 	private int reads;
+	private int read;
 	private String[] readQueue;
 	private Data[] dataQueue;
 	private long[] accs;
@@ -70,12 +69,6 @@ public class Join extends AbstractQueue {
 	private Set<String> streams;
 	private String index;
 	private String sync;
-
-	public Join() {
-		last = head = new Node<Data>(null);
-		count = new AtomicInteger(0);
-
-	}
 
 	public String getIndex() {
 		return index;
@@ -136,6 +129,12 @@ public class Join extends AbstractQueue {
 
 	}
 
+	public Join() {
+		super();
+		count = 0;
+		read = 0;
+	}
+
 	/**
 	 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
 	 * 
@@ -145,13 +144,10 @@ public class Join extends AbstractQueue {
 	 *             if {@code capacity} is not greater than zero
 	 */
 	public Join(int capacity) {
-		super();
-		last = head = new Node<Data>(null);
-		count = new AtomicInteger(0);
+		this();
 		if (capacity <= 0)
 			throw new IllegalArgumentException();
 		this.capacity = capacity;
-
 	}
 
 	public int size() {
@@ -186,6 +182,9 @@ public class Join extends AbstractQueue {
 			unit = s2.toString();
 		// if (streams.contains(unit)) {
 		try {
+//			Serializable s = data.get(index);
+//			if (s != null && s instanceof Long)
+//				log.info("data from {}: {}", unit, (Long) s);
 			ArrayBlockingQueue<Data> queue = queues.get(unit);
 			if (queue != null) {
 				queue.put(data);
@@ -246,52 +245,64 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public Data read() throws Exception {
+		//
+		// StringBuilder sb = new StringBuilder();
+		// sb.append("##########");
+		// sb.append(this.id);
+		// sb.append("##########\n");
+		//
+		// for (Map.Entry<String, ArrayBlockingQueue<Data>> q :
+		// queues.entrySet()) {
+		// sb.append(q.getKey());
+		// sb.append(":");
+		// sb.append(q.getValue().size());
+		// sb.append("\n");
+		// }
+		// log.info(sb.toString());
 
 		log.trace("Reading from queue {}", getId());
 		// init (angenommen units ist String array)
 
-		final AtomicInteger count = this.count;
 		final ReentrantLock takeLock = this.takeLock;
 		takeLock.lockInterruptibly();
 
 		Data result = null;
 		try {
-			if (closed.get() && count.get() == 0) {
+			if (closed.get() && count == 0) {
 				log.debug("Queue '{}' is closed and empty => null", getId());
 				return null;
 			}
-			if (count.get() == 0) {
-				// Read
+			if (count == 0) {
+				read = 0;
+				// Read accs
 				for (int i = 0; i < reads; i++) {
 					dataQueue[i] = queues.get(readQueue[i]).take();
 					Serializable s = dataQueue[i].get(index);
-					if (s != null && s instanceof Long)
+					if (s != null && s instanceof Long) {
 						accs[i] = (Long) s;
+//						log.info("read from {} ts {}", readQueue[i], (Long) s);
+					}
 				}
+				// Sort accs and readqueues
 				GenericSorting.quickSort(0, streams.size(), comp, swapper);
-				int r = 0;
-				Node<Data> node = new Node<Data>(dataQueue[0]);
-				last = last.next = node;
 
-				boolean run = true;
-				while (run) {
-					if (r + 1 < streams.size() && accs[r] == accs[r + 1]) {
-						last = last.next = new Node<Data>(dataQueue[r + 1]);
-						r++;
-					} else
-						run = false;
+				// ?
+				count = 0;
+				for (int i = 1; i < streams.size(); i++) {
+					if (accs[i - 1] == accs[i])
+						count = i;
+					else
+						break;
 				}
-				reads = r + 1;
-				count.set(reads);
-			}
-			Node<Data> h = head;
-			Node<Data> first = h.next;
-			h.next = h; // help GC
-			head = first;
-			result = first.item;
-			first.item = null;
-			count.getAndDecrement();
 
+				++count;
+				reads = count;
+
+			}
+			--count;
+			result = dataQueue[read];
+
+			++read;
 		} finally {
 			takeLock.unlock();
 		}

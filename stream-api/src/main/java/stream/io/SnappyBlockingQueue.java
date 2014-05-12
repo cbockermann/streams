@@ -43,7 +43,7 @@ import stream.Data;
 public class SnappyBlockingQueue extends AbstractQueue {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(SnappyBlockingQueue2.class);
+			.getLogger(SnappyBlockingQueue.class);
 
 	protected boolean closed = false;
 

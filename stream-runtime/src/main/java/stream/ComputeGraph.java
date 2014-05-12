@@ -101,13 +101,30 @@ public class ComputeGraph {
 				continue;
 
 			if (source instanceof Source) {
-				if (!getSourcesFor(source).isEmpty()) {
-					it.remove();
-				}
+				if (getSourcesFor(source).isEmpty())
+					srcs.add(source);
 			}
-			srcs.add(source);
 		}
 		return srcs;
+	}
+
+	public synchronized Set<Object> getNonRefQueues() {
+		Set<Object> targets = getTargets();
+		Set<Object> targs = new LinkedHashSet<Object>();
+		Iterator<Object> it = targets.iterator();
+		while (it.hasNext()) {
+			Object target = it.next();
+			if (finished.contains(target))
+				continue;
+
+			if (target instanceof Sink) {
+				if (getTargets(target).isEmpty()) {
+					targs.add(target);
+				}
+			}
+			it.remove();
+		}
+		return targs;
 	}
 
 	public synchronized Set<Object> getSources() {
@@ -118,6 +135,18 @@ public class ComputeGraph {
 				continue;
 
 			nodes.add(edge.getFrom());
+		}
+		return nodes;
+	}
+
+	public synchronized Set<Object> getTargets() {
+		Set<Object> nodes = new LinkedHashSet<Object>();
+		for (Edge edge : edges) {
+			if (finished.contains(edge.getFrom())
+					|| finished.contains(edge.getTo()))
+				continue;
+
+			nodes.add(edge.getTo());
 		}
 		return nodes;
 	}

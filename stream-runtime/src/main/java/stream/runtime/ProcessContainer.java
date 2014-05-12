@@ -288,15 +288,13 @@ public class ProcessContainer implements IContainer {
 		Document doc = db.parse(url.openStream());
 
 		XIncluder includer = new XIncluder();
-		
+
 		Variables v = new Variables(containerVariables);
-		
-		doc = includer.perform(doc,v);
-		
+
+		doc = includer.perform(doc, v);
+
 		log.debug(XMLUtils.toString(doc));
-		
-		
-		
+
 		// Container
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);
@@ -529,6 +527,43 @@ public class ProcessContainer implements IContainer {
 		// context.getProperties().putAll(pv);
 
 		context.setProperty("xml", XMLUtils.toString(doc));
+
+		drawGraph();
+		System.out.println("asdas");
+	}
+
+	private void drawGraph() {
+		ComputeGraph g = computeGraph();
+		
+		log.info("######## Sources ########");
+		for (Object o : g.getSources()) {
+			if(o instanceof Source){
+				log.info("########" + o.toString() + "########" );
+				for(Object t: g.getTargets(o)){
+					log.info("\t==> " + t.toString() );
+				}
+			}
+		}
+		
+		log.info("######## RootSources ########");
+		for (Object o : g.getRootSources()) {
+			log.info(o.toString());
+		}
+		
+//		log.info("######## Targets ########");
+//		for (Object o : g.getTargets()) {
+//			log.info(o.toString());
+//		}
+		
+		log.info("######## NonRefSinks ########");
+		for (Object o : g.getNonRefQueues()) {
+			log.info("########" + o.toString() + "########" );
+			for(Object t: g.getSourcesFor(o)){
+				log.info("\t==> " + t.toString() );
+			}
+			
+		}
+
 	}
 
 	public void registerQueue(String id, Queue queue, boolean externalListener)

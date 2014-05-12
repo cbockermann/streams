@@ -65,6 +65,8 @@ public class Heartbeat extends Emitter {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		last = 0l;
+		if(every <=0)
+			throw new IllegalArgumentException("every is not set.");
 	}
 
 	/**

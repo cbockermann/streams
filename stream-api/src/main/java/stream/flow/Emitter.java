@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.ProcessContext;
 import stream.annotations.Parameter;
 import stream.expressions.version2.ConditionedProcessor;
 import stream.io.Queue;
@@ -61,6 +62,15 @@ public class Emitter extends ConditionedProcessor {
 
 	public void setSkip(Boolean skip) {
 		this.skip = skip;
+	}
+
+	
+	@Override
+	public void init(ProcessContext ctx) throws Exception {
+		super.init(ctx);
+			if(sinks == null)
+			throw new IllegalArgumentException("sinks are not set" );
+		
 	}
 
 	/**

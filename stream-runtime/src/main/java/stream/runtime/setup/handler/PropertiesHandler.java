@@ -33,7 +33,7 @@ public class PropertiesHandler implements DocumentHandler {
 	static Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
 
 	private stream.util.PropertiesHandler pHandle;
-	
+
 	public PropertiesHandler() {
 		pHandle = new stream.util.PropertiesHandler();
 	}
@@ -60,34 +60,13 @@ public class PropertiesHandler implements DocumentHandler {
 		// Needed)
 		// systemVariables.addVariables(variables);
 
-		// handle property elements, i.e.
-		// <property>
-		// <name>property-name</name>
-		// <value>property-value</value>
-		// </property>
-		//
-		// find
-		NodeList list = doc.getElementsByTagName("property");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element prop = (Element) list.item(i);
-			pHandle.handlePropertyElement(prop, variables, systemVariables);
-		}
-		// find
-		list = doc.getElementsByTagName("Property");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element prop = (Element) list.item(i);
-			pHandle.handlePropertyElement(prop, variables, systemVariables);
-		}
 		// handle maven-like properties, e.g.
 		// <properties>
 		// <property-name>value-of-property</property-name>
 		// </properties>
 		// and <properties url="${urlToProperties}"
 
-		// find
-		list = doc.getElementsByTagName("properties");
+		NodeList list = doc.getElementsByTagName("properties");
 		// handle
 		for (int i = 0; i < list.getLength(); i++) {
 			Element e = (Element) list.item(i);
@@ -99,6 +78,26 @@ public class PropertiesHandler implements DocumentHandler {
 		for (int i = 0; i < list.getLength(); i++) {
 			Element e = (Element) list.item(i);
 			pHandle.handlePropertiesElement(e, variables, systemVariables);
+		}
+
+		// handle property elements, i.e.
+		// <property>
+		// <name>property-name</name>
+		// <value>property-value</value>
+		// </property>
+		//
+		list = doc.getElementsByTagName("property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			pHandle.handlePropertyElement(prop, variables, systemVariables);
+		}
+		// find
+		list = doc.getElementsByTagName("Property");
+		// handle
+		for (int i = 0; i < list.getLength(); i++) {
+			Element prop = (Element) list.item(i);
+			pHandle.handlePropertyElement(prop, variables, systemVariables);
 		}
 
 		// add system properties, e.g defined at command line using the -D flag:

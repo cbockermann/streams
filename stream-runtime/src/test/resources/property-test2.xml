@@ -8,8 +8,9 @@
 
 	<property name="streams.limit" value="10" />
 	<property name="streams.central" value="s.central" />
+	<property name="streams.central.class" value="stream.test.TestStream"/>
 	<properties url="${test.properties}" />
-
+	
 
 	<stream id="${streams.central}.${copy.id}" class="${streams.central.class}"
 		limit="${streams.limit}" copies="[${copies.names}]:[2]" />
@@ -26,10 +27,10 @@
 		<PrintData />
 		 -->
 		<stream.test.LogData message="%{data.@stream} : ${copy.id} + ${copy.id.0} + ${copy.id.1} + ${copy.id.2}" />
-		 
+		<stream.flow.Emitter sinks="transport.${copy.id}:[k,j]" />
 	</process>
 
-
+	<sink id="transport.${copy.id}" class="stream.io.TerminalSink" copies="[${copies.names}]:[2]:[2]:[k,j]"/>
 
 
 

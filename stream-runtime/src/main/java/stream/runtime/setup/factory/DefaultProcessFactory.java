@@ -60,7 +60,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 		ProcessConfiguration config = new ProcessConfiguration();
 		config.setCopy(new Copy());
-		
+
 		Map<String, String> attr = objectFactory.getAttributes(e);
 
 		config.setAttributes(attr);
@@ -151,12 +151,16 @@ public class DefaultProcessFactory implements ProcessFactory {
 		}
 
 		else {
+
 			Variables local = new Variables(v);
 			config.setVariables(local);
 			id = local.expand(id);
-			String input = local.expand(src);
 			config.setId(id);
-			config.setInput(input);
+
+			if (src != null) {
+				config.setInput(local.expand(src));
+			}
+
 			return new ProcessConfiguration[] { config };
 		}
 	}
@@ -269,12 +273,13 @@ public class DefaultProcessFactory implements ProcessFactory {
 			Variables local) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
-		
-		Object o=null;
-		try{
-		o = objectFactory.create(child, params, local);
-		}catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("Error in:"+child.getNodeName(),e);
+
+		Object o = null;
+		try {
+			o = objectFactory.create(child, params, local);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Error in:"
+					+ child.getNodeName(), e);
 		}
 		if (o instanceof ProcessorList) {
 
@@ -341,7 +346,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
-//					String[] refs = value.split(",");
+					// String[] refs = value.split(",");
 					String[] refs = CopiesUtils.parseIds(value);
 					SinkRef sinkRefs = new SinkRef(o, key, refs);
 					computeGraph.addReference(sinkRefs);
@@ -358,7 +363,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-//					String[] refs = value.split(",");
+					// String[] refs = value.split(",");
 					String[] refs = CopiesUtils.parseIds(value);
 					log.debug("Adding ServiceRef to '{}' for object {}", refs,
 							o);

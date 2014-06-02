@@ -209,12 +209,12 @@ public class ObjectFactory extends Variables {
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
 
-		String name = node.getNodeName();
-		for (ObjectCreator creator : objectCreators) {
-			if (name.startsWith(creator.getNamespace())) {
-				return creator.create(name, params, local);
-			}
-		}
+		// String name = node.getNodeName();
+		// for (ObjectCreator creator : objectCreators) {
+		// if (name.startsWith(creator.getNamespace())) {
+		// return creator.create(name, params, local);
+		// }
+		// }
 
 		Object obj = create(this.findClassForElement(node), params,
 				createConfigDocument(node), local);
@@ -244,7 +244,7 @@ public class ObjectFactory extends Variables {
 				log.debug("Expanded {} to {}", orig, expanded);
 			} else {
 				String orig = parameter.get(key);
-				//TODO Exception werfen
+				// TODO Exception werfen
 				String expanded = local.expand(orig);
 				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);
@@ -293,7 +293,7 @@ public class ObjectFactory extends Variables {
 	 * @return
 	 */
 	public Map<String, String> getAttributes(Node node) {
-	Map<String, String> map = new LinkedHashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		NamedNodeMap att = node.getAttributes();
 		for (int i = 0; i < att.getLength(); i++) {
 			Node attr = att.item(i);

@@ -11,7 +11,7 @@ public abstract class AbstractQueue implements Queue, QueueService {
 
 	protected String id;
 
-	protected int capacity = Integer.MAX_VALUE;
+	protected int capacity = 1000;
 
 	/**
 	 * @see stream.io.Source#getId()

@@ -30,6 +30,7 @@ public class JoinTest {
 		}
 
 		Join queue = new Join();
+		queue.setCapacity(100);
 		queue.setIndex("index");
 		queue.setStreams(streams);
 		queue.setSync("id");

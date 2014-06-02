@@ -26,7 +26,6 @@ package stream.runtime.setup.handler;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ import stream.service.Service;
 import stream.util.Variables;
 
 /**
- * @author chris
+ * @author chris,hendrik
  * 
  */
 public class StreamElementHandler implements ElementHandler {

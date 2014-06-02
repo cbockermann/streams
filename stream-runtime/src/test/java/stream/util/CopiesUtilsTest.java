@@ -13,6 +13,10 @@ public class CopiesUtilsTest {
 		String copiesString = "8";
 		Copy[] copies = CopiesUtils.parse(copiesString);
 		Assert.assertEquals(8, copies.length);
+		
+		copiesString = "[1]";
+		copies = CopiesUtils.parse(copiesString);
+		Assert.assertEquals(1, copies.length);
 
 		copiesString = "1,2,3,4";
 		copies = CopiesUtils.parse(copiesString);

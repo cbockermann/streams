@@ -1,5 +1,8 @@
 package stream.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.AbstractProcessor;
 import stream.Context;
 import stream.Data;
@@ -7,6 +10,7 @@ import stream.ProcessContext;
 
 public class AssertSubContext extends AbstractProcessor {
 
+	Logger log = LoggerFactory.getLogger(AssertSubContext.class);
 	private String[] keys;
 	private String ctx;
 
@@ -39,6 +43,7 @@ public class AssertSubContext extends AbstractProcessor {
 			for (String key : keys) {
 				if (context.get(key) == null) {
 					data.put("@subContext:complete", false);
+					log.info("Key: {} is missing", key);
 					return data;
 				}
 			}

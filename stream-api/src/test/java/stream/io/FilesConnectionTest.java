@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class FilesConnectionTest {
 
 	static Logger log = LoggerFactory.getLogger(FilesConnectionTest.class);
 
-	@Test
+	// @Test
 	public void test() {
 
 		try {

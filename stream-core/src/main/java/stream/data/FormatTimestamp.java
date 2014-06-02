@@ -86,7 +86,7 @@ public class FormatTimestamp extends AbstractProcessor {
 	public Data process(Data input) {
 
 		try {
-			Long val = new Long(input.get(from) + "");
+			Long val = new Double(input.get(from) + "").longValue();
 			String fmt = dateFormat.format(new Date(val));
 			input.put(key, fmt);
 		} catch (Exception e) {

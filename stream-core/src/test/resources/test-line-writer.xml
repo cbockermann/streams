@@ -10,7 +10,9 @@
 			<RemoveKeys keys="LINE" />
 			<PrintData />
 			
-			<stream.io.LineWriter file="${test.out}" keys="LINE,IP,DATE,DATA" append="true" />
+			<stream.io.LineWriter file="${test.out}" keys="LINE,IP,DATE,DATA" 
+					format="%{data.LINE} => %{data.IP},%{data.DATE},%{data.DATA}"
+					append="true" />
 		</process>
 
 	</container>

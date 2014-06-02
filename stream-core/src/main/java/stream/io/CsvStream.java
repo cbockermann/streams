@@ -103,7 +103,7 @@ public class CsvStream extends AbstractLineStream {
 		this.header = header;
 	}
 
-	@Parameter(name = "separator", required = true, defaultValue = "(;|,)")
+	@Parameter(name = "separator", required = false, defaultValue = "(;|,)")
 	public void setSeparator(String separator) {
 		splitExpression = separator;
 	}

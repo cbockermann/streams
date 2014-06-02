@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
-import stream.statistics.Statistics;
+import stream.data.Statistics;
 import stream.statistics.StatisticsService;
 
 /**
  * @author Hendrik Blom
- *
+ * 
  */
 public class TimeRate extends AbstractProcessor implements StatisticsService {
 

@@ -354,4 +354,11 @@ public class SequentialFileInputStream extends InputStream {
 	public void setRemoveAfterRead(boolean removeAfterRead) {
 		this.removeAfterRead = removeAfterRead;
 	}
+
+	public File getCurrentFile() {
+		if (current == null)
+			return null;
+
+		return new File(current.getAbsolutePath());
+	}
 }

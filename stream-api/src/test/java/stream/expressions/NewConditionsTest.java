@@ -665,12 +665,18 @@ public class NewConditionsTest {
 		data.put("test", 3);
 
 		SetValue set = new SetValue();
-		set.setScope(new String[] { "process" });
+		set.setScope(new String[] { "process","data" });
 		set.setValue("%{data.test}");
 		set.setKey("test");
+		set.setCondition("%{data.test}!=4");
 		set.init(ctx);
 		set.process(data);
 		Assert.assertEquals(3, ctx.get("test"));
+		
+		
+		MultiData md = new MultiData(1000000);
+		md.put("test", 3d);
+		testTime(set, md);
 	}
 
 	@Test

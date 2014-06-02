@@ -124,9 +124,14 @@ public class XIncluder {
 			}
 
 			if (included == null) {
-				log.error(
-						"Failed to include document for include tag with attributes {}",
-						XMLUtils.getAttributes(include));
+				String optional = include.getAttribute("optional");
+
+				if (optional.equalsIgnoreCase("true"))
+					log.info("skipping optional include.");
+				else
+					log.error(
+							"Failed to include document for include tag with attributes {}",
+							XMLUtils.getAttributes(include));
 				continue;
 			} else {
 				log.debug("Recursively including documents... ");

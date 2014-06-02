@@ -84,7 +84,7 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 							.equals(SourceURL.PROTOCOL_FILE)) || !(this.url
 							.getProtocol().equals(SourceURL.PROTOCOL_CLASSPATH))))
 				throw new IllegalArgumentException(
-						"Given URL is no local directory");
+						"Given URL "+url.getPath()+"is no local directory");
 			else {
 				String[] f = null;
 				if (suffix != null && !suffix.isEmpty()) {

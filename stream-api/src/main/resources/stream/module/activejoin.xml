@@ -2,7 +2,7 @@
 
 	<process input="${module.input${include.id}}:${copy.id}"
 		copies="${inputs${include.id}}">
-		<stream.flow.Emitter sink="${module.output${include.id}}:[${output${include.id}}]" />
+		<stream.flow.Emitter sinks="${module.output${include.id}}:[${output${include.id}}]" />
 	</process>
 
 	<queue id="${module.output${include.id}}:${copy.id}" capacity="${join.capacity${include.id}}"

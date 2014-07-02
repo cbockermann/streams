@@ -529,7 +529,6 @@ public class ProcessContainer implements IContainer {
 		context.setProperty("xml", XMLUtils.toString(doc));
 
 		drawGraph();
-		System.out.println("asdas");
 	}
 
 	private void drawGraph() {

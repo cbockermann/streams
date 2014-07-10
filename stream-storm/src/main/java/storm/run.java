@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
@@ -178,7 +179,8 @@ public class run {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		List<String> params = storm.deploy.handleArgs(args);
+		final Properties p = new Properties();
+		List<String> params = storm.deploy.handleArgs(args, p);
 
 		if (params.isEmpty()) {
 			System.err.println("You need to specify an XML configuration!");

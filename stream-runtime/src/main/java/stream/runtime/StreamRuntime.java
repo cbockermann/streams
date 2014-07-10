@@ -128,9 +128,8 @@ public class StreamRuntime {
 					for (Object k : p.keySet()) {
 						log.debug("Adding property '{}' = '{}'", k,
 								p.getProperty(k.toString()));
-						System.setProperty(k.toString(),
-								p.getProperty(k.toString()));
-
+						// System.setProperty(k.toString(),
+						// p.getProperty(k.toString()));
 						vars.set(k.toString(), p.getProperty(k.toString()));
 					}
 				} catch (Exception e) {

@@ -351,11 +351,6 @@ public class ComputeGraph {
 			}
 		}
 
-		// log.debug("[dep-graph]  Reference counts: ");
-		// for (Object node : this.nodes) {
-		// log.debug("[dep-graph]     * {}  is referenced by {} ", node,
-		// this.getSourcesFor(node));
-		// }
 		return lifeObjects;
 	}
 

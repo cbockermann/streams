@@ -15,9 +15,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.container.IContainer;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
-import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.dependencies.Dependency;
 import stream.runtime.dependencies.DependencyResolver;
@@ -58,7 +58,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
@@ -94,7 +94,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
+	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.container.ProcessContainer,
 	 *      org.w3c.dom.Document)
 	 */
 	@Override

@@ -33,9 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import stream.ComputeGraph;
 import stream.CopiesUtils;
 import stream.Copy;
+import stream.app.ComputeGraph;
 import stream.io.Stream;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -82,7 +82,7 @@ public class StreamElementHandler implements ElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override

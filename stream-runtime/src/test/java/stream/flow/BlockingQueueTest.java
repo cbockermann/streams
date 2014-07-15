@@ -29,7 +29,7 @@ public class BlockingQueueTest {
 				.getResource("/test-blocking-queue.xml");
 		ProcessContainer c = new ProcessContainer(url);
 
-		long time = c.run();
+		long time = c.execute();
 		log.info("Container required {} ms for running.", time);
 
 		CollectorService col = c.getContext().lookup("collected",

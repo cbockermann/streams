@@ -70,8 +70,7 @@ public class MonitorElementHandler extends ProcessElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.setup.ElementHandler#handleElement(stream.runtime
-	 *      .ProcessContainer, org.w3c.dom.Element)
+	 * @see stream.runtime.setup.ElementHandler#handleElement(stream.container.ProcessContainer, org.w3c.dom.Element)
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,

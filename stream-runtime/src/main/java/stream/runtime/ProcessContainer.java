@@ -45,17 +45,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.ComputeGraph;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
+import stream.app.ComputeGraph;
+import stream.container.IContainer;
 import stream.data.DataFactory;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
-import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.runtime.setup.factory.ProcessorFactory;
 import stream.runtime.setup.handler.ContainerRefElementHandler;
@@ -93,7 +93,7 @@ import stream.util.XMLUtils;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class ProcessContainer implements IContainer {
+public class ProcessContainer implements IContainer,Runnable {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
@@ -175,7 +175,9 @@ public class ProcessContainer implements IContainer {
 	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
 
 	boolean server = true;
-
+	
+	protected long runtime; 
+	
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
@@ -584,7 +586,14 @@ public class ProcessContainer implements IContainer {
 		streams.put(id, stream);
 	}
 
-	public long run() throws Exception {
+	public void run(){
+		try {
+			runtime = execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public long execute() throws Exception  {
 
 		if (!container.contains(this)) {
 			container.add(this);
@@ -774,5 +783,10 @@ public class ProcessContainer implements IContainer {
 	 */
 	public void setProcessContext(DefaultProcess process, ProcessContext ctx) {
 		processContexts.put(process, ctx);
+	}
+
+	@Override
+	public NamingService getNamingService() {
+		return namingService;
 	}
 }

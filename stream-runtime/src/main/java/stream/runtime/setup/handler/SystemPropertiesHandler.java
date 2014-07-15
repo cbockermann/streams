@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import stream.container.IContainer;
 import stream.runtime.DependencyInjection;
-import stream.runtime.IContainer;
 import stream.util.Variables;
 
 /**

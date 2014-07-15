@@ -28,7 +28,7 @@ public class EveryTest {
 		URL url = EveryTest.class.getResource("/test-every.xml");
 		ProcessContainer c = new ProcessContainer(url);
 
-		long time = c.run();
+		long time = c.execute();
 		log.info("Container required {} ms for running.", time);
 
 		CounterTestService s = c.getContext().lookup("counter",

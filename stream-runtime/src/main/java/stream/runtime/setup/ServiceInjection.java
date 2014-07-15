@@ -31,8 +31,9 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ComputeGraph;
+import stream.app.ComputeGraph;
 import stream.runtime.ContainerContext;
+import stream.runtime.ServiceReference;
 import stream.service.Service;
 import stream.util.Variables;
 

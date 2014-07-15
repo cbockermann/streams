@@ -30,11 +30,12 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
-import stream.ComputeGraph;
+import stream.app.ComputeGraph;
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
+import stream.runtime.ServiceReference;
 
 /**
  * @author chris

@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
-import stream.ComputeGraph;
 import stream.CopiesUtils;
 import stream.Copy;
+import stream.app.ComputeGraph;
 import stream.io.Queue;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -34,7 +34,7 @@ public class QueueElementHandler implements ElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer,
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer,
 	 *      org.w3c.dom.Element)
 	 */
 	@Override

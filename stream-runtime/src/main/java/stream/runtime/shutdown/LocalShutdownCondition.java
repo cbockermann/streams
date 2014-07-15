@@ -9,9 +9,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ComputeGraph;
 import stream.Process;
 import stream.Processor;
+import stream.app.ComputeGraph;
 import stream.io.Source;
 import stream.runtime.AbstractProcess;
 import stream.runtime.Monitor;
@@ -26,7 +26,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 	static Logger log = LoggerFactory.getLogger(LocalShutdownCondition.class);
 
 	/**
-	 * @see stream.runtime.ShutdownCondition#isMet(stream.ComputeGraph)
+	 * @see stream.runtime.ShutdownCondition#isMet(stream.app.ComputeGraph)
 	 */
 	@Override
 	public boolean isMet(ComputeGraph graph) {

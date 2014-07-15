@@ -1,19 +1,21 @@
 /**
  * 
  */
-package stream.runtime;
+package stream.container;
 
 import java.util.List;
 import java.util.Set;
 
-import stream.ComputeGraph;
+import stream.Context;
 import stream.Process;
+import stream.app.ComputeGraph;
 import stream.io.Source;
-import stream.runtime.setup.ServiceReference;
+import stream.runtime.ServiceReference;
+import stream.service.NamingService;
 import stream.util.Variables;
 
 /**
- * @author chris
+ * @author chris, Hendrik Blom
  *
  */
 public interface IContainer {
@@ -27,7 +29,7 @@ public interface IContainer {
 	 */
 	public abstract String getName();
 
-	public abstract ContainerContext getContext();
+	public abstract Context getContext();
 
 	/**
 	 * @return the processes
@@ -40,5 +42,7 @@ public interface IContainer {
 	public abstract List<ServiceReference> getServiceRefs();
 
 	public abstract Variables getVariables();
+	
+	public abstract NamingService getNamingService();
 
 }

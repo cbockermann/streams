@@ -1,6 +1,6 @@
 package stream.runtime.shutdown;
 
-import stream.ComputeGraph;
+import stream.app.ComputeGraph;
 
 
 public interface ShutdownCondition {

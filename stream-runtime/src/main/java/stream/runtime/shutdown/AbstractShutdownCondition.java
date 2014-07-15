@@ -3,7 +3,7 @@ package stream.runtime.shutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ComputeGraph;
+import stream.app.ComputeGraph;
 
 /**
  * @author hendrik

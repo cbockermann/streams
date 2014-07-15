@@ -76,7 +76,7 @@ public class ServiceElementHandler implements ElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override

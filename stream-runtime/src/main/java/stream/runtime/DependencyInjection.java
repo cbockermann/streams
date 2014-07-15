@@ -13,11 +13,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ComputeGraph;
-import stream.ComputeGraph.ServiceRef;
-import stream.ComputeGraph.SinkRef;
-import stream.ComputeGraph.SourceRef;
-import stream.Reference;
+import stream.app.ComputeGraph;
+import stream.app.Reference;
+import stream.app.ComputeGraph.ServiceRef;
+import stream.app.ComputeGraph.SinkRef;
+import stream.app.ComputeGraph.SourceRef;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;

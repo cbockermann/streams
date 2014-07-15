@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
+import stream.runtime.ProcessContainer;
 
 /**
  * @author chris
@@ -34,6 +35,9 @@ public class Collector extends AbstractProcessor {
 					collected.size());
 			collected.clear();
 		}
+		ProcessContainer c = null;
+		
+	
 	}
 
 	/**

@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import stream.ComputeGraph;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.annotations.BodyContent;
+import stream.app.ComputeGraph;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;

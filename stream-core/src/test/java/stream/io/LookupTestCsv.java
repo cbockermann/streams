@@ -49,7 +49,7 @@ public class LookupTestCsv {
 		URL url = LookupTestCsv.class.getResource("/lookup-test-json.xml");
 
 		ProcessContainer pc = new ProcessContainer(url);
-		long time = pc.run();
+		long time = pc.execute();
 		log.info("Container finished after {} ms.", time);
 
 		CollectorService collector = pc.getContext().lookup("collector",

@@ -16,7 +16,7 @@ import stream.Processor;
  */
 public class Collector implements Processor, CollectorService {
 
-	static final ArrayList<Data> collected = new ArrayList<Data>();
+	protected final ArrayList<Data> collected = new ArrayList<Data>();
 
 	/**
 	 * @see stream.Processor#process(stream.Data)

@@ -8,8 +8,8 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ComputeGraph;
-import stream.ComputeGraph.SinkRef;
+import stream.app.ComputeGraph;
+import stream.app.ComputeGraph.SinkRef;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.runtime.ProcessContainer;

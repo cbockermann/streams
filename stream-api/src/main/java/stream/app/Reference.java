@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream;
+package stream.app;
 
 /**
  * <p>

@@ -5,8 +5,8 @@ package stream.runtime.setup.handler;
 
 import org.w3c.dom.Document;
 
+import stream.container.IContainer;
 import stream.runtime.DependencyInjection;
-import stream.runtime.IContainer;
 import stream.util.Variables;
 
 /**

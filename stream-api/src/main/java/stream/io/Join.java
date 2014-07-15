@@ -30,17 +30,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.io.BlockingQueue.Node;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -105,9 +101,6 @@ public class Join extends AbstractQueue {
 
 	/** Lock held by take, poll, etc */
 	private final ReentrantLock takeLock = new ReentrantLock();
-
-	/** Wait queue for waiting takes */
-	private final Condition notEmpty = takeLock.newCondition();
 
 	public String[] getStreams() {
 		return streams.toArray(new String[streams.size()]);
@@ -182,9 +175,9 @@ public class Join extends AbstractQueue {
 			unit = s2.toString();
 		// if (streams.contains(unit)) {
 		try {
-//			Serializable s = data.get(index);
-//			if (s != null && s instanceof Long)
-//				log.info("data from {}: {}", unit, (Long) s);
+			// Serializable s = data.get(index);
+			// if (s != null && s instanceof Long)
+			// log.info("data from {}: {}", unit, (Long) s);
 			ArrayBlockingQueue<Data> queue = queues.get(unit);
 			if (queue != null) {
 				queue.put(data);
@@ -280,7 +273,8 @@ public class Join extends AbstractQueue {
 					Serializable s = dataQueue[i].get(index);
 					if (s != null && s instanceof Long) {
 						accs[i] = (Long) s;
-//						log.info("read from {} ts {}", readQueue[i], (Long) s);
+						// log.info("read from {} ts {}", readQueue[i], (Long)
+						// s);
 					}
 				}
 				// Sort accs and readqueues

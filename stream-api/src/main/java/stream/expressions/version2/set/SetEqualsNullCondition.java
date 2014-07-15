@@ -23,13 +23,9 @@
  */
 package stream.expressions.version2.set;
 
-import java.io.Serializable;
-import java.util.Iterator;
-
 import stream.Context;
 import stream.Data;
 import stream.expressions.version2.Condition;
-import stream.expressions.version2.Expression;
 
 /**
  * <p>
@@ -50,6 +46,5 @@ public class SetEqualsNullCondition extends Condition {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

@@ -30,7 +30,6 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
 import stream.annotations.Parameter;
-import stream.expressions.ExpressionResolver;
 import stream.expressions.version2.StringExpression;
 import stream.service.Service;
 
@@ -128,12 +127,12 @@ public class OnChange extends If implements Service {
 				return false;
 			}
 		}
-		
+
 		String value = null;
 		try {
 			value = expression.get(context, item);
-			if(value==null)
-				value="null";
+			if (value == null)
+				value = "null";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

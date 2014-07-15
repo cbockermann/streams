@@ -76,6 +76,7 @@ public class ClassFinder {
 					resources.add(url);
 				}
 			}
+			ucl.close();
 		}
 
 		List<File> dirs = new ArrayList<File>();

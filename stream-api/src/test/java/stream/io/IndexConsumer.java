@@ -3,14 +3,11 @@ package stream.io;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import junit.framework.Assert;
 import stream.Data;
 
 public class IndexConsumer implements Runnable {
-	private final Logger log = LoggerFactory
-			.getLogger(BlockingQueue.class);
-	
-	
+	final Logger log = LoggerFactory.getLogger(BlockingQueue.class);
+
 	private Join join;
 	private int reads;
 	private java.util.concurrent.BlockingQueue<Boolean> resultQueue;
@@ -35,7 +32,7 @@ public class IndexConsumer implements Runnable {
 					resultQueue.put(false);
 				index = tindex;
 				c++;
-//				 System.out.println(d + ":"+c);
+				// System.out.println(d + ":"+c);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -69,6 +69,8 @@ public class FifoInputStreamTest {
 
 			t.join();
 
+			fis.close();
+
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			if (log.isDebugEnabled())

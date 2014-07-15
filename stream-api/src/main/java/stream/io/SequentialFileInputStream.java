@@ -246,8 +246,9 @@ public class SequentialFileInputStream extends InputStream {
 		if (closed)
 			return -1;
 
-		while (reader == null)
+		while (reader == null) {
 			openNextFile();
+		}
 
 		buffer.clear();
 		int data = channel.read(buffer);
@@ -275,7 +276,7 @@ public class SequentialFileInputStream extends InputStream {
 						e.printStackTrace();
 					}
 				}
-				if (maxWaitingTime > 0 && waitingTime > maxWaitingTime) {
+				if (maxWaitingTime >= 0 && waitingTime > maxWaitingTime) {
 					closed = true;
 					log.debug("Total sleeping time exhausted!");
 					return -1;

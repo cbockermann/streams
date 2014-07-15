@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -68,6 +68,7 @@ public class ClassFinder {
 		}
 
 		if (classLoader instanceof URLClassLoader) {
+			@SuppressWarnings("resource")
 			URLClassLoader ucl = (URLClassLoader) classLoader;
 			URL[] urls = ucl.getURLs();
 			if (urls != null) {
@@ -76,7 +77,8 @@ public class ClassFinder {
 					resources.add(url);
 				}
 			}
-			ucl.close();
+			// closing the ucl object will interfere with junit tests
+			// ucl.close();
 		}
 
 		List<File> dirs = new ArrayList<File>();

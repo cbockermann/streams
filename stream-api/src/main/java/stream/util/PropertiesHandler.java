@@ -43,8 +43,12 @@ public class PropertiesHandler {
 	 * This method adds properties defined in the format as provided by maven's
 	 * <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
 	 * 
-	 * @param container
-	 * @param doc
+	 * @param pop
+	 *            The XML element that is to be checked for properties
+	 * @param variables
+	 *            The variables that have been gathered so far
+	 * @param systemProperties
+	 *            Variables provided through system properties
 	 */
 	public void handlePropertiesElement(Element prop, Variables variables,
 			Variables systemProperties) {
@@ -143,7 +147,8 @@ public class PropertiesHandler {
 	 * This method adds all the system properties to the container properties,
 	 * possibly overwriting pre-defined properties.
 	 * 
-	 * @param container
+	 * @param variables
+	 *            The collection of variables to add the system properties to.
 	 */
 	public void addSystemProperties(Variables variables) {
 		for (Object key : System.getProperties().keySet()) {

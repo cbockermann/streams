@@ -150,7 +150,7 @@ public class DocFinder {
 	}
 
 	/**
-	 * @param args
+	 * @param packages
 	 */
 	public static Map<Class<?>, URL> findDocumentations(String[] packages)
 			throws Exception {

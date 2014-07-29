@@ -100,7 +100,7 @@ public abstract class Script extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.Data)
+	 * @see stream.data.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

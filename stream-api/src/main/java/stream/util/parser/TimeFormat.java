@@ -32,7 +32,7 @@ import java.text.NumberFormat;
  * (usually given in milliseconds).
  * </p>
  * 
- * @author Christian Bockermann &lt;chris@jwall.org&g;
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public class TimeFormat {
@@ -88,6 +88,7 @@ public class TimeFormat {
 	 * and creates a new String containing a description of the time by means of
 	 * days, hours, minutes and seconds. If <code>time</code> is less than any
 	 * of the mentioned properties, then this field will not be printed, e.g.
+	 * </p>
 	 * <ul>
 	 * <li>calling <code>format( 1000 )</code> will result in the string
 	 * <code>&quot;1s&quot;</code></li>
@@ -95,9 +96,8 @@ public class TimeFormat {
 	 * <li>calling <code>format( 90000 * 1000 )</code>, i.e. milliseconds of one
 	 * day + 1 hour, will result in <code>&quot;1 day 1h&quot;</code>.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
-	 * This method is optimized over the old version (<code>formatOld()</code).
+	 * This method is optimized over the old version (<code>formatOld()</code>).
 	 * </p>
 	 * 
 	 * @param timeInMilliseconds

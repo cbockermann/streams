@@ -60,8 +60,14 @@ public class ServiceInjection {
 	 * the service is looked up and injected into the processor by the setter
 	 * method.
 	 * 
-	 * @param container
+	 * @param refs
+	 *            The set of service references that need to be resolved.
+	 * @param ctx
 	 *            The container that holds the processors which are to be wired.
+	 * @param graph
+	 *            The compute graph containing all the components.
+	 * @param variables
+	 *            The variables that may be required to resolve the references.
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unused")

@@ -38,10 +38,6 @@ public class WildcardPattern {
 		return matches(pattern, input);
 	}
 
-	/**
-	 * @see org.jwall.web.audit.rules.Condition#matches(java.lang.String,
-	 *      java.lang.String)
-	 */
 	public static boolean matches(String pattern, String input) {
 
 		String filename = input.toLowerCase();

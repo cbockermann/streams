@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.annotations.Parameter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -66,12 +67,56 @@ public class Join extends AbstractQueue {
 	private String index;
 	private String sync;
 
+	public Join() {
+		super();
+		count = 0;
+		read = 0;
+	}
+
+	/**
+	 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
+	 * 
+	 * @param capacity
+	 *            the capacity of this queue
+	 * @throws IllegalArgumentException
+	 *             if {@code capacity} is not greater than zero
+	 */
+	public Join(int capacity) {
+		this();
+		if (capacity <= 0)
+			throw new IllegalArgumentException();
+		this.capacity = capacity;
+	}
+
 	public String getIndex() {
 		return index;
 	}
 
+	@Parameter(required = true, description = "the index key, e.g. a timestamp")
 	public void setIndex(String index) {
 		this.index = index;
+	}
+
+	public String[] getStreams() {
+		return streams.toArray(new String[streams.size()]);
+	}
+
+	@Parameter(required = true, description = "identifiers of the different streams (in Combination with sync key )")
+	public void setStreams(String[] streams) {
+		this.streams = new HashSet<String>();
+		for (String unit : streams) {
+			this.streams.add(unit);
+		}
+	}
+
+	public String getSync() {
+		return sync;
+	}
+
+	@Parameter(required = true, description = "the sync key, e.g. @stream )")
+	public void setSync(String sync) {
+		this.sync = sync;
+
 	}
 
 	private Map<String, ArrayBlockingQueue<Data>> queues = new ConcurrentHashMap<String, ArrayBlockingQueue<Data>>();
@@ -101,47 +146,6 @@ public class Join extends AbstractQueue {
 
 	/** Lock held by take, poll, etc */
 	private final ReentrantLock takeLock = new ReentrantLock();
-
-	public String[] getStreams() {
-		return streams.toArray(new String[streams.size()]);
-	}
-
-	public void setStreams(String[] streams) {
-		this.streams = new HashSet<String>();
-		for (String unit : streams) {
-			this.streams.add(unit);
-		}
-	}
-
-	public String getSync() {
-		return sync;
-	}
-
-	public void setSync(String sync) {
-		this.sync = sync;
-
-	}
-
-	public Join() {
-		super();
-		count = 0;
-		read = 0;
-	}
-
-	/**
-	 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
-	 * 
-	 * @param capacity
-	 *            the capacity of this queue
-	 * @throws IllegalArgumentException
-	 *             if {@code capacity} is not greater than zero
-	 */
-	public Join(int capacity) {
-		this();
-		if (capacity <= 0)
-			throw new IllegalArgumentException();
-		this.capacity = capacity;
-	}
 
 	public int size() {
 		int min = Integer.MAX_VALUE;
@@ -372,7 +376,7 @@ public class Join extends AbstractQueue {
 	}
 
 	public String toString() {
-		return "stream.io.BlockingQueue['" + id + "']";
+		return "stream.io.Join['" + id + "']";
 	}
 
 }

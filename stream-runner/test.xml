@@ -1,9 +1,0 @@
-<container id="nico:storage" port="9105">
-    <Stream id="twitter" class="stream.io.BlockingQueue" size="1000" />
-
-    <process input="twitter">
-	<stream.monitor.ItemRate every="100" />
-
-    </process>
-
-</container>

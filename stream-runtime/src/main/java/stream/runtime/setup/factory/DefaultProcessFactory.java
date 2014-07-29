@@ -265,10 +265,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 	}
 
 	/**
-	 * @param container
 	 * @param child
-	 * @param variables
-	 * @param dependencyInjection
+	 * @param local
 	 * @return
 	 * @throws Exception
 	 */

@@ -182,7 +182,6 @@ public class MultiSet<T> implements Set<T> {
 	}
 
 	/**
-	 * @see java.util.Set#toArray(T[])
 	 */
 	@SuppressWarnings({ "unchecked", "hiding" })
 	@Override
@@ -196,10 +195,10 @@ public class MultiSet<T> implements Set<T> {
 
 		return arg0;
 	}
-	
-	public int count( T arg0 ){
-		if( countMap.containsKey( arg0 ) )
-			return countMap.get( arg0 ).intValue();
+
+	public int count(T arg0) {
+		if (countMap.containsKey(arg0))
+			return countMap.get(arg0).intValue();
 		return 0;
 	}
 }

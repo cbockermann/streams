@@ -59,7 +59,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#getKey()
 	 */
 	@Override
 	public String getKey() {
@@ -67,7 +66,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public boolean handlesElement(Element element) {
@@ -78,8 +76,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
-	 *      , org.w3c.dom.Element)
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
@@ -114,8 +110,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.container.ProcessContainer,
-	 *      org.w3c.dom.Document)
+	 * 
 	 */
 	@Override
 	public void handle(IContainer container, Document doc, Variables variables,

@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import stream.Processor;
 import stream.io.Stream;
 import stream.util.URLUtilities;
+import stream.util.Variables;
 
 /**
  * @author chris
@@ -117,9 +118,34 @@ public class DocGenerator {
 				output = "/tmp";
 			}
 
+			File outDir = new File(output);
+
 			DocTree tree = DocTree.findDocs(CLASSES, args);
 			tree.print("  ");
-			tree.generateDocs(new File(output));
+			List<File> indexFiles = tree.generateDocs(outDir);
+
+			String doc = URLUtilities.readContentOrEmpty(DocGenerator.class
+					.getResource("/API.tex"));
+
+			StringBuffer incl = new StringBuffer();
+
+			for (File index : indexFiles) {
+				incl.append("\\input{" + index.getName() + "}\n");
+			}
+
+			Variables vars = new Variables();
+			vars.put("includes", incl.toString());
+
+			doc = vars.expand(doc);
+			PrintStream p = new PrintStream(new File(outDir.getCanonicalPath()
+					+ File.separator + "API.tex"));
+			p.println(doc);
+			p.close();
+
+			URLUtilities.copy(DocGenerator.class.getResource("/streams.pkg"),
+					new File(outDir.getCanonicalPath() + File.separator
+							+ "streams.pkg"));
+
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 			e.printStackTrace();

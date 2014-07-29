@@ -136,9 +136,10 @@ public class DocTree implements Comparable<DocTree> {
 		}
 	}
 
-	public void generateDocs(File base) throws IOException {
+	public List<File> generateDocs(File base) throws IOException {
 		// System.out.println("Generating docs in " +
 		// base.getAbsolutePath());
+		List<File> indexFiles = new ArrayList<File>();
 
 		if (!isLeaf()) {
 			// System.out.println("Checking for index.md file in package "
@@ -157,6 +158,8 @@ public class DocTree implements Comparable<DocTree> {
 			File indexTex = new File(base.getAbsolutePath() + "/" + prefix + p);
 			indexTex.getParentFile().mkdirs();
 			out = new PrintStream(new FileOutputStream(indexTex));
+
+			indexFiles.add(indexTex);
 
 			URL texUrl;
 			URL url = DocTree.class.getResource(getPath() + "/index.md");
@@ -209,7 +212,8 @@ public class DocTree implements Comparable<DocTree> {
 			out.close();
 			DocGenerator.converter.sectionDown();
 			for (DocTree ch : children) {
-				ch.generateDocs(base);
+				List<File> indexes = ch.generateDocs(base);
+				indexFiles.addAll(indexes);
 			}
 			DocGenerator.converter.sectionUp();
 		} else {
@@ -218,13 +222,15 @@ public class DocTree implements Comparable<DocTree> {
 
 			String path = getPath();
 			if (path.trim().isEmpty())
-				return;
+				return indexFiles;
 
 			log.debug("Converting doc-tree leaf '{}'", path);
 			File md = new File(base.getAbsolutePath() + File.separator + prefix
 					+ getPath().substring(1).replace('/', '_') + "_" + name);
 			generateTex(md);
 		}
+
+		return indexFiles;
 	}
 
 	public String getResourceName(String ext) {

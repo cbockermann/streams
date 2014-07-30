@@ -224,7 +224,7 @@ public class DocTree implements Comparable<DocTree> {
 			if (path.trim().isEmpty())
 				return indexFiles;
 
-			log.debug("Converting doc-tree leaf '{}'", path);
+			log.info("Converting doc-tree leaf '{}'", path + "/" + name);
 			File md = new File(base.getAbsolutePath() + File.separator + prefix
 					+ getPath().substring(1).replace('/', '_') + "_" + name);
 			generateTex(md);

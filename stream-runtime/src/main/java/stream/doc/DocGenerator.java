@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.io.Stream;
+import stream.runtime.StreamRuntime;
 import stream.util.URLUtilities;
 import stream.util.Variables;
 
@@ -112,6 +113,8 @@ public class DocGenerator {
 	 */
 	public static void main(String[] args) {
 		try {
+
+			StreamRuntime.setupLogging();
 
 			String output = System.getProperty("output");
 			if (output == null) {

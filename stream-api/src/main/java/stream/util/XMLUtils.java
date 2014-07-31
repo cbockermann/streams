@@ -72,8 +72,8 @@ public class XMLUtils {
 
 	static Logger log = LoggerFactory.getLogger(XMLUtils.class);
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
-	public final static PropertiesHandler propertyHandler = new PropertiesHandler(); 
-	
+	public final static PropertiesHandler propertyHandler = new PropertiesHandler();
+
 	public static Document parseDocument(String xmlString) throws Exception {
 		//
 		// TODO: Enhance this!
@@ -94,10 +94,10 @@ public class XMLUtils {
 	public static String toString(Document doc) throws Exception {
 
 		TransformerFactory tf = TransformerFactory.newInstance();
-		tf.setAttribute("indent-number", new Integer(4));
+		// tf.setAttribute("indent-number", new Integer(4));
 		Transformer trans = tf.newTransformer();
 		trans.setOutputProperty(OutputKeys.METHOD, "xml");
-		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+		// trans.setOutputProperty(OutputKeys.INDENT, "yes");
 		Source source = new DOMSource(doc);
 		StringWriter out = new StringWriter();
 		Result output = new StreamResult(out);
@@ -415,7 +415,7 @@ public class XMLUtils {
 							vars.expand(prop.getTextContent()));
 				}
 			}
-			
+
 		}
 
 		return vars;

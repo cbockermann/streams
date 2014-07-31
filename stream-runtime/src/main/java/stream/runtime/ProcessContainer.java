@@ -93,7 +93,7 @@ import stream.util.XMLUtils;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class ProcessContainer implements IContainer,Runnable {
+public class ProcessContainer implements IContainer, Runnable {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
@@ -175,9 +175,9 @@ public class ProcessContainer implements IContainer,Runnable {
 	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
 
 	boolean server = true;
-	
-	protected long runtime; 
-	
+
+	protected long runtime;
+
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
@@ -220,6 +220,17 @@ public class ProcessContainer implements IContainer,Runnable {
 		}
 	}
 
+	public static Document parseDocument(URL url) throws Exception {
+
+		// Get Document
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(url.openStream());
+
+		return doc;
+	}
+
 	/**
 	 * This constructor creates a new process-container instance by parsing an
 	 * XML document located at the specified URL.
@@ -233,10 +244,16 @@ public class ProcessContainer implements IContainer,Runnable {
 
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
-		this(url, customElementHandler, null);
+		this(parseDocument(url), customElementHandler, null);
 	}
 
 	public ProcessContainer(URL url,
+			Map<String, ElementHandler> customElementHandler,
+			Map<String, String> vars) throws Exception {
+		this(parseDocument(url), customElementHandler, vars);
+	}
+
+	public ProcessContainer(Document doc,
 			Map<String, ElementHandler> customElementHandler,
 			Map<String, String> variables) throws Exception {
 
@@ -282,12 +299,6 @@ public class ProcessContainer implements IContainer,Runnable {
 
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
-
-		// Get Document
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(url.openStream());
 
 		XIncluder includer = new XIncluder();
 
@@ -394,9 +405,7 @@ public class ProcessContainer implements IContainer,Runnable {
 		return depGraph;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getStreams()
 	 */
 	@Override
@@ -404,9 +413,7 @@ public class ProcessContainer implements IContainer,Runnable {
 		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getName()
 	 */
 	@Override
@@ -535,34 +542,34 @@ public class ProcessContainer implements IContainer,Runnable {
 
 	private void drawGraph() {
 		ComputeGraph g = computeGraph();
-		
+
 		log.info("######## Sources ########");
 		for (Object o : g.getSources()) {
-			if(o instanceof Source){
-				log.info("########" + o.toString() + "########" );
-				for(Object t: g.getTargets(o)){
-					log.info("\t==> " + t.toString() );
+			if (o instanceof Source) {
+				log.info("########" + o.toString() + "########");
+				for (Object t : g.getTargets(o)) {
+					log.info("\t==> " + t.toString());
 				}
 			}
 		}
-		
+
 		log.info("######## RootSources ########");
 		for (Object o : g.getRootSources()) {
 			log.info(o.toString());
 		}
-		
-//		log.info("######## Targets ########");
-//		for (Object o : g.getTargets()) {
-//			log.info(o.toString());
-//		}
-		
+
+		// log.info("######## Targets ########");
+		// for (Object o : g.getTargets()) {
+		// log.info(o.toString());
+		// }
+
 		log.info("######## NonRefSinks ########");
 		for (Object o : g.getNonRefQueues()) {
-			log.info("########" + o.toString() + "########" );
-			for(Object t: g.getSourcesFor(o)){
-				log.info("\t==> " + t.toString() );
+			log.info("########" + o.toString() + "########");
+			for (Object t : g.getSourcesFor(o)) {
+				log.info("\t==> " + t.toString());
 			}
-			
+
 		}
 
 	}
@@ -586,14 +593,15 @@ public class ProcessContainer implements IContainer,Runnable {
 		streams.put(id, stream);
 	}
 
-	public void run(){
+	public void run() {
 		try {
 			runtime = execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public long execute() throws Exception  {
+
+	public long execute() throws Exception {
 
 		if (!container.contains(this)) {
 			container.add(this);

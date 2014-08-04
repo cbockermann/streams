@@ -308,6 +308,8 @@ public class ProcessContainer implements IContainer, Runnable {
 
 		log.debug(XMLUtils.toString(doc));
 
+		log.info("XML created and preprocessed.");
+
 		// Container
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);

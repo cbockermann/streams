@@ -1,8 +1,8 @@
 <module>
 
-	<queue id="${copy.id}" class="stream.io.Join" index="${joins.index${include.id}}"
-		streams="${joins.streams${include.id}}" sync="${joins.sync${include.id}}"
-		capacity="${joins.capacity${include.id}}"
-		copies="${joins.copies${include.id}}:[${include.copies${include.id}}]" />
+		<queue id="${copy.id}" class="stream.io.Join" index="${joins.index${include.id}}"
+			streams="${joins.streams${include.id}}" sync="${joins.sync${include.id}}"
+			capacity="${joins.capacity${include.id}}"
+			copies="${joins.copies${include.id}}:[${include.copies${include.id}}]" />
 
 </module>

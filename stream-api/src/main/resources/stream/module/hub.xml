@@ -2,7 +2,7 @@
     
     <queue id="${copy.id}" capacity="${hub.capacity${include.id}}" copies="[${hub.in.copies${include.id}}]:[${include.copies${include.id}}]"/>
     
-	<process input="${copy.id}" copies="[${hub.in.emit${include.id}}]:[${include.copies${include.id}}]">
+	<process input="${copy.id}" copies="[${hub.in.copies${include.id}}]:[${include.copies${include.id}}]">
 	    <stream.flow.Emitter sinks="[${hub.out.emit${include.id}}]:${copy.id.1}" />
 	</process>
 	

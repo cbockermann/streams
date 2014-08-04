@@ -73,7 +73,8 @@ public class CopiesUtils {
 
 					String sub = copyId.substring(start + 1, stop);
 					String[] copies = parseCopiesElemement(sub, false);
-
+					if (copies == null)
+						return null;
 					String pre = copyId.substring(0, start);
 					String post = copyId.substring(stop + 1, copyId.length());
 
@@ -109,10 +110,12 @@ public class CopiesUtils {
 		return copyList.toArray(new Copy[copyList.size()]);
 
 	}
+
 	public static String[] parseIds(String copiesString) {
-		return parseIds(copiesString,false);
-		
+		return parseIds(copiesString, false);
+
 	}
+
 	public static String[] parseIds(String copiesString, boolean ignoreNumbers) {
 		Copy[] copies = parse(copiesString, ignoreNumbers);
 		String[] result = new String[copies.length];
@@ -127,7 +130,7 @@ public class CopiesUtils {
 	private static String[] parseCopiesElemement(String copies,
 			boolean ignoreNumbers) {
 		// incrementing ids or predefinied copies?
-		String[] ids;
+		String[] ids = null;
 
 		// predefinied
 		if (copies.indexOf(",") >= 0) {
@@ -141,9 +144,11 @@ public class CopiesUtils {
 			} else {
 				try {
 					Integer times = new Integer(copies);
-					ids = new String[times];
-					for (int i = 0; i < times; i++) {
-						ids[i] = "" + i;
+					if (times > 0) {
+						ids = new String[times];
+						for (int i = 0; i < times; i++) {
+							ids[i] = "" + i;
+						}
 					}
 				} catch (NumberFormatException ex) {
 					ids = new String[1];

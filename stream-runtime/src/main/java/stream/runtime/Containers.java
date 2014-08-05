@@ -26,6 +26,7 @@ package stream.runtime;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -56,12 +57,11 @@ public class Containers extends LinkedHashMap<String, Container> {
 		pool = Executors.newFixedThreadPool(n);
 	}
 
-	public boolean start(String name) {
+	public Future<Boolean> start(String name) {
 		Container c = get(name);
 		if (c == null)
-			return false;
-		pool.execute(c);
-		return true;
+			return null;
+		return pool.submit(c);
 	}
 
 	public boolean stop(String name) {

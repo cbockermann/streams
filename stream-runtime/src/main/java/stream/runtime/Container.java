@@ -25,12 +25,13 @@ package stream.runtime;
 
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author hendrik
  * 
  */
-public class Container implements Runnable {
+public class Container implements Callable<Boolean> {
 
 	private URL url;
 	private Map<String, String> args;
@@ -44,16 +45,18 @@ public class Container implements Runnable {
 		this.args = args;
 	}
 
-	public void run() {
+	@Override
+	public Boolean call() throws Exception {
 		try {
 			if (this.args == null)
 				stream.run.main(this.url);
 			else
 				stream.run.mainWithMap(this.url, this.args);
+
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-
 	}
-
 }

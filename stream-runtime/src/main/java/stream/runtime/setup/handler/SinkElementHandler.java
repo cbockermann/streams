@@ -72,17 +72,6 @@ public class SinkElementHandler implements ElementHandler {
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
 
-		final ComputeGraph computeGraph = container.computeGraph();
-
-		String className = element.getAttribute("class");
-		if (className == null || className.trim().isEmpty())
-			throw new IllegalArgumentException("class attribute is missing ");
-
-		Map<String, String> params = container.getObjectFactory()
-				.getAttributes(element);
-		if (!params.containsKey("class"))
-			throw new IllegalArgumentException("class attribute is missing ");
-
 		String id = element.getAttribute("id");
 		if (id == null || id.trim().isEmpty())
 			throw new IllegalArgumentException(
@@ -104,6 +93,17 @@ public class SinkElementHandler implements ElementHandler {
 			return;
 		}
 
+		final ComputeGraph computeGraph = container.computeGraph();
+
+		String className = element.getAttribute("class");
+		if (className == null || className.trim().isEmpty())
+			throw new IllegalArgumentException("class attribute is missing ");
+
+		Map<String, String> params = container.getObjectFactory()
+				.getAttributes(element);
+		if (!params.containsKey("class"))
+			throw new IllegalArgumentException("class attribute is missing ");
+
 		for (Copy copy : copies) {
 			Variables local = new Variables(variables);
 			CopiesUtils.addCopyIds(local, copy);
@@ -112,7 +112,9 @@ public class SinkElementHandler implements ElementHandler {
 					params, ObjectFactory.createConfigDocument(element), local);
 
 			container.registerSink(cid, sink);
+			log.info("register sink: {}", cid);
 			computeGraph.addSink(cid, sink);
+			log.info("add sink to compute graph: {}", cid);
 		}
 
 	}

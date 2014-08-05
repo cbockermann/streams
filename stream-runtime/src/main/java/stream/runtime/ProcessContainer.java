@@ -540,6 +540,9 @@ public class ProcessContainer implements IContainer, Runnable {
 		context.setProperty("xml", XMLUtils.toString(doc));
 
 		drawGraph();
+
+		log.info("ProcessContainer is initialized and ready to start:{}",
+				this.toString());
 	}
 
 	private void drawGraph() {
@@ -631,6 +634,8 @@ public class ProcessContainer implements IContainer, Runnable {
 		log.debug("Experiment contains {} stream processes", processes.size());
 
 		log.debug("Initializing all DataStreams...");
+		if (streams.keySet().isEmpty())
+			log.debug("No dataStreams to initialize");
 		for (String name : streams.keySet()) {
 			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);

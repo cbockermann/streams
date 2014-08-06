@@ -97,7 +97,7 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 			if (nowIndex != null) {
 				long indexDiff = nowIndex - startIndex;
 				rate = (1d * indexDiff) / diff;
-				log.info("Data rate '" + getId()
+				log.info("Time rate '" + getId()
 						+ "': {} time (s) processed, time-rate is: {}/second",
 						indexDiff / 1000, rate);
 				start = now;

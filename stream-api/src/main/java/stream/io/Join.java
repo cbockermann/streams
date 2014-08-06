@@ -162,39 +162,6 @@ public class Join extends AbstractQueue {
 	}
 
 	/**
-	 * @see stream.io.QueueService#enqueue(stream.Data)
-	 */
-	public boolean enqueue(Data data) {
-
-		if (data == null)
-			return false;
-
-		if (closed.get())
-			return false;
-
-		// unit
-		final Serializable s2 = data.get(sync);
-		String unit = null;
-		if (s2 != null)
-			unit = s2.toString();
-		// if (streams.contains(unit)) {
-		try {
-			// Serializable s = data.get(index);
-			// if (s != null && s instanceof Long)
-			// log.info("data from {}: {}", unit, (Long) s);
-			ArrayBlockingQueue<Data> queue = queues.get(unit);
-			if (queue != null) {
-				queue.put(data);
-				return true;
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		// }
-		return false;
-	}
-
-	/**
 	 * @see stream.io.Source#init()
 	 */
 	@Override
@@ -242,23 +209,7 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public Data read() throws Exception {
-		//
-		// StringBuilder sb = new StringBuilder();
-		// sb.append("##########");
-		// sb.append(this.id);
-		// sb.append("##########\n");
-		//
-		// for (Map.Entry<String, ArrayBlockingQueue<Data>> q :
-		// queues.entrySet()) {
-		// sb.append(q.getKey());
-		// sb.append(":");
-		// sb.append(q.getValue().size());
-		// sb.append("\n");
-		// }
-		// log.info(sb.toString());
-
 		log.trace("Reading from queue {}", getId());
-		// init (angenommen units ist String array)
 
 		final ReentrantLock takeLock = this.takeLock;
 		takeLock.lockInterruptibly();
@@ -308,27 +259,41 @@ public class Join extends AbstractQueue {
 	}
 
 	/**
-	 * @see stream.io.QueueService#poll()
-	 */
-	public Data poll() {
-		throw new IllegalAccessError("Not Implemented");
-	}
-
-	public Data take() {
-		try {
-			return read();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
 	public boolean write(Data item) throws Exception {
-		return enqueue(item);
+		return insert(item);
+	}
+
+	public boolean insert(Data data) {
+
+		if (data == null)
+			return false;
+
+		if (closed.get())
+			return false;
+
+		// unit
+		final Serializable s2 = data.get(sync);
+		String unit = null;
+		if (s2 != null)
+			unit = s2.toString();
+		// if (streams.contains(unit)) {
+		try {
+			// Serializable s = data.get(index);
+			// if (s != null && s instanceof Long)
+			// log.info("data from {}: {}", unit, (Long) s);
+			ArrayBlockingQueue<Data> queue = queues.get(unit);
+			if (queue != null) {
+				queue.put(data);
+				return true;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		// }
+		return false;
 	}
 
 	@Override
@@ -377,6 +342,21 @@ public class Join extends AbstractQueue {
 
 	public String toString() {
 		return "stream.io.Join['" + id + "']";
+	}
+
+	@Override
+	public Data poll() {
+		return null;
+	}
+
+	@Override
+	public Data take() {
+		return null;
+	}
+
+	@Override
+	public boolean enqueue(Data item) {
+		return false;
 	}
 
 }

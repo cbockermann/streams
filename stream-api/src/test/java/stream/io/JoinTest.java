@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cern.jet.random.engine.MersenneTwister64;
@@ -39,11 +40,20 @@ import cern.jet.random.engine.MersenneTwister64;
  *
  */
 public class JoinTest {
+	private int q;
+	private int n;
+	private int c;
+
+	@Before
+	public void init() {
+		q = 4;
+		n = 100000;
+		c = 1000;
+	}
+
 	@Test
 	public void test() throws Exception {
 		// 100*10000=4.685,5.119
-		int q = 100;
-		int n = 10000;
 
 		ExecutorService pool1 = Executors.newCachedThreadPool();
 		ExecutorService pool2 = Executors.newCachedThreadPool();
@@ -55,7 +65,7 @@ public class JoinTest {
 		}
 
 		Join join = new Join();
-		join.setCapacity(100);
+		join.setCapacity(c);
 		join.setIndex("index");
 		join.setStreams(streams);
 		join.setSync("id");
@@ -85,6 +95,51 @@ public class JoinTest {
 				run = false;
 		}
 		long stop = System.currentTimeMillis();
-		System.out.println("runtime:" + (stop - start));
+		System.out.println("Join:runtime:" + (stop - start));
+	}
+
+	@Test
+	public void snappyTest() throws Exception {
+		ExecutorService pool1 = Executors.newCachedThreadPool();
+		ExecutorService pool2 = Executors.newCachedThreadPool();
+
+		String[] streams = new String[q];
+
+		for (int i = 0; i < q; i++) {
+			streams[i] = String.valueOf(i);
+		}
+
+		SnappyJoin join = new SnappyJoin();
+		join.setCapacity(c);
+		join.setIndex("index");
+		join.setStreams(streams);
+		join.setSync("id");
+		join.init();
+
+		MersenneTwister64 random = new MersenneTwister64();
+
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < q; i++) {
+			pool1.execute(new IndexProducer(join, String.valueOf(i), n, random
+					.nextInt()));
+		}
+		BlockingQueue<Boolean> resultQueue = new ArrayBlockingQueue<>(q);
+
+		for (int i = 0; i < q; i++) {
+			pool2.execute(new IndexConsumer(join, n / 2, resultQueue));
+		}
+
+		boolean run = true;
+		int count = 0;
+		while (run) {
+			Boolean result = resultQueue.take();
+			if (result.equals(false))
+				Assert.fail();
+			count++;
+			if (count == q)
+				run = false;
+		}
+		long stop = System.currentTimeMillis();
+		System.out.println("SnappyJoin:runtime:" + (stop - start));
 	}
 }

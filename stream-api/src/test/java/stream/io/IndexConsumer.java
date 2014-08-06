@@ -46,14 +46,16 @@ public class IndexConsumer implements Runnable {
 	public void run() {
 		int c = 0;
 		long index = 0;
-		while (c < reads) {
+		while (c < reads * 100000) {
 			Data d;
 			try {
-				d = join.read();
-				long tindex = (Long) d.get("index");
-				if (tindex < index)
-					resultQueue.put(false);
-				index = tindex;
+				if (c % 100000 == 0) {
+					d = join.read();
+					long tindex = (Long) d.get("index");
+					if (tindex < index)
+						resultQueue.put(false);
+					index = tindex;
+				}
 				c++;
 				// System.out.println(d + ":"+c);
 			} catch (Exception e) {

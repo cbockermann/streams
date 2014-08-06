@@ -48,7 +48,7 @@ import cern.colt.function.IntComparator;
  * @author Hendrik Blom
  * 
  */
-public class SnappyJoin extends AbstractQueue {
+public class SnappyJoin extends Join {
 
 	private static final Logger log = LoggerFactory.getLogger(SnappyJoin.class);
 
@@ -163,7 +163,8 @@ public class SnappyJoin extends AbstractQueue {
 	/**
 	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
-	public boolean enqueue(Data data) {
+	@Override
+	public boolean insert(Data data) {
 
 		if (data == null)
 			return false;
@@ -183,7 +184,11 @@ public class SnappyJoin extends AbstractQueue {
 		// log.info("data from {}: {}", unit, (Long) s);
 		SnappyBlockingQueue queue = queues.get(unit);
 		if (queue != null) {
-			queue.enqueue(data);
+			try {
+				queue.write(data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
 		// } catch (InterruptedException e) {
@@ -272,7 +277,7 @@ public class SnappyJoin extends AbstractQueue {
 				read = 0;
 				// Read accs
 				for (int i = 0; i < reads; i++) {
-					dataQueue[i] = queues.get(readQueue[i]).take();
+					dataQueue[i] = queues.get(readQueue[i]).read();
 					Serializable s = dataQueue[i].get(index);
 					if (s != null && s instanceof Long) {
 						accs[i] = (Long) s;
@@ -327,7 +332,7 @@ public class SnappyJoin extends AbstractQueue {
 	 */
 	@Override
 	public boolean write(Data item) throws Exception {
-		return enqueue(item);
+		return insert(item);
 	}
 
 	@Override

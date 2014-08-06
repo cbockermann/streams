@@ -24,7 +24,6 @@
 package stream.monitor;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ import stream.statistics.StatisticsService;
  */
 public class TimeRate extends AbstractProcessor implements StatisticsService {
 
-	final DecimalFormat fmt = new DecimalFormat("0.000");
 	static Logger log = LoggerFactory.getLogger(TimeRate.class);
 	protected Long start = null;
 	protected Long startIndex = null;
@@ -98,10 +96,10 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 			nowIndex = getIndex(data);
 			if (nowIndex != null) {
 				long indexDiff = nowIndex - startIndex;
-				rate = 1d * indexDiff / diff;
+				rate = (1d * indexDiff) / diff;
 				log.info("Data rate '" + getId()
-						+ "': {} time processed, time-rate is: {}/second",
-						indexDiff / 1000, fmt.format(rate));
+						+ "': {} time (s) processed, time-rate is: {}/second",
+						indexDiff / 1000, rate);
 				start = now;
 				startIndex = nowIndex;
 			}

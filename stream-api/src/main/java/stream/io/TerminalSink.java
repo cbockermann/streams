@@ -51,7 +51,6 @@ public class TerminalSink implements Sink {
 
 	@Override
 	public boolean write(Data item) throws Exception {
-		System.out.println(item);
 		return true;
 	}
 

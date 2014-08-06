@@ -23,6 +23,7 @@
  */
 package stream.monitor;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 
 import org.slf4j.Logger;
@@ -42,14 +43,15 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 
 	final DecimalFormat fmt = new DecimalFormat("0.000");
 	static Logger log = LoggerFactory.getLogger(TimeRate.class);
-	int count = 0;
-	Long start = null;
+	protected Long start = null;
+	protected Long startIndex = null;
+	protected Long nowIndex = null;
 
-	Double rate = new Double(0.0);
+	protected Double rate = new Double(0.0);
 
-	Integer every = null;
-	String key = "dataRate";
-	String id;
+	protected Integer every = null;
+	protected String id;
+	protected String index;
 
 	/**
 	 * @return the id
@@ -67,21 +69,6 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 	}
 
 	/**
-	 * @return the key
-	 */
-	public String getKey() {
-		return key;
-	}
-
-	/**
-	 * @param key
-	 *            the key to set
-	 */
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
 	 */
 	@Override
@@ -92,21 +79,33 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 
 	@Override
 	public Data process(Data data) {
-		count++;
-
-		if (start == null)
+		if (start == null) {
 			start = System.currentTimeMillis();
+			startIndex = getIndex(data);
+		}
 		Long now = System.currentTimeMillis();
 		long diff = now - start;
 		if (diff > every) {
-			rate = (1000d * count) / diff;
-			log.info("Data rate '" + getId()
-					+ "': {} items processed, data-rate is: {}/second", count,
-					fmt.format(rate));
-			start = System.currentTimeMillis();
-			count = 0;
+
+			nowIndex = getIndex(data);
+			long indexDiff = nowIndex - startIndex;
+			if (nowIndex != null) {
+				rate = 1d * (indexDiff) / diff;
+				log.info("Data rate '" + getId()
+						+ "': {} time processed, time-rate is: {}/second",
+						indexDiff, fmt.format(rate));
+				start = now;
+				startIndex = nowIndex;
+			}
 		}
 		return data;
+	}
+
+	private Long getIndex(Data data) {
+		Serializable s = data.get(index);
+		if (s != null && s instanceof Long)
+			return (Long) s;
+		return null;
 	}
 
 	/**
@@ -121,7 +120,6 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 
 	@Override
 	public void reset() throws Exception {
-		count = 0;
 	}
 
 	@Override

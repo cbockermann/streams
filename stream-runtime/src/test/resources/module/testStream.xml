@@ -1,0 +1,5 @@
+<module>
+
+	<stream id="${copy.id}" class="stream.io.RandomStream" limit="1000" copies="[${stream.copies${include.id}}]:[${include.copies${include.id}}]"/>
+
+</module>

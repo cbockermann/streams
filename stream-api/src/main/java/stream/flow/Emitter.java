@@ -23,6 +23,8 @@
  */
 package stream.flow;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,13 +88,12 @@ public class Emitter extends ConditionedProcessor {
 		this.skip = skip;
 	}
 
-	
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
-			if(sinks == null)
+		if (sinks == null)
 			throw new IllegalArgumentException("sinks are not set");
-		
+
 	}
 
 	/**
@@ -231,4 +232,11 @@ public class Emitter extends ConditionedProcessor {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys="
+				+ Arrays.toString(keys) + "]";
+	}
+
 }

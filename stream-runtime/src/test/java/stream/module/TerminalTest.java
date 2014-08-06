@@ -32,7 +32,7 @@ public class TerminalTest {
 				TerminalTest.class.getResource(
 						"/module/TerminalTest.properties").toString());
 		Container c = new Container(
-				TerminalTest.class.getResource("/stream/module/server.xml"),
+				TerminalTest.class.getResource("/stream/module/container.xml"),
 				props);
 		containers.put("test", c);
 		Future<Boolean> result = containers.start("test");

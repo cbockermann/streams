@@ -90,10 +90,10 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 			nowIndex = getIndex(data);
 			long indexDiff = nowIndex - startIndex;
 			if (nowIndex != null) {
-				rate = 1d * (indexDiff) / diff;
+				rate = 1d * indexDiff / diff;
 				log.info("Data rate '" + getId()
 						+ "': {} time processed, time-rate is: {}/second",
-						indexDiff, fmt.format(rate));
+						indexDiff / 1000, fmt.format(rate));
 				start = now;
 				startIndex = nowIndex;
 			}

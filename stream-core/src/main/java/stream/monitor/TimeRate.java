@@ -68,6 +68,14 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 		this.id = id;
 	}
 
+	public String getIndex() {
+		return index;
+	}
+
+	public void setIndex(String index) {
+		this.index = index;
+	}
+
 	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
 	 */
@@ -88,8 +96,8 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 		if (diff > every) {
 
 			nowIndex = getIndex(data);
-			long indexDiff = nowIndex - startIndex;
 			if (nowIndex != null) {
+				long indexDiff = nowIndex - startIndex;
 				rate = 1d * indexDiff / diff;
 				log.info("Data rate '" + getId()
 						+ "': {} time processed, time-rate is: {}/second",

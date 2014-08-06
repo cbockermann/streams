@@ -117,6 +117,8 @@ public class SnappyBlockingQueue extends AbstractQueue {
 	 */
 	public boolean enqueue(Data item) {
 		try {
+			final ReentrantLock lock = this.lock;
+			lock.lockInterruptibly();
 			// here is the magic!!!
 			while (condition()) {
 				state = true;
@@ -140,6 +142,8 @@ public class SnappyBlockingQueue extends AbstractQueue {
 			if (log.isDebugEnabled())
 				e.printStackTrace();
 			return false;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -203,12 +207,12 @@ public class SnappyBlockingQueue extends AbstractQueue {
 			data[last] = null;
 			last = inc(last);
 			--count;
-			log.debug("last: {}", last);
+			log.trace("last: {}", last);
 
 			// ////////////////////////
 			// TODO Signals checken !!!!!
 			// TODO
-			log.debug("take size: {}", count);
+			log.trace("take size: {}", count);
 			log.trace("took item from queue: {}", item);
 
 			notEmpty.signal();

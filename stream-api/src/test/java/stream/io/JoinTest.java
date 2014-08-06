@@ -34,12 +34,16 @@ import org.junit.Test;
 
 import cern.jet.random.engine.MersenneTwister64;
 
+/**
+ * @author hendrik
+ *
+ */
 public class JoinTest {
 	@Test
 	public void test() throws Exception {
 		// 100*10000=4.685,5.119
-		int q = 5;
-		int n = 100;
+		int q = 100;
+		int n = 10000;
 
 		ExecutorService pool1 = Executors.newCachedThreadPool();
 		ExecutorService pool2 = Executors.newCachedThreadPool();
@@ -50,22 +54,24 @@ public class JoinTest {
 			streams[i] = String.valueOf(i);
 		}
 
-		Join queue = new Join();
-		queue.setCapacity(100);
-		queue.setIndex("index");
-		queue.setStreams(streams);
-		queue.setSync("id");
-		queue.init();
+		Join join = new Join();
+		join.setCapacity(100);
+		join.setIndex("index");
+		join.setStreams(streams);
+		join.setSync("id");
+		join.init();
 
 		MersenneTwister64 random = new MersenneTwister64();
+
+		long start = System.currentTimeMillis();
 		for (int i = 0; i < q; i++) {
-			pool1.execute(new IndexProducer(queue, String.valueOf(i), n, random
+			pool1.execute(new IndexProducer(join, String.valueOf(i), n, random
 					.nextInt()));
 		}
 		BlockingQueue<Boolean> resultQueue = new ArrayBlockingQueue<>(q);
 
 		for (int i = 0; i < q; i++) {
-			pool2.execute(new IndexConsumer(queue, n / 2, resultQueue));
+			pool2.execute(new IndexConsumer(join, n / 2, resultQueue));
 		}
 
 		boolean run = true;
@@ -78,6 +84,7 @@ public class JoinTest {
 			if (count == q)
 				run = false;
 		}
-
+		long stop = System.currentTimeMillis();
+		System.out.println("runtime:" + (stop - start));
 	}
 }

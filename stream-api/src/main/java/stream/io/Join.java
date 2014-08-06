@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -119,7 +118,7 @@ public class Join extends AbstractQueue {
 
 	}
 
-	private Map<String, ArrayBlockingQueue<Data>> queues = new ConcurrentHashMap<String, ArrayBlockingQueue<Data>>();
+	private Map<String, SnappyBlockingQueue> queues = new ConcurrentHashMap<String, SnappyBlockingQueue>();
 
 	private Swapper swapper = new Swapper() {
 		@Override
@@ -149,7 +148,7 @@ public class Join extends AbstractQueue {
 
 	public int size() {
 		int min = Integer.MAX_VALUE;
-		for (ArrayBlockingQueue<Data> queue : queues.values()) {
+		for (SnappyBlockingQueue queue : queues.values()) {
 			if (min > queue.size())
 				min = queue.size();
 		}
@@ -178,18 +177,18 @@ public class Join extends AbstractQueue {
 		if (s2 != null)
 			unit = s2.toString();
 		// if (streams.contains(unit)) {
-		try {
-			// Serializable s = data.get(index);
-			// if (s != null && s instanceof Long)
-			// log.info("data from {}: {}", unit, (Long) s);
-			ArrayBlockingQueue<Data> queue = queues.get(unit);
-			if (queue != null) {
-				queue.put(data);
-				return true;
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		// try {
+		// Serializable s = data.get(index);
+		// if (s != null && s instanceof Long)
+		// log.info("data from {}: {}", unit, (Long) s);
+		SnappyBlockingQueue queue = queues.get(unit);
+		if (queue != null) {
+			queue.enqueue(data);
+			return true;
 		}
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
 		// }
 		return false;
 	}
@@ -209,7 +208,7 @@ public class Join extends AbstractQueue {
 		if (sync == null || sync.isEmpty())
 			throw new IllegalArgumentException("Index is not specified");
 		for (String unit : streams) {
-			queues.put(unit, new ArrayBlockingQueue<Data>(capacity));
+			queues.put(unit, new SnappyBlockingQueue(capacity));
 		}
 
 		reads = streams.size();
@@ -341,7 +340,7 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public int clear() {
-		for (ArrayBlockingQueue<Data> queue : queues.values()) {
+		for (SnappyBlockingQueue queue : queues.values()) {
 			queue.clear();
 		}
 		return -1;

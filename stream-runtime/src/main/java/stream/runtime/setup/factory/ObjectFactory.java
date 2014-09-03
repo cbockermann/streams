@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -209,12 +209,12 @@ public class ObjectFactory extends Variables {
 		log.debug("Creating object '{}' with attributes: {}",
 				node.getNodeName(), params);
 
-		String name = node.getNodeName();
-		for (ObjectCreator creator : objectCreators) {
-			if (name.startsWith(creator.getNamespace())) {
-				return creator.create(name, params, local);
-			}
-		}
+		// String name = node.getNodeName();
+		// for (ObjectCreator creator : objectCreators) {
+		// if (name.startsWith(creator.getNamespace())) {
+		// return creator.create(name, params, local);
+		// }
+		// }
 
 		Object obj = create(this.findClassForElement(node), params,
 				createConfigDocument(node), local);
@@ -244,6 +244,7 @@ public class ObjectFactory extends Variables {
 				log.debug("Expanded {} to {}", orig, expanded);
 			} else {
 				String orig = parameter.get(key);
+				// TODO Exception werfen
 				String expanded = local.expand(orig);
 				log.debug("Expanded {} to {}", orig, expanded);
 				p.put(key, expanded);

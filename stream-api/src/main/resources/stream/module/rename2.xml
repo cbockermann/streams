@@ -1,0 +1,6 @@
+<module>
+	<stream.data.RenameKey from="${rename.from1${include.id}}"
+		to="${rename.to1${include.id}}" />
+		<stream.data.RenameKey from="${rename.from2${include.id}}"
+		to="${rename.to2${include.id}}" />
+</module>

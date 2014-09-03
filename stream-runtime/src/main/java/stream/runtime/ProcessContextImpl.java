@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -44,7 +44,7 @@ public class ProcessContextImpl implements ProcessContext {
 	static Logger log = LoggerFactory.getLogger(ProcessContextImpl.class);
 	final ContainerContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
-
+	
 	public ProcessContextImpl() {
 		containerContext = null;
 	}
@@ -125,5 +125,10 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public void clear() {
 		context.clear();
+	}
+
+	@Override
+	public boolean contains(String key) {
+		return context.containsKey(key);
 	}
 }

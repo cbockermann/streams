@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -77,6 +77,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	protected String lastUrlString = null;
 	protected Expression<String> fileExpression;
 	protected boolean header = true;
+	protected Boolean append = false;
 
 	public CsvWriter() {
 		super();
@@ -170,6 +171,15 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		this.header = header;
 	}
 
+	
+	public Boolean getAppend() {
+		return append;
+	}
+
+	public void setAppend(Boolean append) {
+		this.append = append;
+	}
+
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
@@ -225,7 +235,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			// For now, we append only, if the switch to a new file is caused by
 			// changes of the URL, i.e. initially, we start with new files...
 			//
-			boolean append = (p == null);
+//			boolean append = (p == null);
 
 			try {
 				lastUrlString = expandedUrlString;
@@ -239,7 +249,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 				else
 					out = new FileOutputStream(file, append);
 
-				p = new PrintStream(out);
+				p = new PrintStream(out, false, "UTF-8");
 				lastHeader = null;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();

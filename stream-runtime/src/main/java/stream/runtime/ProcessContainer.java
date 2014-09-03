@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -45,17 +45,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.ComputeGraph;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
+import stream.app.ComputeGraph;
+import stream.container.IContainer;
 import stream.data.DataFactory;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.rpc.RMINamingService;
 import stream.runtime.setup.ObjectCreator;
-import stream.runtime.setup.ServiceReference;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.runtime.setup.factory.ProcessorFactory;
 import stream.runtime.setup.handler.ContainerRefElementHandler;
@@ -93,7 +93,7 @@ import stream.util.XMLUtils;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class ProcessContainer implements IContainer {
+public class ProcessContainer implements IContainer, Runnable {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
@@ -114,9 +114,9 @@ public class ProcessContainer implements IContainer {
 					return;
 				}
 
-				log.info("Running shutdown-hook...");
+				log.debug("Running shutdown-hook...");
 				for (ProcessContainer pc : container) {
-					log.info("Sending shutdown signal to {}", pc);
+					log.debug("Sending shutdown signal to {}", pc);
 					pc.shutdown();
 				}
 			}
@@ -176,6 +176,8 @@ public class ProcessContainer implements IContainer {
 
 	boolean server = true;
 
+	protected long runtime;
+
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
@@ -218,6 +220,17 @@ public class ProcessContainer implements IContainer {
 		}
 	}
 
+	public static Document parseDocument(URL url) throws Exception {
+
+		// Get Document
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(url.openStream());
+
+		return doc;
+	}
+
 	/**
 	 * This constructor creates a new process-container instance by parsing an
 	 * XML document located at the specified URL.
@@ -231,10 +244,16 @@ public class ProcessContainer implements IContainer {
 
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
-		this(url, customElementHandler, null);
+		this(parseDocument(url), customElementHandler, null);
 	}
 
 	public ProcessContainer(URL url,
+			Map<String, ElementHandler> customElementHandler,
+			Map<String, String> vars) throws Exception {
+		this(parseDocument(url), customElementHandler, vars);
+	}
+
+	public ProcessContainer(Document doc,
 			Map<String, ElementHandler> customElementHandler,
 			Map<String, String> variables) throws Exception {
 
@@ -281,14 +300,15 @@ public class ProcessContainer implements IContainer {
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
 
-		// Get Document
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(url.openStream());
-
 		XIncluder includer = new XIncluder();
-		doc = includer.perform(doc);
+
+		Variables v = new Variables(containerVariables);
+
+		doc = includer.perform(doc, v);
+
+		log.debug(XMLUtils.toString(doc));
+
+		log.info("XML created and preprocessed.");
 
 		// Container
 		Element root = doc.getDocumentElement();
@@ -387,9 +407,7 @@ public class ProcessContainer implements IContainer {
 		return depGraph;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getStreams()
 	 */
 	@Override
@@ -397,9 +415,7 @@ public class ProcessContainer implements IContainer {
 		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getName()
 	 */
 	@Override
@@ -522,6 +538,45 @@ public class ProcessContainer implements IContainer {
 		// context.getProperties().putAll(pv);
 
 		context.setProperty("xml", XMLUtils.toString(doc));
+
+		drawGraph();
+
+		log.info("ProcessContainer is initialized and ready to start:{}",
+				this.toString());
+	}
+
+	private void drawGraph() {
+		ComputeGraph g = computeGraph();
+
+		log.info("######## Sources ########");
+		for (Object o : g.getSources()) {
+			if (o instanceof Source) {
+				log.info("########" + o.toString() + "########");
+				for (Object t : g.getTargets(o)) {
+					log.info("\t==> " + t.toString());
+				}
+			}
+		}
+
+		log.info("######## RootSources ########");
+		for (Object o : g.getRootSources()) {
+			log.info(o.toString());
+		}
+
+		// log.info("######## Targets ########");
+		// for (Object o : g.getTargets()) {
+		// log.info(o.toString());
+		// }
+
+		log.info("######## NonRefSinks ########");
+		for (Object o : g.getNonRefQueues()) {
+			log.info("########" + o.toString() + "########");
+			for (Object t : g.getSourcesFor(o)) {
+				log.info("\t==> " + t.toString());
+			}
+
+		}
+
 	}
 
 	public void registerQueue(String id, Queue queue, boolean externalListener)
@@ -543,7 +598,15 @@ public class ProcessContainer implements IContainer {
 		streams.put(id, stream);
 	}
 
-	public long run() throws Exception {
+	public void run() {
+		try {
+			runtime = execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public long execute() throws Exception {
 
 		if (!container.contains(this)) {
 			container.add(this);
@@ -571,6 +634,8 @@ public class ProcessContainer implements IContainer {
 		log.debug("Experiment contains {} stream processes", processes.size());
 
 		log.debug("Initializing all DataStreams...");
+		if (streams.keySet().isEmpty())
+			log.debug("No dataStreams to initialize");
 		for (String name : streams.keySet()) {
 			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);
@@ -696,7 +761,7 @@ public class ProcessContainer implements IContainer {
 			List<LifeCycle> lifeCycles = depGraph.remove(source);
 			for (LifeCycle lf : lifeCycles) {
 				try {
-					log.info("Finishing LifeCycle object {}", lf);
+					log.debug("Finishing LifeCycle object {}", lf);
 					lf.finish();
 				} catch (Exception e) {
 					log.error("Failed to end LifeCycle object {}: {}", lf,
@@ -733,5 +798,10 @@ public class ProcessContainer implements IContainer {
 	 */
 	public void setProcessContext(DefaultProcess process, ProcessContext ctx) {
 		processContexts.put(process, ctx);
+	}
+
+	@Override
+	public NamingService getNamingService() {
+		return namingService;
 	}
 }

@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -100,7 +100,7 @@ public abstract class Script extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.Data)
+	 * @see stream.data.Processor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {

@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.runtime.setup.factory;
 
 import java.util.HashMap;
@@ -5,12 +28,14 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.util.Variables;
 
 public class ProcessConfiguration implements Cloneable {
 
 	private String id;
-	private String copyId;
+	private Copy copy;
 	private String processType;
 
 	private String processClass;
@@ -21,7 +46,7 @@ public class ProcessConfiguration implements Cloneable {
 	private Element element;
 
 	public ProcessConfiguration() {
-		processType ="process";
+		processType = "process";
 	}
 
 	public String getId() {
@@ -31,21 +56,19 @@ public class ProcessConfiguration implements Cloneable {
 	public void setId(String id) {
 		this.id = id;
 		if (variables != null)
-			variables.put(processType+".id", id);
+			variables.put(processType + ".id", id);
 
 	}
 
-	public String getCopyId() {
-		return copyId;
+	public Copy getCopy() {
+		return copy;
 	}
 
-	public void setCopyId(String copyId) {
-		this.copyId = copyId;
+	public void setCopy(Copy copy) {
+		this.copy = copy;
 		if (variables != null)
-			variables.put("copy.id", copyId);
+			CopiesUtils.addCopyIds(variables, copy);
 	}
-	
-	
 
 	public String getProcessType() {
 		return processType;
@@ -104,7 +127,7 @@ public class ProcessConfiguration implements Cloneable {
 	}
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		ProcessConfiguration c = new ProcessConfiguration();
 		c.setAttributes(new HashMap<String, String>(this.getAttributes()));
 
@@ -113,7 +136,7 @@ public class ProcessConfiguration implements Cloneable {
 		c.setOutput(this.getOutput());
 		c.setProcessClass(this.getProcessClass());
 		c.setVariables(this.getVariables());
-		c.setCopyId(this.getCopyId());
+		c.setCopy(this.getCopy());
 		c.setElement(this.element);
 
 		return c;

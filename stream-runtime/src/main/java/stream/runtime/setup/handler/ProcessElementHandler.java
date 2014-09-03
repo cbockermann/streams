@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -33,15 +33,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.ComputeGraph;
-import stream.ComputeGraph.ServiceRef;
-import stream.ComputeGraph.SinkRef;
+import stream.CopiesUtils;
 import stream.Processor;
 import stream.ProcessorList;
+import stream.app.ComputeGraph;
+import stream.app.ComputeGraph.ServiceRef;
+import stream.app.ComputeGraph.SinkRef;
+import stream.container.IContainer;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
-import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.setup.factory.DefaultProcessFactory;
 import stream.runtime.setup.factory.ObjectFactory;
@@ -85,7 +86,7 @@ public class ProcessElementHandler implements ElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
@@ -313,7 +314,7 @@ public class ProcessElementHandler implements ElementHandler {
 					log.debug(
 							"Registering processor with id '{}' in look-up service",
 							id);
-					container.getContext().register(id, (Service) o);
+					container.getNamingService().register(id, (Service) o);
 				}
 				// false id
 				else {
@@ -344,7 +345,8 @@ public class ProcessElementHandler implements ElementHandler {
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value,true);
 					SinkRef sinkRefs = new SinkRef(o, key, refs);
 					computeGraph.addReference(sinkRefs);
 					dependencyInjection.add(sinkRefs);
@@ -360,7 +362,8 @@ public class ProcessElementHandler implements ElementHandler {
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String[] refs = value.split(",");
+//					String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value,true);
 					log.debug("Adding ServiceRef to '{}' for object {}", refs,
 							o);
 					ServiceRef serviceRef = new ServiceRef(o, key, refs,

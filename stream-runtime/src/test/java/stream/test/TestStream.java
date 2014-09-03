@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -68,4 +68,12 @@ public class TestStream extends AbstractStream {
 		// test-method without this method.
 		//
 	}
+
+	@Override
+	public String toString() {
+		return "TestStream [numberOfKeys=" + numberOfKeys + ", rnd=" + rnd
+				+ ", id=" + id + ", url=" + url + ", limit=" + limit
+				+ ", count=" + count + "]";
+	}
+
 }

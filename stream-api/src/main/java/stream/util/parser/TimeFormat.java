@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -32,7 +32,7 @@ import java.text.NumberFormat;
  * (usually given in milliseconds).
  * </p>
  * 
- * @author Christian Bockermann &lt;chris@jwall.org&g;
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
 public class TimeFormat {
@@ -61,8 +61,7 @@ public class TimeFormat {
 
 	static final String[] UNIT_NAME = { " year", " day", "h", "m" };
 
-	static final String[] UNIT_LONG_NAMES = { " year", " day", " hour",
-			" minute" };
+	static final String[] UNIT_LONG_NAMES = { "year", "day", "hour", "minute" };
 
 	private String[] format = UNIT_NAME;
 	private int style = 0;
@@ -89,6 +88,7 @@ public class TimeFormat {
 	 * and creates a new String containing a description of the time by means of
 	 * days, hours, minutes and seconds. If <code>time</code> is less than any
 	 * of the mentioned properties, then this field will not be printed, e.g.
+	 * </p>
 	 * <ul>
 	 * <li>calling <code>format( 1000 )</code> will result in the string
 	 * <code>&quot;1s&quot;</code></li>
@@ -96,9 +96,8 @@ public class TimeFormat {
 	 * <li>calling <code>format( 90000 * 1000 )</code>, i.e. milliseconds of one
 	 * day + 1 hour, will result in <code>&quot;1 day 1h&quot;</code>.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
-	 * This method is optimized over the old version (<code>formatOld()</code).
+	 * This method is optimized over the old version (<code>formatOld()</code>).
 	 * </p>
 	 * 
 	 * @param timeInMilliseconds
@@ -124,8 +123,10 @@ public class TimeFormat {
 					s.append(" ");
 
 				s.append(format[i]);
-				// if( units > 1 && i > 0 )
-				// s.append("s");
+
+				if (style == TimeFormat.LONG_FORMAT && units > 1 && i > 0)
+					s.append("s");
+
 				s.append(" ");
 				ms = left;
 			}

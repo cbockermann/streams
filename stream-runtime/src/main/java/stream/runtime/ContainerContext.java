@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -143,5 +143,14 @@ public class ContainerContext implements Context {
 		log.info("Adding remote container '{}' at {}", key, remoteNamingService);
 		// remoteContainers.put(key, remoteNamingService);
 		this.namingService.addContainer(key, remoteNamingService);
+	}
+
+	@Override
+	public boolean contains(String key) {
+		if (key.startsWith("container.")) {
+			key = key.substring(CONTEXT_NAME.length() + 1);
+			return properties.containsKey(key);
+		}
+		return false;
 	}
 }

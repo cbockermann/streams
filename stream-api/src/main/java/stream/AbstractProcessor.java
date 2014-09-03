@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -38,7 +38,11 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 	protected transient ProcessContext context;
 
 	/**
-	 * @see stream.Processor#resetState()
+	 * @see stream.StatefulProcessor#init()
+	 * @param ctx
+	 *            The process context.
+	 * @throws ex
+	 *             An exception if initialization fails.
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
@@ -47,13 +51,20 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 
 	/**
 	 * @see stream.StatefulProcessor#resetState()
+	 * 
+	 * @throws ex
+	 *             An exception if resetting the state (e.g. after recovery)
+	 *             fails.
 	 */
 	@Override
 	public void resetState() throws Exception {
 	}
 
 	/**
-	 * @see stream.Processor#destory()
+	 * @see stream.StatefulProcessor#finish()
+	 * 
+	 * @throws ex
+	 *             An exception if a proper shut down of this component fails.
 	 */
 	@Override
 	public void finish() throws Exception {

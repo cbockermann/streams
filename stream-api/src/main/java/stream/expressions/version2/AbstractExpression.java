@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -86,6 +86,8 @@ public abstract class AbstractExpression<T extends Serializable> implements
 				statics = true;
 				return;
 			} catch (Exception exc) {
+				if (expression.startsWith("'") && expression.endsWith("'"))
+					expression = expression.substring(1, e.length() - 1);
 				r = createStringExpression();
 			}
 
@@ -254,7 +256,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 
 			nonExps = new String[mids.length + 1];
 			ers = new ArrayList<AbstractExpression<T>.ContextResolver>();
-			int exps = 0;
+
 			for (int i = 0; i < mids.length; i++) {
 				String s = mids[i];
 				// FIRST NONEXP

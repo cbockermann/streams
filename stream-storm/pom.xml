@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.16-SNAPSHOT</version>
+		<version>0.9.19-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<name>streams-storm</name>
@@ -21,10 +21,6 @@
 			<id>github-releases</id>
 			<url>http://oss.sonatype.org/content/repositories/github-releases/</url>
 		</repository>
-		<repository>
-			<id>clojars.org</id>
-			<url>http://clojars.org/repo</url>
-		</repository>
 	</repositories>
 
 
@@ -35,9 +31,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>storm</groupId>
-			<artifactId>storm</artifactId>
-			<version>0.8.2</version>
+			<groupId>org.apache.storm</groupId>
+			<artifactId>storm-core</artifactId>
+			<version>0.9.1-incubating</version>
 			<scope>${storm.scope}</scope>
 		</dependency>
 		<dependency>
@@ -45,11 +41,13 @@
 			<artifactId>streams-runtime</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+<!--
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>[1.5,)</version>
 		</dependency>
+-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -67,26 +65,48 @@
 				</property>
 			</activation>
 
+			<properties>
+				<storm.scope>compile</storm.scope>
+			</properties>
+
 			<build>
+				<finalName>streams-storm-${project.version}</finalName>
 				<plugins>
 					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>1.5</version>
 						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<mainClass />
-								</manifest>
-							</archive>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
+										<Implementation-Title>streams-storm</Implementation-Title>
+										<Implementation-URL>http://www.jwall.org/streams/</Implementation-URL>
+										<Implementation-Version>${pom.version}</Implementation-Version>
+										<Implementation-Revision>${pom.version}</Implementation-Revision>
+										<Specification-Title>streams-storm</Specification-Title>
+										<Specification-Version>1.0</Specification-Version>
+										<main-class>storm.run</main-class>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 						<executions>
 							<execution>
-								<id>make-assembly</id>
 								<phase>package</phase>
 								<goals>
-									<goal>single</goal>
+									<goal>shade</goal>
 								</goals>
 							</execution>
 						</executions>

@@ -1,0 +1,38 @@
+<container>
+
+
+	<property name="test.name" value="test.value" />
+	<property name="test.properties" value="classpath:/property-test.properties" />
+	<property name="copies.names"
+		value="${test.name}-1,${test.name}-2,${test.name}-3,${test.name}-4 " />
+
+	<property name="streams.limit" value="10" />
+	<property name="streams.central" value="s.central" />
+	<property name="streams.central.class" value="stream.test.TestStream"/>
+	<properties url="${test.properties}" />
+	
+
+	<stream id="${streams.central}.${copy.id}" class="${streams.central.class}"
+		limit="${streams.limit}" copies="[${copies.names}]:[2]" />
+
+
+	<process input="${streams.central}.${copy.id}" copies="[${copies.names}]:[2]">
+		<stream.flow.Emitter sinks="transport.${copy.id}:[2]" />
+	</process>
+
+	<queue id="transport.${copy.id}" copies="[${copies.names}]:[2]:[2]"/>
+	
+	<process input="transport.${copy.id}" copies="[${copies.names}]:[2]:[2]">
+		<!-- 
+		<PrintData />
+		 -->
+		<stream.test.LogData message="%{data.@stream} : ${copy.id} + ${copy.id.0} + ${copy.id.1} + ${copy.id.2}" />
+		<stream.flow.Emitter sinks="transport.${copy.id}:[k,j]" />
+	</process>
+
+	<sink id="transport.${copy.id}" class="stream.io.TerminalSink" copies="[${copies.names}]:[2]:[2]:[k,j]"/>
+
+
+
+
+</container>

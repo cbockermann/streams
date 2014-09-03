@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -27,8 +27,6 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import stream.test.DependencyTest;
-
 /**
  * @author chris
  * 
@@ -37,7 +35,7 @@ public class PropertyTest {
 
 	@Test
 	public void test() throws Exception {
-		URL url = DependencyTest.class.getResource("/property-test.xml");
+		URL url = PropertyTest.class.getResource("/property-test2.xml");
 		stream.run.main(url);
 	}
 }

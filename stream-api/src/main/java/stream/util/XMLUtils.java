@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.util;
 
@@ -52,6 +72,7 @@ public class XMLUtils {
 
 	static Logger log = LoggerFactory.getLogger(XMLUtils.class);
 	public final static String UUID_ATTRIBUTE = "stream.storm.uuid";
+	public final static PropertiesHandler propertyHandler = new PropertiesHandler();
 
 	public static Document parseDocument(String xmlString) throws Exception {
 		//
@@ -73,10 +94,10 @@ public class XMLUtils {
 	public static String toString(Document doc) throws Exception {
 
 		TransformerFactory tf = TransformerFactory.newInstance();
-		tf.setAttribute("indent-number", new Integer(4));
+		// tf.setAttribute("indent-number", new Integer(4));
 		Transformer trans = tf.newTransformer();
 		trans.setOutputProperty(OutputKeys.METHOD, "xml");
-		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+		// trans.setOutputProperty(OutputKeys.INDENT, "yes");
 		Source source = new DOMSource(doc);
 		StringWriter out = new StringWriter();
 		Result output = new StreamResult(out);
@@ -394,6 +415,7 @@ public class XMLUtils {
 							vars.expand(prop.getTextContent()));
 				}
 			}
+
 		}
 
 		return vars;

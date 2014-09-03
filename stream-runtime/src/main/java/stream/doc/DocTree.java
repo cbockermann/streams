@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.doc;
 
@@ -116,9 +136,10 @@ public class DocTree implements Comparable<DocTree> {
 		}
 	}
 
-	public void generateDocs(File base) throws IOException {
+	public List<File> generateDocs(File base) throws IOException {
 		// System.out.println("Generating docs in " +
 		// base.getAbsolutePath());
+		List<File> indexFiles = new ArrayList<File>();
 
 		if (!isLeaf()) {
 			// System.out.println("Checking for index.md file in package "
@@ -137,6 +158,8 @@ public class DocTree implements Comparable<DocTree> {
 			File indexTex = new File(base.getAbsolutePath() + "/" + prefix + p);
 			indexTex.getParentFile().mkdirs();
 			out = new PrintStream(new FileOutputStream(indexTex));
+
+			indexFiles.add(indexTex);
 
 			URL texUrl;
 			URL url = DocTree.class.getResource(getPath() + "/index.md");
@@ -189,7 +212,8 @@ public class DocTree implements Comparable<DocTree> {
 			out.close();
 			DocGenerator.converter.sectionDown();
 			for (DocTree ch : children) {
-				ch.generateDocs(base);
+				List<File> indexes = ch.generateDocs(base);
+				indexFiles.addAll(indexes);
 			}
 			DocGenerator.converter.sectionUp();
 		} else {
@@ -198,13 +222,15 @@ public class DocTree implements Comparable<DocTree> {
 
 			String path = getPath();
 			if (path.trim().isEmpty())
-				return;
+				return indexFiles;
 
-			log.debug("Converting doc-tree leaf '{}'", path);
+			log.info("Converting doc-tree leaf '{}'", path + "/" + name);
 			File md = new File(base.getAbsolutePath() + File.separator + prefix
 					+ getPath().substring(1).replace('/', '_') + "_" + name);
 			generateTex(md);
 		}
+
+		return indexFiles;
 	}
 
 	public String getResourceName(String ext) {

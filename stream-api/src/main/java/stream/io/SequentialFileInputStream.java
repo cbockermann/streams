@@ -1,11 +1,34 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.io;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
@@ -64,7 +87,8 @@ public class SequentialFileInputStream extends InputStream {
 	File next = null;
 
 	/* The input-stream of the current file */
-	InputStream reader;
+	FileInputStream reader;
+	FileChannel channel;
 
 	String pattern = "";
 
@@ -76,6 +100,8 @@ public class SequentialFileInputStream extends InputStream {
 	long waitingTime = 0L;
 	boolean removeAfterRead = true;
 	Set<File> finished = new TreeSet<File>(FILE_ORDER);
+
+	final ByteBuffer buffer = ByteBuffer.allocate(1);
 
 	/**
 	 * Creates a new SequentialInputStream, which will read the specified file
@@ -211,6 +237,7 @@ public class SequentialFileInputStream extends InputStream {
 				finished.add(current);
 				read = 0L;
 				reader = new FileInputStream(current);
+				channel = reader.getChannel();
 				log.debug("Now reading from '{}'", current);
 				proceeded = true;
 			} else {
@@ -238,39 +265,55 @@ public class SequentialFileInputStream extends InputStream {
 	@Override
 	public int read() throws IOException {
 
+		waitingTime = 0;
 		if (closed)
 			return -1;
 
-		while (reader == null)
+		while (reader == null) {
 			openNextFile();
+		}
 
-		int data = reader.read();
+		buffer.clear();
+		int data = channel.read(buffer);
+		// log.info("Read {} bytes", data);
 		while (data == -1) {
+			buffer.clear();
 			if (hasNext()) {
 				openNextFile();
 			} else {
 
-				if (maxWaitingTime == 0)
-					return -1;
+				// if (maxWaitingTime == 0)
+				// return -1;
 
 				try {
-					log.debug("Waiting for new data to arrive at file {}",
-							current);
+					// log.debug(
+					// "Waiting {} ms for new data to arrive at file {}",
+					// sleep, current);
+					// log.debug("   file '{}' has size {}", current,
+					// current.length());
+					// log.debug("   channel pos is: {}", channel.position());
 					Thread.sleep(sleep);
 					waitingTime += sleep;
 				} catch (Exception e) {
+					if (log.isDebugEnabled()) {
+						e.printStackTrace();
+					}
 				}
-				if (maxWaitingTime > 0 && waitingTime > maxWaitingTime) {
+				if (maxWaitingTime >= 0 && waitingTime > maxWaitingTime) {
 					closed = true;
 					log.debug("Total sleeping time exhausted!");
 					return -1;
 				}
 			}
-			data = reader.read();
+			log.debug("Trying to read from {} again...", current);
+			data = channel.read(buffer);
+			// log.info("read {} bytes", data);
 		}
 		read++;
 		total++;
-		return data;
+		byte b = buffer.array()[0];
+		// log.info("returning byte: '{}'", (char) b);
+		return b;
 	}
 
 	/**
@@ -291,27 +334,55 @@ public class SequentialFileInputStream extends InputStream {
 		return reader.available();
 	}
 
-	public static void main(String[] args) throws Exception {
-		File input = new File("/tmp/test.log");
+	/**
+	 * @return the sleep
+	 */
+	public Integer getSleep() {
+		return sleep;
+	}
 
-		SequentialFileInputStream f = new SequentialFileInputStream(input,
-				false);
-		PrintStream out = new PrintStream(new FileOutputStream(new File(
-				input.getAbsolutePath() + "-complete")));
+	/**
+	 * @param sleep
+	 *            the sleep to set
+	 */
+	public void setSleep(Integer sleep) {
+		this.sleep = sleep;
+	}
 
-		byte[] buf = new byte[1024];
-		int read = 0;
-		int written = 0;
-		do {
-			if (f.available() > 0)
-				buf = new byte[Math.min(1024, f.available())];
-			read = f.read(buf);
-			if (read >= 0) {
-				written += read;
-				out.write(buf, 0, read);
-				out.flush();
-			}
-			log.debug("{} bytes written", written);
-		} while (read > 0);
+	/**
+	 * @return the maxWaitingTime
+	 */
+	public long getMaxWaitingTime() {
+		return maxWaitingTime;
+	}
+
+	/**
+	 * @param maxWaitingTime
+	 *            the maxWaitingTime to set
+	 */
+	public void setMaxWaitingTime(long maxWaitingTime) {
+		this.maxWaitingTime = maxWaitingTime;
+	}
+
+	/**
+	 * @return the removeAfterRead
+	 */
+	public boolean isRemoveAfterRead() {
+		return removeAfterRead;
+	}
+
+	/**
+	 * @param removeAfterRead
+	 *            the removeAfterRead to set
+	 */
+	public void setRemoveAfterRead(boolean removeAfterRead) {
+		this.removeAfterRead = removeAfterRead;
+	}
+
+	public File getCurrentFile() {
+		if (current == null)
+			return null;
+
+		return new File(current.getAbsolutePath());
 	}
 }

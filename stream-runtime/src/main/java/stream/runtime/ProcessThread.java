@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -23,6 +23,8 @@
  */
 package stream.runtime;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -122,11 +124,18 @@ public class ProcessThread extends Thread {
 
 			process.execute();
 		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String exceptionDetails = sw.toString();
+			log.error(exceptionDetails);
 			e.printStackTrace();
 			try {
 				process.finish();
 			} catch (Exception fe) {
-				fe.printStackTrace();
+				sw = new StringWriter();
+				fe.printStackTrace(new PrintWriter(sw));
+				exceptionDetails = sw.toString();
+				log.error(exceptionDetails);
 			}
 		} finally {
 
@@ -138,8 +147,11 @@ public class ProcessThread extends Thread {
 					l.processFinished(process);
 				}
 			} catch (Exception e) {
+				StringWriter sw = new StringWriter();
+				e.printStackTrace(new PrintWriter(sw));
+				String exceptionDetails = sw.toString();
 				log.error("Failed to call process listeners: {}",
-						e.getMessage());
+						exceptionDetails);
 				// if (log.isDebugEnabled())
 				e.printStackTrace();
 			}

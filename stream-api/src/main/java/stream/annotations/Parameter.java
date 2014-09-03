@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-@Target({ ElementType.METHOD , ElementType.FIELD})
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Parameter {
 
@@ -49,11 +49,11 @@ public @interface Parameter {
 
 	/**
 	 * An optional parameter for the parameter which states whether this
-	 * parameter is optional or required. The default is <code>true</code>.
+	 * parameter is optional or required. The default is <code>false</code>.
 	 * 
 	 * @return <code>true</code> if this parameter is required to be provided.
 	 */
-	boolean required() default true;
+	boolean required() default false;
 
 	/**
 	 * The default minimum for an numerical parameters
@@ -98,8 +98,7 @@ public @interface Parameter {
 	/**
 	 * The setting allows to specify runtime-expansion of parameters. This will
 	 * result in the XML value for the attribute to be cached and the setter to
-	 * be called with the evaluated string for each {@link stream.Data}
-	 * item.
+	 * be called with the evaluated string for each {@link stream.Data} item.
 	 * 
 	 * <b>Important: </b> This feature is not supported, yet!
 	 * 

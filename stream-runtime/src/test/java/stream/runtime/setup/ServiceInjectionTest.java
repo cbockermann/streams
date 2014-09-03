@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -30,11 +30,12 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
-import stream.ComputeGraph;
+import stream.app.ComputeGraph;
 import stream.learner.Prediction;
 import stream.learner.PredictionService;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
+import stream.runtime.ServiceReference;
 
 /**
  * @author chris

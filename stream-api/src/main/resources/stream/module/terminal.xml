@@ -1,0 +1,5 @@
+<module>
+    
+    <sink id="${copy.id}" class="stream.io.TerminalSink" copies="[${terminal.in${include.id}}]:[${include.copies${include.id}}]"/>
+	
+</module>

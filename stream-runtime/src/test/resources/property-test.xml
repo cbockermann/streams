@@ -10,10 +10,11 @@
 	<properties url="${test.properties}" />
 	
 
-	<stream id="${streams.central}.${copy.id}" class="${streams.central.class}" limit="${streams.limit}" copies="${copies.names}"/>
+	<stream id="${streams.central}.${copy.id}" class="${streams.central.class}" limit="${streams.limit}" copies="[${copies.names}]:[8]"/>
 
-	<process input="${streams.central}.${copy.id}"  copies="${copies.names}">
+	<process input="${streams.central}.${copy.id}"  copies="[${copies.names}]:[8]">
 		<PrintData/>
+		<stream.logger.Message m="${copy.id} + ${copy.id.1}"/>
 	</process>
 
 	

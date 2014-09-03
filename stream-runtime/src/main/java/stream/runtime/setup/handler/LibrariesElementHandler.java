@@ -1,5 +1,25 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.runtime.setup.handler;
 
@@ -15,9 +35,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.container.IContainer;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
-import stream.runtime.IContainer;
 import stream.runtime.ProcessContainer;
 import stream.runtime.dependencies.Dependency;
 import stream.runtime.dependencies.DependencyResolver;
@@ -39,7 +59,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#getKey()
 	 */
 	@Override
 	public String getKey() {
@@ -47,7 +66,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public boolean handlesElement(Element element) {
@@ -58,8 +76,6 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer
-	 *      , org.w3c.dom.Element)
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
@@ -94,8 +110,7 @@ public class LibrariesElementHandler implements DocumentHandler, ElementHandler 
 	}
 
 	/**
-	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
-	 *      org.w3c.dom.Document)
+	 * 
 	 */
 	@Override
 	public void handle(IContainer container, Document doc, Variables variables,

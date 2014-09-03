@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -49,7 +49,7 @@ public class LookupTestCsv {
 		URL url = LookupTestCsv.class.getResource("/lookup-test-json.xml");
 
 		ProcessContainer pc = new ProcessContainer(url);
-		long time = pc.run();
+		long time = pc.execute();
 		log.info("Container finished after {} ms.", time);
 
 		CollectorService collector = pc.getContext().lookup("collector",

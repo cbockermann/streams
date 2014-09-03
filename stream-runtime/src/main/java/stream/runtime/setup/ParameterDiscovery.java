@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -147,11 +147,18 @@ public class ParameterDiscovery {
 	}
 
 	public static String getParameterName(Method m) {
-		if (isGetter(m)) {
+		if (isGetter(m) || isSetter(m)) {
 
 			String key = m.getName().substring(3, 4).toLowerCase();
 			if (m.getName().length() > 3)
 				key += m.getName().substring(4);
+
+			Parameter an = m.getAnnotation(Parameter.class);
+			if (an != null && an.name() != null && !an.name().trim().isEmpty()) {
+				log.debug("Method is annotated with 'name' attribute '{}'!", an
+						.name().trim());
+				key = an.name().trim();
+			}
 
 			return key;
 		}

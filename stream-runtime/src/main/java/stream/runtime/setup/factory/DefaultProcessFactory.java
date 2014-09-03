@@ -1,3 +1,26 @@
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
+ * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package stream.runtime.setup.factory;
 
 import java.util.ArrayList;
@@ -11,13 +34,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.ComputeGraph;
-import stream.ComputeGraph.ServiceRef;
-import stream.ComputeGraph.SinkRef;
-import stream.ComputeGraph.SourceRef;
+import stream.CopiesUtils;
+import stream.Copy;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
+import stream.app.ComputeGraph;
+import stream.app.ComputeGraph.ServiceRef;
+import stream.app.ComputeGraph.SinkRef;
+import stream.app.ComputeGraph.SourceRef;
 import stream.io.Sink;
 import stream.runtime.DefaultProcess;
 import stream.runtime.DependencyInjection;
@@ -57,6 +82,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 		ProcessConfiguration[] configs;
 
 		ProcessConfiguration config = new ProcessConfiguration();
+		config.setCopy(new Copy());
+
 		Map<String, String> attr = objectFactory.getAttributes(e);
 
 		config.setAttributes(attr);
@@ -70,7 +97,6 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 		String out = attr.get("output");
 
-		config.setInput(src);
 		config.setOutput(out);
 
 		// Set Process class
@@ -103,34 +129,14 @@ public class DefaultProcessFactory implements ProcessFactory {
 			log.debug("Expanding '{}'", copies);
 			copies = v.expand(copies);
 
-			// incrementing ids or predefinied copies?
-			String[] ids;
-
-			// predefinied
-			if (copies.indexOf(",") >= 0) {
-				ids = copies.split(",");
-			}
-			// incrementing ids
-			else {
-				try {
-					Integer times = new Integer(copies);
-					ids = new String[times];
-					for (int i = 0; i < times; i++) {
-						ids[i] = "" + i;
-					}
-				} catch (NumberFormatException ex) {
-					ids = new String[1];
-					ids[0] = copies;
-				}
-
-			}
+			Copy[] ids = CopiesUtils.parse(copies);
 			log.debug("Creating {} processes due to copies='{}'", ids.length,
 					copies);
 
 			configs = new ProcessConfiguration[ids.length];
 			int i = 0;
 			// create process-local properties
-			for (String pid : ids) {
+			for (Copy copy : ids) {
 
 				ProcessConfiguration configi = null;
 				try {
@@ -143,10 +149,10 @@ public class DefaultProcessFactory implements ProcessFactory {
 				configi.setVariables(v);
 				Variables local = configi.getVariables();
 
-				String idpid = id + "-" + pid;
+				String idpid = id + "-" + copy.getId();
 				idpid = local.expand(idpid);
 				configi.setId(idpid);
-				configi.setCopyId(pid);
+				configi.setCopy(copy);
 
 				// input output
 				String input = local.expand(src);
@@ -168,10 +174,16 @@ public class DefaultProcessFactory implements ProcessFactory {
 		}
 
 		else {
+
 			Variables local = new Variables(v);
 			config.setVariables(local);
 			id = local.expand(id);
 			config.setId(id);
+
+			if (src != null) {
+				config.setInput(local.expand(src));
+			}
+
 			return new ProcessConfiguration[] { config };
 		}
 	}
@@ -253,10 +265,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 	}
 
 	/**
-	 * @param container
 	 * @param child
-	 * @param variables
-	 * @param dependencyInjection
+	 * @param local
 	 * @return
 	 * @throws Exception
 	 */
@@ -285,8 +295,13 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
 
-		Object o = objectFactory.create(child, params, local);
-
+		Object o = null;
+		try {
+			o = objectFactory.create(child, params, local);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Error in:"
+					+ child.getNodeName(), e);
+		}
 		if (o instanceof ProcessorList) {
 
 			NodeList children = child.getChildNodes();
@@ -352,7 +367,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found queue-injection for key '{}' in processor '{}'",
 							key, o);
 
-					String[] refs = value.split(",");
+					// String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value);
 					SinkRef sinkRefs = new SinkRef(o, key, refs);
 					computeGraph.addReference(sinkRefs);
 					dependencyInjection.add(sinkRefs);
@@ -368,7 +384,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 							"Found service setter for key '{}' in processor {}",
 							key, o);
 
-					String[] refs = value.split(",");
+					// String[] refs = value.split(",");
+					String[] refs = CopiesUtils.parseIds(value);
 					log.debug("Adding ServiceRef to '{}' for object {}", refs,
 							o);
 					ServiceRef serviceRef = new ServiceRef(o, key, refs,

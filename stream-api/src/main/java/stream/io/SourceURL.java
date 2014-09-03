@@ -1,14 +1,36 @@
-/**
+/*
+ *  streams library
+ *
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
+ *  streams is a library, API and runtime environment for processing high
+ *  volume data streams. It is composed of three submodules "stream-api",
+ *  "stream-core" and "stream-runtime".
+ *
+ *  The streams library (and its submodules) is free software: you can 
+ *  redistribute it and/or modify it under the terms of the 
+ *  GNU Affero General Public License as published by the Free Software 
+ *  Foundation, either version 3 of the License, or (at your option) any 
+ *  later version.
+ *
+ *  The stream.ai library (and its submodules) is distributed in the hope
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package stream.io;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
@@ -63,6 +85,7 @@ public class SourceURL implements Serializable {
 		urlProvider.put(PROTOCOL_SSL, stream.urls.SSLConnection.class);
 		urlProvider.put(PROTOCOL_TCP, stream.urls.TcpConnection.class);
 		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
+		urlProvider.put("files", stream.urls.FilesConnection.class);
 	}
 
 	final URL url;
@@ -107,6 +130,9 @@ public class SourceURL implements Serializable {
 	public SourceURL(String urlString) throws Exception {
 		this.url = null;
 		this.urlString = urlString;
+
+		if (!hasProtocol(urlString))
+			throw new MalformedURLException("Missing Protocol in: " + urlString);
 
 		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
@@ -234,6 +260,14 @@ public class SourceURL implements Serializable {
 		}
 	}
 
+	private boolean hasProtocol(String urlString) {
+		String[] p = urlString.split(":");
+		if (p.length < 2
+				|| (p.length > 1 && (p[0] == null || p[0].length() == 0)))
+			return false;
+		return true;
+	}
+
 	public boolean isGzip() {
 		if (urlString != null && urlString.toLowerCase().endsWith(".gz"))
 			return true;
@@ -259,6 +293,7 @@ public class SourceURL implements Serializable {
 
 	private InputStream createStream() throws IOException {
 
+		log.debug("Opening URL {}", this.urlString);
 		if (this.url != null) {
 			return url.openStream();
 		}
@@ -317,6 +352,15 @@ public class SourceURL implements Serializable {
 		String theUrl = this.urlString;
 		try {
 
+			if (theUrl.startsWith(PROTOCOL_FILE + ":")) {
+				File f = new File(theUrl.substring(PROTOCOL_FILE.length() + 1));
+				if (!f.canRead()) {
+					log.error("Cannot open file '{}' for reading!", f);
+					throw new FileNotFoundException("Cannot open file '"
+							+ f.getAbsolutePath() + "' for reading!");
+				}
+			}
+
 			if (theUrl.startsWith(PROTOCOL_FIFO)) {
 
 				log.debug("Handling FIFO URL pattern...");
@@ -357,6 +401,8 @@ public class SourceURL implements Serializable {
 			}
 			return conn.getInputStream();
 			// return url.openStream();
+		} catch (FileNotFoundException fnf) {
+			throw fnf;
 		} catch (Exception e) {
 			log.error(
 					"Failed to open '{}' with default Java URL mechanism: {}",

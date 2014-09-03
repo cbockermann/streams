@@ -1,0 +1,11 @@
+<module>
+	
+    <queue id="output.module${include.id}:${copy.id}" capacity="${split.queuecapacity${include.id}}" copies="${include.copies}"/>
+    
+	<process input="output.module${include.id}:${copy.id}" copies="${include.copies}" >
+	    <stream.flow.Emitter sinks="input.module[${split.copies${include.id}}]:[${include.copies}]"/>
+	</process>
+
+	<queue id="input.module${copy.id}" capacity="${split.queuecapacity${include.id}}" copies="[${split.copies${include.id}}]:[${include.copies}]"/> 
+	
+</module>

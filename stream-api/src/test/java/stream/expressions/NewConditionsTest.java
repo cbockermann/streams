@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
 import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
@@ -80,8 +79,17 @@ public class NewConditionsTest {
 
 	@Test
 	public void testBooleanExpressions() throws Exception {
-
 		Data data = DataFactory.create();
+
+		// CONSTANTS
+
+		assertCondition("true", data, true);
+		assertCondition("TRUE", data, true);
+
+		assertCondition("false", data, false);
+		assertCondition("FALSE", data, false);
+
+		// Dynamic
 
 		data.put("test1", true);
 		data.put("test2", false);
@@ -305,6 +313,10 @@ public class NewConditionsTest {
 		// ******************************
 		// Condition Double
 		Data data = DataFactory.create();
+		data.put("@mbp_status", Integer.valueOf(0));
+		assertCondition("%{data.@mbp_status}==1", data, false);
+
+		data = DataFactory.create();
 		data.put("test", 3d);
 		assertCondition("%{data.test} == 3d", data, true);
 		assertCondition("3d == %{data.test}", data, true);
@@ -652,12 +664,17 @@ public class NewConditionsTest {
 		data.put("test", 3);
 
 		SetValue set = new SetValue();
-		set.setScope(new String[] { "process" });
+		set.setScope(new String[] { "process", "data" });
 		set.setValue("%{data.test}");
 		set.setKey("test");
+		set.setCondition("%{data.test}!=4");
 		set.init(ctx);
 		set.process(data);
 		Assert.assertEquals(3, ctx.get("test"));
+
+		MultiData md = new MultiData(1000000);
+		md.put("test", 3d);
+		testTime(set, md);
 	}
 
 	@Test

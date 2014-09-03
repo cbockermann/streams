@@ -1,0 +1,9 @@
+<module>
+    
+    <queue id="${copy.id}" capacity="${queues.capacity${include.id}}" 
+    copies="${queues.copies${include.id}}:[${include.copies${include.id}}]" class="stream.io.BlockingQueue"/>
+    <!-- 
+    copies="${queues.copies${include.id}}:[${include.copies${include.id}}]" class="stream.io.SnappyBlockingQueue"/>
+     -->
+  
+</module>

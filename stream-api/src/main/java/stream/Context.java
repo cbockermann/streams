@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -33,7 +33,7 @@ package stream;
  * This general definition of a context is a read-only context.
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt; Hendrik Blom
  * 
  */
 public interface Context {
@@ -65,7 +65,8 @@ public interface Context {
 	 * @param variable
 	 * @return
 	 */
-	public Object resolve(String variable); // TODO: Shouldn't we rename this
+	public Object resolve(String key); // TODO: Shouldn't we rename this
 											// method to 'get(String)' ??
-
+	
+	public boolean contains(String key);
 }

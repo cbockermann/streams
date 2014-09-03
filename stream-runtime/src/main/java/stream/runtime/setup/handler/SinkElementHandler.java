@@ -1,7 +1,7 @@
 /*
  *  streams library
  *
- *  Copyright (C) 2011-2012 by Christian Bockermann, Hendrik Blom
+ *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
  * 
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
@@ -25,9 +25,13 @@ package stream.runtime.setup.handler;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import stream.ComputeGraph;
+import stream.CopiesUtils;
+import stream.Copy;
+import stream.app.ComputeGraph;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -35,7 +39,13 @@ import stream.runtime.ProcessContainer;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.util.Variables;
 
+/**
+ * @author Hendrik,cris
+ * 
+ */
 public class SinkElementHandler implements ElementHandler {
+
+	static Logger log = LoggerFactory.getLogger(ProcessElementHandler.class);
 
 	/**
 	 * @see stream.runtime.ElementHandler#getKey()
@@ -54,13 +64,34 @@ public class SinkElementHandler implements ElementHandler {
 	}
 
 	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.runtime.ProcessContainer,
+	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer,
 	 *      org.w3c.dom.Element)
 	 */
 	@Override
 	public void handleElement(ProcessContainer container, Element element,
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
+
+		String id = element.getAttribute("id");
+		if (id == null || id.trim().isEmpty())
+			throw new IllegalArgumentException(
+					"No 'id' attribute defined for sink!");
+
+		String copiesString = element.getAttribute("copies");
+		Copy[] copies = null;
+		if (copiesString != null && !copiesString.isEmpty()) {
+			copiesString = variables.expand(copiesString);
+			copies = CopiesUtils.parse(copiesString);
+		} else {
+			Copy c = new Copy();
+			c.setId(id);
+			copies = new Copy[] { c };
+		}
+
+		if (copies == null) {
+			log.info("queues where not created, due to 'zero' copies");
+			return;
+		}
 
 		final ComputeGraph computeGraph = container.computeGraph();
 
@@ -73,16 +104,18 @@ public class SinkElementHandler implements ElementHandler {
 		if (!params.containsKey("class"))
 			throw new IllegalArgumentException("class attribute is missing ");
 
-		String id = element.getAttribute("id");
-		if (id == null || id.trim().isEmpty())
-			throw new IllegalArgumentException(
-					"No 'id' attribute defined for sink!");
+		for (Copy copy : copies) {
+			Variables local = new Variables(variables);
+			CopiesUtils.addCopyIds(local, copy);
+			String cid = local.expand(id);
+			Sink sink = (Sink) container.getObjectFactory().create(className,
+					params, ObjectFactory.createConfigDocument(element), local);
 
-		Sink sink = (Sink) container.getObjectFactory().create(className,
-				params, ObjectFactory.createConfigDocument(element), variables);
-
-		container.registerSink(id, sink);
-		computeGraph.addSink(id, sink);
+			container.registerSink(cid, sink);
+			log.info("register sink: {}", cid);
+			computeGraph.addSink(cid, sink);
+			log.info("add sink to compute graph: {}", cid);
+		}
 
 	}
 }

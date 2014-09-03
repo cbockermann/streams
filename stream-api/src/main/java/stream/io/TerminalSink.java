@@ -35,7 +35,6 @@ public class TerminalSink implements Sink {
 
 	protected String id;
 
-
 	@Override
 	public String getId() {
 		return id;
@@ -64,6 +63,9 @@ public class TerminalSink implements Sink {
 	public void close() throws Exception {
 	}
 
-	
+	@Override
+	public String toString() {
+		return "TerminalSink [id=" + id + "]";
+	}
 
 }

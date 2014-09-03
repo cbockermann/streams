@@ -220,6 +220,17 @@ public class ProcessContainer implements IContainer, Runnable {
 		}
 	}
 
+	public static Document parseDocument(URL url) throws Exception {
+
+		// Get Document
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(url.openStream());
+
+		return doc;
+	}
+
 	/**
 	 * This constructor creates a new process-container instance by parsing an
 	 * XML document located at the specified URL.
@@ -233,10 +244,16 @@ public class ProcessContainer implements IContainer, Runnable {
 
 	public ProcessContainer(URL url,
 			Map<String, ElementHandler> customElementHandler) throws Exception {
-		this(url, customElementHandler, null);
+		this(parseDocument(url), customElementHandler, null);
 	}
 
 	public ProcessContainer(URL url,
+			Map<String, ElementHandler> customElementHandler,
+			Map<String, String> vars) throws Exception {
+		this(parseDocument(url), customElementHandler, vars);
+	}
+
+	public ProcessContainer(Document doc,
 			Map<String, ElementHandler> customElementHandler,
 			Map<String, String> variables) throws Exception {
 
@@ -283,12 +300,6 @@ public class ProcessContainer implements IContainer, Runnable {
 		if (customElementHandler != null)
 			elementHandler.putAll(customElementHandler);
 
-		// Get Document
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(url.openStream());
-
 		XIncluder includer = new XIncluder();
 
 		Variables v = new Variables(containerVariables);
@@ -296,6 +307,8 @@ public class ProcessContainer implements IContainer, Runnable {
 		doc = includer.perform(doc, v);
 
 		log.debug(XMLUtils.toString(doc));
+
+		log.info("XML created and preprocessed.");
 
 		// Container
 		Element root = doc.getDocumentElement();
@@ -394,9 +407,7 @@ public class ProcessContainer implements IContainer, Runnable {
 		return depGraph;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getStreams()
 	 */
 	@Override
@@ -404,9 +415,7 @@ public class ProcessContainer implements IContainer, Runnable {
 		return new LinkedHashSet<Source>(this.streams.values());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see stream.runtime.IContainer#getName()
 	 */
 	@Override
@@ -531,6 +540,9 @@ public class ProcessContainer implements IContainer, Runnable {
 		context.setProperty("xml", XMLUtils.toString(doc));
 
 		drawGraph();
+
+		log.info("ProcessContainer is initialized and ready to start:{}",
+				this.toString());
 	}
 
 	private void drawGraph() {
@@ -622,6 +634,8 @@ public class ProcessContainer implements IContainer, Runnable {
 		log.debug("Experiment contains {} stream processes", processes.size());
 
 		log.debug("Initializing all DataStreams...");
+		if (streams.keySet().isEmpty())
+			log.debug("No dataStreams to initialize");
 		for (String name : streams.keySet()) {
 			Source stream = streams.get(name);
 			log.debug("Initializing stream '{}'", name);

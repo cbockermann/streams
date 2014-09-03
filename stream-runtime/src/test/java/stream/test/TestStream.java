@@ -68,4 +68,12 @@ public class TestStream extends AbstractStream {
 		// test-method without this method.
 		//
 	}
+
+	@Override
+	public String toString() {
+		return "TestStream [numberOfKeys=" + numberOfKeys + ", rnd=" + rnd
+				+ ", id=" + id + ", url=" + url + ", limit=" + limit
+				+ ", count=" + count + "]";
+	}
+
 }

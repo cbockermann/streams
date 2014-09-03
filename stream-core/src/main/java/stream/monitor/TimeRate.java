@@ -23,7 +23,7 @@
  */
 package stream.monitor;
 
-import java.text.DecimalFormat;
+import java.io.Serializable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,20 +40,16 @@ import stream.statistics.StatisticsService;
  */
 public class TimeRate extends AbstractProcessor implements StatisticsService {
 
-	final DecimalFormat fmt = new DecimalFormat("0.000");
 	static Logger log = LoggerFactory.getLogger(TimeRate.class);
-	String clock = null;
-	Long count = 0L;
-	Long start = null;
+	protected Long start = null;
+	protected Long startIndex = null;
+	protected Long nowIndex = null;
 
-	Long windowCount = 0L;
-	Long last = 0L;
-	Double elapsed = 0.0d;
-	Double rate = new Double(0.0);
+	protected Double rate = new Double(0.0);
 
-	Integer every = null;
-	String key = "dataRate";
-	String id;
+	protected Integer every = null;
+	protected String id;
+	protected String index;
 
 	/**
 	 * @return the id
@@ -70,27 +66,12 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 		this.id = id;
 	}
 
-	public String getClock() {
-		return clock;
+	public String getIndex() {
+		return index;
 	}
 
-	public void setClock(String clock) {
-		this.clock = clock;
-	}
-
-	/**
-	 * @return the key
-	 */
-	public String getKey() {
-		return key;
-	}
-
-	/**
-	 * @param key
-	 *            the key to set
-	 */
-	public void setKey(String key) {
-		this.key = key;
+	public void setIndex(String index) {
+		this.index = index;
 	}
 
 	/**
@@ -103,61 +84,34 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 	}
 
 	@Override
-	public Data process(Data input) {
-
-		if (start == null)
+	public Data process(Data data) {
+		if (start == null) {
 			start = System.currentTimeMillis();
-		// Long now = System.currentTimeMillis();
-		//
-		// if (clock != null) {
-		// now = new Long(input.get(clock) + "");
-		// if (last == 0L)
-		// last = now;
-		// // log.info( "Timestamp: {}, last: {}", now, last );
-		// }
-		//
-		// Double seconds = Math.abs(last - now) / 1000.0d;
-		// if (now > last) {
-		// elapsed += seconds;
-		// rate = windowCount / seconds;
-		// // log.debug("data rate: {}  (overall: {})", rate, count / elapsed);
-		// last = now;
-		// windowCount = 1L;
-		//
-		// if (key != null) {
-		// input.put("time", new Double(elapsed));
-		// input.put(key, new Double(rate));
-		// }
-		//
-		// } else {
-		// windowCount++;
-		// }
-
-		count++;
-		if (every != null && count % every.intValue() == 0) {
-			printDataRate(System.currentTimeMillis());
+			startIndex = getIndex(data);
 		}
+		Long now = System.currentTimeMillis();
+		long diff = now - start;
+		if (diff > every) {
 
-		Long t = System.currentTimeMillis() - start;
-		if (t > 0 && count % 10 == 0) {
-			synchronized (rate) {
-				rate = this.count.doubleValue() / (t.doubleValue() / 1000.0d);
+			nowIndex = getIndex(data);
+			if (nowIndex != null) {
+				long indexDiff = nowIndex - startIndex;
+				rate = (1d * indexDiff) / diff;
+				log.info("Time rate '" + getId()
+						+ "': {} time (s) processed, time-rate is: {}/second",
+						indexDiff / 1000, rate);
+				start = now;
+				startIndex = nowIndex;
 			}
 		}
-
-		return input;
+		return data;
 	}
 
-	public void printDataRate() {
-		printDataRate(System.currentTimeMillis());
-	}
-
-	protected void printDataRate(Long now) {
-		Long sec = (now - start) / 1000;
-		if (sec > 0)
-			log.info("Data rate '" + getId()
-					+ "': {} items processed, data-rate is: {}/second", count,
-					fmt.format(count.doubleValue() / sec.doubleValue()));
+	private Long getIndex(Data data) {
+		Serializable s = data.get(index);
+		if (s != null && s instanceof Long)
+			return (Long) s;
+		return null;
 	}
 
 	/**
@@ -167,28 +121,11 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 	public void finish() throws Exception {
 		super.finish();
 
-		if (start != null) {
-			Long now = System.currentTimeMillis();
-			Long sec = (now - start);
-			log.info("DataRate processor '" + id
-					+ "' has been running for {} ms, {} items.", sec,
-					count.doubleValue());
-			Double s = sec.doubleValue() / 1000.0d;
-			if (s > 0)
-				log.info(
-						"Overall average data-rate for processor '{}' is: {}/second",
-						id, fmt.format(count.doubleValue() / s));
-		} else {
-			log.info("Start time not available.");
-		}
+		log.info("TimeRate finished");
 	}
 
 	@Override
 	public void reset() throws Exception {
-		count = 0L;
-		windowCount = 1L;
-		last = 0L;
-		start = null;
 	}
 
 	@Override

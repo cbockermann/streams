@@ -66,7 +66,7 @@ public class AssertSubContext extends AbstractProcessor {
 			for (String key : keys) {
 				if (context.get(key) == null) {
 					data.put("@subContext:complete", false);
-					log.info("Key: {} is missing", key);
+					// log.info("Key: {} is missing", key);
 					return data;
 				}
 			}

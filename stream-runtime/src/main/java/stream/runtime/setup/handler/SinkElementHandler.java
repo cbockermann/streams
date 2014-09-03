@@ -25,6 +25,8 @@ package stream.runtime.setup.handler;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.CopiesUtils;
@@ -37,7 +39,13 @@ import stream.runtime.ProcessContainer;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.util.Variables;
 
+/**
+ * @author Hendrik,cris
+ * 
+ */
 public class SinkElementHandler implements ElementHandler {
+
+	static Logger log = LoggerFactory.getLogger(ProcessElementHandler.class);
 
 	/**
 	 * @see stream.runtime.ElementHandler#getKey()
@@ -64,6 +72,27 @@ public class SinkElementHandler implements ElementHandler {
 			Variables variables, DependencyInjection dependencyInjection)
 			throws Exception {
 
+		String id = element.getAttribute("id");
+		if (id == null || id.trim().isEmpty())
+			throw new IllegalArgumentException(
+					"No 'id' attribute defined for sink!");
+
+		String copiesString = element.getAttribute("copies");
+		Copy[] copies = null;
+		if (copiesString != null && !copiesString.isEmpty()) {
+			copiesString = variables.expand(copiesString);
+			copies = CopiesUtils.parse(copiesString);
+		} else {
+			Copy c = new Copy();
+			c.setId(id);
+			copies = new Copy[] { c };
+		}
+
+		if (copies == null) {
+			log.info("queues where not created, due to 'zero' copies");
+			return;
+		}
+
 		final ComputeGraph computeGraph = container.computeGraph();
 
 		String className = element.getAttribute("class");
@@ -75,23 +104,6 @@ public class SinkElementHandler implements ElementHandler {
 		if (!params.containsKey("class"))
 			throw new IllegalArgumentException("class attribute is missing ");
 
-		String id = element.getAttribute("id");
-		if (id == null || id.trim().isEmpty())
-			throw new IllegalArgumentException(
-					"No 'id' attribute defined for sink!");
-		
-		String copiesString = element.getAttribute("copies");
-		Copy[] copies = null;
-		if (copiesString != null && !copiesString.isEmpty()){
-			copiesString = variables.expand(copiesString);
-			copies = CopiesUtils.parse(copiesString);
-		}
-		else {
-			Copy c = new Copy();
-			c.setId(id);
-			copies = new Copy[]{c};
-		}
-
 		for (Copy copy : copies) {
 			Variables local = new Variables(variables);
 			CopiesUtils.addCopyIds(local, copy);
@@ -100,10 +112,10 @@ public class SinkElementHandler implements ElementHandler {
 					params, ObjectFactory.createConfigDocument(element), local);
 
 			container.registerSink(cid, sink);
+			log.info("register sink: {}", cid);
 			computeGraph.addSink(cid, sink);
+			log.info("add sink to compute graph: {}", cid);
 		}
-		
-	
 
 	}
 }

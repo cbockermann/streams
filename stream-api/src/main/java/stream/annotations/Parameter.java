@@ -23,10 +23,7 @@
  */
 package stream.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * This annotation can be used to annotate class methods and define them as
@@ -35,6 +32,7 @@ import java.lang.annotation.Target;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
+@Documented
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Parameter {

@@ -62,8 +62,8 @@ public class SnappyBlockingQueue extends AbstractQueue {
 	private int last = 0;
 	private int head = 0;
 
-	private boolean state = false;
-	private boolean readState = false;
+	protected boolean writeSnap = false;
+	protected boolean readSnap = false;
 
 	/**
 	 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
@@ -112,42 +112,16 @@ public class SnappyBlockingQueue extends AbstractQueue {
 		return ((i == 0) ? data.length : i) - 1;
 	}
 
-	/**
-	 * @see stream.io.QueueService#enqueue(stream.Data)
-	 */
-	public boolean enqueue(Data item) {
-		try {
-			// here is the magic!!!
-			while (condition()) {
-				state = true;
-				notFull.await();
-			}
-			data[head] = item;
-			// log.info("head: {}", head);
-			head = inc(head);
-			++count;
-			// log.info(this.toString() + "==>" + count);
-			if (!readState)
-				notEmpty.signal();
-			else if (readState && count > (2 / 3) * capacity) {
-				readState = false;
-				notEmpty.signal();
-			}
+	protected boolean conditionWriteSnap() {
+		// Thread is snapped and the queue is > 1/3 full
+		return (writeSnap && count * 3 > capacity)
+		// Thread is not snapped and the queue is full
+				|| (writeSnap == false && count == capacity);
 
-			return true;
-		} catch (Exception e) {
-			log.error("Error enqueuing item: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-			return false;
-		}
 	}
 
-	public boolean condition() {
-		return (state && count * 3 > capacity)
-				|| (state == false && count == capacity);
-
-		// return count == capacity;
+	protected boolean conditionReadNotSnap() {
+		return readSnap && (count * 3) / 2 > capacity;
 	}
 
 	/**
@@ -194,62 +168,46 @@ public class SnappyBlockingQueue extends AbstractQueue {
 				return null;
 			}
 			while (count == 0) {
-				readState = true;
+				readSnap = true;
 				notEmpty.await();
 			}
+			return extract();
 
-			final Data[] data = this.data;
-			Data item = data[last];
-			data[last] = null;
-			last = inc(last);
-			--count;
-			log.debug("last: {}", last);
-
-			// ////////////////////////
-			// TODO Signals checken !!!!!
-			// TODO
-			log.debug("take size: {}", count);
-			log.trace("took item from queue: {}", item);
-
-			notEmpty.signal();
-			if (!state)
-				notFull.signal();
-			else if (state && count * 3 < capacity) {
-				state = false;
-				notFull.signal();
-				// log.info("changed state");
-			}
-			return item;
-		} catch (InterruptedException e) {
-			if (closed && count == 0) {
-				log.debug("Queue '{}' is closed and empty => null", getId());
-				return null;
-			} else {
-				log.error("Interruped while waiting for data: {}",
-						e.getMessage());
-				if (log.isDebugEnabled())
-					e.printStackTrace();
-			}
+			// } catch (InterruptedException e) {
+			// if (closed && count == 0) {
+			// log.debug("Queue '{}' is closed and empty => null", getId());
+			// return null;
+			// } else {
+			// log.error("Interruped while waiting for data: {}",
+			// e.getMessage());
+			// if (log.isDebugEnabled())
+			// e.printStackTrace();
+			// }
 		} finally {
 			lock.unlock();
 		}
-		return null;
+		// return null;
 	}
 
-	/**
-	 * @see stream.io.QueueService#poll()
-	 */
-	public Data poll() {
-		throw new IllegalAccessError("Not Implemented");
-	}
+	private Data extract() {
+		final Data[] data = this.data;
+		Data item = data[last];
+		data[last] = null;
+		last = inc(last);
+		--count;
+		log.trace("last: {}", last);
 
-	public Data take() {
-		try {
-			return read();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		log.trace("take size: {}", count);
+		log.trace("took item from queue: {}", item);
+
+		if (!writeSnap)
+			notFull.signal();
+		else if (conditionWriteSnap()) {
+			writeSnap = false;
+			notFull.signal();
+			// log.info("changed state");
 		}
+		return item;
 	}
 
 	/**
@@ -267,10 +225,32 @@ public class SnappyBlockingQueue extends AbstractQueue {
 		final ReentrantLock lock = this.lock;
 		lock.lockInterruptibly();
 		try {
-			return enqueue(item);
+			while (conditionWriteSnap()) {
+				writeSnap = true;
+				notFull.await();
+			}
+			return insert(item);
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	/**
+	 * @see stream.io.QueueService#enqueue(stream.Data)
+	 */
+	private boolean insert(Data item) {
+		// insert dataItem
+		data[head] = item;
+		head = inc(head);
+		++count;
+		//
+		if (!readSnap)
+			notEmpty.signal();
+		else if (conditionReadNotSnap()) {
+			readSnap = false;
+			notEmpty.signal();
+		}
+		return true;
 	}
 
 	@Override
@@ -331,6 +311,26 @@ public class SnappyBlockingQueue extends AbstractQueue {
 
 	public String toString() {
 		return "stream.io.BlockingQueue['" + id + "']";
+	}
+
+	// ############ QueueService
+
+	@Override
+	public Data poll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Data take() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean enqueue(Data item) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

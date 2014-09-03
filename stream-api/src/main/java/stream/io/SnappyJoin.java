@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,9 +48,9 @@ import cern.colt.function.IntComparator;
  * @author Hendrik Blom
  * 
  */
-public class Join extends AbstractQueue {
+public class SnappyJoin extends Join {
 
-	private static final Logger log = LoggerFactory.getLogger(Join.class);
+	private static final Logger log = LoggerFactory.getLogger(SnappyJoin.class);
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -67,7 +66,7 @@ public class Join extends AbstractQueue {
 	private String index;
 	private String sync;
 
-	public Join() {
+	public SnappyJoin() {
 		super();
 		count = 0;
 		read = 0;
@@ -81,7 +80,7 @@ public class Join extends AbstractQueue {
 	 * @throws IllegalArgumentException
 	 *             if {@code capacity} is not greater than zero
 	 */
-	public Join(int capacity) {
+	public SnappyJoin(int capacity) {
 		this();
 		if (capacity <= 0)
 			throw new IllegalArgumentException();
@@ -119,7 +118,7 @@ public class Join extends AbstractQueue {
 
 	}
 
-	private Map<String, ArrayBlockingQueue<Data>> queues = new ConcurrentHashMap<String, ArrayBlockingQueue<Data>>();
+	private Map<String, SnappyBlockingQueue> queues = new ConcurrentHashMap<String, SnappyBlockingQueue>();
 
 	private Swapper swapper = new Swapper() {
 		@Override
@@ -149,7 +148,7 @@ public class Join extends AbstractQueue {
 
 	public int size() {
 		int min = Integer.MAX_VALUE;
-		for (ArrayBlockingQueue<Data> queue : queues.values()) {
+		for (SnappyBlockingQueue queue : queues.values()) {
 			if (min > queue.size())
 				min = queue.size();
 		}
@@ -159,6 +158,44 @@ public class Join extends AbstractQueue {
 
 	public int remainingCapacity() {
 		return capacity - size();
+	}
+
+	/**
+	 * @see stream.io.QueueService#enqueue(stream.Data)
+	 */
+	@Override
+	public boolean insert(Data data) {
+
+		if (data == null)
+			return false;
+
+		if (closed.get())
+			return false;
+
+		// unit
+		final Serializable s2 = data.get(sync);
+		String unit = null;
+		if (s2 != null)
+			unit = s2.toString();
+		// if (streams.contains(unit)) {
+		// try {
+		// Serializable s = data.get(index);
+		// if (s != null && s instanceof Long)
+		// log.info("data from {}: {}", unit, (Long) s);
+		SnappyBlockingQueue queue = queues.get(unit);
+		if (queue != null) {
+			try {
+				queue.write(data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		return false;
 	}
 
 	/**
@@ -176,7 +213,7 @@ public class Join extends AbstractQueue {
 		if (sync == null || sync.isEmpty())
 			throw new IllegalArgumentException("Index is not specified");
 		for (String unit : streams) {
-			queues.put(unit, new ArrayBlockingQueue<Data>(capacity));
+			queues.put(unit, new SnappyBlockingQueue(capacity));
 		}
 
 		reads = streams.size();
@@ -209,7 +246,23 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public Data read() throws Exception {
+		//
+		// StringBuilder sb = new StringBuilder();
+		// sb.append("##########");
+		// sb.append(this.id);
+		// sb.append("##########\n");
+		//
+		// for (Map.Entry<String, ArrayBlockingQueue<Data>> q :
+		// queues.entrySet()) {
+		// sb.append(q.getKey());
+		// sb.append(":");
+		// sb.append(q.getValue().size());
+		// sb.append("\n");
+		// }
+		// log.info(sb.toString());
+
 		log.trace("Reading from queue {}", getId());
+		// init (angenommen units ist String array)
 
 		final ReentrantLock takeLock = this.takeLock;
 		takeLock.lockInterruptibly();
@@ -224,7 +277,7 @@ public class Join extends AbstractQueue {
 				read = 0;
 				// Read accs
 				for (int i = 0; i < reads; i++) {
-					dataQueue[i] = queues.get(readQueue[i]).take();
+					dataQueue[i] = queues.get(readQueue[i]).read();
 					Serializable s = dataQueue[i].get(index);
 					if (s != null && s instanceof Long) {
 						accs[i] = (Long) s;
@@ -259,41 +312,27 @@ public class Join extends AbstractQueue {
 	}
 
 	/**
+	 * @see stream.io.QueueService#poll()
+	 */
+	public Data poll() {
+		throw new IllegalAccessError("Not Implemented");
+	}
+
+	public Data take() {
+		try {
+			return read();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
 	 * @see stream.io.Sink#write(stream.Data)
 	 */
 	@Override
 	public boolean write(Data item) throws Exception {
 		return insert(item);
-	}
-
-	public boolean insert(Data data) {
-
-		if (data == null)
-			return false;
-
-		if (closed.get())
-			return false;
-
-		// unit
-		final Serializable s2 = data.get(sync);
-		String unit = null;
-		if (s2 != null)
-			unit = s2.toString();
-		// if (streams.contains(unit)) {
-		try {
-			// Serializable s = data.get(index);
-			// if (s != null && s instanceof Long)
-			// log.info("data from {}: {}", unit, (Long) s);
-			ArrayBlockingQueue<Data> queue = queues.get(unit);
-			if (queue != null) {
-				queue.put(data);
-				return true;
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		// }
-		return false;
 	}
 
 	@Override
@@ -306,7 +345,7 @@ public class Join extends AbstractQueue {
 	 */
 	@Override
 	public int clear() {
-		for (ArrayBlockingQueue<Data> queue : queues.values()) {
+		for (SnappyBlockingQueue queue : queues.values()) {
 			queue.clear();
 		}
 		return -1;
@@ -342,21 +381,6 @@ public class Join extends AbstractQueue {
 
 	public String toString() {
 		return "stream.io.Join['" + id + "']";
-	}
-
-	@Override
-	public Data poll() {
-		return null;
-	}
-
-	@Override
-	public Data take() {
-		return null;
-	}
-
-	@Override
-	public boolean enqueue(Data item) {
-		return false;
 	}
 
 }

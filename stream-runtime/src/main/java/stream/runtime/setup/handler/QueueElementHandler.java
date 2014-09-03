@@ -25,6 +25,8 @@ package stream.runtime.setup.handler;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import stream.CopiesUtils;
@@ -38,7 +40,13 @@ import stream.runtime.setup.factory.ObjectFactory;
 import stream.service.Service;
 import stream.util.Variables;
 
+/**
+ * @author chris, Hendrik
+ * 
+ */
 public class QueueElementHandler implements ElementHandler {
+
+	static Logger log = LoggerFactory.getLogger(QueueElementHandler.class);
 
 	/**
 	 * @see stream.runtime.ElementHandler#getKey()
@@ -83,19 +91,21 @@ public class QueueElementHandler implements ElementHandler {
 
 		String copiesString = element.getAttribute("copies");
 		Copy[] copies = null;
-		if (copiesString != null && !copiesString.isEmpty()){
+		if (copiesString != null && !copiesString.isEmpty()) {
 			copiesString = variables.expand(copiesString);
 			copies = CopiesUtils.parse(copiesString);
-		}
-		else {
+		} else {
 			Copy c = new Copy();
 			c.setId(id);
-			copies = new Copy[]{c};
+			copies = new Copy[] { c };
 		}
-
+		if (copies == null) {
+			log.info("queues where not created, due to 'zero' copies");
+			return;
+		}
 		for (Copy copy : copies) {
 			Variables local = new Variables(variables);
-			
+
 			CopiesUtils.addCopyIds(local, copy);
 			String cid = local.expand(id);
 

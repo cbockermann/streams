@@ -3,7 +3,7 @@
 	<groupId>org.jwall</groupId>
 	<artifactId>streams</artifactId>
 	<name>streams</name>
-	<version>0.9.19-SNAPSHOT</version>
+	<version>0.9.20-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>The streams library is a multi-module library for processing data from data streams</description>
 
@@ -126,7 +126,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4.1</version>
+				<version>2.5</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

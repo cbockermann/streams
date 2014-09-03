@@ -93,7 +93,7 @@ import stream.util.XMLUtils;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class ProcessContainer implements IContainer,Runnable {
+public class ProcessContainer implements IContainer, Runnable {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContainer.class);
 
@@ -175,9 +175,9 @@ public class ProcessContainer implements IContainer,Runnable {
 	protected final List<LifeCycle> lifeCyleObjects = new ArrayList<LifeCycle>();
 
 	boolean server = true;
-	
-	protected long runtime; 
-	
+
+	protected long runtime;
+
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
@@ -535,34 +535,34 @@ public class ProcessContainer implements IContainer,Runnable {
 
 	private void drawGraph() {
 		ComputeGraph g = computeGraph();
-		
+
 		log.info("######## Sources ########");
 		for (Object o : g.getSources()) {
-			if(o instanceof Source){
-				log.info("########" + o.toString() + "########" );
-				for(Object t: g.getTargets(o)){
-					log.info("\t==> " + t.toString() );
+			if (o instanceof Source) {
+				log.info("########" + o.toString() + "########");
+				for (Object t : g.getTargets(o)) {
+					log.info("\t==> " + t.toString());
 				}
 			}
 		}
-		
+
 		log.info("######## RootSources ########");
 		for (Object o : g.getRootSources()) {
 			log.info(o.toString());
 		}
-		
-//		log.info("######## Targets ########");
-//		for (Object o : g.getTargets()) {
-//			log.info(o.toString());
-//		}
-		
+
+		// log.info("######## Targets ########");
+		// for (Object o : g.getTargets()) {
+		// log.info(o.toString());
+		// }
+
 		log.info("######## NonRefSinks ########");
 		for (Object o : g.getNonRefQueues()) {
-			log.info("########" + o.toString() + "########" );
-			for(Object t: g.getSourcesFor(o)){
-				log.info("\t==> " + t.toString() );
+			log.info("########" + o.toString() + "########");
+			for (Object t : g.getSourcesFor(o)) {
+				log.info("\t==> " + t.toString());
 			}
-			
+
 		}
 
 	}
@@ -586,14 +586,15 @@ public class ProcessContainer implements IContainer,Runnable {
 		streams.put(id, stream);
 	}
 
-	public void run(){
+	public void run() {
 		try {
 			runtime = execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public long execute() throws Exception  {
+
+	public long execute() throws Exception {
 
 		if (!container.contains(this)) {
 			container.add(this);

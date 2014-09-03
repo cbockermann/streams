@@ -41,8 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.urls.Connection;
+import stream.urls.FilesConnection;
 import stream.urls.SSLConnection;
 import stream.urls.TcpConnection;
+import stream.urls.TcpListener;
 import stream.util.parser.Parser;
 import stream.util.parser.ParserGenerator;
 
@@ -85,7 +87,17 @@ public class SourceURL implements Serializable {
 		urlProvider.put(PROTOCOL_SSL, stream.urls.SSLConnection.class);
 		urlProvider.put(PROTOCOL_TCP, stream.urls.TcpConnection.class);
 		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
-		urlProvider.put("files", stream.urls.FilesConnection.class);
+		registerUrlHandler("files", FilesConnection.class);
+		registerUrlHandler("tcpd", TcpListener.class);
+	}
+
+	public final static void registerUrlHandler(String protocol,
+			Class<? extends Connection> clazz) {
+		if (urlProvider.containsKey(protocol)) {
+			log.warn("Overriding URL handler {} for protocol '{}'",
+					urlProvider.get(protocol), protocol);
+		}
+		urlProvider.put(protocol, clazz);
 	}
 
 	final URL url;
@@ -180,13 +192,20 @@ public class SourceURL implements Serializable {
 					Parser<Map<String, String>> dbparser = pg.newParser();
 					Map<String, String> values = dbparser.parse("jdbc:"
 							+ target);
-					log.info("sub-parsing jdbc-target returned: {}", values);
+					log.debug("sub-parsing jdbc-target returned: {}", values);
 					vals.putAll(values);
 				}
 
-				log.info("'target' of JDBC-URL is: {}", vals.get("target"));
+				log.debug("'target' of JDBC-URL is: {}", vals.get("target"));
 			}
 			protocol = vals.get("protocol");
+
+			for (String proto : urlProvider.keySet()) {
+				if (protocol.equalsIgnoreCase(proto)) {
+					log.debug("URL {} is handled by {}", url,
+							urlProvider.get(protocol));
+				}
+			}
 
 			String hostname = vals.get("address");
 			if (hostname != null) {

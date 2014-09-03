@@ -26,17 +26,20 @@ package stream.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.minidev.json.JSONObject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.annotations.Parameter;
+import stream.data.DataFactory;
 import stream.util.ByteSize;
 
 /**
@@ -75,6 +78,21 @@ public class JSONBlockWriter extends AbstractProcessor {
 
 		try {
 			if (directory != null) {
+
+				Data dat = DataFactory.create(input);
+				for (String key : dat.keySet()) {
+					Serializable val = dat.get(key);
+					if (val.getClass().isArray()
+							&& val.getClass().getComponentType() == byte.class) {
+						try {
+							String enc = Base64
+									.encodeBase64String((byte[]) val);
+							dat.put(key, enc);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 
 				byte[] json = (JSONObject.toJSONString(input) + "\n")
 						.getBytes();

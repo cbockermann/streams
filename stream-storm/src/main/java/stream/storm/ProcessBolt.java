@@ -151,6 +151,7 @@ public class ProcessBolt extends AbstractBolt {
 		}
 
 		ObjectFactory obf = ObjectFactory.newInstance();
+		obf.addVariables(this.variables);
 		ProcessorFactory pf = new ProcessorFactory(obf);
 
 		// The handler injects wrappers for any QueueService accesses, thus

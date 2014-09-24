@@ -30,7 +30,6 @@ import stream.ConditionedProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
-import stream.expressions.ExpressionResolver;
 import stream.expressions.version2.StringExpression;
 
 /**
@@ -80,10 +79,6 @@ public class Message extends ConditionedProcessor {
 	 */
 	@Override
 	public Data processMatchingData(Data data) {
-
-		Object o = ExpressionResolver.expand(getMessage(), context, data);
-		if (o != null)
-			log.info(o.toString());
 
 		try {
 			switch (level) {

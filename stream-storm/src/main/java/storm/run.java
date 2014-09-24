@@ -124,6 +124,10 @@ public class run {
 	}
 
 	public static void main(URL url) throws Exception {
+		main(url, Long.MAX_VALUE);
+	}
+
+	public static void main(URL url, Long time) throws Exception {
 
 		stream.runtime.StreamRuntime.loadUserProperties();
 
@@ -164,14 +168,15 @@ public class run {
 
 		log.info("########################################################################");
 		log.info("submitting topology...");
-		cluster.submitTopology(
-				System.getProperty("id", UUID.randomUUID().toString()), conf,
-				storm);
+		String topId = System.getProperty("id", UUID.randomUUID().toString());
+		cluster.submitTopology(topId, conf, storm);
 		log.info("########################################################################");
 
 		log.info("Topology submitted.");
 
-		Utils.sleep(Long.MAX_VALUE);
+		Utils.sleep(time);
+
+		cluster.killTopology(topId);
 	}
 
 	public static LocalCluster getLocalCluster() {

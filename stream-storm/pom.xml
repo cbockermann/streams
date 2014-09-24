@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>streams</artifactId>
@@ -33,27 +34,33 @@
 		<dependency>
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-core</artifactId>
-			<version>0.9.1-incubating</version>
-			<scope>${storm.scope}</scope>
+			<version>0.9.2-incubating</version>
+			<!-- <scope>${storm.scope}</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>[1.5,)</version>
-		</dependency>
--->
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
+			<version>[1.5,)</version> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<profiles>
@@ -77,8 +84,17 @@
 						<artifactId>maven-shade-plugin</artifactId>
 						<version>1.5</version>
 						<configuration>
+							<filters>
+								<filter>
+									<artifact>log4j:log4j</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
 										<Implementation-Title>streams-storm</Implementation-Title>
@@ -115,4 +131,5 @@
 			</build>
 		</profile>
 	</profiles>
+	
 </project>

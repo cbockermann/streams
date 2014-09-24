@@ -37,7 +37,7 @@ public class StringExpression extends AbstractExpression<String> {
 	public final String result;
 
 	public StringExpression(String e) {
-		super(e.replace("'", ""));
+		super(e == null ? null : e.replace("'", ""));
 		String st = "";
 		if (this.isStatic()) {
 			Serializable s;

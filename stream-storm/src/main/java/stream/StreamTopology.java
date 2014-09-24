@@ -156,6 +156,7 @@ public class StreamTopology {
 		try {
 			PropertiesHandler handler = new PropertiesHandler();
 			handler.handle(null, doc, st.getVariables(), dependencies);
+			of.addVariables(st.getVariables());
 
 			log.info("########################################################################");
 			log.info("Found properties: {}", st.getVariables());

@@ -192,7 +192,8 @@ public class ObjectFactory extends Variables {
 	}
 
 	public Object create(Element node) throws Exception {
-		return create(node, new HashMap<String, String>(), new Variables());
+		Map<String, String> params = getAttributes(node);
+		return create(node, params, new Variables(this.variables));
 	}
 
 	/**

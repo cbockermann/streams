@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.Subscription;
-import stream.io.Queue;
+import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.runtime.setup.factory.ProcessorFactory.ProcessorCreationHandler;
@@ -90,7 +90,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 				from);
 		for (Method m : p.getClass().getMethods()) {
 			log.debug("Checking method {}", m);
-			if (DependencyInjection.isSetter(m, Queue.class)) {
+			if (DependencyInjection.isSetter(m, Sink.class)) {
 				final String qsn = getQueueSetterName(m);
 				String prop = qsn.substring(0, 1).toLowerCase()
 						+ qsn.substring(1);
@@ -106,7 +106,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 						"Found queue-setter for property {} (property value: '{}')",
 						prop, params.get(prop));
 
-				if (DependencyInjection.isArraySetter(m, Queue.class)) {
+				if (DependencyInjection.isArraySetter(m, Sink.class)) {
 					String[] names = params.get(prop).split(",");
 
 					List<QueueWrapper> wrapper = new ArrayList<QueueWrapper>();

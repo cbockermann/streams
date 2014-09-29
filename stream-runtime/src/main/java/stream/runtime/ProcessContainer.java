@@ -327,7 +327,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			server = true;
 		}
 
-		if (!root.getNodeName().equalsIgnoreCase("experiment")
+		if (!root.getNodeName().equalsIgnoreCase("application")
 				&& !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
 

@@ -60,6 +60,7 @@ public abstract class AbstractExpression<T extends Serializable> implements
 		expression = e.trim();
 		if (expression != null) {
 
+			// TODO Bugfix Was ist wenn mehrere Expressions in String?
 			if (expression.startsWith(DATA_START)
 					&& expression.endsWith(DATA_END)) {
 				r = createContextExpression(expression);

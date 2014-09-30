@@ -1,4 +1,4 @@
-<experiment source="log">
+<application source="log">
 
 <!-- 
 	<Stream id="log" class="stream.io.CsvStream" limit="200"
@@ -23,4 +23,4 @@
  		
 	</Process>
 	
-</experiment>
+</application>

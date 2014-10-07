@@ -36,10 +36,13 @@ public class ApplicationBuilder {
 	static Logger log = LoggerFactory.getLogger(ApplicationBuilder.class);
 
 	public static ComputeGraph parseGraph(SourceURL url) throws Exception {
+		Document doc = XMLUtils.parseDocument(url.openStream());
+		return parseGraph(doc);
+	}
+
+	public static ComputeGraph parseGraph(Document doc) throws Exception {
 
 		ComputeGraph graph = new ComputeGraph();
-
-		Document doc = XMLUtils.parseDocument(url.openStream());
 
 		NodeList streams = doc.getElementsByTagName("stream");
 		for (int i = 0; i < streams.getLength(); i++) {

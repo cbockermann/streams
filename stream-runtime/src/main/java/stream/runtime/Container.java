@@ -47,16 +47,11 @@ public class Container implements Callable<Boolean> {
 
 	@Override
 	public Boolean call() throws Exception {
-		try {
-			if (this.args == null)
-				stream.run.main(this.url);
-			else
-				stream.run.mainWithMap(this.url, this.args);
+		if (this.args == null)
+			stream.run.main(this.url);
+		else
+			stream.run.mainWithMap(this.url, this.args);
 
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return true;
 	}
 }

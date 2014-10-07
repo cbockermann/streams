@@ -47,6 +47,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import stream.util.XMLUtils;
+
 /**
  * @author chris
  * 
@@ -70,7 +72,7 @@ public class DependencyResolver {
 			localRepo = System.getenv("STREAMS_REPOSITORY");
 			log.debug("Using local repository {}", localRepo);
 		}
-		baseUrls.add(localRepo);
+		// baseUrls.add(localRepo);
 		baseUrls.add("http://repo.maven.apache.org/maven2/");
 		scopes.add("compile");
 		scopes.add("provided");
@@ -96,10 +98,17 @@ public class DependencyResolver {
 				resolvedDependencies.add(cur);
 				boolean found = false;
 				for (String base : baseUrls) {
-					try {
 
+					try {
 						if (base.startsWith("/"))
 							base = "file:" + base;
+
+						List<String> versions = extractVersions(cur);
+						log.debug("Versions found for {}: {}", cur.artifactId,
+								versions);
+
+						String sel = selectVersion(versions, cur.version);
+						cur.version = sel;
 
 						log.debug("Checking for {}", cur);
 						Set<Dependency> trans = extractDependenciesFromPom(
@@ -144,6 +153,40 @@ public class DependencyResolver {
 		}
 
 		return fetch(d, m2repo);
+	}
+
+	public List<String> extractVersions(Dependency d) {
+		List<String> vs = new ArrayList<String>();
+
+		for (String base : this.baseUrls) {
+
+			if (base.startsWith("/"))
+				base = "file:" + base;
+
+			String metaXml = base + d.getGroupId().replace('.', '/') + "/"
+					+ d.getArtifactId() + "/maven-metadata.xml";
+			log.debug("Fetching metadata-xml from {}", metaXml);
+			try {
+
+				URL url = new URL(metaXml);
+				Document doc = XMLUtils.parseDocument(url.openStream());
+				NodeList versions = doc.getElementsByTagName("version");
+				for (int i = 0; i < versions.getLength(); i++) {
+					Element v = (Element) versions.item(i);
+					if (v.getTextContent() != null) {
+						String ver = v.getTextContent().trim();
+						if (ver.length() > 0 && !vs.contains(ver)) {
+							vs.add(ver);
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return vs;
 	}
 
 	public File fetch(Dependency d, File repoDir) throws Exception {
@@ -222,11 +265,11 @@ public class DependencyResolver {
 		for (int i = 0; i < list.getLength(); i++) {
 
 			Element el = (Element) list.item(i);
-
+			log.debug("Checking element {}", el.getNodeName());
 			String groupId = null;
 			String artifactId = null;
 			String version = null;
-			String scope = null;
+			String scope = "compile";
 
 			NodeList children = el.getChildNodes();
 			for (int j = 0; j < children.getLength(); j++) {
@@ -249,18 +292,29 @@ public class DependencyResolver {
 				version = pomVersion;
 			}
 
-			if (groupId != null && artifactId != null && version != null) {
+			log.debug("artifact '{}', group '{}'", artifactId, groupId);
+			log.debug("    scope = '{}', version = '{}'", scope, version);
 
-				if (version.startsWith("["))
+			if (groupId != null && artifactId != null) {
+
+				if (version != null && version.startsWith("["))
 					version = version.substring(1);
 
-				if (version.endsWith(",)"))
+				if (version != null && version.endsWith(",)"))
 					version = version.replace(",)", "");
 
 				if (isScopeIncluded(scope)) {
 					log.debug("Adding dependency {} with scope {}", artifactId,
 							scope);
-					resolved.add(new Dependency(groupId, artifactId, version));
+
+					Dependency d = new Dependency(groupId, artifactId, version);
+					List<String> versions = this.extractVersions(d);
+					d.addVersions(versions);
+					log.debug("{} versions are: {}", artifactId, versions);
+					String sel = selectVersion(versions, version);
+					log.debug("Selected version is: {}", sel);
+					d.version = sel;
+					resolved.add(d);
 				} else {
 					log.debug("Dependencies with scope '{}' will be ignored.",
 							scope);
@@ -272,11 +326,26 @@ public class DependencyResolver {
 		return resolved;
 	}
 
+	public String selectVersion(List<String> versions, String ver) {
+
+		if (ver != null && versions.contains(ver)) {
+			log.debug("selecting specific version {}", ver);
+			return ver;
+		}
+
+		String sel = versions.get(versions.size() - 1);
+		log.debug("selecting last version in list {} => {}", versions, sel);
+		return sel;
+	}
+
 	public boolean isScopeIncluded(String scope) {
 
 		if (scope == null || scopes.contains(scope.toLowerCase())) {
+			log.debug("scope '{}' will be included...", scope);
 			return true;
 		}
+
+		log.debug("scope '{}' will be excluded", scope);
 		return false;
 	}
 }

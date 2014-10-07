@@ -1,0 +1,34 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+
+<Container>
+
+	<dependencies>
+		<dependency>
+			<artifactId>slf4j-log4j12</artifactId>
+			<groupId>org.slf4j</groupId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<artifactId>streams-moa</artifactId>
+			<groupId>org.jwall</groupId>
+			<version>[0.0.4,)</version>
+		</dependency>
+	</dependencies>
+
+	<Stream id="stream-0" class="stream.test.TestStream" limit = "10" />
+	<Stream id="stream-1" class="stream.test.TestStream" limit = "10" />
+
+
+	<Process input="stream-${copy.id}" copies="2">
+
+	<!-- 
+		<stream.flow.Delay time="10ms" />
+		<stream.test.LogData message="Process: ${process.id}   %{data.@id}" />
+	 -->
+	 <stream.data.PrintData />
+		
+	</Process>
+	
+</Container>

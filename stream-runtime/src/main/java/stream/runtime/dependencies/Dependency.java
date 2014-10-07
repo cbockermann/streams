@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,8 @@ public class Dependency {
 	static Logger log = LoggerFactory.getLogger(Dependency.class);
 	final String groupId;
 	final String artifactId;
-	final String version;
+	String version;
+	final ArrayList<String> versions = new ArrayList<String>();
 
 	public Dependency(String groupId, String artifactId, String version) {
 		this.groupId = groupId;
@@ -150,5 +155,21 @@ public class Dependency {
 	 */
 	public String getVersion() {
 		return version;
+	}
+
+	public void addVersion(String ver) {
+		if (ver != null && !versions.contains(ver.trim())) {
+			this.versions.add(ver.trim());
+		}
+	}
+
+	public void addVersions(Collection<String> vers) {
+		for (String ver : vers) {
+			addVersion(ver);
+		}
+	}
+
+	public List<String> availableVersions() {
+		return Collections.unmodifiableList(versions);
 	}
 }

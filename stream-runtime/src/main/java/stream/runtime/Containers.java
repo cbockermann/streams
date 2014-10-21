@@ -61,18 +61,19 @@ public class Containers extends LinkedHashMap<String, Container> {
 		Container c = get(name);
 		if (c == null)
 			return null;
-		return pool.submit(c);
+		Future<Boolean> f = pool.submit(c);
+		return f;
 	}
 
-	public boolean stop(String name) {
+	public boolean shutdown(String name) {
 		Container c = get(name);
 		if (c == null)
 			return false;
-		// TODO streams stuff
+		c.shutdown();
 		return true;
 	}
 
-	public boolean stop() {
+	public boolean shutdown() {
 		pool.shutdown();
 
 		int c = 0;

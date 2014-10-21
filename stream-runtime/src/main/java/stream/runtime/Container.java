@@ -27,6 +27,11 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import stream.util.Variables;
+
 /**
  * @author hendrik
  * 
@@ -35,6 +40,8 @@ public class Container implements Callable<Boolean> {
 
 	private URL url;
 	private Map<String, String> args;
+	static Logger log = LoggerFactory.getLogger(Container.class);
+	private ProcessContainer container;
 
 	public Container(URL url) {
 		this.url = url;
@@ -47,11 +54,22 @@ public class Container implements Callable<Boolean> {
 
 	@Override
 	public Boolean call() throws Exception {
-		if (this.args == null)
-			stream.run.main(this.url);
-		else
-			stream.run.mainWithMap(this.url, this.args);
+		Variables props = StreamRuntime.loadUserProperties();
+		if (props == null)
+			props = new Variables();
+		if (this.args != null)
+			props.addVariables(args);
 
+		log.debug("Creating process-container from configuration at {}", url);
+		container = new ProcessContainer(url, null, props);
+
+		log.info("Starting process-container...");
+		container.run();
+		log.info("Container started.");
 		return true;
+	}
+
+	public void shutdown() {
+		container.shutdown();
 	}
 }

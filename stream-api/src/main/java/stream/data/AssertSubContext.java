@@ -36,6 +36,7 @@ public class AssertSubContext extends AbstractProcessor {
 	Logger log = LoggerFactory.getLogger(AssertSubContext.class);
 	private String[] keys;
 	private String ctx;
+	private Boolean show = false;
 
 	public String[] getKeys() {
 		return keys;
@@ -53,6 +54,14 @@ public class AssertSubContext extends AbstractProcessor {
 		this.ctx = ctx;
 	}
 
+	public Boolean getShow() {
+		return show;
+	}
+
+	public void setShow(Boolean show) {
+		this.show = show;
+	}
+
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
@@ -62,11 +71,13 @@ public class AssertSubContext extends AbstractProcessor {
 
 	@Override
 	public Data process(Data data) {
+
 		if (Context.PROCESS_CONTEXT_NAME.equals(ctx))
 			for (String key : keys) {
 				if (context.get(key) == null) {
 					data.put("@subContext:complete", false);
-					// log.info("Key: {} is missing", key);
+					if (show)
+						log.info("Key: {} is missing", key);
 					return data;
 				}
 			}
@@ -74,6 +85,8 @@ public class AssertSubContext extends AbstractProcessor {
 		if (Context.DATA_CONTEXT_NAME.equals(ctx))
 			for (String key : keys) {
 				if (data.get(key) == null) {
+					if (show)
+						log.info("Key: {} is missing", key);
 					data.put("@subContext:complete", false);
 					return data;
 				}

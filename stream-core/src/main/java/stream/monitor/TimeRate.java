@@ -31,14 +31,12 @@ import org.slf4j.LoggerFactory;
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
-import stream.data.Statistics;
-import stream.statistics.StatisticsService;
 
 /**
  * @author Hendrik Blom
  * 
  */
-public class TimeRate extends AbstractProcessor implements StatisticsService {
+public class TimeRate extends AbstractProcessor implements TimeRateService {
 
 	static Logger log = LoggerFactory.getLogger(TimeRate.class);
 	protected Long start = null;
@@ -50,6 +48,7 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 	protected Integer every = null;
 	protected String id;
 	protected String index;
+	protected Boolean show = true;
 
 	/**
 	 * @return the id
@@ -72,6 +71,14 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 
 	public void setIndex(String index) {
 		this.index = index;
+	}
+
+	public Boolean getShow() {
+		return show;
+	}
+
+	public void setShow(Boolean show) {
+		this.show = show;
 	}
 
 	/**
@@ -97,9 +104,11 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 			if (nowIndex != null) {
 				long indexDiff = nowIndex - startIndex;
 				rate = (1d * indexDiff) / diff;
-				log.info(
-						"Time rate {}. {} time (s) processed. @index={}.Time-rate is: {}/second",
-						getId(), indexDiff / 1000f, nowIndex, rate);
+				if (show)
+					log.info(
+							"Time rate {}. {} time (s) processed. @index={}.Time-rate is: {}/second",
+							getId(), indexDiff / 1000f, nowIndex, rate);
+				data.put("@timeRate", rate);
 				start = now;
 				startIndex = nowIndex;
 			}
@@ -124,19 +133,6 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 		log.info("TimeRate finished");
 	}
 
-	@Override
-	public void reset() throws Exception {
-	}
-
-	@Override
-	public Statistics getStatistics() {
-		Statistics st = new Statistics();
-		synchronized (rate) {
-			st.put("dataRate", new Double(rate.doubleValue()));
-		}
-		return st;
-	}
-
 	/**
 	 * @return the every
 	 */
@@ -152,4 +148,8 @@ public class TimeRate extends AbstractProcessor implements StatisticsService {
 		this.every = every;
 	}
 
+	@Override
+	public Double getTimeRate() {
+		return new Double(rate);
+	}
 }

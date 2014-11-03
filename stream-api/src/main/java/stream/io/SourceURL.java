@@ -23,7 +23,6 @@
  */
 package stream.io;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -305,7 +304,7 @@ public class SourceURL implements Serializable {
 		if (isGzip()) {
 			log.debug("Wrapping stream {} in GZIPInputStream for URL {}",
 					inputStream, this);
-			return new BufferedInputStream(new GZIPInputStream(inputStream));
+			return new GZIPInputStream(inputStream, 65536);
 		}
 
 		return inputStream;

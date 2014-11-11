@@ -68,12 +68,13 @@ public class ClassFinder {
 		}
 
 		if (classLoader instanceof URLClassLoader) {
-			URLClassLoader ucl = (URLClassLoader) classLoader;
-			URL[] urls = ucl.getURLs();
-			if (urls != null) {
-				for (URL url : urls) {
-					log.debug("Adding URL {} from URLClassLoader", url);
-					resources.add(url);
+			try (URLClassLoader ucl = (URLClassLoader) classLoader) {
+				URL[] urls = ucl.getURLs();
+				if (urls != null) {
+					for (URL url : urls) {
+						log.debug("Adding URL {} from URLClassLoader", url);
+						resources.add(url);
+					}
 				}
 			}
 		}

@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.annotations.Parameter;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
@@ -296,9 +295,40 @@ public class Join extends AbstractQueue {
 		return false;
 	}
 
+	public boolean insert(Collection<Data> data) {
+
+		if (data == null)
+			return false;
+
+		if (closed.get())
+			return false;
+
+		boolean first = true;
+		ArrayBlockingQueue<Data> queue = null;
+		for (Data d : data) {
+			if (first) {
+				final Serializable s2 = d.get(sync);
+				String unit = null;
+				if (s2 == null)
+					return false;
+				unit = s2.toString();
+				queue = queues.get(unit);
+				if (queue == null)
+					return false;
+				first = false;
+			}
+			try {
+				queue.put(d);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public boolean write(Collection<Data> data) throws Exception {
-		throw new NotImplementedException();
+		return insert(data);
 	}
 
 	/**

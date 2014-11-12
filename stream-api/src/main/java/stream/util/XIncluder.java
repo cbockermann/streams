@@ -40,7 +40,7 @@ import stream.io.SourceURL;
 /**
  * 
  * 
- * @author Christian Bockermann
+ * @author Christian Bockermann, Hendrik Blom
  * 
  */
 public class XIncluder {
@@ -104,6 +104,13 @@ public class XIncluder {
 				log.info("   url expanded to: '{}'", url);
 				SourceURL source = new SourceURL(url);
 				log.debug("reading document from {}", source);
+
+				// InputStream stream = new
+				// ByteArrayInputStream(context.get("b")
+				// .getBytes(StandardCharsets.UTF_8));
+				//
+				// included = XMLUtils.parseDocument(stream);
+
 				included = XMLUtils.parseDocument(source.openStream());
 				String tmpIncluded = XMLUtils.toString(included);
 				tmpIncluded = tmpIncluded.replace("${include.id}", includeId);

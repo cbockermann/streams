@@ -66,6 +66,9 @@ public class DweetWriter extends AbstractProcessor {
 
 		for (int i = 0; i < keys.length; i++) {
 			postKeys[i] = prefix + "_" + keys[i] + "=";
+			postKeys[i] = postKeys[i].replace(":", "_");
+			postKeys[i] = postKeys[i].replace("@", "_");
+			postKeys[i] = postKeys[i].replace("-", "_");
 		}
 
 	}

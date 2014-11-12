@@ -41,6 +41,8 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 	protected Long start;
 	protected Long startIndex;
 	protected Long nowIndex;
+	protected long n;
+	protected float mean;
 
 	protected Float rate;
 	protected Float time;
@@ -111,8 +113,13 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 					logger.info(
 							"Time rate {}. {} time (s) processed. @index={}.Time-rate is: {}/second",
 							getId(), time, nowIndex, rate);
-				if (dweet)
+				if (dweet) {
+					n++;
+					float delta = rate - mean;
+					mean = mean + (delta / n);
+					data.put("@timeRate", mean);
 					dweetWriter.process(data);
+				}
 
 				start = now;
 				startIndex = nowIndex;
@@ -145,11 +152,13 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 
 	@Override
 	public void reset() throws Exception {
+		n = 0l;
 		start = null;
 		startIndex = null;
 		nowIndex = null;
 		rate = new Float(0f);
 		time = new Float(0f);
+		mean = 0;
 
 	}
 }

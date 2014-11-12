@@ -6,12 +6,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
 
 public class DweetWriter extends AbstractProcessor {
 
+	static Logger logger = LoggerFactory.getLogger(DweetWriter.class);
 	protected String machine;
 	protected String id;
 	protected String thing;
@@ -114,7 +118,7 @@ public class DweetWriter extends AbstractProcessor {
 				connection.setRequestMethod("POST");
 				connection.setRequestProperty("Content-Type",
 						"application/json");
-				System.out.print(connection.getResponseCode());
+				logger.info("dweet.io says {}", connection.getResponseCode());
 				connection.disconnect();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -123,7 +127,7 @@ public class DweetWriter extends AbstractProcessor {
 			}
 
 		} else
-			System.out.println("blah");
+			logger.info("nothing to dweet!");
 		return data;
 	}
 }

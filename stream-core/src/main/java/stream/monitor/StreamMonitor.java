@@ -47,6 +47,14 @@ public abstract class StreamMonitor extends AbstractProcessor implements
 		this.log = log;
 	}
 
+	public Boolean getDweet() {
+		return dweet;
+	}
+
+	public void setDweet(Boolean dweet) {
+		this.dweet = dweet;
+	}
+
 	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
 	 */

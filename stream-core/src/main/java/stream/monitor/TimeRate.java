@@ -82,7 +82,8 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		if (dweet)
-			keys = new String[] { "index", "@timeRate", "@processedTime" };
+			// keys = new String[] { "index", "@timeRate", "@processedTime" };
+			keys = new String[] { "@timeRate" };
 		super.init(ctx);
 
 	}

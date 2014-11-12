@@ -55,6 +55,22 @@ public abstract class StreamMonitor extends AbstractProcessor implements
 		this.dweet = dweet;
 	}
 
+	public String getThing() {
+		return thing;
+	}
+
+	public void setThing(String thing) {
+		this.thing = thing;
+	}
+
+	public String getMachine() {
+		return machine;
+	}
+
+	public void setMachine(String machine) {
+		this.machine = machine;
+	}
+
 	/**
 	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
 	 */

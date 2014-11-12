@@ -64,6 +64,21 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 		this.index = index;
 	}
 
+	/**
+	 * @return the every
+	 */
+	public Integer getEvery() {
+		return every;
+	}
+
+	/**
+	 * @param every
+	 *            the every to set
+	 */
+	public void setEvery(Integer every) {
+		this.every = every;
+	}
+
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		if (dweet)
@@ -120,21 +135,6 @@ public class TimeRate extends StreamMonitor implements TimeRateService {
 		super.finish();
 
 		logger.info("TimeRate finished");
-	}
-
-	/**
-	 * @return the every
-	 */
-	public Integer getEvery() {
-		return every;
-	}
-
-	/**
-	 * @param every
-	 *            the every to set
-	 */
-	public void setEvery(Integer every) {
-		this.every = every;
 	}
 
 	@Override

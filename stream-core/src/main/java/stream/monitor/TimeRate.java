@@ -28,7 +28,6 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
 
@@ -36,33 +35,25 @@ import stream.ProcessContext;
  * @author Hendrik Blom
  * 
  */
-public class TimeRate extends AbstractProcessor implements TimeRateService {
+public class TimeRate extends StreamMonitor implements TimeRateService {
 
-	static Logger log = LoggerFactory.getLogger(TimeRate.class);
-	protected Long start = null;
-	protected Long startIndex = null;
-	protected Long nowIndex = null;
+	static Logger logger = LoggerFactory.getLogger(TimeRate.class);
+	protected Long start;
+	protected Long startIndex;
+	protected Long nowIndex;
 
-	protected Double rate = new Double(0.0);
+	protected Float rate;
+	protected Float time;
 
 	protected Integer every = null;
-	protected String id;
 	protected String index;
-	protected Boolean show = true;
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
+	public TimeRate() {
+		try {
+			reset();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String getIndex() {
@@ -73,21 +64,12 @@ public class TimeRate extends AbstractProcessor implements TimeRateService {
 		this.index = index;
 	}
 
-	public Boolean getShow() {
-		return show;
-	}
-
-	public void setShow(Boolean show) {
-		this.show = show;
-	}
-
-	/**
-	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
-	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
+		if (dweet)
+			keys = new String[] { "index", "@timeRate", "@processedTime" };
 		super.init(ctx);
-		// start = System.currentTimeMillis();
+
 	}
 
 	@Override
@@ -103,12 +85,19 @@ public class TimeRate extends AbstractProcessor implements TimeRateService {
 			nowIndex = getIndex(data);
 			if (nowIndex != null) {
 				long indexDiff = nowIndex - startIndex;
-				rate = (1d * indexDiff) / diff;
-				if (show)
-					log.info(
-							"Time rate {}. {} time (s) processed. @index={}.Time-rate is: {}/second",
-							getId(), indexDiff / 1000f, nowIndex, rate);
+				rate = (1f * indexDiff) / diff;
+				time = (1f * indexDiff) / 1000f;
+
 				data.put("@timeRate", rate);
+				data.put("@processedTime", time);
+
+				if (log)
+					logger.info(
+							"Time rate {}. {} time (s) processed. @index={}.Time-rate is: {}/second",
+							getId(), time, nowIndex, rate);
+				if (dweet)
+					dweetWriter.process(data);
+
 				start = now;
 				startIndex = nowIndex;
 			}
@@ -130,7 +119,7 @@ public class TimeRate extends AbstractProcessor implements TimeRateService {
 	public void finish() throws Exception {
 		super.finish();
 
-		log.info("TimeRate finished");
+		logger.info("TimeRate finished");
 	}
 
 	/**
@@ -151,5 +140,15 @@ public class TimeRate extends AbstractProcessor implements TimeRateService {
 	@Override
 	public Double getTimeRate() {
 		return new Double(rate);
+	}
+
+	@Override
+	public void reset() throws Exception {
+		start = null;
+		startIndex = null;
+		nowIndex = null;
+		rate = new Float(0f);
+		time = new Float(0f);
+
 	}
 }

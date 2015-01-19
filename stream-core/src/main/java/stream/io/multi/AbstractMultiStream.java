@@ -34,7 +34,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Data;
 import stream.io.AbstractStream;
 import stream.io.SourceURL;
 import stream.io.Stream;
@@ -101,8 +100,6 @@ public abstract class AbstractMultiStream extends AbstractStream implements
 	 */
 	@Override
 	public void init() throws Exception {
-
-		
 
 		for (Stream s : streams.values()) {
 			s.init();

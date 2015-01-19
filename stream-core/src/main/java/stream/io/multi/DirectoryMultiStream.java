@@ -32,7 +32,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +52,13 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 	private File dir;
 	private static BlockingQueue<String> files;
 	private String suffix;
-	private static AtomicInteger counter;
+	// private static AtomicInteger counter;
 	private static AtomicBoolean filesAreRead;
 	// TODO order
 	private String[] order;
 	private AbstractStream stream;
-	private boolean noStream = false;
+
+	// private boolean noStream = false;
 
 	public DirectoryMultiStream(SourceURL url) {
 		super(url);
@@ -106,8 +106,8 @@ public class DirectoryMultiStream extends AbstractMultiStream {
 					&& (!(this.url.getProtocol()
 							.equals(SourceURL.PROTOCOL_FILE)) || !(this.url
 							.getProtocol().equals(SourceURL.PROTOCOL_CLASSPATH))))
-				throw new IllegalArgumentException(
-						"Given URL "+url.getPath()+"is no local directory");
+				throw new IllegalArgumentException("Given URL " + url.getPath()
+						+ "is no local directory");
 			else {
 				String[] f = null;
 				if (suffix != null && !suffix.isEmpty()) {

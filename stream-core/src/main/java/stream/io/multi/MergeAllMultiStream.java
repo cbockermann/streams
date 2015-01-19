@@ -23,8 +23,6 @@
  */
 package stream.io.multi;
 
-import java.util.Map;
-
 import stream.Data;
 import stream.data.DataFactory;
 import stream.io.Stream;
@@ -40,7 +38,6 @@ import stream.io.Stream;
  * 
  */
 public class MergeAllMultiStream extends AbstractMultiStream {
-
 
 	/*
 	 * @see stream.io.AbstractStream#readNext()

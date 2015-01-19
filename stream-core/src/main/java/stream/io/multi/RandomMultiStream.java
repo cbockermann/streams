@@ -28,7 +28,7 @@ import stream.io.Stream;
 
 /**
  * @author chris, hendrik
- *
+ * 
  */
 public class RandomMultiStream extends AbstractMultiStream {
 
@@ -104,6 +104,7 @@ public class RandomMultiStream extends AbstractMultiStream {
 			return readNext();
 		}
 
+		nextItem.put("@stream", nextKey);
 		return nextItem;
 	}
 }

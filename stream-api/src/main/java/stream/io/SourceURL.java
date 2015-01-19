@@ -409,25 +409,32 @@ public class SourceURL implements Serializable {
 
 			log.debug("The URL string is: '{}'", theUrl);
 			URL url = new URL(theUrl);
-			URLConnection conn = url.openConnection();
 			if (url.getUserInfo() != null) {
+				final URLConnection conn = url.openConnection();
 				String basicAuth = "Basic "
 						+ new String(
 								javax.xml.bind.DatatypeConverter
 										.printBase64Binary(url.getUserInfo()
 												.getBytes()));
 				conn.setRequestProperty("Authorization", basicAuth);
+				return conn.getInputStream();
 			}
-			return conn.getInputStream();
-			// return url.openStream();
+			return url.openStream();
 		} catch (FileNotFoundException fnf) {
+			log.error("Did not find referenced file: {}", fnf.getMessage());
 			throw fnf;
+		} catch (IOException ioe) {
+			log.error(
+					"Failed to open URL '{}' with default URL.openStream(): {}",
+					theUrl, ioe.getMessage());
+			throw ioe;
 		} catch (Exception e) {
 			log.error(
 					"Failed to open '{}' with default Java URL mechanism: {}",
 					theUrl, e.getMessage());
+			e.printStackTrace();
 			throw new IOException("No handler found for protocol '" + protocol
-					+ "'!");
+					+ "': " + e.getMessage());
 		}
 
 	}

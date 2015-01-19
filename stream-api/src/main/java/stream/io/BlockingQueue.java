@@ -210,6 +210,7 @@ public class BlockingQueue extends AbstractQueue {
 			final ReentrantLock putLock = this.putLock;
 			final AtomicInteger count = this.count;
 			putLock.lockInterruptibly();
+
 			try {
 				while (count.get() == capacity) {
 					notFull.await();

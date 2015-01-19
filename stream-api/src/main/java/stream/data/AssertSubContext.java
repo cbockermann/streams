@@ -72,7 +72,7 @@ public class AssertSubContext extends AbstractProcessor {
 	@Override
 	public Data process(Data data) {
 
-		if (Context.PROCESS_CONTEXT_NAME.equals(ctx))
+		if (Context.PROCESS_CONTEXT_NAME.equals(ctx)) {
 			for (String key : keys) {
 				if (context.get(key) == null) {
 					data.put("@subContext:complete", false);
@@ -81,8 +81,8 @@ public class AssertSubContext extends AbstractProcessor {
 					return data;
 				}
 			}
-
-		if (Context.DATA_CONTEXT_NAME.equals(ctx))
+		}
+		if (Context.DATA_CONTEXT_NAME.equals(ctx)) {
 			for (String key : keys) {
 				if (data.get(key) == null) {
 					if (show)
@@ -91,6 +91,7 @@ public class AssertSubContext extends AbstractProcessor {
 					return data;
 				}
 			}
+		}
 
 		data.put("@subContext:complete", true);
 		return data;

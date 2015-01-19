@@ -58,6 +58,7 @@ public class TcpListener extends Connection {
 	 */
 	@Override
 	public void disconnect() throws IOException {
+		inputStream.socket.close();
 	}
 
 	public class TcpInputStream extends InputStream {

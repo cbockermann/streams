@@ -304,7 +304,7 @@ public class SourceURL implements Serializable {
 		if (isGzip()) {
 			log.debug("Wrapping stream {} in GZIPInputStream for URL {}",
 					inputStream, this);
-			return new GZIPInputStream(inputStream);
+			return new GZIPInputStream(inputStream, 1048576);
 		}
 
 		return inputStream;

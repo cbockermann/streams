@@ -465,10 +465,10 @@
   <div class="body">  
     <div id="banner">
        <a href="http://www.uni-dortmund.de/" id="bannerLeft">
-          <img src="http://www-ai.cs.uni-dortmund.de/ci/Medienpool/Seitenbilder/logo_tu.png" id="logoLeft" alt="" />
+          <img src="$relativePath/images/logo_tu.png" id="logoLeft" alt="" />
        </a>
        <a href="" id="bannerRight">
-          <img src="http://www-ai.cs.uni-dortmund.de/header-bg-topLeft.png" id="logoRight" alt="" />
+          <img src="$relativePath/images/header-bg-topLeft.png" id="logoRight" alt="" />
        </a>
        <div class="clear"></div>
     </div> 

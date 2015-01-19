@@ -87,7 +87,7 @@
   <skin>
     <groupId>org.jwall</groupId>
     <artifactId>streams-skin</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
   </skin>
   
   <poweredBy></poweredBy>

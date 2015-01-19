@@ -57,8 +57,6 @@ public class GaussianStream extends AbstractStream {
 
 	Double[] attributes;
 
-	Long limit = -1L;
-
 	Long count = 0L;
 
 	/**
@@ -111,14 +109,6 @@ public class GaussianStream extends AbstractStream {
 		this.seedGenerator = new Random(this.seed);
 	}
 
-	public Long getLimit() {
-		return limit;
-	}
-
-	public void setLimit(Long limit) {
-		this.limit = limit;
-	}
-
 	public Data generate() {
 		Data item = DataFactory.create();
 
@@ -152,15 +142,6 @@ public class GaussianStream extends AbstractStream {
 	@Override
 	public Data readNext() throws Exception {
 		Data item = DataFactory.create();
-		//
-		// TODO: This is cheated: we still create a new item-object, which
-		// should not
-		// happen... :-)
-		//
-
-		if (limit > 0 && count >= limit) {
-			return null;
-		}
 
 		Data gen = this.generate();
 		item.clear();

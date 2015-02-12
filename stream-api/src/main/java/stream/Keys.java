@@ -65,7 +65,7 @@ public final class Keys implements Serializable {
 		this.keyValues = keyValues.toArray(new String[keyValues.size()]);
 	}
 
-	protected Keys(Collection<String> ks) {
+	public Keys(Collection<String> ks) {
 		final ArrayList<String> keyValues = new ArrayList<String>();
 
 		for (String k : ks) {

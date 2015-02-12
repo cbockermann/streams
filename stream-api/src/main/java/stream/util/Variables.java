@@ -113,11 +113,20 @@ public class Variables implements Map<String, String>, Serializable {
 		return substitute(str, false);
 	}
 
-	private String substitute(String str, boolean replaceMissing) {
+	public String expand(String str, boolean replaceMissing, boolean postpone) {
+		return substitute(str, replaceMissing, postpone);
+	}
+
+	public String substitute(String str, boolean replaceMissing) {
+		return substitute(str, replaceMissing, false);
+	}
+
+	private String substitute(String str, boolean replaceMissing,
+			boolean postpone) {
 		String content = str;
 		// ${p1.${p2}_${p3.${p4}}}
 		int t = 0;
-		while (content.indexOf(VAR_PREFIX, 0) > -1) {
+		while (content.indexOf(VAR_PREFIX, t) > -1) {
 			int start = content.indexOf(VAR_PREFIX, t);
 			int start2 = content.indexOf(VAR_PREFIX,
 					start + VAR_PREFIX.length());
@@ -142,9 +151,21 @@ public class Variables implements Map<String, String>, Serializable {
 					if (replaceMissing)
 						content = content.substring(0, start) + ""
 								+ content.substring(end + 1);
-					else
-						throw new IllegalArgumentException("Property "
-								+ variable + " is not set.");
+					else {
+						if (postpone) {
+							log.warn(
+									"Cannot resolve variable '{}' in '{}' => need to be resolved at a later stage!",
+									variable, str);
+							content = content.substring(0, start) + VAR_PREFIX
+									+ variable + VAR_SUFFIX
+									+ content.substring(end + 1);
+							t = end + 1;
+							continue;
+						} else {
+							throw new IllegalArgumentException("Property "
+									+ variable + " is not set.");
+						}
+					}
 				}
 			}
 			t = 0;

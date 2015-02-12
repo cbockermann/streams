@@ -93,7 +93,7 @@ public class PropertiesHandler {
 				for (Object k : p.keySet()) {
 					String key = k.toString();
 					String value = p.getProperty(key);
-					value = systemProperties.expand(value);
+					value = variables.expand(value, false);
 					log.debug("Adding property '{}' = '{}'", key, value);
 					variables.set(key + suffix, value);
 				}

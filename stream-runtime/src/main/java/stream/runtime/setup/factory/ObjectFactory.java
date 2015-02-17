@@ -50,6 +50,7 @@ import stream.runtime.setup.ObjectCreator;
 import stream.runtime.setup.ParameterInjection;
 import stream.runtime.setup.UserSettings;
 import stream.util.Variables;
+import stream.util.XMLUtils;
 import stream.utils.FileUtils;
 
 /**
@@ -283,7 +284,17 @@ public class ObjectFactory extends Variables {
 		//
 		if (object instanceof Configurable) {
 			log.debug("Applying configuration: {}", config);
-			((Configurable) object).configure(config);
+
+			Element el = (Element) config.cloneNode(true);
+
+			Map<String, String> attr = XMLUtils.getAttributes(el);
+			attr = local.expandAll(attr);
+
+			for (String a : attr.keySet()) {
+				el.setAttribute(a, attr.get(a));
+			}
+
+			((Configurable) object).configure(el);
 		}
 
 		return object;

@@ -84,21 +84,14 @@ public class ProcessHandler extends ATopologyElementHandler {
 
 			String copies = el.getAttribute("copies");
 			Integer workers = 1;
-			String input = el.getAttribute("input");
-			List<String> inputs = getInputNames(el);
-
 			if (copies != null && !copies.isEmpty()) {
 				try {
 					workers = Integer.parseInt(copies);
 				} catch (Exception e) {
-					workers = 1;
 					throw new RuntimeException("Invalid number of copies '"
-							+ copies + "' specified!");
+                            + copies + "' specified!");
 				}
 			}
-
-			log.info("  >   Adding bolt '{}', subscribing to input(s): '{}'",
-					id, input);
 
 			ProcessBolt bolt = new ProcessBolt(xml, id, st.getVariables());
 			log.info("  >   Registering bolt (process) '{}' with instance {}", id, bolt);

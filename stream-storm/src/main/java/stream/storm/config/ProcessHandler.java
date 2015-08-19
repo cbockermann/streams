@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 import stream.StreamTopology;
 import stream.Subscription;
 import stream.runtime.setup.factory.ObjectFactory;
+import stream.storm.Constants;
 import stream.storm.ProcessBolt;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;
@@ -72,13 +73,11 @@ public class ProcessHandler extends ATopologyElementHandler {
 			throws Exception {
 
 		if (el.getNodeName().equalsIgnoreCase("process")) {
-			String id = el.getAttribute("id");
+			String id = el.getAttribute(Constants.ID);
 			if (id == null || id.trim().isEmpty()) {
-				log.error(
-						"No 'id' attribute defined in process element (class: '{}')",
+				log.error("No 'id' attribute defined in process element (class: '{}')",
 						el.getAttribute("class"));
-				throw new Exception(
-						"Missing 'id' attribute for process element!");
+				throw new Exception("Missing 'id' attribute for process element!");
 			}
 
 			log.info("  > Creating process-bolt with id '{}'", id);
@@ -102,17 +101,13 @@ public class ProcessHandler extends ATopologyElementHandler {
 					id, input);
 
 			ProcessBolt bolt = new ProcessBolt(xml, id, st.getVariables());
-			log.info("  >   Registering bolt (process) '{}' with instance {}",
-					id, bolt);
+			log.info("  >   Registering bolt (process) '{}' with instance {}", id, bolt);
 
-			BoltDeclarer boltDeclarer = builder.setBolt(id, bolt, workers);
-
-			BoltDeclarer cur = boltDeclarer;
+            List<String> inputs = getInputNames(el);
+            BoltDeclarer cur = builder.setBolt(id, bolt, workers);
 			if (!inputs.isEmpty()) {
 				for (String in : inputs) {
-
 					if (!in.isEmpty()) {
-
 						//
 						// if 'in' is reference to a process/bolt
 						//
@@ -120,9 +115,7 @@ public class ProcessHandler extends ATopologyElementHandler {
 						//
 						// else
 						//
-						log.info(
-								"  >   Connecting bolt '{}' to non-group '{}'",
-								id, in);
+						log.info("  >   Connecting bolt '{}' to non-group '{}'", id, in);
 						cur = cur.noneGrouping(in);
 					}
 				}

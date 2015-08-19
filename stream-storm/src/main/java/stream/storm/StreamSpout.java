@@ -76,6 +76,7 @@ public class StreamSpout extends BaseRichSpout {
 		stream = createStream();
 	}
 
+	//TODO: classname is not used to create spout
 	protected Stream createStream() throws Exception {
 		Stream stream = null;
 

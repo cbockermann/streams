@@ -30,11 +30,9 @@ import org.w3c.dom.Element;
 import java.util.Map;
 
 import backtype.storm.topology.IRichSpout;
-import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import stream.StreamTopology;
 import stream.runtime.setup.factory.ObjectFactory;
-
 import stream.storm.Constants;
 
 /**
@@ -71,13 +69,14 @@ public class SpoutHandler extends ATopologyElementHandler {
     public void handle(Element el, StreamTopology st, TopologyBuilder builder)
             throws Exception {
 
-        if (!handles(el))
+        if (!handles(el)) {
             return;
+        }
 
         String id = el.getAttribute(Constants.ID);
-        if (id == null)
-            throw new Exception("Element '" + el.getNodeName()
-                    + "' is missing an 'id' attribute!");
+        if (id == null) {
+            throw new Exception("Element '" + el.getNodeName() + "' is missing an 'id' attribute!");
+        }
 
         String className = el.getAttribute("class");
         Map<String, String> params = objectFactory.getAttributes(el);
@@ -89,12 +88,13 @@ public class SpoutHandler extends ATopologyElementHandler {
         log.info("  >   Expanded parameters: {}", params);
 
         log.info("  >   Creating spout-instance from class {}, parameters: {}", className, params);
-        IRichSpout bolt = (IRichSpout) objectFactory.create(className, params, ObjectFactory.createConfigDocument(el));
+        IRichSpout bolt = (IRichSpout) objectFactory.create(className, params,
+                ObjectFactory.createConfigDocument(el));
 
         log.info("  > Registering spout '{}' with instance {}", id, bolt);
-        SpoutDeclarer spoutDeclarer = builder.setSpout(id, bolt, 2);
-        SpoutDeclarer cur = spoutDeclarer;
 
-        st.addSpout(id, cur);
+        //TODO: add number of copies for a spout (not just 2)
+
+        st.addSpout(id, builder.setSpout(id, bolt, 2));
     }
 }

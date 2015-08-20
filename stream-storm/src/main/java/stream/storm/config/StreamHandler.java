@@ -83,8 +83,6 @@ public class StreamHandler extends ATopologyElementHandler {
 		}
 
 		log.info("  > Creating stream-spout with id '{}'", id);
-		String className = el.getAttribute("class");
-		log.info("  >   stream-class is: {}", className);
 
 		// Extract the parameters for the stream from the element
 		//
@@ -97,7 +95,7 @@ public class StreamHandler extends ATopologyElementHandler {
 		params = st.getVariables().expandAll(params);
 		log.info("  >   expanded stream-parameters are: {}", params);
 
-		StreamSpout spout = new StreamSpout(xml, id, className, params);
+		StreamSpout spout = new StreamSpout(xml, id, params);
 		log.info("  >   stream-spout instance is: {}", spout);
 
 		SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);

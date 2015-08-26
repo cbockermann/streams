@@ -8,8 +8,6 @@
         <version>0.9.22-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <name>streams-storm</name>
-    <artifactId>streams-storm</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,8 +15,11 @@
         <storm.mainclass>storm.deploy</storm.mainclass>
         <skipTests>true</skipTests>
         <streams.cta.version>0.9.22-SNAPSHOT</streams.cta.version>
+        <artifactid>streams-storm</artifactid>
     </properties>
 
+    <name>streams-storm</name>
+    <artifactId>${artifactid}</artifactId>
 
     <repositories>
         <repository>
@@ -82,6 +83,19 @@
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>local install</id>
+            <activation>
+                <property>
+                    <name>standalone</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <properties>
+                <artifactid>streams-storm-local</artifactid>
+            </properties>
+        </profile>
         <profile>
             <id>
                 standalone

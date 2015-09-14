@@ -201,15 +201,16 @@ public class PredictionError extends AbstractProcessor {
 			dfs.setDecimalSeparator('.');
 			DecimalFormat fmt = new DecimalFormat("0.00", dfs);
 
-			ConfusionMatrix matrix = confusionMatrices.get(learner);
+			ConfusionMatrix<Serializable> matrix = confusionMatrices
+					.get(learner);
 			List<Serializable> labels = matrix.getLabels();
 			for (Serializable label : labels) {
 				config.append("|c");
 
 				header.append("& \\textbf{" + label + "} ");
 				TableOfConfusion conf = matrix.getTableOfConfusion(label);
-				double prec = conf.calculatePrecision();
-				double reca = conf.calculateRecall();
+				// double prec = conf.calculatePrecision();
+				// double reca = conf.calculateRecall();
 				double acc = conf.calculateAccuracy();
 
 				body.append(" & " + fmt.format(acc) + " ");

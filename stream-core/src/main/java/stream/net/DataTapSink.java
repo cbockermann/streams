@@ -103,9 +103,7 @@ public class DataTapSink implements Sink {
 	protected boolean logBufferFull = false;
 
 	// OTHER CLASS FIELDS
-
-	private static final Logger log = LoggerFactory
-			.getLogger(DataTapSink.class);
+	static final Logger log = LoggerFactory.getLogger(DataTapSink.class);
 
 	/** the {@link ConnectionHandler} */
 	protected ConnectionHandler connectionHandler;

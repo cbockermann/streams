@@ -227,6 +227,7 @@ public class DocTree implements Comparable<DocTree> {
 			log.info("Converting doc-tree leaf '{}'", path + "/" + name);
 			File md = new File(base.getAbsolutePath() + File.separator + prefix
 					+ getPath().substring(1).replace('/', '_') + "_" + name);
+			log.info("   to {}", md);
 			generateTex(md);
 		}
 
@@ -285,6 +286,7 @@ public class DocTree implements Comparable<DocTree> {
 		if (url == null) {
 			// System.err
 			// .println("No documentation found for '" + className + "'");
+			log.error("No documentation found for '{}'", className);
 			return null;
 		}
 

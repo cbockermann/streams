@@ -43,7 +43,12 @@ public class Prediction implements Processor {
 
 	PredictionService predictionService;
 
+	public void setClassifier(PredictionService predService) {
+		setLearner(predService);
+	}
+
 	public void setLearner(PredictionService predService) {
+		log.info("Lerner injected: {}", predService);
 		this.predictionService = predService;
 	}
 
@@ -58,14 +63,17 @@ public class Prediction implements Processor {
 				String key = predictionService.getName();
 				Serializable pred = predictionService.predict(data);
 
-				if (!key.startsWith(Data.PREDICTION_PREFIX)) {
+				if (key != null && !key.startsWith(Data.PREDICTION_PREFIX)) {
 					key = Data.PREDICTION_PREFIX + ":" + key;
+				} else {
+					key = "@prediction";
 				}
 
 				data.put(key, pred);
 				return data;
 			} catch (Exception e) {
 				log.error("Failed to apply prediction: {}", e.getMessage());
+				e.printStackTrace();
 			}
 		} else {
 			log.error("No PredictionService has been injected!");

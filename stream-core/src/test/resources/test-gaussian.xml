@@ -1,4 +1,4 @@
-<container namingService="stream.runtime.rpc.RMINamingService">
+<container>
 
 	<stream id="test" class="stream.io.multi.RandomMultiStream" limit="10"
 			weights="0.01,0.99">
@@ -13,7 +13,7 @@
 	
 		<CreateID />
 	
-		<stream.monitor.AverageThroughput id="througput"/>
+		<stream.monitor.AverageThroughput id="throughput"/>
 	
 		<PrintData />
 	

@@ -26,8 +26,8 @@ package stream.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.expressions.version2.ConditionedProcessor;
 import stream.Data;
+import stream.expressions.version2.ConditionedProcessor;
 
 /**
  * <p>
@@ -38,18 +38,32 @@ import stream.Data;
  * @author Hendrik Blom
  * 
  */
-//@Description(group = "Data Stream.Flow")
+// @Description(group = "Data Stream.Flow")
 public class Skip extends ConditionedProcessor {
 
 	static Logger log = LoggerFactory.getLogger(Skip.class);
+
+	Long count = null;
+	Long seen = 0L;
+
 	/**
 	 * @see stream.DataProcessor#process(stream.Data)
 	 */
 	@Override
 	public Data process(Data data) {
 		try {
-			if (this.matches(data))
-				return null;
+
+			seen++;
+			if (count != null) {
+				if (count < seen) {
+					return null;
+				} else {
+					return data;
+				}
+			} else {
+				if (this.matches(data))
+					return null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,14 +71,14 @@ public class Skip extends ConditionedProcessor {
 	}
 
 	public boolean matches(Data item) throws Exception {
-		if(condition==null)
+		if (condition == null)
 			return true;
-		final Boolean b=  condition.get(context, item);
-		if(b == null)
+		final Boolean b = condition.get(context, item);
+		if (b == null)
 			return false;
 		return b;
 	}
-	
+
 	/**
 	 * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
 	 */

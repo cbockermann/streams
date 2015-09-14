@@ -84,10 +84,11 @@ public class ParseDouble extends AbstractProcessor {
 		for (String key : ks) {
 			Double value = defaultValue;
 			try {
-				if (data.containsKey(key))
+				if (data.containsKey(key)) {
 					value = Double.parseDouble(data.get(key).toString());
-				// value = new Double(data.get(key) + "");
-				data.put(key, value);
+					// value = new Double(data.get(key) + "");
+					data.put(key, value);
+				}
 			} catch (Exception e) {
 				if (defaultValue != null)
 					data.put(key, defaultValue);

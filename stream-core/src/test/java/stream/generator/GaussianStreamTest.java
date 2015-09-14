@@ -29,39 +29,36 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.data.Statistics;
-import stream.runtime.rpc.RMINamingService;
-import stream.statistics.StatisticsService;
-
 /**
  * @author chris
  * 
  */
 public class GaussianStreamTest {
 
-	static Logger log = LoggerFactory.getLogger( GaussianStreamTest.class );
-	
+	static Logger log = LoggerFactory.getLogger(GaussianStreamTest.class);
+
 	@Test
 	public void test() throws Exception {
 		URL url = GaussianStreamTest.class.getResource("/test-gaussian.xml");
 		stream.run.main(url);
 	}
-	
-	
-	public static void main( String[] args ){
-		try {
-			
-			RMINamingService ns = new RMINamingService();
-			StatisticsService stats = ns.lookup( "throughput", StatisticsService.class );
-			
-			while( true ){
-				Statistics st = stats.getStatistics();
-				log.info( "Received statistics: {}", st );
-				Thread.sleep( 1000 );
-			} 
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	//
+	//
+	// public static void main( String[] args ){
+	// try {
+	//
+	// RMINamingService ns = new RMINamingService();
+	// StatisticsService stats = ns.lookup( "throughput",
+	// StatisticsService.class );
+	//
+	// while( true ){
+	// Statistics st = stats.getStatistics();
+	// log.info( "Received statistics: {}", st );
+	// Thread.sleep( 1000 );
+	// }
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 }

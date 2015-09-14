@@ -34,6 +34,7 @@ import stream.data.DataUtils;
 
 /**
  * @author Sangkyun Lee
+ * @deprecated
  */
 public class Vector implements Serializable, Measurable {
 

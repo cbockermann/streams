@@ -34,7 +34,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +42,6 @@ import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ConditionedProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.annotations.Description;
@@ -61,7 +59,7 @@ import stream.service.Service;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
 @Description(group = "Data Stream.Output")
-public class CsvWriter extends ConditionedProcessor implements Service {
+public class CsvWriter extends AbstractWriter implements Service {
 	static Logger log = LoggerFactory.getLogger(CsvWriter.class);
 	protected PrintStream p;
 	protected String separator = ",";
@@ -70,7 +68,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 	protected String filter;
 	protected List<String> headers;
 	protected boolean closed;
-	protected String[] keys;
+
 	protected String urlString;
 	protected URL url;
 	protected File file;
@@ -152,17 +150,6 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 	}
 
-	/**
-	 * 
-	 * @param str
-	 */
-	@Parameter(required = false, description = "The attributes to write out, leave blank to write out all attributes.")
-	public void setKeys(String[] str) {
-		if (str == null || str.length == 0)
-			this.keys = null;
-		this.keys = str;
-	}
-
 	public boolean isHeader() {
 		return header;
 	}
@@ -171,7 +158,6 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		this.header = header;
 	}
 
-	
 	public Boolean getAppend() {
 		return append;
 	}
@@ -235,7 +221,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 			// For now, we append only, if the switch to a new file is caused by
 			// changes of the URL, i.e. initially, we start with new files...
 			//
-//			boolean append = (p == null);
+			// boolean append = (p == null);
 
 			try {
 				lastUrlString = expandedUrlString;
@@ -293,9 +279,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 		if (!headerWritten
 				|| (keys == null && datum.keySet().size() > headers.size())) {
 			// p.print("# ");
-			Iterator<String> it = datum.keySet().iterator();
-			if (keys != null)
-				it = Arrays.asList(keys).iterator();
+			Iterator<String> it = this.selectedKeys(datum).iterator();
 
 			while (it.hasNext()) {
 				String name = it.next();
@@ -313,12 +297,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 		// write the datum elements (attribute values)
 		//
-
-		Iterator<String> it = null;
-		if (keys != null && keys.length != 0)
-			it = Arrays.asList(keys).iterator();
-		else
-			it = datum.keySet().iterator();
+		Iterator<String> it = this.selectedKeys(datum).iterator();
 
 		while (it.hasNext()) {
 			String name = it.next();
@@ -339,12 +318,7 @@ public class CsvWriter extends ConditionedProcessor implements Service {
 
 	protected String createHeader(Data item) {
 		StringWriter s = new StringWriter();
-		Iterator<String> it = null;
-
-		if (keys != null)
-			it = Arrays.asList(keys).iterator();
-		else
-			it = item.keySet().iterator();
+		Iterator<String> it = this.selectedKeys(item).iterator();
 
 		while (it.hasNext()) {
 			s.append(it.next());

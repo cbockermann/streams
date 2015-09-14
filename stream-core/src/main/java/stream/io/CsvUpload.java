@@ -31,6 +31,7 @@ import stream.Data;
 
 /**
  * @author chris
+ * @deprecated
  * 
  */
 public class CsvUpload extends AbstractProcessor {
@@ -52,8 +53,7 @@ public class CsvUpload extends AbstractProcessor {
 			con.setDoInput(false);
 			con.setDoOutput(true);
 
-			CsvWriter writer = new CsvWriter(
-					con.getOutputStream());
+			CsvWriter writer = new CsvWriter(con.getOutputStream());
 
 			Data item = writer.process(datum);
 			writer.finish();

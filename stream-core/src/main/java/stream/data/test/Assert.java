@@ -29,7 +29,7 @@ import stream.ProcessorException;
 
 /**
  * @author chris
- * 
+ * @deprecated
  */
 public class Assert extends ConditionedProcessor {
 

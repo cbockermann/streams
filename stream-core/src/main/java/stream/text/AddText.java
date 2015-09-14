@@ -35,6 +35,7 @@ import stream.util.URLUtilities;
  * @author chris
  * 
  */
+@Deprecated
 public class AddText extends AbstractProcessor {
 
 	String file;

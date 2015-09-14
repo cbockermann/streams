@@ -28,15 +28,15 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
+import stream.data.DataFactory;
 
 /**
  * @author chris
  * 
  */
-public class DataObjectWriter extends AbstractProcessor {
+public class DataObjectWriter extends AbstractWriter {
 
 	File file;
 	ObjectOutputStream out;
@@ -72,13 +72,19 @@ public class DataObjectWriter extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.Data)
+	 * @see stream.io.AbstractWriter#write(stream.Data)
 	 */
 	@Override
-	public Data process(Data input) {
+	public void write(Data input) {
 		if (input != null) {
 			try {
-				out.writeObject(input);
+
+				Data store = DataFactory.create();
+				for (String key : selectedKeys(input)) {
+					store.put(key, input.get(key));
+				}
+
+				out.writeObject(store);
 				this.cnt++;
 				if (cnt % reset == 0) {
 					out.reset();
@@ -87,7 +93,6 @@ public class DataObjectWriter extends AbstractProcessor {
 				e.printStackTrace();
 			}
 		}
-		return input;
 	}
 
 	/**

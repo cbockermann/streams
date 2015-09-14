@@ -24,7 +24,10 @@
 package stream.learner.evaluation;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -54,7 +57,7 @@ public class PredictionError extends AbstractProcessor {
 	Integer count = 0;
 	Integer every = 0;
 
-	Map<String, ConfusionMatrix<Serializable>> confusionMatrices = new LinkedHashMap<String, ConfusionMatrix<Serializable>>();
+	protected Map<String, ConfusionMatrix<Serializable>> confusionMatrices = new LinkedHashMap<String, ConfusionMatrix<Serializable>>();
 
 	/**
 	 * @return the prefix
@@ -190,6 +193,36 @@ public class PredictionError extends AbstractProcessor {
 
 		for (String learner : confusionMatrices.keySet()) {
 			log.info(confusionMatrices.get(learner).toString());
+			StringBuffer config = new StringBuffer("\\begin{tabular}{p{2cm}");
+			StringBuffer header = new StringBuffer("\\textbf{Label} ");
+			StringBuffer body = new StringBuffer("Accuracy ");
+
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			DecimalFormat fmt = new DecimalFormat("0.00", dfs);
+
+			ConfusionMatrix matrix = confusionMatrices.get(learner);
+			List<Serializable> labels = matrix.getLabels();
+			for (Serializable label : labels) {
+				config.append("|c");
+
+				header.append("& \\textbf{" + label + "} ");
+				TableOfConfusion conf = matrix.getTableOfConfusion(label);
+				double prec = conf.calculatePrecision();
+				double reca = conf.calculateRecall();
+				double acc = conf.calculateAccuracy();
+
+				body.append(" & " + fmt.format(acc) + " ");
+			}
+			config.append("|} \\\\ \\hline");
+			header.append("\\\\ \\hline");
+			body.append("\\\\ \\hline");
+			body.append("\n");
+			body.append("\\end{tabular}");
+
+			System.out.println(config.toString());
+			System.out.println(header.toString());
+			System.out.println(body.toString());
 		}
 
 	}

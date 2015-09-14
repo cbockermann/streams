@@ -6,12 +6,14 @@ package stream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.data.DataFactory;
 import stream.util.WildcardPattern;
 
 /**
@@ -79,6 +81,13 @@ public final class Keys implements Serializable {
 		this.keyValues = keyValues.toArray(new String[keyValues.size()]);
 	}
 
+	public Set<String> select(Data item) {
+		if (item == null) {
+			return new HashSet<String>();
+		}
+		return select(item.keySet());
+	}
+
 	public Set<String> select(Collection<String> names) {
 		return select(names, keyValues);
 	}
@@ -96,6 +105,14 @@ public final class Keys implements Serializable {
 		}
 
 		return s.toString();
+	}
+
+	public Data refine(Data item) {
+		Data out = DataFactory.create();
+		for (String key : this.select(item.keySet())) {
+			out.put(key, item.get(key));
+		}
+		return out;
 	}
 
 	public static String joinValues(Data item, String[] keys, String glue) {

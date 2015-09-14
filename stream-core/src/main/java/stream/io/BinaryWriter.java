@@ -9,11 +9,11 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.expressions.MacroExpander;
@@ -24,13 +24,12 @@ import stream.util.Time;
  * @author chris
  * 
  */
-public class BinaryWriter extends AbstractProcessor {
+public class BinaryWriter extends AbstractWriter {
 
 	static Logger log = LoggerFactory.getLogger(BinaryWriter.class);
 	final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	final SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
 	final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
-	String[] keys;
 	File file;
 	File current;
 	OutputStream os;
@@ -51,13 +50,15 @@ public class BinaryWriter extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.Processor#process(stream.Data)
+	 * @see stream.io.AbstractWriter#write(stream.Data)
 	 */
 	@Override
-	public Data process(Data input) {
-		if (keys != null && keys.length > 0) {
+	public void write(Data input) throws Exception {
+		Set<String> ks = selectedKeys(input);
 
-			for (String key : keys) {
+		if (!ks.isEmpty()) {
+
+			for (String key : ks) {
 				Serializable value = input.get(key);
 				if (value != null && value.getClass().isArray()
 						&& value.getClass().getComponentType() == byte.class) {
@@ -97,8 +98,6 @@ public class BinaryWriter extends AbstractProcessor {
 				}
 			}
 		}
-
-		return input;
 	}
 
 	/**
@@ -114,24 +113,5 @@ public class BinaryWriter extends AbstractProcessor {
 	 */
 	public void setFile(File file) {
 		this.file = file;
-	}
-
-	/**
-	 * @return the keys
-	 */
-	public String[] getKeys() {
-		return keys;
-	}
-
-	/**
-	 * @param keys
-	 *            the keys to set
-	 */
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
-
-	public void setKey(String key) {
-		setKeys(new String[] { key });
 	}
 }

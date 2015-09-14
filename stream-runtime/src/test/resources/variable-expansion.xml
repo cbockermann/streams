@@ -1,0 +1,17 @@
+<application>
+    
+    <properties>
+        <answer>42</answer>
+        <answer-42>found in the book.</answer-42>
+        <question>What is the answer?</question>
+        <complete>What is the answer?</complete>
+    </properties>
+    
+    <stream id="test" class="stream.test.TestStream" limit="1" />
+    
+    <process input="test">
+        <stream.test.CheckVariable variable="${complete} ${answer-${answer}}" expected="What is the answer? ${answer-${answer}}." />
+    </process>
+    
+    
+</application>

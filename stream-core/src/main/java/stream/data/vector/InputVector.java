@@ -25,6 +25,10 @@ package stream.data.vector;
 
 import java.util.HashMap;
 
+/**
+ * @author chris
+ * @deprecated
+ */
 public class InputVector extends Vector {
 
 	/**
@@ -33,19 +37,19 @@ public class InputVector extends Vector {
 	private static final long serialVersionUID = 1868992010251953558L;
 
 	double y;
-	
+
 	public void setLabel(double y) {
 		this.y = y;
 	}
-	
+
 	public double getLabel() {
 		return y;
 	}
-	
+
 	public InputVector() {
 		super();
 	}
-		
+
 	/**
 	 * Creates a dense vector from the given values
 	 * 
@@ -57,7 +61,7 @@ public class InputVector extends Vector {
 		super(vals, copy);
 		this.y = y;
 	}
-	
+
 	/**
 	 * Creates a sparse vector from the given values
 	 * 
@@ -65,11 +69,11 @@ public class InputVector extends Vector {
 	 * @param copy
 	 * @param y
 	 */
-	public InputVector(HashMap<Integer,Double> pairs, boolean copy, double y) {
+	public InputVector(HashMap<Integer, Double> pairs, boolean copy, double y) {
 		super(pairs, copy);
 		this.y = y;
 	}
-	
+
 	/**
 	 * Copy constructor
 	 * 

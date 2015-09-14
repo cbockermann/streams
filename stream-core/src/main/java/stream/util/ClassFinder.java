@@ -44,6 +44,11 @@ public class ClassFinder {
 
 	static Logger log = LoggerFactory.getLogger(ClassFinder.class);
 
+	public static Class<?>[] getClasses(String packageName)
+			throws ClassNotFoundException, IOException {
+		return getClasses(packageName, ClassFinder.class.getClassLoader());
+	}
+
 	/**
 	 * Scans all classes accessible from the context class loader which belong
 	 * to the given package and subpackages.
@@ -54,10 +59,10 @@ public class ClassFinder {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public static Class<?>[] getClasses(String packageName)
+	public static Class<?>[] getClasses(String packageName, ClassLoader loader)
 			throws ClassNotFoundException, IOException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		ClassLoader classLoader = ClassFinder.class.getClassLoader(); // .getContextClassLoader();
+		ClassLoader classLoader = loader;
 		log.debug("Using class-loader {}", classLoader);
 		assert classLoader != null;
 		List<URL> resources = new ArrayList<URL>();
@@ -93,7 +98,7 @@ public class ClassFinder {
 				if (p.startsWith("file:"))
 					p = p.substring("file:".length());
 
-				classes.addAll(findClasses(new JarFile(p), packageName));
+				classes.addAll(findClasses(new JarFile(p), packageName, loader));
 			} else {
 				log.trace("Checking URL {}", resource);
 				dirs.add(new File(resource.getFile()));
@@ -110,6 +115,12 @@ public class ClassFinder {
 
 	public static List<Class<?>> findClasses(JarFile jar, String packageName)
 			throws ClassNotFoundException {
+		return findClasses(jar, packageName, ClassFinder.class.getClassLoader());
+	}
+
+	public static List<Class<?>> findClasses(JarFile jar, String packageName,
+			ClassLoader loader) throws ClassNotFoundException {
+
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		log.debug("Checking jar-file {}", jar.getName());
 		Enumeration<JarEntry> en = jar.entries();
@@ -127,8 +138,8 @@ public class ClassFinder {
 					String className = entry.getName()
 							.replaceAll("\\.class$", "").replace('/', '.');
 					log.trace("Class-name is: '{}'", className);
-					Class<?> clazz = Class.forName(className, false,
-							ClassFinder.class.getClassLoader());
+					Class<?> clazz = Class.forName(className); // , false,
+																// loader);
 
 					log.trace("Found class {}", clazz);
 					classes.add(clazz);
@@ -137,6 +148,7 @@ public class ClassFinder {
 				} catch (NoClassDefFoundError ncdfe) {
 
 				} catch (ClassNotFoundException cnfe) {
+					cnfe.printStackTrace();
 					log.error("Failed to locate class for entry '{}': {}",
 							entry, cnfe.getMessage());
 				} catch (Exception e) {

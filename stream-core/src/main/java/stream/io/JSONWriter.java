@@ -24,14 +24,14 @@
 package stream.io;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
+import java.io.PrintStream;
 
 import net.minidev.json.JSONObject;
 import stream.Data;
 import stream.data.DataFactory;
-import stream.util.KeyFilter;
 
 /**
  * <p>
@@ -42,33 +42,20 @@ import stream.util.KeyFilter;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class JSONWriter extends CsvWriter {
+public class JSONWriter extends AbstractWriter {
+
+	PrintStream p;
 
 	public JSONWriter() {
 		super();
 	}
 
 	public JSONWriter(File file) throws IOException {
-		super(file);
+		this(new FileOutputStream(file));
 	}
 
-	public JSONWriter(URL url) throws Exception {
-		super(url);
-	}
-
-	public JSONWriter(OutputStream out) throws Exception {
-		super(out);
-	}
-
-	/**
-	 * @see stream.io.CsvWriter#writeHeader(stream.Data)
-	 */
-	@Override
-	public void writeHeader(Data datum) {
-		//
-		// we overwrite this method to ensure no data-header is
-		// written by the super-class
-		//
+	public JSONWriter(OutputStream out) throws IOException {
+		p = new PrintStream(out);
 	}
 
 	/**
@@ -76,15 +63,11 @@ public class JSONWriter extends CsvWriter {
 	 */
 	@Override
 	public void write(Data datum) {
-
-		if (this.keys != null) {
-			Data item = DataFactory.create();
-			for (String key : KeyFilter.select(datum, keys)) {
-				if (datum.containsKey(key))
-					item.put(key, datum.get(key));
-			}
-			p.println(JSONObject.toJSONString(item));
-		} else
-			p.println(JSONObject.toJSONString(datum));
+		Data item = DataFactory.create();
+		for (String key : this.selectedKeys(datum)) {
+			if (datum.containsKey(key))
+				item.put(key, datum.get(key));
+		}
+		p.println(JSONObject.toJSONString(item));
 	}
 }

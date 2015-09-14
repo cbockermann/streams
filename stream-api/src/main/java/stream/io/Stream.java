@@ -36,4 +36,5 @@ public interface Stream extends Source {
 	public Long getLimit();
 
 	public void setLimit(Long limit);
+
 }

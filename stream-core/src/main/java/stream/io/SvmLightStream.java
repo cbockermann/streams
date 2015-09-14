@@ -42,6 +42,7 @@ import stream.data.vector.InputVector;
  * format. The data is read from a URL and parsed into a Data instance.
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * @deprecated
  * 
  */
 @Description(group = "Data Stream.Sources")

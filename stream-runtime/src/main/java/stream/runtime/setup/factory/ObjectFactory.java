@@ -271,6 +271,11 @@ public class ObjectFactory extends Variables {
 		//
 		log.debug("Looking for class '{}'", className);
 		Class<?> clazz = Class.forName(className, false, classLoader);
+
+		Deprecated depr = clazz.getAnnotation(Deprecated.class);
+		if (depr != null) {
+			log.warn("Using deprecated class '{}' -> {}", className, depr);
+		}
 		object = clazz.newInstance();
 
 		// Inject the parameters into the object...

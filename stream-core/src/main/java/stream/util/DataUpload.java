@@ -31,10 +31,14 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.io.CsvStream;
 import stream.io.CsvUpload;
-import stream.io.Stream;
 import stream.io.JSONStream;
 import stream.io.SourceURL;
+import stream.io.Stream;
 
+/**
+ * @author chris
+ * @deprecated This class is too specific to belong to the streams-core package.
+ */
 public class DataUpload {
 
 	static Logger log = LoggerFactory.getLogger(DataUpload.class);

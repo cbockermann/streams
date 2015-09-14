@@ -58,7 +58,7 @@ public abstract class AbstractBolt extends BaseRichBolt {
 	 */
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		log.debug("Declaring Bolt-output field 'stream.Data'");
-		declarer.declare(new Fields("stream.Data"));
+		log.debug("Declaring Bolt-output field 'stream.Data' for default output stream");
+		declarer.declare(new Fields(TupleWrapper.DATA_KEY));
 	}
 }

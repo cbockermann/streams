@@ -1,0 +1,41 @@
+<container id="example">
+
+    <stream id="data" class="stream.generator.RandomStream" limit="4"/>
+
+    <process input="data" id="extraction">
+        <CreateID />
+        <!--
+
+        <stream.util.AlternateAB key="flag" />
+        <stream.util.Log prefix="beforeEnqueue" />
+        -->
+        <!--
+        <stream.DataRate every="2" silence="true"/>
+
+    -->
+        <Enqueue queues="queue1" condition="%{data.flag} == 'A'"/>
+        <Enqueue queues="queue2" condition="%{data.flag} == 'B'"/>
+    </process>
+
+    <queue id="queue1" />
+    <queue id="queue2" />
+
+    <process input="queue1" id="performancebolt1">
+        <PrintData />
+        <!--
+        <stream.util.Log prefix="perfBolt1" />
+        <stream.io.JSONWriter url="file:/Users/chris/storm_datarate1.json" 
+                           keys="@datarate" writeblock="true"/>
+                       -->
+    </process>
+
+    <process input="queue2" id="performancebolt2">
+        <PrintData />
+        <!--
+        <stream.util.Log prefix="perfBolt2" />
+        <stream.io.JSONWriter url="file:/Users/chris/storm_datarate2.json" 
+                           keys="@datarate" writeblock="true"/>
+                       -->
+    </process>
+
+</container>

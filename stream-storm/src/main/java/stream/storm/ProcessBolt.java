@@ -54,6 +54,7 @@ import stream.runtime.setup.factory.ProcessorFactory;
 import stream.util.Variables;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
+import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
@@ -115,6 +116,19 @@ public class ProcessBolt extends AbstractBolt {
 		// sinks/services
 		//
 		createProcess();
+	}
+
+	@Override
+	public void declareOutputFields(
+			final OutputFieldsDeclarer outputFieldsDeclarer) {
+
+		super.declareOutputFields(outputFieldsDeclarer);
+
+		for (Subscription sub : getSubscriptions()) {
+			log.debug("Declaring output stream '{}'", sub.subscriber());
+			outputFieldsDeclarer.declareStream(sub.subscriber(), new Fields(
+					TupleWrapper.DATA_KEY));
+		}
 	}
 
 	/**

@@ -89,7 +89,7 @@ public class QueueInjection implements ProcessorCreationHandler {
 		Map<String, String> params = ObjectFactory.newInstance().getAttributes(
 				from);
 		for (Method m : p.getClass().getMethods()) {
-			log.debug("Checking method {}", m);
+			log.trace("Checking method {}", m);
 			if (DependencyInjection.isSetter(m, Sink.class)) {
 				final String qsn = getQueueSetterName(m);
 				String prop = qsn.substring(0, 1).toLowerCase()

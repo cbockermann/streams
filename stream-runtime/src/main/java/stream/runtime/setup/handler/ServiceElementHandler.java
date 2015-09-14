@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import stream.app.ComputeGraph.SourceRef;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.LifeCycle;
@@ -111,7 +112,15 @@ public class ServiceElementHandler implements ElementHandler {
 			if (service instanceof LifeCycle) {
 				container.register((LifeCycle) service);
 			}
+			String input = params.get("input");
 
+			if (input != null && !input.trim().isEmpty()) {
+				SourceRef sourceRef = new SourceRef(service, "input", input);
+				dependencyInjection.add(sourceRef);
+				// this should not be required in the future - handled
+				// by dependencyInjection class
+				// computeGraph.addReference(sourceRef);
+			}
 		} catch (Exception e) {
 			log.error("Failed to create and register service '{}': {}", id,
 					e.getMessage());

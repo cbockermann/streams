@@ -48,7 +48,7 @@ public abstract class ATopologyElementHandler implements ConfigHandler {
 		if (input == null)
 			return inputs;
 
-		if (input.indexOf(",") < 0) {
+		if (!input.contains(",")) {
 			inputs.add(input.trim());
 			return inputs;
 		}

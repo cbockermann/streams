@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 
 import stream.StreamTopology;
 import stream.runtime.setup.factory.ObjectFactory;
+import stream.storm.Constants;
 import stream.storm.StreamSpout;
 import stream.util.XMLElementMatch;
 import backtype.storm.topology.SpoutDeclarer;
@@ -73,7 +74,7 @@ public class StreamHandler extends ATopologyElementHandler {
 		if (!handles(el))
 			return;
 
-		String id = el.getAttribute("id");
+		String id = el.getAttribute(Constants.ID);
 		if (id == null || id.trim().isEmpty()) {
 			log.error(
 					"Missing attribute 'id' for element 'stream' with class '{}'!",
@@ -82,13 +83,10 @@ public class StreamHandler extends ATopologyElementHandler {
 		}
 
 		log.info("  > Creating stream-spout with id '{}'", id);
-		String className = el.getAttribute("class");
-		log.info("  >   stream-class is: {}", className);
 
 		// Extract the parameters for the stream from the element
 		//
-		Map<String, String> params = ObjectFactory.newInstance().getAttributes(
-				el);
+		Map<String, String> params = ObjectFactory.newInstance().getAttributes(el);
 		log.info("  >   stream-parameters are: {}", params);
 
 		// expand any static place-holders (e.g. "${var}") using the
@@ -97,7 +95,7 @@ public class StreamHandler extends ATopologyElementHandler {
 		params = st.getVariables().expandAll(params);
 		log.info("  >   expanded stream-parameters are: {}", params);
 
-		StreamSpout spout = new StreamSpout(xml, id, className, params);
+		StreamSpout spout = new StreamSpout(xml, id, params);
 		log.info("  >   stream-spout instance is: {}", spout);
 
 		SpoutDeclarer spoutDeclarer = builder.setSpout(id, spout);

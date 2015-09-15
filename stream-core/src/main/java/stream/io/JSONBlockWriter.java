@@ -32,7 +32,6 @@ import java.util.Date;
 
 import net.minidev.json.JSONObject;
 
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,8 @@ import stream.Data;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
 import stream.util.ByteSize;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author chris
@@ -85,8 +86,7 @@ public class JSONBlockWriter extends AbstractProcessor {
 					if (val.getClass().isArray()
 							&& val.getClass().getComponentType() == byte.class) {
 						try {
-							String enc = Base64
-									.encodeBase64String((byte[]) val);
+							String enc = DatatypeConverter.printBase64Binary((byte[]) val);
 							dat.put(key, enc);
 						} catch (Exception e) {
 							e.printStackTrace();

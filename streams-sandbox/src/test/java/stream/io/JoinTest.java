@@ -28,8 +28,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +36,7 @@ import cern.jet.random.engine.MersenneTwister64;
 
 /**
  * @author hendrik
- *
+ * 
  */
 public class JoinTest {
 	private int q;

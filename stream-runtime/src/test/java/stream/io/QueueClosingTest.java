@@ -28,6 +28,8 @@ public class QueueClosingTest {
 			ProcessContainer pc = new ProcessContainer(url);
 			pc.run();
 
+			Thread.sleep(1000);
+
 			Assert.assertTrue(ExpectedItems.finishMethodPerformed.get());
 
 		} catch (Exception e) {

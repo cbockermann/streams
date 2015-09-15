@@ -29,7 +29,7 @@ import stream.service.Service;
 
 /**
  * @author chris
- * 
+ * @deprecated Was added for Nico's paper, no longer used.
  */
 public interface GraphService extends Service {
 

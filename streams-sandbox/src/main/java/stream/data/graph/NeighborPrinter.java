@@ -31,7 +31,7 @@ import stream.Processor;
 
 /**
  * @author chris
- * 
+ * @deprecated Was added for Nico's paper, no longer used.
  */
 public class NeighborPrinter implements Processor {
 

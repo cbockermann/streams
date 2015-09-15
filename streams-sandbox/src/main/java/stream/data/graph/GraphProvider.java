@@ -40,7 +40,7 @@ import stream.io.CsvStream;
 
 /**
  * @author chris
- * 
+ * @deprecated Was added for Nico's paper, no longer used.
  */
 public class GraphProvider implements GraphService {
 

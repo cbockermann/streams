@@ -35,11 +35,13 @@ import stream.Data;
 
 /**
  * <p>
- * 
+ * This implementation of a Data item is backed by two arrays. A string array
+ * holding the keys and an array of Serializable objects representing the
+ * values.
  * </p>
  * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
+ * @deprecated
  */
 public class DataArrayImpl implements Data {
 

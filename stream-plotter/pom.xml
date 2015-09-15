@@ -7,7 +7,7 @@
     <relativePath>..</relativePath>
   </parent>
   <artifactId>streams-plotter</artifactId>
-  <name>stream-plotter</name>
+  <name>streams-plotter</name>
   <description>A small package providing various plotter processors for the stream-api</description>
   
   

@@ -51,7 +51,9 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	/** The unique class ID */
 	private static final long serialVersionUID = -7751681008628413236L;
 
-	final static boolean deepClone = "true".equalsIgnoreCase(System
+	// use deep-cloning by default
+	//
+	final static boolean deepClone = !"false".equalsIgnoreCase(System
 			.getProperty("stream.Data.deepClone"));
 
 	final transient JavaSerializer javaSerializer = new JavaSerializer();
@@ -99,10 +101,10 @@ public class DataImpl extends LinkedHashMap<String, Serializable> implements
 	 */
 	@Override
 	public Data createCopy() {
-		// if (!deepClone) {
-		return new DataImpl(this);
-		// }
-		//
-		// return DataFactory.copy(this);
+		if (!deepClone) {
+			return new DataImpl(this);
+		}
+
+		return DataFactory.copy(this);
 	}
 }

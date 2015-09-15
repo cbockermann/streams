@@ -1,0 +1,17 @@
+<application>
+    
+    <stream id="data" class="stream.test.TestStream" limit="10" />
+    
+    
+    <process id="reader" input="data">
+        <stream.flow.Enqueue queue="q1" />
+    </process>
+    
+    
+    <process id="consumer" input="q1">
+        <PrintData />
+        <stream.test.ExpectedItems count="10" />
+    </process>
+    
+    
+</application>

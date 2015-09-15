@@ -21,19 +21,41 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.data.graph;
+package stream.flow;
 
-import java.util.Set;
+import java.util.List;
 
-import stream.service.Service;
+import stream.expressions.Condition;
+import stream.io.Sink;
 
 /**
- * @author chris
- * @deprecated Was added for Nico's paper, no longer used.
+ * <p>
+ * This interface defines an abstract split element. A split element is
+ * essentially just like a queue, but allows for multiple consumers to connect
+ * with a given condition.
+ * </p>
+ * <p>
+ * Each consumer will then receive the items matching the condition it provided.
+ * The exact behavior is left to the different implementations of {@link Split}.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * 
  */
-public interface GraphService extends Service {
+public interface Split extends Sink {
 
-	public Set<String> getNodes();
+	/**
+	 * List the conditions registered at this split point.
+	 * 
+	 * @return
+	 */
+	public List<Condition> getConditions();
 
-	public Set<String> getNeighbors(String node);
+	/**
+	 * Adds a new sink with a given condition to the split.
+	 * 
+	 * @param condition
+	 * @param sink
+	 */
+	public void add(Condition condition, Sink sink);
 }

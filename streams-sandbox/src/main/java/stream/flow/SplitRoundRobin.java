@@ -21,62 +21,40 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.data.graph;
+package stream.flow;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
-import stream.Processor;
+import stream.io.Sink;
 
 /**
- * @author chris
- * @deprecated Was added for Nico's paper, no longer used.
+ * <p>
+ * A split-point following a round-robin strategy.
+ * </p>
+ * 
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
+ * 
  */
-public class NeighborPrinter implements Processor {
+public class SplitRoundRobin extends SplitByRandom {
 
-	static Logger log = LoggerFactory.getLogger(NeighborPrinter.class);
-	GraphService graphService;
+	static Logger log = LoggerFactory.getLogger(SplitRoundRobin.class);
 
-	String node;
-
-	/**
-	 * @return the graphService
-	 */
-	public GraphService getGraph() {
-		return graphService;
-	}
+	protected AtomicInteger lastIndex = new AtomicInteger(0);
 
 	/**
-	 * @param graphService
-	 *            the graphService to set
-	 */
-	public void setGraph(GraphService graphService) {
-		this.graphService = graphService;
-	}
-
-	/**
-	 * @return the node
-	 */
-	public String getNode() {
-		return node;
-	}
-
-	/**
-	 * @param node
-	 *            the node to set
-	 */
-	public void setNode(String node) {
-		this.node = node;
-	}
-
-	/**
-	 * @see stream.Processor#process(stream.Data)
+	 * @see stream.flow.SplitByRandom#write(stream.Data)
 	 */
 	@Override
-	public Data process(Data input) {
-		log.info("Neighbors of {} are: {}", node,
-				graphService.getNeighbors(node));
-		return input;
+	public boolean write(Data item) throws Exception {
+
+		int idx = lastIndex.getAndIncrement();
+		Sink destination = sinks.get(idx % sinks.size());
+		log.debug("Current index '{}' ~> {}", idx % sinks.size(), destination);
+
+		return destination.write(item);
 	}
 }

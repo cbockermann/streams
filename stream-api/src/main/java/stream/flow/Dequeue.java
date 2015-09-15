@@ -31,12 +31,18 @@ import stream.Data;
 import stream.data.DataFactory;
 import stream.io.QueueService;
 
+/**
+ * This processor reads the top element from a queue and merges it into the
+ * currently processed data item.
+ * 
+ * @author Christian Bockermann
+ * 
+ */
 public class Dequeue extends AbstractProcessor {
 
-	static Logger log = LoggerFactory.getLogger( Dequeue.class );
+	static Logger log = LoggerFactory.getLogger(Dequeue.class);
 	QueueService queue;
-	
-	
+
 	public QueueService getQueue() {
 		return queue;
 	}
@@ -50,23 +56,23 @@ public class Dequeue extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data input) {
-		
-		if( queue != null ){
-			
-			if( input == null )
+
+		if (queue != null) {
+
+			if (input == null)
 				input = DataFactory.create();
-			
+
 			Data item = queue.take();
-			if( item != null ){
-				log.debug( "Merging dequeued item '{}'", item );
-				input.putAll( item );
+			if (item != null) {
+				log.debug("Merging dequeued item '{}'", item);
+				input.putAll(item);
 			} else {
-				log.error( "Dequeued 'null' from queue - unexpected?!" );
+				log.error("Dequeued 'null' from queue - unexpected?!");
 			}
 		} else {
-			log.debug( "No queue defined, not dequeuing anything..." );
+			log.debug("No queue defined, not dequeuing anything...");
 		}
-		
+
 		return input;
 	}
 }

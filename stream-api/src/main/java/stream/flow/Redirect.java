@@ -31,7 +31,11 @@ import stream.Data;
 import stream.io.QueueService;
 
 /**
- * @author chris
+ * This processor will send items to the specified queues and stop processing,
+ * i.e. it works similar to the <code>Enqueue</code> processor, except that the
+ * latter passes on the item to subsequent processors.
+ * 
+ * @author Christian Bockermann
  * 
  */
 public class Redirect extends ConditionedProcessor {
@@ -75,7 +79,6 @@ public class Redirect extends ConditionedProcessor {
 					log.error("Failed to redirect item to {}", queue);
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

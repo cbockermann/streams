@@ -37,7 +37,10 @@ import stream.ProcessContext;
 import stream.service.AssertionService;
 
 /**
- * @author chris
+ * This processor may be used to raise errors if any of the specified type
+ * checks fails for processed data items.
+ * 
+ * @author Christian Bockermann
  * 
  */
 public class AssertTypes extends AbstractProcessor implements AssertionService {

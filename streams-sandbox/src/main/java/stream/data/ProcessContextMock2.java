@@ -30,7 +30,7 @@ import stream.ProcessContext;
 
 /**
  * @author chris
- * 
+ * @deprecated Why do we have this class here?????
  */
 public class ProcessContextMock2 implements ProcessContext {
 
@@ -78,7 +78,7 @@ public class ProcessContextMock2 implements ProcessContext {
 		ctx.clear();
 	}
 
-	@Override
+	// @Override
 	public boolean contains(String key) {
 		return ctx.containsKey(key);
 	}

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.Data;
-import stream.util.WildcardPattern;
+import stream.Keys;
 
 /**
  * @author chris
@@ -40,7 +40,7 @@ import stream.util.WildcardPattern;
 public class SelectKeys extends AbstractProcessor {
 
 	static Logger log = LoggerFactory.getLogger(SelectKeys.class);
-	String[] keys = null;
+	Keys keys;
 
 	Set<String> selected = new HashSet<String>();
 	private Boolean remove;
@@ -50,13 +50,11 @@ public class SelectKeys extends AbstractProcessor {
 		this.remove = true;
 	}
 
-	public void setKeys(String[] keys) {
+	public void setKeys(Keys keys) {
 		this.keys = keys;
-		for (String key : keys)
-			selected.add(key);
 	}
 
-	public String[] getKeys() {
+	public Keys getKeys() {
 		return keys;
 	}
 
@@ -73,43 +71,14 @@ public class SelectKeys extends AbstractProcessor {
 	 */
 	@Override
 	public Data process(Data data) {
-		if (keys == null || keys.length == 0)
+		if (keys == null)
 			return data;
 
 		Data result = DataFactory.create();
-		for (String key : data.keySet()) {
-			if (isSelected(key)) {
-				result.put(key, data.get(key));
-			}
+		for (String key : keys.select(data)) {
+			result.put(key, data.get(key));
 		}
 
 		return result;
-	}
-
-	public boolean isSelected(String key) {
-
-		if (keys == null || keys.length == 0)
-			return false;
-
-		boolean included = false;
-
-		for (String k : keys) {
-			if (k.startsWith("!")) {
-				k = k.substring(1);
-				if (included && WildcardPattern.matches(k, key))
-					included = false;
-				log.debug("Removing '{}' from selection due to pattern '!{}'",
-						key, k);
-			} else {
-
-				if (!included && WildcardPattern.matches(k, key)) {
-					included = true;
-					log.debug("Adding '{}' to selection due to pattern '{}'",
-							key, k);
-				}
-			}
-		}
-
-		return included;
 	}
 }

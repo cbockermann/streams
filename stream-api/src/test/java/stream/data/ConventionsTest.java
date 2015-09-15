@@ -33,7 +33,7 @@ import stream.data.Conventions.Key;
 
 /**
  * @author chris
- * 
+ * @deprecated
  */
 public class ConventionsTest {
 

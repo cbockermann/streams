@@ -40,7 +40,7 @@ import stream.Data;
  * </p>
  * 
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
- * 
+ * @deprecated
  */
 public class Conventions {
 

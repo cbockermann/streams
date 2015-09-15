@@ -23,8 +23,7 @@
  */
 package stream.data;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import stream.Data;
@@ -113,6 +112,5 @@ public class SimpleCopyValuesTest {
 		Assert.assertTrue(d.get("k6") == null);
 
 	}
-	
-	
+
 }

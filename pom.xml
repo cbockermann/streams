@@ -17,6 +17,7 @@
 		<module>stream-core</module>
 		<module>stream-runtime</module>
 		<module>stream-plotter</module>
+		<module>streams-sandbox</module>
 	</modules>
 
 	<distributionManagement>

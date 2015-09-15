@@ -603,6 +603,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			runtime = execute();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * This is a generic utility class that holds a map of keys to double values.
+ * Instance of this class can be added, subtracted and multiplied with a scalar.
+ * 
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  */
 public class Statistics extends LinkedHashMap<String, Double> {

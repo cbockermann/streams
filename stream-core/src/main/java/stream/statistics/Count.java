@@ -55,7 +55,6 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 
 	History<Statistics> historyStats;
 	String file = null;
-	String separator = ",";
 	Long lastTime = 0L;
 
 	Statistics currentStatistics = new Statistics();
@@ -100,7 +99,7 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 			if (lastTime == 0L)
 				lastTime = time;
 
-			if (time != lastTime) {
+			if (!time.equals(lastTime)) {
 				log.debug("new time-index, putting out all statistics {}", st);
 				input.putAll(st);
 				synchronized (currentStatistics) {

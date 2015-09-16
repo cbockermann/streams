@@ -168,8 +168,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 
 				if (keys != null) {
 					for (String key : keys) {
-						if (tableSchema.containsKey(key)) {
-						} else {
+						if (!tableSchema.containsKey(key)) {
 							log.info("Removing non-selected key '{}'", key);
 							tableSchema.remove(key);
 						}

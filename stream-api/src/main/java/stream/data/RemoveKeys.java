@@ -26,6 +26,7 @@ package stream.data;
 import java.util.Set;
 
 import stream.Data;
+import stream.Keys;
 import stream.Processor;
 import stream.annotations.Description;
 import stream.util.KeyFilter;
@@ -44,21 +45,10 @@ import stream.util.KeyFilter;
 @Description(group = "Data Stream.Processing.Transformations.Attributes")
 public class RemoveKeys implements Processor {
 
-	String[] keys = new String[0];
+	Keys keys;
 
-	public RemoveKeys() {
-	}
-
-	public RemoveKeys(String[] keys) {
-		setKeys(keys);
-	}
-
-	public void setKeys(String[] keys) {
+	public void setKeys(Keys keys) {
 		this.keys = keys;
-	}
-
-	public String[] getKeys() {
-		return keys;
 	}
 
 	@Override
@@ -67,7 +57,7 @@ public class RemoveKeys implements Processor {
 		if (keys == null)
 			return data;
 
-		Set<String> ks = KeyFilter.select(data, keys);
+		Set<String> ks = keys.select(data);
 		for (String key : ks)
 			data.remove(key);
 		return data;

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.AbstractProcessor;
 import stream.Data;
+import stream.Keys;
 import stream.ProcessContext;
 import stream.data.DataFactory;
 import stream.util.KeyFilter;
@@ -47,7 +48,7 @@ public class TcpSender extends AbstractProcessor {
 	static Logger log = LoggerFactory.getLogger(TcpSender.class);
 	Socket socket = null;
 	PrintStream out = null;
-	String[] keys;
+	Keys keys;
 
 	String address;
 	int port;
@@ -86,7 +87,7 @@ public class TcpSender extends AbstractProcessor {
 			String json;
 			if (keys != null) {
 
-				Set<String> selected = KeyFilter.select(input, keys);
+				Set<String> selected = keys.select(input);
 				Data item = DataFactory.create();
 				for (String k : selected) {
 					item.put(k, input.get(k));
@@ -148,18 +149,13 @@ public class TcpSender extends AbstractProcessor {
 		this.port = port;
 	}
 
-	/**
-	 * @return the keys
-	 */
-	public String[] getKeys() {
-		return keys;
-	}
+
 
 	/**
 	 * @param keys
 	 *            the keys to set
 	 */
-	public void setKeys(String[] keys) {
+	public void setKeys(Keys keys) {
 		this.keys = keys;
 	}
 }

@@ -32,10 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.Keys;
 import stream.ProcessContext;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
-import stream.util.KeyFilter;
 
 /**
  * @author chris
@@ -48,10 +48,9 @@ public class Plotter extends DataVisualizer {
 	final PlotPanel plotPanel = new PlotPanel();
 
 	Integer history = 1000;
-	String[] keys = null;
+	Keys keys;
 	boolean keepOpen = false;
 
-	String xaxis = null;
 
 	Double ymin = null;
 	Double ymax = null;
@@ -101,7 +100,7 @@ public class Plotter extends DataVisualizer {
 	/**
 	 * @return the keys
 	 */
-	public String[] getKeys() {
+	public Keys getKeys() {
 		return keys;
 	}
 
@@ -110,7 +109,7 @@ public class Plotter extends DataVisualizer {
 	 *            the keys to set
 	 */
 	@Parameter(required = false, description = "The attributes/features to be plotted (non-numerical features will be ignored)")
-	public void setKeys(String[] keys) {
+	public void setKeys(Keys keys) {
 		this.keys = keys;
 	}
 
@@ -146,7 +145,7 @@ public class Plotter extends DataVisualizer {
 	}
 
 	/**
-	 * @see stream.data.Processor#resetState()
+	 * @see stream.StatefulProcessor#init(stream.ProcessContext)
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
@@ -176,7 +175,7 @@ public class Plotter extends DataVisualizer {
 	}
 
 	/**
-	 * @see stream.data.Processor#finish()
+	 * @see stream.StatefulProcessor#finish()
 	 */
 	@Override
 	public void finish() throws Exception {
@@ -191,7 +190,7 @@ public class Plotter extends DataVisualizer {
 	}
 
 	/**
-	 * @see stream.data.DataProcessor#process(stream.Data)
+	 * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
 	 */
 	@Override
 	public Data processMatchingData(Data data) {
@@ -202,7 +201,7 @@ public class Plotter extends DataVisualizer {
 		} else {
 			Data stats = DataFactory.create();
 
-			Set<String> selected = KeyFilter.select(data, keys);
+			Set<String> selected = keys.select(data);
 			for (String key : selected) {
 				if (data.containsKey(key)) {
 					stats.put(key, data.get(key));

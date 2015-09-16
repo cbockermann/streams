@@ -29,7 +29,6 @@ import stream.Data;
 import stream.Keys;
 import stream.Processor;
 import stream.annotations.Description;
-import stream.util.KeyFilter;
 
 /**
  * This class implements a data-processor that removes a bunch of keys from each

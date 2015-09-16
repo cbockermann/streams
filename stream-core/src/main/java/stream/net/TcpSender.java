@@ -37,7 +37,6 @@ import stream.Data;
 import stream.Keys;
 import stream.ProcessContext;
 import stream.data.DataFactory;
-import stream.util.KeyFilter;
 
 /**
  * @author chris

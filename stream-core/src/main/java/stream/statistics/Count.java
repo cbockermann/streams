@@ -57,7 +57,7 @@ public class Count extends ConditionedProcessor implements StatisticsService {
 	String file = null;
 	Long lastTime = 0L;
 
-	Statistics currentStatistics = new Statistics();
+	final Statistics currentStatistics = new Statistics();
 
 	/**
 	 * @see stream.Processor#process(stream.Data)

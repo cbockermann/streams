@@ -34,6 +34,7 @@ public final class Keys implements Serializable {
 
 	static Logger log = LoggerFactory.getLogger(Keys.class);
 
+
 	final String[] keyValues;
 
 	/**
@@ -192,5 +193,14 @@ public final class Keys implements Serializable {
 		}
 
 		return included;
+	}
+
+
+	/**
+	 * Get the strings which were used to build this object.
+	 * @return the keys
+	 */
+	public String[] getKeyValues() {
+		return keyValues;
 	}
 }

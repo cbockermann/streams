@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.Keys;
 import stream.ProcessContext;
 import stream.ProcessorException;
 import stream.annotations.Description;
@@ -46,7 +47,6 @@ import stream.annotations.Parameter;
 import stream.data.DataFactory;
 import stream.io.sql.HsqlDialect;
 import stream.io.sql.MysqlDialect;
-import stream.util.KeyFilter;
 
 /**
  * @author chris
@@ -58,7 +58,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 	static Logger log = LoggerFactory.getLogger(SQLWriter.class);
 	boolean dropTable = false;
 	String table;
-	String[] keys;
+	Keys keys;
 
 	final LinkedHashSet<String> keysToStore = new LinkedHashSet<String>();
 	Map<String, Class<?>> tableSchema = null;
@@ -83,19 +83,14 @@ public class SQLWriter extends AbstractSQLProcessor {
 		this.table = table;
 	}
 
-	/**
-	 * @return the keys
-	 */
-	public String[] getKeys() {
-		return keys;
-	}
+
 
 	/**
 	 * @param keys
 	 *            the keys to set
 	 */
 	@Parameter(required = false, description = "A list of attributes to insert (columns), empty string for all attributes.")
-	public void setKeys(String[] keys) {
+	public void setKeys(Keys keys) {
 		this.keys = keys;
 	}
 
@@ -167,9 +162,8 @@ public class SQLWriter extends AbstractSQLProcessor {
 					tableSchema.putAll(schema);
 
 				if (keys != null) {
-					for (String key : keys) {
-						if (tableSchema.containsKey(key)) {
-						} else {
+					for (String key : keys.getKeyValues()) {
+						if (!tableSchema.containsKey(key)) {
 							log.info("Removing non-selected key '{}'", key);
 							tableSchema.remove(key);
 						}
@@ -220,7 +214,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 						getTable(), input);
 				Data sample = DataFactory.create();
 
-				Set<String> ks = KeyFilter.select(input, keys);
+				Set<String> ks = keys.select(input);
 				for (String k : ks) {
 					sample.put(k, input.get(k));
 				}
@@ -239,7 +233,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 		if (!hasTable(getTable())) {
 
 			if (keys != null) {
-				for (String key : keys) {
+				for (String key : keys.select(input)) {
 					Serializable value = input.get(key);
 					if (value == null)
 						throw new ProcessorException(

@@ -309,11 +309,6 @@
 					<artifactId>streams-runtime</artifactId>
 					<version>${project.version}</version>
 				</dependency>
-				<dependency>
-					<groupId>org.jwall</groupId>
-					<artifactId>streams-moa</artifactId>
-					<version>[0.0.4,)</version>
-				</dependency>
 			</dependencies>
 		</profile>
 	</profiles>

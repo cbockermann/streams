@@ -169,8 +169,6 @@ public class DataTap extends AbstractProcessor {
 						e.printStackTrace();
 					}
 				}
-			} catch (Exception e) {
-
 			} finally {
 				try {
 					log.info("Closing TAP socket");

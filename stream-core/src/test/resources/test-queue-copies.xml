@@ -1,0 +1,15 @@
+<application>
+
+    <stream id="data" class="stream.io.RandomStream"  limit="50" />
+
+    <Queue id="queue" />
+
+    <process input="data" copies="4">
+        <Delay time="40 ms" />
+        <Enqueue queue="queue"/>
+    </process>
+
+    <process input="queue">
+        <PrintData/>
+    </process>
+</application>

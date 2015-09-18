@@ -28,7 +28,7 @@ public class QueueClosingTest {
 			ProcessContainer pc = new ProcessContainer(url);
 			pc.run();
 
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 
 			Assert.assertTrue(ExpectedItems.finishMethodPerformed.get());
 

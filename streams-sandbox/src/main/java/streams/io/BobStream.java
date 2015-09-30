@@ -24,6 +24,7 @@ public class BobStream extends AbstractStream {
 
 	DataInputStream in;
 	long count = 0L;
+	final Object lock = new Object();
 
 	public BobStream(SourceURL url) {
 		super(url);
@@ -46,13 +47,14 @@ public class BobStream extends AbstractStream {
 	public Data readNext() throws Exception {
 
 		try {
+			synchronized (lock) {
+				final byte[] block = BobCodec.readBlock(in);
 
-			final byte[] block = BobCodec.readBlock(in);
-
-			final Data item = DataFactory.create();
-			item.put("data", block);
-			count++;
-			return item;
+				final Data item = DataFactory.create();
+				item.put("data", block);
+				count++;
+				return item;
+			}
 		} catch (Exception e) {
 			log.error("Failed to read event #{}:  {}", count, e.getMessage());
 			e.printStackTrace();

@@ -6,6 +6,8 @@ package streams.io;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,5 +104,25 @@ public class BobCodec {
 		}
 
 		return s.toString();
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		Socket socket = new Socket(InetAddress.getByName("ls8cb01.cs.uni-dortmund.de"), 9999);
+
+		// FileInputStream fis = new FileInputStream(new File(args[0]));
+		DataInputStream dis = new DataInputStream(socket.getInputStream()); // fis);
+
+		long count = 0L;
+		byte[] block = BobCodec.readBlock(dis);
+		while (block != null) {
+			count++;
+			if (count % 1000 == 0) {
+				System.out.println(count + " blocks read...");
+			}
+			block = BobCodec.readBlock(dis);
+		}
+
+		dis.close();
 	}
 }

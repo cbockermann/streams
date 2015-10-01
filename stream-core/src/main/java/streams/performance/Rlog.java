@@ -43,7 +43,7 @@ public class Rlog {
 
 	public Rlog() {
 		baseUrl = System.getProperty("rlog.url", DEFAULT_URL);
-		this.sessionId = UUID.randomUUID().toString();
+		sessionId = System.getProperty("rlog.trace", UUID.randomUUID().toString());
 		String hostname = null;
 		try {
 			hostname = InetAddress.getLocalHost().getHostName();

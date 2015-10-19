@@ -51,7 +51,7 @@ public class ScopeTest {
 		try {
 			stream.runtime.DefaultProcess p = new stream.runtime.DefaultProcess();
 
-			ProcessContext ctx = new ProcessContextImpl();
+			ProcessContext ctx = new ProcessContextImpl("0");
 
 			SetValue sv = new SetValue();
 			sv.setKey("tetst");
@@ -61,7 +61,8 @@ public class ScopeTest {
 			p.add(sv);
 
 			If cond = new If();
-			cond.setCondition("%{data.frame:red:avg} < 10 AND %{data.frame:green:avg} < 10 AND %{data.frame:blue:avg} < 10");
+			cond.setCondition(
+					"%{data.frame:red:avg} < 10 AND %{data.frame:green:avg} < 10 AND %{data.frame:blue:avg} < 10");
 
 			SetValue sv2 = new SetValue();
 			sv2.setKey("kapselStart");

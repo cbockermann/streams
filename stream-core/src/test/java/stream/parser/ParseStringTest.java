@@ -63,9 +63,10 @@ public class ParseStringTest {
 
 			ParseString parser = new ParseString();
 			parser.setKey("LINE");
-			parser.setFormat("%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"");
+			parser.setFormat(
+					"%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"");
 
-			ProcessContext pc = new ProcessContextImpl();
+			ProcessContext pc = new ProcessContextImpl("process:0");
 			ProcessorList list = new ProcessorList();
 
 			DataRate rate = new DataRate();

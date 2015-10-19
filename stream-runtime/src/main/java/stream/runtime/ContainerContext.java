@@ -45,20 +45,31 @@ public class ContainerContext implements Context {
 	final Map<String, String> properties = new LinkedHashMap<String, String>();
 	NamingService namingService;
 	String name;
+
+	final String id;
 	final Map<String, NamingService> remoteContainers = new LinkedHashMap<String, NamingService>();
 
-	public ContainerContext() {
-		this(new DefaultNamingService());
+	public ContainerContext(String id) {
+		this(id, new DefaultNamingService());
 	}
 
-	public ContainerContext(NamingService ns) {
-		this("local", ns);
+	public ContainerContext(String id, NamingService ns) {
+		this(id, "local", ns);
 	}
 
-	public ContainerContext(String name, NamingService ns) {
+	public ContainerContext(String id, String name, NamingService ns) {
+		this.id = id;
 		this.namingService = ns;
 		log.debug("Creating experiment-context '{}'", name);
 		this.name = name;
+	}
+
+	/**
+	 * @see stream.Context#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	/**
@@ -93,6 +104,10 @@ public class ContainerContext implements Context {
 	@Override
 	public Object resolve(String variable) {
 
+		if ("application.id".equals(variable) || "id".equals(variable)) {
+			return id;
+		}
+
 		if (variable == null)
 			return null;
 
@@ -110,8 +125,7 @@ public class ContainerContext implements Context {
 	 * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
 	 */
 	// @Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass) throws Exception {
 		return namingService.lookup(ref, serviceClass);
 	}
 
@@ -138,8 +152,7 @@ public class ContainerContext implements Context {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	public void addContainer(String key, NamingService remoteNamingService)
-			throws Exception {
+	public void addContainer(String key, NamingService remoteNamingService) throws Exception {
 		log.info("Adding remote container '{}' at {}", key, remoteNamingService);
 		// remoteContainers.put(key, remoteNamingService);
 		this.namingService.addContainer(key, remoteNamingService);
@@ -151,6 +164,11 @@ public class ContainerContext implements Context {
 			key = key.substring(CONTEXT_NAME.length() + 1);
 			return properties.containsKey(key);
 		}
+		if (key.startsWith("application.")) {
+			key = key.substring("application.".length());
+			return properties.containsKey("key");
+		}
+
 		return false;
 	}
 }

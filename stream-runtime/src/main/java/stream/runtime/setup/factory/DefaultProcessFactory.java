@@ -67,8 +67,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 	private final DependencyInjection dependencyInjection;
 	protected String processType;
 
-	public DefaultProcessFactory(ProcessContainer processContainer,
-			ObjectFactory objectFactory, DependencyInjection dependencyInjection) {
+	public DefaultProcessFactory(ProcessContainer processContainer, ObjectFactory objectFactory,
+			DependencyInjection dependencyInjection) {
 		this.processContainer = processContainer;
 		this.objectFactory = objectFactory;
 		this.computeGraph = processContainer.computeGraph();
@@ -130,8 +130,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 			copies = v.expand(copies);
 
 			Copy[] ids = CopiesUtils.parse(copies);
-			log.debug("Creating {} processes due to copies='{}'", ids.length,
-					copies);
+			log.debug("Creating {} processes due to copies='{}'", ids.length, copies);
 
 			configs = new ProcessConfiguration[ids.length];
 			int i = 0;
@@ -161,8 +160,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 				if (out != null) {
 					String processOut = local.expand(out);
-					log.debug("Setting process output for process {} to {}",
-							idpid, processOut);
+					log.debug("Setting process output for process {} to {}", idpid, processOut);
 					configi.setOutput(processOut);
 
 				} else
@@ -189,8 +187,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 	}
 
 	@Override
-	public void createAndRegisterProcesses(ProcessConfiguration[] configs)
-			throws Exception {
+	public void createAndRegisterProcesses(ProcessConfiguration[] configs) throws Exception {
 
 		for (ProcessConfiguration config : configs) {
 
@@ -199,9 +196,8 @@ public class DefaultProcessFactory implements ProcessFactory {
 				log.trace("  '{}' = '{}'", key, config.getVariables().get(key));
 			}
 
-			DefaultProcess process = (DefaultProcess) objectFactory.create(
-					config.getProcessClass(), config.getAttributes(),
-					config.getElement(), config.getVariables());
+			DefaultProcess process = (DefaultProcess) objectFactory.create(config.getProcessClass(),
+					config.getAttributes(), config.getElement(), config.getVariables());
 
 			processContainer.getProcesses().add(process);
 			computeGraph.addProcess(config.getId(), process);
@@ -233,8 +229,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 			String outputId = config.getOutput();
 			if (outputId != null && !outputId.trim().isEmpty()) {
 				SinkRef sinkRef = new SinkRef(process, "output", outputId);
-				log.debug("Adding output reference for process {} to {}",
-						process, outputId);
+				log.debug("Adding output reference for process {} to {}", process, outputId);
 				dependencyInjection.add(sinkRef);
 
 				// this should not be required in the future - handled
@@ -242,11 +237,9 @@ public class DefaultProcessFactory implements ProcessFactory {
 				computeGraph.addReference(sinkRef);
 			}
 
-			ProcessContext ctx = new ProcessContextImpl(
-					processContainer.getContext());
+			ProcessContext ctx = new ProcessContextImpl(config.getId(), processContainer.getContext());
 
-			for (Map.Entry<String, String> e : config.getAttributes()
-					.entrySet()) {
+			for (Map.Entry<String, String> e : config.getAttributes().entrySet()) {
 				ctx.set(e.getKey(), e.getValue());
 			}
 			// add to local process context
@@ -255,8 +248,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 			}
 			processContainer.setProcessContext(process, ctx);
 
-			List<Processor> procs = createNestedProcessors(config.getElement(),
-					config.getVariables());
+			List<Processor> procs = createNestedProcessors(config.getElement(), config.getVariables());
 			for (Processor p : procs) {
 				process.add(p);
 				processContainer.computeGraph().add(process, p);
@@ -270,8 +262,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	protected List<Processor> createNestedProcessors(Element child,
-			Variables local) throws Exception {
+	protected List<Processor> createNestedProcessors(Element child, Variables local) throws Exception {
 		List<Processor> procs = new ArrayList<Processor>();
 
 		NodeList pnodes = child.getChildNodes();
@@ -279,8 +270,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 
 			Node cnode = pnodes.item(j);
 			if (cnode.getNodeType() == Node.ELEMENT_NODE) {
-				Processor p = createProcessorAndRegisterServices(
-						(Element) cnode, local);
+				Processor p = createProcessorAndRegisterServices((Element) cnode, local);
 				if (p != null) {
 					log.debug("Found processor...");
 					procs.add(p);
@@ -290,8 +280,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 		return procs;
 	}
 
-	protected Processor createProcessorAndRegisterServices(Element child,
-			Variables local) throws Exception {
+	protected Processor createProcessorAndRegisterServices(Element child, Variables local) throws Exception {
 
 		Map<String, String> params = objectFactory.getAttributes(child);
 
@@ -299,8 +288,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 		try {
 			o = objectFactory.create(child, params, local);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Error in:"
-					+ child.getNodeName(), e);
+			throw new IllegalArgumentException("Error in:" + child.getNodeName(), e);
 		}
 		if (o instanceof ProcessorList) {
 
@@ -311,14 +299,11 @@ public class DefaultProcessFactory implements ProcessFactory {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 
 					Element element = (Element) node;
-					Processor proc = createProcessorAndRegisterServices(
-							element, local);
+					Processor proc = createProcessorAndRegisterServices(element, local);
 					if (proc != null) {
 						((ProcessorList) o).getProcessors().add(proc);
 					} else {
-						log.warn(
-								"Nested element {} is not of type 'stream.data.Processor': ",
-								node.getNodeName());
+						log.warn("Nested element {} is not of type 'stream.data.Processor': ", node.getNodeName());
 					}
 				}
 			}
@@ -333,9 +318,7 @@ public class DefaultProcessFactory implements ProcessFactory {
 					String id = params.get("id").trim();
 
 					id = local.expand(id);
-					log.debug(
-							"Registering processor with id '{}' in look-up service",
-							id);
+					log.debug("Registering processor with id '{}' in look-up service", id);
 					processContainer.getContext().register(id, (Service) o);
 				}
 				// false id
@@ -354,18 +337,14 @@ public class DefaultProcessFactory implements ProcessFactory {
 				//
 				String k = key;
 				if (key.endsWith("-ref"))
-					throw new Exception(
-							"'-ref' attributes are no longer supported!");
+					throw new Exception("'-ref' attributes are no longer supported!");
 
 				final String value = local.expand(params.get(k));
 
 				// make the key SinkInjectionAware
-				Class<? extends Sink> sinkClass = DependencyInjection
-						.hasSinkSetter(key, o);
+				Class<? extends Sink> sinkClass = DependencyInjection.hasSinkSetter(key, o);
 				if (sinkClass != null) {
-					log.debug(
-							"Found queue-injection for key '{}' in processor '{}'",
-							key, o);
+					log.debug("Found queue-injection for key '{}' in processor '{}'", key, o);
 
 					// String[] refs = value.split(",");
 					String[] refs = CopiesUtils.parseIds(value);
@@ -377,19 +356,14 @@ public class DefaultProcessFactory implements ProcessFactory {
 				}
 
 				// make the key ServiceInjectionAware
-				Class<? extends Service> serviceClass = DependencyInjection
-						.hasServiceSetter(key, o);
+				Class<? extends Service> serviceClass = DependencyInjection.hasServiceSetter(key, o);
 				if (serviceClass != null) {
-					log.debug(
-							"Found service setter for key '{}' in processor {}",
-							key, o);
+					log.debug("Found service setter for key '{}' in processor {}", key, o);
 
 					// String[] refs = value.split(",");
 					String[] refs = CopiesUtils.parseIds(value);
-					log.debug("Adding ServiceRef to '{}' for object {}", refs,
-							o);
-					ServiceRef serviceRef = new ServiceRef(o, key, refs,
-							serviceClass);
+					log.debug("Adding ServiceRef to '{}' for object {}", refs, o);
+					ServiceRef serviceRef = new ServiceRef(o, key, refs, serviceClass);
 					computeGraph.addReference(serviceRef);
 					dependencyInjection.add(serviceRef);
 

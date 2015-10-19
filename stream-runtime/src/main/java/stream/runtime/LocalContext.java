@@ -41,6 +41,12 @@ public class LocalContext implements ProcessContext {
 	final Map<String, Service> lookupService = new HashMap<String, Service>();
 	final Map<String, Object> context = new HashMap<String, Object>();
 
+	String id;
+
+	public LocalContext(String id) {
+		this.id = id;
+	}
+
 	/**
 	 * @see stream.service.NamingService#register(java.lang.String,
 	 *      stream.Processor)
@@ -84,8 +90,7 @@ public class LocalContext implements ProcessContext {
 	public Map<String, ServiceInfo> list() throws Exception {
 		Map<String, ServiceInfo> classes = new LinkedHashMap<String, ServiceInfo>();
 		for (String key : lookupService.keySet()) {
-			classes.put(key,
-					ServiceInfo.createServiceInfo(key, lookupService.get(key)));
+			classes.put(key, ServiceInfo.createServiceInfo(key, lookupService.get(key)));
 		}
 		return classes;
 	}
@@ -94,10 +99,8 @@ public class LocalContext implements ProcessContext {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	public void addContainer(String key, NamingService remoteNamingService)
-			throws Exception {
-		throw new Exception(
-				"Addition of remote naming services is not supported by local context!");
+	public void addContainer(String key, NamingService remoteNamingService) throws Exception {
+		throw new Exception("Addition of remote naming services is not supported by local context!");
 	}
 
 	@Override
@@ -108,5 +111,13 @@ public class LocalContext implements ProcessContext {
 	@Override
 	public boolean contains(String key) {
 		return context.containsKey(key);
+	}
+
+	/**
+	 * @see stream.Context#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
 	}
 }

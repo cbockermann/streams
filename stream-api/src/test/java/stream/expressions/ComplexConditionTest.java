@@ -60,6 +60,12 @@ public class ComplexConditionTest {
 			// TODO Auto-generated method stub
 			return false;
 		}
+
+		@Override
+		public String getId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	};
 
 	/**

@@ -59,50 +59,7 @@ public class StreamFactory {
 		streamClassesByExtension.put("arff", "stream.io.ArffStream");
 	}
 
-	/**
-	 * @deprecated
-	 * 
-	 * @param className
-	 * @param params
-	 * @return
-	 * @throws Exception
-	 */
-	public static Stream createStream(String className,
-			Map<String, String> params) throws Exception {
-
-		Class<?> clazz = Class.forName(className);
-
-		Stream stream;
-		SourceURL sourceUrl = null;
-		if (params.get("url") != null) {
-			sourceUrl = new SourceURL(params.get("url"));
-		}
-
-		if (sourceUrl != null) {
-			Constructor<?> constr = clazz.getConstructor(SourceURL.class);
-			if (constr == null) {
-				throw new Exception(
-						"Parameter 'url' found, but no SourceURL constructor given in class '"
-								+ className + "'!");
-			}
-
-			stream = (Stream) constr.newInstance(sourceUrl);
-
-			log.debug("Injecting variables {} into stream {}", params, stream);
-			ParameterInjection.inject(stream, params, new Variables());
-		} else {
-			Constructor<?> constr = clazz.getConstructor();
-			stream = (Stream) constr.newInstance(new Object[0]);
-
-			log.debug("Injecting variables {} into stream {}", params, stream);
-			ParameterInjection.inject(stream, params, new Variables());
-		}
-
-		return stream;
-	}
-
-	public static Stream createStream(ObjectFactory objectFactory,
-			Element node, Variables local) throws Exception {
+	public static Stream createStream(ObjectFactory objectFactory, Element node, Variables local) throws Exception {
 		Map<String, String> params = objectFactory.getAttributes(node);
 
 		Class<?> clazz = Class.forName(local.expand(params.get("class")));
@@ -125,9 +82,7 @@ public class StreamFactory {
 				log.debug("Looking up resource '{}'", resource);
 				URL u = ProcessContainer.class.getResource(resource);
 				if (u == null) {
-					throw new Exception(
-							"Classpath url does not exist! Resource '"
-									+ resource + "' not found!");
+					throw new Exception("Classpath url does not exist! Resource '" + resource + "' not found!");
 				}
 				url = new SourceURL(u);
 			} else {
@@ -158,91 +113,17 @@ public class StreamFactory {
 
 				if (child.getNodeName().equalsIgnoreCase("stream")
 						|| child.getNodeName().equalsIgnoreCase("datastream")) {
-					Stream innerStream = createStream(objectFactory, child,
-							local);
+					Stream innerStream = createStream(objectFactory, child, local);
 					log.debug("Created inner stream {}", innerStream);
 					String id = child.getAttribute("id");
 					if (id == null || "".equals(id.trim()))
 						id = innerStream.toString();
 					multiStream.addStream(id, innerStream);
 				} else {
-					throw new Exception(
-							"Pre-processors within streams are no longer supported!");
+					throw new Exception("Pre-processors within streams are no longer supported!");
 				}
 			}
 			stream = multiStream;
-		}
-
-		return stream;
-	}
-
-	/**
-	 * 
-	 * @param params
-	 * @return
-	 * @throws Exception
-	 * @deprecated
-	 */
-	public static Stream createStream(Map<String, String> params)
-			throws Exception {
-		Class<?> clazz = Class.forName(params.get("class"));
-		Constructor<?> urlConstructor = null;
-
-		try {
-			urlConstructor = clazz.getConstructor(URL.class);
-		} catch (Exception e) {
-			log.error("Class {} does not provide an URL constructor...", clazz);
-			urlConstructor = null;
-		}
-
-		Stream stream = null;
-		String urlParam = params.get("url");
-		if (urlParam == null || urlConstructor == null) {
-			if (urlParam == null)
-				log.debug(
-						"No 'url' parameter for data class {} found, checking for no-args constructor",
-						clazz);
-			else {
-				log.debug(
-						"No URL-constructor found for class {}, using no-args constructor...",
-						clazz);
-			}
-
-			try {
-				stream = (Stream) clazz.newInstance();
-				ParameterInjection.inject(stream, params, new Variables());
-				stream.init();
-				return stream;
-			} catch (Exception e) {
-				log.error(
-						"No no-args constructor found and no 'url' parameter specified for stream {}!",
-						clazz);
-				throw new Exception(
-						"No no-args constructor found and no 'url' parameter specified for stream "
-								+ clazz + "!");
-			}
-		}
-
-		URL url = null;
-
-		if (params.get("url").startsWith("classpath:")) {
-			String resource = urlParam.substring("classpath:".length());
-			log.debug("Looking up resource '{}'", resource);
-			url = ProcessContainer.class.getResource(resource);
-			if (url == null) {
-				throw new Exception("Classpath url does not exist! Resource '"
-						+ resource + "' not found!");
-			}
-		} else {
-			url = new URL(urlParam);
-		}
-
-		stream = (Stream) urlConstructor.newInstance(url);
-		stream.init();
-		ParameterInjection.inject(stream, params, new Variables());
-
-		if (stream instanceof MultiStream) {
-			log.debug("Found a multi-stream, need to add inner streams...");
 		}
 
 		return stream;

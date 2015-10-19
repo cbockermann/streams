@@ -24,11 +24,13 @@
 package stream.data.filter;
 
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
+
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import stream.Data;
 import stream.data.DataFactory;
 import stream.expressions.Expression;
@@ -63,7 +65,7 @@ public class ExpressionTest {
 
 	protected boolean eval(Data item, String expression) throws Exception {
 		Expression e = ExpressionCompiler.parse(expression);
-		return e.matches(new LocalContext(), item);
+		return e.matches(new LocalContext(UUID.randomUUID().toString()), item);
 	}
 
 	@Test

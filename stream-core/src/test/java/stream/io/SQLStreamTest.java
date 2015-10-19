@@ -59,7 +59,7 @@ public class SQLStreamTest {
 		writer.setPassword(dbPass);
 		writer.setTable("TEST_TABLE");
 
-		writer.init(new ProcessContextImpl());
+		writer.init(new ProcessContextImpl("0"));
 
 		for (int i = 0; i < 100; i++) {
 			Data item = stream.readNext();

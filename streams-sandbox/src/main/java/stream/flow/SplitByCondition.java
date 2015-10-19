@@ -84,9 +84,7 @@ public class SplitByCondition extends AbstractSplit {
 			}
 		}
 
-		log.warn(
-				"No data-flow matching item {} in split {}. Item will be discarded!",
-				item, id);
+		log.warn("No data-flow matching item {} in split {}. Item will be discarded!", item, id);
 		return true;
 	}
 
@@ -114,6 +112,15 @@ public class SplitByCondition extends AbstractSplit {
 		public boolean contains(String key) {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		/**
+		 * @see stream.Context#getId()
+		 */
+		@Override
+		public String getId() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

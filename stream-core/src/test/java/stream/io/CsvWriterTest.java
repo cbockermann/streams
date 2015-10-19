@@ -53,7 +53,7 @@ public class CsvWriterTest {
 
 			writer.setUrl("file:" + tmp.getAbsolutePath());
 			writer.setKeys(new Keys("*,!x3"));
-			writer.init(new ProcessContextImpl());
+			writer.init(new ProcessContextImpl("0"));
 
 			for (Data item : items) {
 				writer.process(item);

@@ -137,14 +137,13 @@ public abstract class AbstractProcess implements stream.Process {
 	public void init(Context context) throws Exception {
 
 		parentContext = context;
-		processContext = new ProcessContextImpl(context);
+		processContext = new ProcessContextImpl(this.getId(), context);
 
 		for (Processor proc : processors) {
 			if (proc instanceof StatefulProcessor)
 				((StatefulProcessor) proc).init(processContext);
 		}
-		log.debug("Process {} (source: {}) initialized, processors: ", this,
-				getInput());
+		log.debug("Process {} (source: {}) initialized, processors: ", this, getInput());
 	}
 
 	/**
@@ -158,8 +157,7 @@ public abstract class AbstractProcess implements stream.Process {
 					log.debug("Finishing processor {}", proc);
 					((StatefulProcessor) proc).finish();
 				} catch (Exception e) {
-					log.error("Failed to finish processor '{}': {}", proc,
-							e.getMessage());
+					log.error("Failed to finish processor '{}': {}", proc, e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -186,9 +184,7 @@ public abstract class AbstractProcess implements stream.Process {
 					item = process(item);
 
 					if (item != null && getOutput() != null) {
-						log.trace(
-								"Sending process output to connected sink {}",
-								getOutput());
+						log.trace("Sending process output to connected sink {}", getOutput());
 						getOutput().write(item);
 					}
 
@@ -198,8 +194,7 @@ public abstract class AbstractProcess implements stream.Process {
 
 				} catch (Exception e) {
 					if ("continue".equalsIgnoreCase(onError)) {
-						log.error("Error while processing data: {}",
-								e.getMessage());
+						log.error("Error while processing data: {}", e.getMessage());
 						log.error("   continuing with next item...");
 					} else {
 						throw e;

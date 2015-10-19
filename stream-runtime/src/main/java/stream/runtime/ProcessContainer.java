@@ -108,8 +108,7 @@ public class ProcessContainer implements IContainer, Runnable {
 		Thread t = new Thread() {
 			public void run() {
 
-				if ("disabled".equalsIgnoreCase(System
-						.getProperty("container.shutdown-hook"))) {
+				if ("disabled".equalsIgnoreCase(System.getProperty("container.shutdown-hook"))) {
 					log.warn("Shutdown-hook disabled...");
 					return;
 				}
@@ -127,8 +126,7 @@ public class ProcessContainer implements IContainer, Runnable {
 	}
 
 	protected final ObjectFactory objectFactory = ObjectFactory.newInstance();
-	protected final ProcessorFactory processorFactory = new ProcessorFactory(
-			objectFactory);
+	protected final ProcessorFactory processorFactory = new ProcessorFactory(objectFactory);
 
 	/** The final compute graph that will be build... */
 	protected final ComputeGraph depGraph = new ComputeGraph();
@@ -154,7 +152,9 @@ public class ProcessContainer implements IContainer, Runnable {
 	/** The set of sinks */
 	protected final Map<String, Sink> sinks = new LinkedHashMap<String, Sink>();
 
-	/** The list of data-stream-queues, that can be fed from external instances */
+	/**
+	 * The list of data-stream-queues, that can be fed from external instances
+	 */
 	protected final Map<String, Queue> listeners = new LinkedHashMap<String, Queue>();
 
 	/** The list of processes running in this container */
@@ -181,8 +181,7 @@ public class ProcessContainer implements IContainer, Runnable {
 	protected Long startTime = 0L;
 	protected Variables containerVariables = new Variables();
 
-	final static String[] extensions = new String[] {
-			"stream.moa.MoaObjectFactory",
+	final static String[] extensions = new String[] { "stream.moa.MoaObjectFactory",
 			"stream.script.JavaScriptProcessorFactory" };
 
 	final static Map<String, ElementHandler> autoHandlers = new LinkedHashMap<String, ElementHandler>();
@@ -196,8 +195,7 @@ public class ProcessContainer implements IContainer, Runnable {
 				ObjectFactory.registerObjectCreator(creator);
 				log.debug("Registered extension {}", ext);
 			} catch (Exception e) {
-				log.debug("Failed to register extension '{}': {}", ext,
-						e.getMessage());
+				log.debug("Failed to register extension '{}': {}", ext, e.getMessage());
 				if (log.isTraceEnabled())
 					e.printStackTrace();
 			}
@@ -242,27 +240,23 @@ public class ProcessContainer implements IContainer, Runnable {
 		this(url, null);
 	}
 
-	public ProcessContainer(URL url,
-			Map<String, ElementHandler> customElementHandler) throws Exception {
+	public ProcessContainer(URL url, Map<String, ElementHandler> customElementHandler) throws Exception {
 		this(parseDocument(url), customElementHandler, null);
 	}
 
-	public ProcessContainer(URL url,
-			Map<String, ElementHandler> customElementHandler,
-			Map<String, String> vars) throws Exception {
+	public ProcessContainer(URL url, Map<String, ElementHandler> customElementHandler, Map<String, String> vars)
+			throws Exception {
 		this(parseDocument(url), customElementHandler, vars);
 	}
 
-	public ProcessContainer(Document doc,
-			Map<String, ElementHandler> customElementHandler,
+	public ProcessContainer(Document doc, Map<String, ElementHandler> customElementHandler,
 			Map<String, String> variables) throws Exception {
 
 		if (variables != null)
 			containerVariables.addVariables(variables);
 		container.add(this);
 
-		LibrariesElementHandler libHandler = new LibrariesElementHandler(
-				objectFactory);
+		LibrariesElementHandler libHandler = new LibrariesElementHandler(objectFactory);
 
 		// DocumentHandler ORDER IS VERY IMPORTANT!!!
 		// "Default" Parameter first. Property-Files from System-properties.
@@ -273,15 +267,13 @@ public class ProcessContainer implements IContainer, Runnable {
 
 		// auto-discovered handler
 		for (String elem : autoHandlers.keySet()) {
-			log.debug("Adding auto-discovered handler for element '{}': {}",
-					elem, autoHandlers.get(elem));
+			log.debug("Adding auto-discovered handler for element '{}': {}", elem, autoHandlers.get(elem));
 			elementHandler.put(elem, autoHandlers.get(elem));
 		}
 
 		// ElementHandler
 		// Container-Ref
-		elementHandler.put("Container-Ref", new ContainerRefElementHandler(
-				objectFactory));
+		elementHandler.put("Container-Ref", new ContainerRefElementHandler(objectFactory));
 
 		// IO
 		elementHandler.put("Stream", new StreamElementHandler(objectFactory));
@@ -289,10 +281,8 @@ public class ProcessContainer implements IContainer, Runnable {
 		elementHandler.put("Sink", new SinkElementHandler());
 		elementHandler.put("Queue", new QueueElementHandler());
 
-		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory,
-				processorFactory));
-		elementHandler.put("Process", new ProcessElementHandler(objectFactory,
-				processorFactory));
+		elementHandler.put("Monitor", new MonitorElementHandler(objectFactory, processorFactory));
+		elementHandler.put("Process", new ProcessElementHandler(objectFactory, processorFactory));
 
 		elementHandler.put("Service", new ServiceElementHandler(objectFactory));
 		elementHandler.put("Libs", libHandler);
@@ -314,6 +304,14 @@ public class ProcessContainer implements IContainer, Runnable {
 		Element root = doc.getDocumentElement();
 		Map<String, String> attr = objectFactory.getAttributes(root);
 
+		String applicationId = null;
+		if (root.hasAttribute("id")) {
+			applicationId = root.getAttribute("id");
+			name = applicationId;
+		} else {
+			applicationId = UUID.randomUUID().toString();
+		}
+
 		if (System.getProperty("container.address") != null) {
 			attr.put("address", System.getProperty("container.address"));
 		}
@@ -327,8 +325,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			server = true;
 		}
 
-		if (!root.getNodeName().equalsIgnoreCase("application")
-				&& !root.getNodeName().equalsIgnoreCase("container"))
+		if (!root.getNodeName().equalsIgnoreCase("application") && !root.getNodeName().equalsIgnoreCase("container"))
 			throw new Exception("Expecting root element to be 'container'!");
 
 		// Container Adress
@@ -345,8 +342,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
 		log.debug("Default hostname is: {}", host);
 		// String host = "localhost";
-		if (attr.containsKey("address")
-				&& !attr.get("address").trim().isEmpty()) {
+		if (attr.containsKey("address") && !attr.get("address").trim().isEmpty()) {
 			host = InetAddress.getByName(attr.get("address")).getHostAddress();
 			log.debug("Container address will be {}", host);
 		}
@@ -362,13 +358,12 @@ public class ProcessContainer implements IContainer, Runnable {
 		try {
 			String nsClass = root.getAttribute("namingService");
 			if (nsClass != null && !nsClass.trim().isEmpty())
-				namingService = (NamingService) objectFactory.create(nsClass,
-						attr, ObjectFactory.createConfigDocument(root));
+				namingService = (NamingService) objectFactory.create(nsClass, attr,
+						ObjectFactory.createConfigDocument(root));
 		} catch (Exception e) {
-			log.error("Faild to instantiate naming service '{}': {}",
-					root.getAttribute("namingService"), e.getMessage());
-			throw new Exception("Faild to instantiate naming service '"
-					+ root.getAttribute("namingService") + "': "
+			log.error("Faild to instantiate naming service '{}': {}", root.getAttribute("namingService"),
+					e.getMessage());
+			throw new Exception("Faild to instantiate naming service '" + root.getAttribute("namingService") + "': "
 					+ e.getMessage());
 		}
 
@@ -385,7 +380,8 @@ public class ProcessContainer implements IContainer, Runnable {
 				System.setProperty("java.rmi.server.hostname", host);
 				namingService = new RMINamingService(name, host, port, true);
 			} else {
-				log.debug("No address specified, using local naming-service. Container will not be able to reference other containers!");
+				log.debug(
+						"No address specified, using local naming-service. Container will not be able to reference other containers!");
 				namingService = new DefaultNamingService();
 			}
 		}
@@ -395,7 +391,7 @@ public class ProcessContainer implements IContainer, Runnable {
 		}
 
 		log.debug("Using naming-service {}", namingService);
-		context = new ContainerContext(name, namingService);
+		context = new ContainerContext(applicationId + "@" + System.currentTimeMillis(), name, namingService);
 		this.init(doc);
 	}
 
@@ -497,10 +493,8 @@ public class ProcessContainer implements IContainer, Runnable {
 		if (context.getProperties().get("container.datafactory") != null) {
 			log.debug("Using {} as default DataFactory for this container...",
 					context.getProperties().get("container.datafactory"));
-			Class<?> dataFactoryClass = Class.forName(context.getProperties()
-					.get("container.datafactory"));
-			DataFactory.setDefaultDataFactory((DataFactory) dataFactoryClass
-					.newInstance());
+			Class<?> dataFactoryClass = Class.forName(context.getProperties().get("container.datafactory"));
+			DataFactory.setDefaultDataFactory((DataFactory) dataFactoryClass.newInstance());
 		}
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -512,8 +506,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			Element element = (Element) node;
 			for (ElementHandler handler : this.elementHandler.values()) {
 				if (handler.handlesElement(element)) {
-					handler.handleElement(this, element, containerVariables,
-							dependencyInjection);
+					handler.handleElement(this, element, containerVariables, dependencyInjection);
 					continue;
 				}
 			}
@@ -541,8 +534,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
 		drawGraph();
 
-		log.info("ProcessContainer is initialized and ready to start:{}",
-				this.toString());
+		log.info("ProcessContainer is initialized and ready to start:{}", this.toString());
 	}
 
 	private void drawGraph() {
@@ -579,8 +571,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
 	}
 
-	public void registerQueue(String id, Queue queue, boolean externalListener)
-			throws Exception {
+	public void registerQueue(String id, Queue queue, boolean externalListener) throws Exception {
 		log.debug("A new queue '{}' is registered for id '{}'", queue, id);
 		if (externalListener) {
 			listeners.put(id, queue);
@@ -629,8 +620,7 @@ public class ProcessContainer implements IContainer, Runnable {
 		if (!server && streams.isEmpty() && listeners.isEmpty())
 			throw new Exception("No data-stream defined!");
 
-		log.debug("Need to handle {} sources: {}", streams.size(),
-				streams.keySet());
+		log.debug("Need to handle {} sources: {}", streams.size(), streams.keySet());
 
 		log.debug("Experiment contains {} stream processes", processes.size());
 
@@ -662,7 +652,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
 			ProcessContext ctx = this.processContexts.get(spu);
 			if (ctx == null) {
-				ctx = new ProcessContextImpl(context);
+				ctx = new ProcessContextImpl("process:" + spu.hashCode(), context);
 				processContexts.put(spu, ctx);
 			}
 			// log.debug("Initializing process with process-context...");
@@ -707,8 +697,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);
-		log.debug("ProcessContainer finished all processes after {} ms",
-				(end - start));
+		log.debug("ProcessContainer finished all processes after {} ms", (end - start));
 		return end - start;
 	}
 
@@ -736,9 +725,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			try {
 				listeners.get(key).write(item);
 			} catch (Exception e) {
-				log.error(
-						"Failed to inject arriving data item into queue {}: {}",
-						key, e.getMessage());
+				log.error("Failed to inject arriving data item into queue {}: {}", key, e.getMessage());
 			}
 		} else {
 			log.warn("No listener defined for {}", key);
@@ -755,8 +742,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			runShutdownHook = false;
 		}
 
-		log.debug("Graph has {} source elements", depGraph.getRootSources()
-				.size());
+		log.debug("Graph has {} source elements", depGraph.getRootSources().size());
 		for (Object source : depGraph.getRootSources()) {
 			log.debug("Removing element {} from compute-graph", source);
 			List<LifeCycle> lifeCycles = depGraph.remove(source);
@@ -765,8 +751,7 @@ public class ProcessContainer implements IContainer, Runnable {
 					log.debug("Finishing LifeCycle object {}", lf);
 					lf.finish();
 				} catch (Exception e) {
-					log.error("Failed to end LifeCycle object {}: {}", lf,
-							e.getMessage());
+					log.error("Failed to end LifeCycle object {}: {}", lf, e.getMessage());
 					if (log.isDebugEnabled())
 						e.printStackTrace();
 				} finally {
@@ -783,8 +768,7 @@ public class ProcessContainer implements IContainer, Runnable {
 				log.info("Finishing life-cycle object {}", lc);
 				lc.finish();
 			} catch (Exception e) {
-				log.error("Failed to end life-cycle object {}: {}", lc,
-						e.getMessage());
+				log.error("Failed to end life-cycle object {}: {}", lc, e.getMessage());
 				if (log.isDebugEnabled())
 					e.printStackTrace();
 			} finally {

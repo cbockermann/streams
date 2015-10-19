@@ -18,6 +18,7 @@
 		<module>stream-runtime</module>
 		<module>stream-plotter</module>
 		<module>streams-sandbox</module>
+		<module>streams-performance</module>
 	</modules>
 
 	<distributionManagement>

@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -19,15 +20,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minidev.json.JSONObject;
 import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
+import stream.annotations.Parameter;
 import streams.logging.Message;
 import streams.logging.Rlog;
 
 /**
- * @author chris
+ * This class implements a processor list which aggregates timing information
+ * about all its inner processors during execution. The timing is performed
+ * based on the wall-clock time (using System.nanoTime()) and is determined with
+ * every processed item.
+ * 
+ * @author Christian Bockermann
  *
  */
 public class Performance extends ProcessorList {
@@ -57,6 +65,7 @@ public class Performance extends ProcessorList {
 
 	File output;
 	String hostname;
+	String path;
 
 	/**
 	 * @see stream.ProcessorList#init(stream.ProcessContext)
@@ -70,6 +79,8 @@ public class Performance extends ProcessorList {
 		String pid = context.getId();
 		log.info("Process ID is: '{}'", pid);
 		rlog.define("process.id", context.getId());
+
+		path = appId + "/" + pid;
 
 		initStart = System.currentTimeMillis();
 		super.init(context);
@@ -231,21 +242,45 @@ public class Performance extends ProcessorList {
 		}
 	}
 
+	public List<ProcessorStats> getProcessorStatistics() {
+		List<ProcessorStats> ps = new ArrayList<ProcessorStats>();
+		for (ProcessorStats stats : this.statistics) {
+			ps.add(stats.clone());
+		}
+		return ps;
+	}
+
 	public void logPerformance() {
 		Double millis = 1.0 * (lastItem - firstItem);
 		Double seconds = millis / 1000.0;
 
-		// Long duration = lastItem - firstItem;
-		// Double itemRate = items / (duration.doubleValue() / 1000.0);
-		// stats.put("duration", duration);
-		// stats.put("items-per-second", itemRate);
-		// rlog.send(stats);
 		Long count = items;
 		if (count > 1) {
 			log.info("current performance: {} items/sec", (count.doubleValue() / seconds));
-			Message m = rlog.message().add("performance.id", getId()).add("items", items)
-					.add("millis", millis.longValue()).add("item-per-second", (count.doubleValue() / seconds));
+			// Message m = rlog.message().add("performance.id",
+			// getId()).add("items", items)
+			// .add("millis", millis.longValue()).add("item-per-second",
+			// (count.doubleValue() / seconds));
+			// m.send();
+
+			Message m = rlog.message().add("performance.id", path);
+			ArrayList<Map<String, Serializable>> procs = new ArrayList<Map<String, Serializable>>();
+			for (int i = 0; i < this.statistics.length; i++) {
+				Map<String, Serializable> stats = statistics[i].toMap();
+				procs.add(stats);
+				// Map<String, Object> info = new LinkedHashMap<String,
+				// Object>();
+				// info.put("performance.id", path);
+				// info.putAll(statistics[i].toMap());
+				//
+				// m.add("processor", i);
+				// m.add(statistics[i].toMap());
+				// m.send();
+				log.info(" [{}] = {}", i, JSONObject.toJSONString(stats));
+			}
+			m.add("processors", procs);
 			m.send();
+			// log.info("JSON:\n{}", JSONObject.toJSONString(m));
 		}
 	}
 
@@ -260,6 +295,7 @@ public class Performance extends ProcessorList {
 	 * @param id
 	 *            the id to set
 	 */
+	@Parameter(description = "A custom identifier to associate with all the timing data produced by this processor list.")
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -275,6 +311,7 @@ public class Performance extends ProcessorList {
 	 * @param output
 	 *            the output to set
 	 */
+	@Parameter(description = "An optional output file, to which all performance stats shall be appended in CSV format.", required = false)
 	public void setOutput(File output) {
 		this.output = output;
 	}
@@ -290,6 +327,7 @@ public class Performance extends ProcessorList {
 	 * @param every
 	 *            the every to set
 	 */
+	@Parameter(description = "Determines the interval after which performance stats are emitted/written out, e.g. every 10 items.", required = false)
 	public void setEvery(int every) {
 		this.every = every;
 	}
@@ -305,8 +343,13 @@ public class Performance extends ProcessorList {
 	 * @param ignoreFirst
 	 *            the ignoreFirst to set
 	 */
+	@Parameter(description = "The number of items to be ignored in the beginning - to provide a gap for just-in-time compilation to kick in.", required = false)
 	public void setIgnoreFirst(long ignoreFirst) {
 		this.ignoreFirst = ignoreFirst;
+	}
+
+	public String getPath() {
+		return path;
 	}
 
 	public static class ProcessorStats {
@@ -321,6 +364,8 @@ public class Performance extends ProcessorList {
 
 		double timeMean = 0.0;
 		double m2 = 0.0;
+		double min = 0L;
+		double max = 0L;
 
 		public ProcessorStats(String clazz, Processor obj) {
 			className = clazz;
@@ -343,16 +388,19 @@ public class Performance extends ProcessorList {
 			this.m2 = p.m2;
 		}
 
-		public Map<String, Object> toMap() {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
+		public Map<String, Serializable> toMap() {
+			Map<String, Serializable> map = new LinkedHashMap<String, Serializable>();
 			map.put("class", className);
 			map.put("ref", objectReference);
-			map.put("itemsProcessed", itemsProcessed);
-			map.put("processingTime", processingTime);
-			map.put("processingTime.mean", timeMean());
-			map.put("processingTime.variance", timeVariance());
-			map.put("start", start());
-			map.put("end", end());
+			map.put("items", itemsProcessed);
+			map.put("time.min", min);
+			map.put("time.max", max);
+			map.put("time.avg", processingTime / itemsProcessed);
+			map.put("time.total", processingTime);
+			map.put("time.mean", timeMean());
+			map.put("time.variance", timeVariance());
+			map.put("time.start", start());
+			map.put("time.end", end());
 			return map;
 		}
 
@@ -368,6 +416,8 @@ public class Performance extends ProcessorList {
 		public void addMillis(Long millis) {
 			if (itemsProcessed == 0) {
 				start = System.currentTimeMillis();
+				min = millis;
+				max = millis;
 			}
 
 			itemsProcessed++;
@@ -383,7 +433,11 @@ public class Performance extends ProcessorList {
 			Double millis = nanos / 1000000.0d;
 			if (itemsProcessed == 0) {
 				start = System.currentTimeMillis();
+				min = millis;
+				max = millis;
 			}
+			min = Math.min(min, millis);
+			max = Math.max(max, millis);
 
 			itemsProcessed++;
 			end = System.currentTimeMillis();
@@ -423,6 +477,15 @@ public class Performance extends ProcessorList {
 		public ProcessorStats clone() {
 			return new ProcessorStats(this);
 		}
+
+		public String toJSON() {
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			DecimalFormat df = new DecimalFormat("0.0000", dfs);
+			double avg = this.processingTime / this.itemsProcessed.doubleValue();
+			return "{" + "'class':'" + this.className + "', 'min':" + df.format(min) + ", 'max':" + df.format(max)
+					+ ", 'avg:'" + df.format(avg) + "}";
+		}
 	}
 
 	public static class PerfStats {
@@ -442,6 +505,16 @@ public class Performance extends ProcessorList {
 			for (int i = 0; i < processorStats.length; i++) {
 				procStats.add(processorStats[i]);
 			}
+		}
+
+		public PerfStats clone() {
+			PerfStats ps = new PerfStats(new Long(items), new Long(start), new Long(end));
+
+			for (ProcessorStats pStats : procStats) {
+				ps.procStats.add(pStats.clone());
+			}
+
+			return ps;
 		}
 	}
 }

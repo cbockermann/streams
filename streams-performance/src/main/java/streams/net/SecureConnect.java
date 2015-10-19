@@ -15,13 +15,21 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * @author chris
+ * This class provides a convenient wrapper to create SSL connections based on
+ * the <code>sfb876.jks</code> keystore.
+ * 
+ * @author Christian Bockermann
  *
  */
 public class SecureConnect {
 
-	// static Logger log = LoggerFactory.getLogger(SecureConnect.class);
+	static Logger log = LoggerFactory.getLogger(SecureConnect.class);
+
+	public final static boolean debug = "true".equals(System.getProperty("streams.net.SecureConnect.debug"));
 
 	public final static String DEFAULT_PROTOCOL = "TLSv1.2";
 
@@ -32,14 +40,18 @@ public class SecureConnect {
 
 		if (km != null && tm != null) {
 			// already initialized
-			// log.debug("SecureConnect already initialized. {} key managers and
-			// {} trust managers available.", km.length,
-			// tm.length);
+			if (debug) {
+				log.debug("SecureConnect already initialized. {} key managers and {} trust managers available.",
+						km.length, tm.length);
+			}
 			return;
 		}
 
 		URL ksUrl = SecureConnect.class.getResource("/sfb876.jks");
-		// log.debug("Using keystore from {}", ksUrl);
+
+		if (debug) {
+			log.debug("Using keystore from {}", ksUrl);
+		}
 
 		KeyStore keyStore = KeyStore.getInstance("jks");
 		keyStore.load(ksUrl.openStream(), "changeit".toCharArray());
@@ -58,23 +70,6 @@ public class SecureConnect {
 
 		SSLContext ctx = SSLContext.getInstance(DEFAULT_PROTOCOL);
 		ctx.init(km, tm, new SecureRandom());
-
-		// String[] enabled =
-		// ctx.getServerSocketFactory().getDefaultCipherSuites();
-		// String[] supported =
-		// ctx.getServerSocketFactory().getSupportedCipherSuites();
-		//
-		// log.info("{} ciphers enabled, {} ciphers supported.", enabled.length,
-		// supported.length);
-		//
-		// for (int i = 0; i < enabled.length; i++) {
-		// log.info("enabled[{}] = {}", i, enabled[i]);
-		// }
-		//
-		// for (int i = 0; i < supported.length; i++) {
-		// log.info("supported[{}] = {}", i, supported[i]);
-		// }
-
 	}
 
 	public static SSLSocket connect() throws Exception {
@@ -85,15 +80,21 @@ public class SecureConnect {
 
 		init();
 
-		// log.debug("Creating SSL context...");
+		if (debug) {
+			log.debug("Creating SSL context...");
+		}
 		SSLContext ctx = SSLContext.getInstance(DEFAULT_PROTOCOL);
 
-		// log.debug("Initializing SSL context...");
+		if (debug) {
+			log.debug("Initializing SSL context...");
+		}
 		ctx.init(km, tm, new SecureRandom());
 
-		// log.debug("Connecting socket...");
-		SocketFactory sf = new ProtocolFactory(ctx.getSocketFactory());
+		if (debug) {
+			log.debug("Connecting socket...");
+		}
 
+		SocketFactory sf = new ProtocolFactory(ctx.getSocketFactory());
 		return (SSLSocket) sf.createSocket(host, port);
 	}
 }

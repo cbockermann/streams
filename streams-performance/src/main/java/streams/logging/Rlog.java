@@ -3,6 +3,7 @@
  */
 package streams.logging;
 
+import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.LinkedHashMap;
@@ -22,7 +23,7 @@ public class Rlog {
 	String host;
 	String pid;
 
-	final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
+	final Map<String, Serializable> defaults = new LinkedHashMap<String, Serializable>();
 
 	public Rlog() {
 		init();
@@ -33,7 +34,7 @@ public class Rlog {
 		init();
 	}
 
-	public Rlog define(String key, Object value) {
+	public Rlog define(String key, Serializable value) {
 		defaults.put(key, value);
 		return this;
 	}
@@ -88,7 +89,7 @@ public class Rlog {
 		return new Message(this);
 	}
 
-	public Message message(Map<String, Object> vals) {
+	public Message message(Map<String, Serializable> vals) {
 		return message().add(vals);
 	}
 
@@ -98,8 +99,7 @@ public class Rlog {
 		return m;
 	}
 
-	public Message message(String key, Object o) {
+	public Message message(String key, Serializable o) {
 		return message().add(key, o);
 	}
-
 }

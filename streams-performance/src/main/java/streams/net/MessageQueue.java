@@ -4,12 +4,16 @@
 package streams.net;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import net.minidev.json.JSONObject;
+import stream.Data;
+import stream.data.DataFactory;
+import stream.io.Codec;
+import stream.io.JavaCodec;
+import streams.io.BobCodec;
 import streams.logging.Message;
 
 /**
@@ -24,17 +28,28 @@ public class MessageQueue {
 
 	static {
 		System.out.println("Initializing global MessageQueue");
-		sender.setDaemon(true);
-		sender.start();
+
+		String host = System.getProperty("rlog.host");
+		if (host == null) {
+			System.out.println("'rlog.host' not set, disabling rlog-sender");
+			sender = null;
+		} else {
+			sender.setDaemon(true);
+			sender.start();
+		}
 	}
 
 	public static void add(Message m) {
-		messages.offer(m);
+		if (sender != null) {
+			messages.offer(m);
+		}
 	}
 
 	protected static class Sender extends Thread {
 
-		PrintStream out;
+		final Codec<Data> mc = new JavaCodec<Data>();
+
+		DataOutputStream out;
 		BufferedReader in;
 
 		public Sender() {
@@ -55,7 +70,7 @@ public class MessageQueue {
 
 		protected Socket connect() throws Exception {
 			Socket socket = SecureConnect.connect();
-			out = new PrintStream(socket.getOutputStream());
+			out = new DataOutputStream(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			return socket;
 		}
@@ -66,7 +81,9 @@ public class MessageQueue {
 					connect();
 				}
 
-				out.println(JSONObject.toJSONString(m));
+				byte[] bytes = mc.encode(DataFactory.create(m));
+				BobCodec.writeBlock(bytes, out);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

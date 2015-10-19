@@ -3,6 +3,7 @@
  */
 package streams.logging;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import streams.net.MessageQueue;
  *
  */
 
-public class Message extends LinkedHashMap<String, Object> {
+public class Message extends LinkedHashMap<String, Serializable> {
 	/** The unique class ID */
 	private static final long serialVersionUID = 2193782766563687626L;
 	final Rlog rlog;
@@ -29,14 +30,14 @@ public class Message extends LinkedHashMap<String, Object> {
 		}
 	}
 
-	public Message add(String key, Object o) {
+	public Message add(String key, Serializable o) {
 		if (o != null) {
 			put(key, o);
 		}
 		return this;
 	}
 
-	public Message add(Map<String, ?> map) {
+	public Message add(Map<String, ? extends Serializable> map) {
 		if (map != null) {
 			this.putAll(map);
 		}

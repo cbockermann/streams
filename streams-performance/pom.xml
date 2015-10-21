@@ -3,16 +3,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.sfb876</groupId>
 	<artifactId>streams-performance</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
 	<name>streams-performance</name>
 	<description>Performance monitoring for streams graphs.</description>
 
-        <parent>
-                <groupId>org.jwall</groupId>
-                <artifactId>streams</artifactId>
-                <version>0.9.23-SNAPSHOT</version>
-                <relativePath>..</relativePath>
-        </parent>
+	<parent>
+		<groupId>org.jwall</groupId>
+		<artifactId>streams</artifactId>
+		<version>0.9.23-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	
+	<properties>
+		<streams.version>0.9.23-SNAPSHOT</streams.version>
+	</properties>
 
 	<distributionManagement>
 		<repository>
@@ -38,7 +41,7 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-	
+
 	<ciManagement>
 		<system>Jenkins</system>
 		<url>https://builder.sfb876.de/</url>
@@ -65,7 +68,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-api</artifactId>
-			<version>[0.9.22,)</version>
+			<version>0.9.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.minidev</groupId>
@@ -75,7 +78,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
-			<version>[0.9.22,)</version>
+			<version>0.9.23-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -86,8 +89,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-core</artifactId>
-			<version>[0.9.16,)</version>
-			<scope>test</scope>
+			<version>0.9.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -119,6 +121,30 @@
 					<value>true</value>
 				</property>
 			</activation>
+
+			<dependencies>
+				<dependency>
+					<groupId>net.minidev</groupId>
+					<artifactId>json-smart</artifactId>
+					<version>2.0-RC2</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jwall</groupId>
+					<artifactId>streams-runtime</artifactId>
+					<version>0.9.23-SNAPSHOT</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jwall</groupId>
+					<artifactId>streams-core</artifactId>
+					<version>0.9.23-SNAPSHOT</version>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					<version>1.7.7</version>
+				</dependency>
+			</dependencies>
+
 			<build>
 				<finalName>streams-performance</finalName>
 				<plugins>
@@ -146,6 +172,7 @@
 										<Implementation-Revision>${project.version}</Implementation-Revision>
 										<Specification-Title>streams-performance</Specification-Title>
 										<Specification-Version>0.0.1</Specification-Version>
+										<mainClass>streams.net.PerformanceReceiver</mainClass>
 									</manifestEntries>
 								</transformer>
 							</transformers>

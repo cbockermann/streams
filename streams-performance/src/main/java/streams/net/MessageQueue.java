@@ -60,7 +60,7 @@ public class MessageQueue {
 			while (true) {
 				try {
 					Message m = messages.take();
-					System.out.println("Sending message " + m);
+//					System.out.println("Sending message " + m);
 					send(m);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -82,7 +82,10 @@ public class MessageQueue {
 				}
 
 				byte[] bytes = mc.encode(DataFactory.create(m));
-				BobCodec.writeBlock(bytes, out);
+//				System.out.println("Encoded message to " + bytes.length + " bytes");
+				int written = BobCodec.writeBlock(bytes, out);
+//				System.out.println(written + " bytes written to socket...");
+				out.flush();
 
 			} catch (Exception e) {
 				e.printStackTrace();

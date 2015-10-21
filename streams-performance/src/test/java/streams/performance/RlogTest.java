@@ -22,6 +22,7 @@ public class RlogTest {
 		Variables vars = stream.runtime.StreamRuntime.loadUserProperties();
 		// System.setProperty("javax.net.debug", "ssl=handshake");
 
+		System.setProperty("rlog.host", "performance.sfb876.de");
 		System.setProperty("rlog.token", vars.get("rlog.token"));
 
 		Rlog rlog = new Rlog();

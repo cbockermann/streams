@@ -13,13 +13,13 @@ import java.sql.ResultSetMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
 import stream.Data;
 import stream.annotations.Parameter;
 import stream.data.DataFactory;
 import stream.io.SourceURL;
 import stream.io.sql.DatabaseDialect;
 import stream.io.sql.HsqlDialect;
+import stream.runtime.ApplicationContext;
 import stream.runtime.LifeCycle;
 import stream.service.LookupService;
 
@@ -60,14 +60,13 @@ public class SQLDatabase implements LookupService, LifeCycle {
 	 * @see stream.runtime.LifeCycle#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 		try {
 
 			log.info("Opening connection to database {}", getUrl());
 
 			SourceURL url = this.getUrl();
-			connection = DriverManager.getConnection(url.toString(),
-					getUsername(), getPassword());
+			connection = DriverManager.getConnection(url.toString(), getUsername(), getPassword());
 
 			statement = connection.prepareStatement(select);
 
@@ -122,8 +121,7 @@ public class SQLDatabase implements LookupService, LifeCycle {
 			rs.close();
 
 		} catch (Exception e) {
-			log.error("Failed to run select for lookup('{}'): {}", key,
-					e.getMessage());
+			log.error("Failed to run select for lookup('{}'): {}", key, e.getMessage());
 			e.printStackTrace();
 		}
 

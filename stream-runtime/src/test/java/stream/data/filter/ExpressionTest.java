@@ -25,8 +25,6 @@ package stream.data.filter;
 
 import static org.junit.Assert.fail;
 
-import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,7 +63,7 @@ public class ExpressionTest {
 
 	protected boolean eval(Data item, String expression) throws Exception {
 		Expression e = ExpressionCompiler.parse(expression);
-		return e.matches(new LocalContext(UUID.randomUUID().toString()), item);
+		return e.matches(new LocalContext(), item);
 	}
 
 	@Test

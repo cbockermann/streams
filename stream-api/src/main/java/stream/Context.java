@@ -39,6 +39,8 @@ package stream;
  */
 public interface Context {
 
+	public final static String PATH_SEPARATOR = "/";
+
 	/**
 	 * This constant defines the name of the data item context, i.e. when
 	 * accessing attributes in a data item using the expression language. For
@@ -72,4 +74,8 @@ public interface Context {
 										// method to 'get(String)' ??
 
 	public boolean contains(String key);
+
+	public Context getParent();
+
+	public String path();
 }

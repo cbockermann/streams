@@ -134,7 +134,7 @@ public abstract class AbstractProcess implements stream.Process {
 	/**
 	 * @see stream.DataProcessor#init(stream.runtime.Context)
 	 */
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 
 		parentContext = context;
 		processContext = new ProcessContextImpl(this.getId(), context);

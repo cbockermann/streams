@@ -43,7 +43,7 @@ import stream.service.ServiceInfo;
 public class ProcessContextImpl implements ProcessContext {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContextImpl.class);
-	final ContainerContext containerContext;
+	final ApplicationContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
 
 	String processId;
@@ -54,11 +54,12 @@ public class ProcessContextImpl implements ProcessContext {
 
 	public ProcessContextImpl(String id) {
 		this.processId = id;
-		containerContext = null;
+		containerContext = new LocalContext();
 	}
 
-	public ProcessContextImpl(String id, Context ctx) {
-		this(id);
+	public ProcessContextImpl(String id, ApplicationContext ctx) {
+		this.processId = id;
+		this.containerContext = (ApplicationContext) ctx;
 	}
 
 	public ProcessContextImpl(String id, ContainerContext ctx) {
@@ -145,5 +146,25 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public String getId() {
 		return this.processId;
+	}
+
+	/**
+	 * @see stream.Context#getParent()
+	 */
+	@Override
+	public Context getParent() {
+		return this.containerContext;
+	}
+
+	/**
+	 * @see stream.Context#path()
+	 */
+	@Override
+	public String path() {
+		if (getParent() != null) {
+			return this.getParent().path() + Context.PATH_SEPARATOR + "process:" + getId();
+		} else {
+			return "process:" + getId();
+		}
 	}
 }

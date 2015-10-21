@@ -30,11 +30,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
 import stream.Data;
 import stream.annotations.Parameter;
 import stream.io.SourceURL;
 import stream.io.Stream;
+import stream.runtime.ApplicationContext;
 import stream.runtime.LifeCycle;
 import stream.service.LookupService;
 
@@ -72,7 +72,7 @@ public abstract class AbstractDatabase implements LookupService, LifeCycle {
 	 * @see stream.runtime.LifeCycle#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 
 		if (url == null) {
 			throw new Exception("No 'url' attribute specified!");
@@ -81,19 +81,16 @@ public abstract class AbstractDatabase implements LookupService, LifeCycle {
 		populateDatabase(url, database);
 	}
 
-	protected abstract void populateDatabase(SourceURL url,
-			Map<String, Data> database) throws Exception;
+	protected abstract void populateDatabase(SourceURL url, Map<String, Data> database) throws Exception;
 
-	protected void readDatabase(Stream stream, Map<String, Data> database)
-			throws Exception {
+	protected void readDatabase(Stream stream, Map<String, Data> database) throws Exception {
 
 		Data item = stream.read();
 		while (item != null) {
 
 			Serializable value = item.get(key);
 			if (value == null) {
-				log.error("Missing attribute '{}' in item read from URL: {}",
-						key, item);
+				log.error("Missing attribute '{}' in item read from URL: {}", key, item);
 			} else {
 				log.debug("Adding item for key '{}': {}", value, item);
 				database.put(value.toString(), item);

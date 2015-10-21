@@ -40,7 +40,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
+import stream.runtime.ApplicationContext;
 import stream.runtime.LifeCycle;
 import stream.service.NamingService;
 import stream.service.Service;
@@ -53,8 +53,7 @@ import stream.service.ServiceInfo;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public class RMINamingService extends UnicastRemoteObject implements
-		RemoteNamingService, LifeCycle {
+public class RMINamingService extends UnicastRemoteObject implements RemoteNamingService, LifeCycle {
 
 	/** The unique class ID */
 	private static final long serialVersionUID = 3886371094536580516L;
@@ -79,13 +78,11 @@ public class RMINamingService extends UnicastRemoteObject implements
 		this(name, "localhost", 0, true);
 	}
 
-	public RMINamingService(String name, String host, int port)
-			throws Exception {
+	public RMINamingService(String name, String host, int port) throws Exception {
 		this(name, host, port, false);
 	}
 
-	public RMINamingService(String name, String host, int port, boolean announce)
-			throws Exception {
+	public RMINamingService(String name, String host, int port, boolean announce) throws Exception {
 		this.name = name;
 		this.namespace = "//" + name + "/";
 
@@ -111,9 +108,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			names = reg.list();
 			log.debug("Found existing registry, names: {}", (Object[]) names);
 		} catch (Exception e) {
-			log.debug(
-					"No RMI-registry exists as port {}: a new one will be created.",
-					port);
+			log.debug("No RMI-registry exists as port {}: a new one will be created.", port);
 			// e.printStackTrace();
 		}
 
@@ -121,24 +116,20 @@ public class RMINamingService extends UnicastRemoteObject implements
 			if (names == null) {
 				log.debug("Trying to create new registry at port {}", port);
 				registry = LocateRegistry.createRegistry(port);
-				log.debug("New registry has registered objects: {}",
-						(Object[]) registry.list());
+				log.debug("New registry has registered objects: {}", (Object[]) registry.list());
 			} else {
 				registry = reg;
 			}
 		} catch (Exception e) {
-			log.error("Failed to create registry at port {}: {}", port,
-					e.getMessage());
-			throw new Exception("Failed to create RMI registry at port " + port
-					+ ": " + e.getMessage());
+			log.error("Failed to create registry at port {}: {}", port, e.getMessage());
+			throw new Exception("Failed to create RMI registry at port " + port + ": " + e.getMessage());
 		}
 
 		log.debug("my rmi server name is: {}", address.getHostAddress());
 		log.debug("Binding myself to RMI...");
 		registry.rebind(RemoteNamingService.DIRECTORY_NAME, this);
 
-		announcement = new ContainerAnnouncement(name, "rmi",
-				address.getHostAddress(), port);
+		announcement = new ContainerAnnouncement(name, "rmi", address.getHostAddress(), port);
 		log.debug("Announcement will be: {}", announcement);
 		if (announce) {
 			announcer = new Announcer(9200, announcement);
@@ -161,8 +152,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 *      stream.service.NamingService)
 	 */
 	@Override
-	public void addContainer(String key, NamingService remoteNamingService)
-			throws Exception {
+	public void addContainer(String key, NamingService remoteNamingService) throws Exception {
 		this.container.put(key, remoteNamingService);
 	}
 
@@ -171,19 +161,15 @@ public class RMINamingService extends UnicastRemoteObject implements
 			Discovery discovery = new Discovery();
 			discovery.discover();
 
-			Map<String, ContainerAnnouncement> containers = discovery
-					.getAnnouncements();
+			Map<String, ContainerAnnouncement> containers = discovery.getAnnouncements();
 			for (String key : containers.keySet()) {
 				ContainerAnnouncement info = containers.get(key);
 				log.debug("found   {} => {}", key, info);
 				if (info.equals(announcement))
 					log.debug("  => That's me!");
 				else {
-					NamingService remote = new RMIClient(info.getHost(),
-							info.getPort());
-					log.debug(
-							"Created new NamingService-connection for container {}: {}",
-							key, remote);
+					NamingService remote = new RMIClient(info.getHost(), info.getPort());
+					log.debug("Created new NamingService-connection for container {}: {}", key, remote);
 
 					Map<String, ServiceInfo> services = remote.list();
 					log.debug("RemoteServices are:");
@@ -208,11 +194,9 @@ public class RMINamingService extends UnicastRemoteObject implements
 
 		Map<String, String> containers = discovery.getContainerURLs();
 		if (containers == null || !containers.containsKey(container)) {
-			throw new Exception("No container found for name '" + container
-					+ "'!");
+			throw new Exception("No container found for name '" + container + "'!");
 		} else {
-			log.debug("Found container {}: {}", container,
-					containers.get(container));
+			log.debug("Found container {}: {}", container, containers.get(container));
 			return containers.get(container);
 		}
 	}
@@ -275,8 +259,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception {
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass) throws Exception {
 		log.debug("Received lookup for {} ({})", ref, serviceClass);
 
 		if (!isLocal(ref)) {
@@ -298,16 +281,13 @@ public class RMINamingService extends UnicastRemoteObject implements
 
 			log.debug("Container reference is '{}'", con);
 			if (con == null)
-				throw new Exception(
-						"Failed to determine container for reference '" + ref
-								+ "'!");
+				throw new Exception("Failed to determine container for reference '" + ref + "'!");
 
 			NamingService ns = container.get(con);
 			if (ns == null) {
 				String url = discover(con);
 				log.debug("Discovered container {} at {}", con, url);
-				throw new Exception("No container known for name '" + con
-						+ "'!");
+				throw new Exception("No container known for name '" + con + "'!");
 			}
 
 			return ns.lookup(ref, serviceClass);
@@ -320,20 +300,16 @@ public class RMINamingService extends UnicastRemoteObject implements
 			throw new Exception("No local reference for '" + ref + "'!");
 		RemoteEndpoint re = (RemoteEndpoint) registry.lookup(localRef);
 		if (re == null)
-			throw new Exception("No service entity found for reference '" + ref
-					+ "'!");
+			throw new Exception("No service entity found for reference '" + ref + "'!");
 
 		ServiceInfo info = classes.get(localRef);
 		if (info == null)
-			throw new Exception("No service information available for '" + ref
-					+ "'!");
+			throw new Exception("No service information available for '" + ref + "'!");
 
-		log.debug("Creating proxy for {}, service interfaces: {}", ref,
-				classes.get(ref));
+		log.debug("Creating proxy for {}, service interfaces: {}", ref, classes.get(ref));
 
-		Service service = (Service) Proxy.newProxyInstance(re.getClass()
-				.getClassLoader(), info.getServices(), new RMIServiceDelegator(
-				re));
+		Service service = (Service) Proxy.newProxyInstance(re.getClass().getClassLoader(), info.getServices(),
+				new RMIServiceDelegator(re));
 		log.debug("Service lookup of '{}' => {}", localRef, service);
 		return (T) service;
 	}
@@ -345,20 +321,17 @@ public class RMINamingService extends UnicastRemoteObject implements
 	@Override
 	public void register(String ref, Service p) throws Exception {
 
-		Class<? extends Service>[] services = ServiceProxy
-				.getServiceInterfaces(p);
+		Class<? extends Service>[] services = ServiceProxy.getServiceInterfaces(p);
 		if (services.length == 0) {
 			log.error("Object {} does not implement a service!", p);
-			throw new Exception("Object " + p
-					+ " does not implement a service interface!");
+			throw new Exception("Object " + p + " does not implement a service interface!");
 		}
 
 		log.debug("Service {} registered as {}.", p, ref);
 		ServiceProxy proxy = new ServiceProxy(p);
 		String localRef = getLocalRef(ref);
 		if (localRef == null)
-			throw new Exception("Cannot resolve reference '" + ref
-					+ "' as local reference!");
+			throw new Exception("Cannot resolve reference '" + ref + "' as local reference!");
 		registry.rebind(localRef, proxy);
 
 		classes.put(localRef, ServiceInfo.createServiceInfo(localRef, p));
@@ -372,8 +345,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	public void unregister(String ref) throws Exception {
 		String localRef = getLocalRef(ref);
 		if (localRef == null)
-			throw new Exception("Cannot resolve reference '" + ref
-					+ "' as local reference!");
+			throw new Exception("Cannot resolve reference '" + ref + "' as local reference!");
 		log.debug("Service {} unregistered.", ref);
 		registry.unbind(localRef);
 		classes.remove(localRef);
@@ -401,8 +373,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 * @see stream.runtime.rpc.RemoteNamingService#getServiceInfo(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getServiceInfo(String name)
-			throws RemoteException {
+	public Map<String, String> getServiceInfo(String name) throws RemoteException {
 
 		log.debug("Query for service-info on {} received!", name);
 		Map<String, String> info = new LinkedHashMap<String, String>();
@@ -428,8 +399,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 			String returnType = "void";
 			if (m.getReturnType() != null)
 				returnType = m.getReturnType().getCanonicalName();
-			info.put("method:" + m.getName() + "(" + args.toString() + ")",
-					returnType);
+			info.put("method:" + m.getName() + "(" + args.toString() + ")", returnType);
 		}
 
 		log.debug("Returning info {}", info);
@@ -437,8 +407,8 @@ public class RMINamingService extends UnicastRemoteObject implements
 	}
 
 	@Override
-	public Serializable call(String name, String method, String signature,
-			Serializable... args) throws RemoteException {
+	public Serializable call(String name, String method, String signature, Serializable... args)
+			throws RemoteException {
 		try {
 			log.debug("calling '{}.{}'", name, method);
 			log.debug("   args: {}", (Object[]) args);
@@ -448,8 +418,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 				params.add(args[i]);
 			}
 
-			RemoteEndpoint re = (RemoteEndpoint) registry
-					.lookup(getLocalRef(name));
+			RemoteEndpoint re = (RemoteEndpoint) registry.lookup(getLocalRef(name));
 			return re.call(method, signature, params);
 		} catch (Exception e) {
 			throw new RemoteException(e.getMessage());
@@ -468,7 +437,7 @@ public class RMINamingService extends UnicastRemoteObject implements
 	 * @see stream.runtime.LifeCycle#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 		// TODO This should be obsolete after refactoring...
 	}
 }

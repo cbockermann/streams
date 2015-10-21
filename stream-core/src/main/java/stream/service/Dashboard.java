@@ -30,7 +30,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import stream.Context;
+import stream.runtime.ApplicationContext;
 import stream.runtime.LifeCycle;
 
 /**
@@ -86,7 +86,7 @@ public class Dashboard implements DashboardService, LifeCycle {
 	 * @see stream.runtime.LifeCycle#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 		frame = new JFrame();
 
 		if (title != null) {

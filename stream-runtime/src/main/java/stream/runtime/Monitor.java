@@ -26,7 +26,6 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.Context;
 import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
@@ -73,7 +72,7 @@ public class Monitor extends DefaultProcess {
 	 * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 		super.init(context);
 
 		try {
@@ -84,8 +83,7 @@ public class Monitor extends DefaultProcess {
 
 		} catch (Exception e) {
 			interval = 1000L;
-			throw new Exception("Failed to initialize Monitor: "
-					+ e.getMessage());
+			throw new Exception("Failed to initialize Monitor: " + e.getMessage());
 		}
 	}
 

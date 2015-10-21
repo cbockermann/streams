@@ -33,8 +33,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.ProcessContext;
-
 /**
  * <p>
  * 
@@ -48,6 +46,7 @@ public class ProcessThread extends Thread {
 	static Logger log = LoggerFactory.getLogger(ProcessThread.class);
 
 	static final Map<String, Integer> PRIORITY_NAMES = new LinkedHashMap<String, Integer>();
+
 	static {
 		PRIORITY_NAMES.put("lowest", Thread.MIN_PRIORITY);
 		PRIORITY_NAMES.put("low", 2);
@@ -57,12 +56,12 @@ public class ProcessThread extends Thread {
 	}
 
 	final stream.Process process;
-	final ProcessContext context;
+	final ApplicationContext context;
 	boolean running = false;
 
 	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
-	public ProcessThread(stream.Process process, ProcessContext ctx) {
+	public ProcessThread(stream.Process process, ApplicationContext ctx) {
 
 		Integer prio = Thread.NORM_PRIORITY;
 		try {
@@ -115,8 +114,7 @@ public class ProcessThread extends Thread {
 		running = true;
 		try {
 
-			log.debug("Starting process {}, notifying listeners {}", process,
-					processListener);
+			log.debug("Starting process {}, notifying listeners {}", process, processListener);
 			for (ProcessListener l : this.processListener) {
 				log.debug("Calling process-listener {}", l);
 				l.processStarted(process);
@@ -140,8 +138,7 @@ public class ProcessThread extends Thread {
 		} finally {
 
 			try {
-				log.debug("Process {} finished, notifying listeners: {}",
-						process, processListener);
+				log.debug("Process {} finished, notifying listeners: {}", process, processListener);
 				for (ProcessListener l : this.processListener) {
 					log.debug("   Calling listener {}", l);
 					l.processFinished(process);
@@ -150,8 +147,7 @@ public class ProcessThread extends Thread {
 				StringWriter sw = new StringWriter();
 				e.printStackTrace(new PrintWriter(sw));
 				String exceptionDetails = sw.toString();
-				log.error("Failed to call process listeners: {}",
-						exceptionDetails);
+				log.error("Failed to call process listeners: {}", exceptionDetails);
 				// if (log.isDebugEnabled())
 				e.printStackTrace();
 			}

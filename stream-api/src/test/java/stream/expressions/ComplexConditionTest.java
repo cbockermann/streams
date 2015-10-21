@@ -66,6 +66,17 @@ public class ComplexConditionTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Context getParent() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String path() {
+			return "context";
+		}
 	};
 
 	/**

@@ -23,7 +23,6 @@
  */
 package stream.runtime;
 
-import stream.Context;
 import stream.Data;
 import stream.io.Stream;
 
@@ -43,7 +42,7 @@ public class StreamLifeCycle implements LifeCycle, Stream {
 	 * @see stream.runtime.LifeCycle#init(stream.Context)
 	 */
 	@Override
-	public void init(Context context) throws Exception {
+	public void init(ApplicationContext context) throws Exception {
 	}
 
 	/**

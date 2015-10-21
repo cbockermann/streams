@@ -25,6 +25,8 @@ package stream.test;
 
 import static org.junit.Assert.fail;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import stream.data.DataFactory;
 import stream.data.PrintData;
 import stream.data.SetValue;
 import stream.flow.If;
+import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
 /**
@@ -51,7 +54,8 @@ public class ScopeTest {
 		try {
 			stream.runtime.DefaultProcess p = new stream.runtime.DefaultProcess();
 
-			ProcessContext ctx = new ProcessContextImpl("0");
+			ContainerContext container = new ContainerContext(UUID.randomUUID().toString());
+			ProcessContext ctx = new ProcessContextImpl("0", container);
 
 			SetValue sv = new SetValue();
 			sv.setKey("tetst");
@@ -75,7 +79,7 @@ public class ScopeTest {
 			PrintData pd = new PrintData();
 			p.add(pd);
 
-			p.init(ctx);
+			p.init(container);
 
 			Data item = DataFactory.create();
 			item.put("frame:red:avg", 1.0d);

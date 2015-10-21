@@ -38,7 +38,7 @@ import stream.service.ServiceInfo;
  * @author chris
  * 
  */
-public class ContainerContext implements Context {
+public class ContainerContext implements ApplicationContext {
 
 	final static String CONTEXT_NAME = "container";
 	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
@@ -170,5 +170,22 @@ public class ContainerContext implements Context {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @see stream.Context#getParent()
+	 */
+	@Override
+	public Context getParent() {
+		// A container context is the root context
+		return null;
+	}
+
+	/**
+	 * @see stream.Context#path()
+	 */
+	@Override
+	public String path() {
+		return "application:" + getId();
 	}
 }

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import stream.Context;
 import stream.ProcessContext;
 import stream.service.Service;
 
@@ -102,5 +103,25 @@ public class ProcessContextMock implements ProcessContext {
 	@Override
 	public String getId() {
 		return processId;
+	}
+
+	/**
+	 * @see stream.Context#getParent()
+	 */
+	@Override
+	public Context getParent() {
+		return null;
+	}
+
+	/**
+	 * @see stream.Context#path()
+	 */
+	@Override
+	public String path() {
+		if (getParent() != null) {
+			return this.getParent().path() + Context.PATH_SEPARATOR + "process:" + getId();
+		} else {
+			return "process:" + getId();
+		}
 	}
 }

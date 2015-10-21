@@ -23,8 +23,6 @@
  */
 package stream.runtime;
 
-import stream.Context;
-
 /**
  * <p>
  * The life cycle interface defines a general life cycle of elements within a
@@ -40,7 +38,7 @@ public interface LifeCycle {
 	/**
 	 * Initializes this life cycle instance with the provided context.
 	 */
-	public void init(Context context) throws Exception;
+	public void init(ApplicationContext context) throws Exception;
 
 	/**
 	 * This method is called at the end of the life cycle.

@@ -658,7 +658,7 @@ public class ProcessContainer implements IContainer, Runnable {
 			// log.debug("Initializing process with process-context...");
 			// spu.init(ctx);
 
-			ProcessThread worker = new ProcessThread(spu, ctx);
+			ProcessThread worker = new ProcessThread(spu, context);
 			worker.addListener(new ProcessListener() {
 				@Override
 				public void processStarted(Process p) {

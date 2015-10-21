@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.runtime.ProcessContextImpl;
+import stream.test.RootContextMock;
 import stream.test.TestStream;
 
 /**
@@ -59,7 +60,7 @@ public class SQLStreamTest {
 		writer.setPassword(dbPass);
 		writer.setTable("TEST_TABLE");
 
-		writer.init(new ProcessContextImpl("0"));
+		writer.init(new ProcessContextImpl("0", new RootContextMock()));
 
 		for (int i = 0; i < 100; i++) {
 			Data item = stream.readNext();

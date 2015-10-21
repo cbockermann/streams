@@ -122,6 +122,26 @@ public class SplitByCondition extends AbstractSplit {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		/**
+		 * @see stream.Context#getParent()
+		 */
+		@Override
+		public Context getParent() {
+			return null;
+		}
+
+		/**
+		 * @see stream.Context#path()
+		 */
+		@Override
+		public String path() {
+			if (getParent() != null) {
+				return this.getParent().path() + Context.PATH_SEPARATOR + "split:" + getId();
+			} else {
+				return "split:" + getId();
+			}
+		}
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import stream.ProcessorList;
 import stream.annotations.Parameter;
 import streams.logging.Message;
 import streams.logging.Rlog;
+import streams.net.MessageQueue.Sender;
 
 /**
  * This class implements a processor list which aggregates timing information
@@ -54,6 +55,8 @@ public class Performance extends ProcessorList {
 	File output;
 	String hostname;
 	String path;
+	String host;
+	Sender sender;
 
 	public Performance() {
 		myStatistics = new ProcessorStatistics(this);
@@ -85,6 +88,12 @@ public class Performance extends ProcessorList {
 		}
 		hostname = InetAddress.getLocalHost().getHostName();
 		global.incrementAndGet();
+
+		if (host != null) {
+			log.info("Starting my own messenger...");
+			sender = new Sender(host);
+			sender.start();
+		}
 	}
 
 	public Data executeInnerProcessors(Data data) {
@@ -153,6 +162,15 @@ public class Performance extends ProcessorList {
 		super.finish();
 
 		logPerformance();
+
+		while (sender != null && sender.messagesPending() > 0) {
+			log.debug("Waiting for sender to finish... {} messages pending", sender.messagesPending());
+			try {
+				sender.join(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public ProcessorStatistics[] getProcessorStatistics() {
@@ -171,7 +189,11 @@ public class Performance extends ProcessorList {
 			Message m = rlog.message().add("performance.id", context.path());
 			m.add("performance.stats", new ProcessorStatistics(this.myStatistics));
 			m.add("processors", this.getProcessorStatistics());
-			m.send();
+			if (sender != null) {
+				sender.add(m);
+			} else {
+				m.send();
+			}
 		}
 	}
 
@@ -241,5 +263,21 @@ public class Performance extends ProcessorList {
 
 	public String getPath() {
 		return path;
+	}
+
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
+
+	/**
+	 * @param host
+	 *            the host to set
+	 */
+	@Parameter(description = "The host where to send the statistics to. If not set, the default setting from rlog.host will be used.", required = false)
+	public void setHost(String host) {
+		this.host = host;
 	}
 }

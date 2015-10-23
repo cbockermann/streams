@@ -33,17 +33,9 @@ public class PerformanceTree {
 		log.debug("Looking for node at level '{}'", depth());
 		if (depth < path.length) {
 			String next = path[depth];
-			PerformanceTree down = null;
-			for (PerformanceTree child : sibblings) {
-				if (next.equals(child.id)) {
-					log.debug("found child: " + child + " (" + child.id + ")");
-					down = child;
-					break;
-				}
-			}
-
+			PerformanceTree down = getChild(next);
 			if (down == null) {
-				log.debug("Creating new child for '{}'", next);
+				log.info("Creating new child for '{}' at node '{}'", next, id);
 				down = new PerformanceTree(next, this);
 				sibblings.add(down);
 			}
@@ -53,6 +45,15 @@ public class PerformanceTree {
 			log.debug("Updating data for node '{}'", id);
 			value = data;
 		}
+	}
+
+	public PerformanceTree getChild(String id) {
+		for (PerformanceTree ch : sibblings) {
+			if (ch.id.equals(id)) {
+				return ch;
+			}
+		}
+		return null;
 	}
 
 	public void add(PerformanceTree child) {

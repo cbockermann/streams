@@ -11,13 +11,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.net.ssl.SSLServerSocket;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minidev.json.JSONObject;
 import stream.Data;
 import stream.io.Codec;
 import stream.io.JavaCodec;
+import stream.util.MultiSet;
 import streams.io.BobCodec;
 import streams.performance.PerformanceTree;
 import streams.performance.ProcessorStatistics;
@@ -34,12 +36,15 @@ public class PerformanceReceiver {
 	PerformanceTree perfTree;
 
 	static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<String, PerformanceTree>();
+	static MultiSet<String> updateCount = new MultiSet<String>();
 
 	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 
 	public PerformanceReceiver(int port) throws Exception {
-		server = new ServerSocket(port);
-		// perfTree = new PerformanceTree("", null);
+		// server = new ServerSocket(port);
+		SSLServerSocket server = SecureConnect.openServer(port);
+		server.setWantClientAuth(true);
+		this.server = server;
 	}
 
 	public static class Receiver extends Thread {
@@ -55,27 +60,19 @@ public class PerformanceReceiver {
 
 		public void run() {
 
-			Updater updater = new Updater();
-			updater.setDaemon(true);
-			updater.start();
-
 			try {
 
 				while (true) {
 					DataInputStream dis = new DataInputStream(socket.getInputStream());
 					byte[] block = BobCodec.readBlock(dis);
 					if (block == null) {
-						log.info("Received null block - exiting receiver...");
+						log.debug("Received null block - exiting receiver...");
 						return;
 					}
 					Data message = codec.decode(block);
 
 					Serializable id = message.get("performance.id");
 					if (id != null) {
-						log.info("Performance path: '{}'", id);
-
-						String appId = id.toString().replaceAll("/(.*)$", "");
-						log.info("application ID: {}", appId);
 
 						Serializable perfs = message.get("processors");
 						if (perfs != null && perfs.getClass().isArray()
@@ -86,23 +83,13 @@ public class PerformanceReceiver {
 
 							if (perfs != null && perfs instanceof ProcessorStatistics) {
 								ProcessorStatistics performance = (ProcessorStatistics) perfs;
-								report(performance, stats);
-								// parent.merge(id.toString(), performance);
 								updates.add(new Update(id.toString(), performance));
 								for (int i = 0; i < stats.length; i++) {
-									// parent.merge(id.toString() +
-									// "/processor:" + i, stats[i]);
 									updates.add(new Update(id.toString() + "/processor:" + i, stats[i]));
 								}
-
-								// parent.perfTree.print();
 							}
-
 						}
 					}
-
-					log.info("Received message: {}", JSONObject.toJSONString(message));
-					// System.out.println(message);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -132,6 +119,10 @@ public class PerformanceReceiver {
 
 	public void run() {
 		try {
+
+			Updater updater = new Updater();
+			updater.setDaemon(true);
+			updater.start();
 
 			while (true) {
 
@@ -171,11 +162,16 @@ public class PerformanceReceiver {
 					if (tree == null) {
 						tree = new PerformanceTree("", null);
 						performanceTrees.put(app, tree);
-						log.info("Creating new performance tree for application '{}'", app);
+						log.debug("Creating new performance tree for application '{}'", app);
 					}
 
 					tree.update(path, update.stats);
-					tree.print();
+
+					updateCount.add(app);
+					int cnt = updateCount.count(app);
+					if (cnt % 10 == 0) {
+						tree.print();
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -184,10 +180,25 @@ public class PerformanceReceiver {
 		}
 	}
 
+	public static class Dump extends Thread {
+
+		public void run() {
+			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+			for (String id : performanceTrees.keySet()) {
+				PerformanceTree tree = performanceTrees.get(id);
+				System.out.println("------------------------ Application " + id + " ------------------------");
+				tree.print();
+				System.out.println("------------------------ -------------- ------------------------");
+			}
+		}
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
+		Runtime.getRuntime().addShutdownHook(new Dump());
+
 		PerformanceReceiver receiver = new PerformanceReceiver(6001);
 		log.info("Starting performance-receiver on port {}", receiver.server.getLocalPort());
 		receiver.run();

@@ -48,7 +48,7 @@ public class ProtocolFactory extends SSLSocketFactory {
 
 	@Override
 	public String[] getSupportedCipherSuites() {
-		return underlyingSSLSocketFactory.getSupportedCipherSuites();
+		return enabledCiphers;
 	}
 
 	@Override

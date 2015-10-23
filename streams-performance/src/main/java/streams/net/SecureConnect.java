@@ -12,6 +12,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -64,6 +65,17 @@ public class SecureConnect {
 		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		tmf.init(keyStore);
 		tm = tmf.getTrustManagers();
+
+		//
+		// ArrayList<String> ciphers = new ArrayList<String>();
+		// for (int i = 0; i < delegate.getSupportedCipherSuites().length; i++)
+		// {
+		// String cipher = delegate.getSupportedCipherSuites()[i];
+		// if (cipher.toLowerCase().indexOf("krb") < 0) {
+		// ciphers.add(cipher);
+		// }
+		// }
+
 	}
 
 	public static void main(String args[]) throws Exception {
@@ -75,19 +87,49 @@ public class SecureConnect {
 
 	public static Socket connect() throws Exception {
 
-		String host = System.getProperty("rlog.host", "performance.sfb876.de");
-		Integer port = new Integer(System.getProperty("rlog.port", "6001"));
-
-		if (!host.equalsIgnoreCase("performance.sfb876.de")) {
-			System.err.println("Connecting to host " + host + ":" + port + " via plain tcp connection...");
-			return new Socket(host, port);
-		}
+		// String host = System.getProperty("rlog.host",
+		// "performance.sfb876.de");
+		// Integer port = new Integer(System.getProperty("rlog.port", "6001"));
+		// if (!host.equalsIgnoreCase("performance.sfb876.de")) {
+		// System.err.println("Connecting to host " + host + ":" + port + " via
+		// plain tcp connection...");
+		// return new Socket(host, port);
+		// }
 
 		return connect("performance.sfb876.de", 6001);
 	}
 
-	public static SSLSocket connect(String host, int port) throws Exception {
+	public static SSLServerSocket openServer(int port) throws Exception {
+		init();
 
+		log.debug("Creating SSL context...");
+		SSLContext ctx = SSLContext.getInstance(DEFAULT_PROTOCOL);
+
+		log.debug("Initializing SSL context...");
+		ctx.init(km, tm, new SecureRandom());
+
+		log.debug("Creating SSLServerSocket...");
+
+		ProtocolServerFactory ssf = new ProtocolServerFactory(ctx.getServerSocketFactory());
+		SSLServerSocket socket = (SSLServerSocket) ssf.createServerSocket(port);
+		return socket;
+	}
+
+	public static Socket connect(String host, int port) throws Exception {
+
+		try {
+			SSLSocket socket = connectSSL(host, port);
+			return socket;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		log.debug("Establishing plain TCP connection...");
+		return new Socket(host, port);
+	}
+
+	public static SSLSocket connectSSL(String host, int port) throws Exception {
+		log.debug("Establishing SSL connection...");
 		init();
 
 		if (debug) {
@@ -105,6 +147,8 @@ public class SecureConnect {
 		}
 
 		SocketFactory sf = new ProtocolFactory(ctx.getSocketFactory());
-		return (SSLSocket) sf.createSocket(host, port);
+		SSLSocket socket = (SSLSocket) sf.createSocket(host, port);
+		socket.setKeepAlive(true);
+		return socket;
 	}
 }

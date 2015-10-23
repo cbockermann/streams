@@ -118,8 +118,7 @@ public class LineStream extends AbstractLineStream {
 			ParserGenerator pg = new ParserGenerator(format);
 			parser = pg.newParser();
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to create parser for format: "
-					+ e.getMessage());
+			throw new RuntimeException("Failed to create parser for format: " + e.getMessage());
 		}
 	}
 
@@ -128,9 +127,6 @@ public class LineStream extends AbstractLineStream {
 	 */
 	@Override
 	public synchronized Data readNext() throws Exception {
-
-		if (this.limit != null && this.limit > 0 && this.count > this.limit)
-			return null;
 
 		Data instance = DataFactory.create();
 

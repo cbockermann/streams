@@ -24,6 +24,8 @@
 package stream.runtime.setup.handler;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,8 +79,7 @@ public class StreamElementHandler implements ElementHandler {
 		if (element == null)
 			return false;
 
-		return "Stream".equalsIgnoreCase(element.getNodeName())
-				|| "DataStream".equalsIgnoreCase(element.getNodeName());
+		return "Stream".equalsIgnoreCase(element.getNodeName()) || "DataStream".equalsIgnoreCase(element.getNodeName());
 	}
 
 	/**
@@ -86,9 +87,8 @@ public class StreamElementHandler implements ElementHandler {
 	 *      , org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element,
-			Variables variables, DependencyInjection dependencyInjection)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element, Variables variables,
+			DependencyInjection dependencyInjection) throws Exception {
 		try {
 			final ComputeGraph computeGraph = container.computeGraph();
 			Map<String, String> attr = objectFactory.getAttributes(element);
@@ -118,12 +118,22 @@ public class StreamElementHandler implements ElementHandler {
 
 				String lid = local.expand(id);
 
-				Stream stream = StreamFactory.createStream(objectFactory,
-						element, local);
+				Stream stream = StreamFactory.createStream(objectFactory, element, local);
 				if (stream != null) {
 					if (lid == null)
 						lid = "" + stream;
 					stream.setId(lid);
+
+					try {
+						Method m = stream.getClass().getMethod("read", null);
+						int mod = m.getModifiers();
+						if (!Modifier.isSynchronized(mod)) {
+							log.warn("DANGER: Use of non-synchronized read() method in stream implementation!");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 					computeGraph.addStream(lid, stream);
 					container.registerStream(lid, stream);
 				}
@@ -133,8 +143,7 @@ public class StreamElementHandler implements ElementHandler {
 				}
 			}
 		} catch (FileNotFoundException fnfe) {
-			throw new Exception("Cannot create stream from referenced file: "
-					+ fnfe.getMessage());
+			throw new Exception("Cannot create stream from referenced file: " + fnfe.getMessage());
 		} catch (Exception e) {
 
 			if (e.getCause() != null)
@@ -142,8 +151,7 @@ public class StreamElementHandler implements ElementHandler {
 
 			log.error("Failed to create stream-object: {}", e.getMessage());
 			e.printStackTrace();
-			throw new Exception("Failed to create data-stream: "
-					+ e.getMessage());
+			throw new Exception("Failed to create data-stream: " + e.getMessage());
 		}
 	}
 }

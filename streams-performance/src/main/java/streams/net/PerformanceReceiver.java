@@ -28,7 +28,7 @@ import streams.performance.ProcessorStatistics;
  * @author chris
  *
  */
-public class PerformanceReceiver {
+public class PerformanceReceiver extends Thread {
 
 	static Logger log = LoggerFactory.getLogger(PerformanceReceiver.class);
 
@@ -45,6 +45,7 @@ public class PerformanceReceiver {
 		SSLServerSocket server = SecureConnect.openServer(port);
 		server.setWantClientAuth(true);
 		this.server = server;
+		this.setDaemon(true);
 	}
 
 	public static class Receiver extends Thread {

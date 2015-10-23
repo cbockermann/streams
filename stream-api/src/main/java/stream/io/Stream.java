@@ -33,6 +33,8 @@ package stream.io;
  */
 public interface Stream extends Source {
 
+	public final static String SOURCE_KEY = "@stream";
+
 	public Long getLimit();
 
 	public void setLimit(Long limit);

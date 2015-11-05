@@ -83,19 +83,31 @@ public class SourceURL implements Serializable {
 	static Logger log = LoggerFactory.getLogger(SourceURL.class);
 
 	final static Map<String, Class<? extends Connection>> urlProvider = new LinkedHashMap<String, Class<? extends Connection>>();
+
 	static {
 		urlProvider.put(PROTOCOL_SSL, stream.urls.SSLConnection.class);
 		urlProvider.put(PROTOCOL_TCP, stream.urls.TcpConnection.class);
 		urlProvider.put(PROTOCOL_FIFO, stream.urls.FIFOConnection.class);
 		registerUrlHandler("files", FilesConnection.class);
 		registerUrlHandler("tcpd", TcpListener.class);
+
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Connection> c = (Class<? extends Connection>) Class.forName("stream.urls.HdfsConnection");
+			if (c != null) {
+				registerUrlHandler("hdfs", c);
+			}
+		} catch (Exception e) {
+			log.error("Failed to register handler for protocol '{}'", "hdfs");
+			if (log.isDebugEnabled()) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public final static void registerUrlHandler(String protocol,
-			Class<? extends Connection> clazz) {
+	public final static void registerUrlHandler(String protocol, Class<? extends Connection> clazz) {
 		if (urlProvider.containsKey(protocol)) {
-			log.warn("Overriding URL handler {} for protocol '{}'",
-					urlProvider.get(protocol), protocol);
+			log.warn("Overriding URL handler {} for protocol '{}'", urlProvider.get(protocol), protocol);
 		}
 		urlProvider.put(protocol, clazz);
 	}
@@ -146,8 +158,7 @@ public class SourceURL implements Serializable {
 		if (!hasProtocol(urlString))
 			throw new MalformedURLException("Missing Protocol in: " + urlString);
 
-		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE)
-				|| urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
+		if (urlString.toLowerCase().startsWith(PROTOCOL_FILE) || urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
 				|| urlString.toLowerCase().startsWith(PROTOCOL_FIFO)) {
 			ParserGenerator gen = new ParserGenerator(FILE_GRAMMAR);
 			Parser<Map<String, String>> parser = gen.newParser();
@@ -190,8 +201,7 @@ public class SourceURL implements Serializable {
 					// assume a host:port
 					ParserGenerator pg = new ParserGenerator(GRAMMAR);
 					Parser<Map<String, String>> dbparser = pg.newParser();
-					Map<String, String> values = dbparser.parse("jdbc:"
-							+ target);
+					Map<String, String> values = dbparser.parse("jdbc:" + target);
 					log.debug("sub-parsing jdbc-target returned: {}", values);
 					vals.putAll(values);
 				}
@@ -202,8 +212,7 @@ public class SourceURL implements Serializable {
 
 			for (String proto : urlProvider.keySet()) {
 				if (protocol.equalsIgnoreCase(proto)) {
-					log.debug("URL {} is handled by {}", url,
-							urlProvider.get(protocol));
+					log.debug("Protocol {} is handled by {}", proto, urlProvider.get(protocol));
 				}
 			}
 
@@ -281,8 +290,7 @@ public class SourceURL implements Serializable {
 
 	private boolean hasProtocol(String urlString) {
 		String[] p = urlString.split(":");
-		if (p.length < 2
-				|| (p.length > 1 && (p[0] == null || p[0].length() == 0)))
+		if (p.length < 2 || (p.length > 1 && (p[0] == null || p[0].length() == 0)))
 			return false;
 		return true;
 	}
@@ -302,8 +310,7 @@ public class SourceURL implements Serializable {
 		InputStream inputStream = createStream();
 
 		if (isGzip()) {
-			log.debug("Wrapping stream {} in GZIPInputStream for URL {}",
-					inputStream, this);
+			log.debug("Wrapping stream {} in GZIPInputStream for URL {}", inputStream, this);
 			return new GZIPInputStream(inputStream, 1048576);
 		}
 
@@ -322,19 +329,14 @@ public class SourceURL implements Serializable {
 				Class<? extends Connection> clazz = urlProvider.get(proto);
 				log.debug("Found url-provider '{}' for URL {}", clazz, this);
 				try {
-					Constructor<? extends Connection> constructor = clazz
-							.getConstructor(SourceURL.class);
+					Constructor<? extends Connection> constructor = clazz.getConstructor(SourceURL.class);
 
-					log.debug(
-							"Using constructor {} to create new instance of provider {}",
-							constructor, clazz);
+					log.debug("Using constructor {} to create new instance of provider {}", constructor, clazz);
 					Connection con = constructor.newInstance(this);
 					return con.connect();
 				} catch (NoSuchMethodException nsm) {
 					nsm.printStackTrace();
-					log.error(
-							"Failed to create instance of class {} for URL {}",
-							clazz, this);
+					log.error("Failed to create instance of class {} for URL {}", clazz, this);
 					throw new IOException(nsm.getMessage());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -348,8 +350,7 @@ public class SourceURL implements Serializable {
 		}
 
 		if (PROTOCOL_CLASSPATH.equalsIgnoreCase(protocol)) {
-			log.debug("Returning InputStream for classpath resource '{}'",
-					getPath());
+			log.debug("Returning InputStream for classpath resource '{}'", getPath());
 			return SourceURL.class.getResourceAsStream(getPath());
 		}
 
@@ -375,8 +376,7 @@ public class SourceURL implements Serializable {
 				File f = new File(theUrl.substring(PROTOCOL_FILE.length() + 1));
 				if (!f.canRead()) {
 					log.error("Cannot open file '{}' for reading!", f);
-					throw new FileNotFoundException("Cannot open file '"
-							+ f.getAbsolutePath() + "' for reading!");
+					throw new FileNotFoundException("Cannot open file '" + f.getAbsolutePath() + "' for reading!");
 				}
 			}
 
@@ -387,8 +387,7 @@ public class SourceURL implements Serializable {
 				File file = new File(theUrl.replace("file:", ""));
 				if (!file.exists()) {
 					log.debug("Creating new fifo file '{}' with mkfifo", file);
-					Process p = Runtime.getRuntime().exec(
-							"mkfifo " + file.getAbsolutePath());
+					Process p = Runtime.getRuntime().exec("mkfifo " + file.getAbsolutePath());
 					log.debug("Waiting for mkfifo to return...");
 					int ret = p.waitFor();
 					log.debug("mkfifo finished: {}", ret);
@@ -397,9 +396,7 @@ public class SourceURL implements Serializable {
 				}
 
 				if (!file.exists()) {
-					throw new IOException(
-							"Failed to create/acquire FIFO file '"
-									+ file.getAbsolutePath() + "'!");
+					throw new IOException("Failed to create/acquire FIFO file '" + file.getAbsolutePath() + "'!");
 				}
 
 				log.debug("Returning FileInputStream for FIFO {}", file);
@@ -412,10 +409,7 @@ public class SourceURL implements Serializable {
 			if (url.getUserInfo() != null) {
 				final URLConnection conn = url.openConnection();
 				String basicAuth = "Basic "
-						+ new String(
-								javax.xml.bind.DatatypeConverter
-										.printBase64Binary(url.getUserInfo()
-												.getBytes()));
+						+ new String(javax.xml.bind.DatatypeConverter.printBase64Binary(url.getUserInfo().getBytes()));
 				conn.setRequestProperty("Authorization", basicAuth);
 				return conn.getInputStream();
 			}
@@ -424,17 +418,12 @@ public class SourceURL implements Serializable {
 			log.error("Did not find referenced file: {}", fnf.getMessage());
 			throw fnf;
 		} catch (IOException ioe) {
-			log.error(
-					"Failed to open URL '{}' with default URL.openStream(): {}",
-					theUrl, ioe.getMessage());
+			log.error("Failed to open URL '{}' with default URL.openStream(): {}", theUrl, ioe.getMessage());
 			throw ioe;
 		} catch (Exception e) {
-			log.error(
-					"Failed to open '{}' with default Java URL mechanism: {}",
-					theUrl, e.getMessage());
+			log.error("Failed to open '{}' with default Java URL mechanism: {}", theUrl, e.getMessage());
 			e.printStackTrace();
-			throw new IOException("No handler found for protocol '" + protocol
-					+ "': " + e.getMessage());
+			throw new IOException("No handler found for protocol '" + protocol + "': " + e.getMessage());
 		}
 
 	}

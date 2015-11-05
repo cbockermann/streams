@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.sfb876</groupId>
 	<artifactId>streams-performance</artifactId>
@@ -9,7 +8,7 @@
 	<parent>
 		<groupId>org.jwall</groupId>
 		<artifactId>streams</artifactId>
-		<version>0.9.23-SNAPSHOT</version>
+		<version>0.9.23</version>
 		<relativePath>..</relativePath>
 	</parent>
 	
@@ -68,7 +67,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-api</artifactId>
-			<version>0.9.23-SNAPSHOT</version>
+			<version>0.9.23</version>
 		</dependency>
 		<dependency>
 			<groupId>net.minidev</groupId>
@@ -78,7 +77,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
-			<version>0.9.23-SNAPSHOT</version>
+			<version>0.9.23</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -89,7 +88,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-core</artifactId>
-			<version>0.9.23-SNAPSHOT</version>
+			<version>0.9.23</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -131,12 +130,12 @@
 				<dependency>
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-runtime</artifactId>
-					<version>0.9.23-SNAPSHOT</version>
+					<version>0.9.23</version>
 				</dependency>
 				<dependency>
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-core</artifactId>
-					<version>0.9.23-SNAPSHOT</version>
+					<version>0.9.23</version>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>
@@ -163,8 +162,7 @@
 						<configuration>
 							<finalName>${streams.jar}</finalName>
 							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Implementation-Vendor>Christian Bockermann</Implementation-Vendor>
 										<Implementation-Title>streams-performance</Implementation-Title>

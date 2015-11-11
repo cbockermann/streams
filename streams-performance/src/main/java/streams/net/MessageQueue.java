@@ -115,10 +115,9 @@ public class MessageQueue {
 				}
 
 				byte[] bytes = mc.encode(DataFactory.create(m));
-				// System.out.println("Encoded message to " + bytes.length + "
-				// bytes");
-				BobCodec.writeBlock(bytes, out);
-				// System.out.println(written + " bytes written to socket...");
+				log.debug("Encoded message to " + bytes.length + " bytes");
+				int written = BobCodec.writeBlock(bytes, out);
+				log.debug(written + " bytes written to socket...");
 				out.flush();
 
 			} catch (Exception e) {

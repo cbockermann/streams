@@ -98,6 +98,7 @@ public class DataRate extends AbstractProcessor {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		// start = System.currentTimeMillis();
+		rlog = new Rlog();
 	}
 
 	@Override
@@ -129,10 +130,11 @@ public class DataRate extends AbstractProcessor {
 	protected void printDataRate(Long now) {
 		Double sec = (now - start) / 1000.0;
 		if (sec > 0) {
+            double rate = count.doubleValue() / sec;
 			log.info("Data rate '" + getId() + "': {} items processed, data-rate is: {}/second",
-                    count, fmt.format(count.doubleValue() / sec));
+                    count, fmt.format(rate));
 
-			rlog.message().add("items-per-second", count.doubleValue() / sec).send();
+			rlog.message().add("items-per-second", rate).send();
 		}
 	}
 

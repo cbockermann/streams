@@ -36,11 +36,11 @@ public class MessageQueue {
 	private static Sender sender;
 
 	static {
-		System.out.println("Initializing global MessageQueue");
+		log.info("Initializing global MessageQueue");
 
 		String host = System.getProperty("rlog.host");
 		if (host == null) {
-			System.out.println("'rlog.host' not set, disabling rlog-sender");
+			log.error("'rlog.host' not set, disabling rlog-sender");
 			sender = null;
 		} else {
 			sender = new Sender(host, messages);

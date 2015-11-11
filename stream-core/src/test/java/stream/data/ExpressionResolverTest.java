@@ -23,10 +23,9 @@
  */
 package stream.data;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+import junit.framework.Assert;
 import stream.Data;
 import stream.ProcessContext;
 import stream.expressions.ExpressionResolver;
@@ -43,8 +42,8 @@ import stream.runtime.ProcessContextImpl;
  */
 public class ExpressionResolverTest {
 
-	final ContainerContext ctx = new ContainerContext();
-	final ProcessContext pc = new ProcessContextImpl(ctx);
+	final ContainerContext ctx = new ContainerContext("container:test");
+	final ProcessContext pc = new ProcessContextImpl("process:0", ctx);
 
 	/**
 	 * Test method for

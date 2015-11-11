@@ -69,20 +69,18 @@ public class QueueElementHandler implements ElementHandler {
 	 *      org.w3c.dom.Element)
 	 */
 	@Override
-	public void handleElement(ProcessContainer container, Element element,
-			Variables variables, DependencyInjection dependencyInjection)
-			throws Exception {
+	public void handleElement(ProcessContainer container, Element element, Variables variables,
+			DependencyInjection dependencyInjection) throws Exception {
 
 		final ComputeGraph computeGraph = container.computeGraph();
 
 		String className = element.getAttribute("class");
 		if (className == null || className.trim().isEmpty())
-			className = "stream.io.BlockingQueue";
+			className = "stream.io.DefaultBlockingQueue";
 
-		Map<String, String> params = container.getObjectFactory()
-				.getAttributes(element);
+		Map<String, String> params = container.getObjectFactory().getAttributes(element);
 		if (!params.containsKey("class")) {
-			params.put("class", "stream.io.BlockingQueue");
+			params.put("class", "stream.io.DefaultBlockingQueue");
 		}
 
 		String id = element.getAttribute("id");
@@ -109,8 +107,7 @@ public class QueueElementHandler implements ElementHandler {
 			CopiesUtils.addCopyIds(local, copy);
 			String cid = local.expand(id);
 
-			Queue queue = (Queue) container.getObjectFactory().create(
-					className, params,
+			Queue queue = (Queue) container.getObjectFactory().create(className, params,
 					ObjectFactory.createConfigDocument(element), local);
 			container.registerQueue(copy.getId(), queue, true);
 			computeGraph.addQueue(cid, queue);

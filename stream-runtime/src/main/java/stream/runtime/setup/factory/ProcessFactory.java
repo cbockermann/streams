@@ -35,14 +35,7 @@ import stream.util.Variables;
 public interface ProcessFactory {
 
 	public ProcessConfiguration[] createConfigurations(Element e, Variables v);
-	
-	public void createAndRegisterProcesses(ProcessConfiguration[] configs) throws Exception;	
-	
-//	public List<Processor> createNestedProcessors(Element child, Variables local) throws Exception;
 
-
-
-
-
+	public void createAndRegisterProcesses(ProcessConfiguration[] configs) throws Exception;
 
 }

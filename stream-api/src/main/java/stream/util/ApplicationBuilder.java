@@ -18,7 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import stream.Context;
 import stream.Data;
 import stream.Processor;
 import stream.app.ComputeGraph;
@@ -26,6 +25,7 @@ import stream.io.AbstractStream;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.io.SourceURL;
+import stream.runtime.ApplicationContext;
 
 /**
  * @author chris
@@ -68,14 +68,12 @@ public class ApplicationBuilder {
 
 			String input = proc.getAttribute("input");
 			if (input == null) {
-				throw new RuntimeException("Process '" + id
-						+ "' is not connected to any input!");
+				throw new RuntimeException("Process '" + id + "' is not connected to any input!");
 			}
 
 			Source src = graph.sources().get(input);
 			if (src == null) {
-				throw new RuntimeException("Process '" + id
-						+ "' references unknown input '" + input + "'!");
+				throw new RuntimeException("Process '" + id + "' references unknown input '" + input + "'!");
 			}
 
 			Object last = src;
@@ -108,8 +106,7 @@ public class ApplicationBuilder {
 		return graph;
 	}
 
-	public static class StreamNode extends AbstractStream implements
-			stream.util.Node {
+	public static class StreamNode extends AbstractStream implements stream.util.Node {
 		final Map<String, String> attributes = new LinkedHashMap<String, String>();
 
 		/**
@@ -242,7 +239,7 @@ public class ApplicationBuilder {
 		 * @see stream.runtime.LifeCycle#init(stream.Context)
 		 */
 		@Override
-		public void init(Context context) throws Exception {
+		public void init(ApplicationContext context) throws Exception {
 		}
 
 		/**

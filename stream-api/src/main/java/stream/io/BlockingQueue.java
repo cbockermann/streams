@@ -62,8 +62,7 @@ public class BlockingQueue extends AbstractQueue {
 		}
 	}
 
-	private static final Logger log = LoggerFactory
-			.getLogger(BlockingQueue.class);
+	private static final Logger log = LoggerFactory.getLogger(BlockingQueue.class);
 
 	protected AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -196,7 +195,7 @@ public class BlockingQueue extends AbstractQueue {
 	/**
 	 * @see stream.io.QueueService#enqueue(stream.Data)
 	 */
-	public boolean enqueue(Data item) {
+	public synchronized boolean enqueue(Data item) {
 		log.trace("Queue {}: Enqueuing event {}", getId(), item);
 		try {
 			if (item == null)
@@ -243,8 +242,7 @@ public class BlockingQueue extends AbstractQueue {
 	@Override
 	public void init() throws Exception {
 		if (getCapacity() < 1) {
-			throw new IllegalArgumentException("Invalid queue-capacity '"
-					+ getCapacity() + "'!");
+			throw new IllegalArgumentException("Invalid queue-capacity '" + getCapacity() + "'!");
 		}
 	}
 
@@ -272,7 +270,7 @@ public class BlockingQueue extends AbstractQueue {
 	 * @see stream.io.AbstractStream#readItem(stream.Data)
 	 */
 	@Override
-	public Data read() throws Exception {
+	public synchronized Data read() throws Exception {
 		log.trace("Reading from queue {}", getId());
 		Data item = null;
 		int c = -1;
@@ -301,8 +299,7 @@ public class BlockingQueue extends AbstractQueue {
 				log.debug("Queue '{}' is closed and empty => null", getId());
 				return null;
 			} else {
-				log.error("Interruped while waiting for data: {}",
-						e.getMessage());
+				log.error("Interruped while waiting for data: {}", e.getMessage());
 				if (log.isDebugEnabled())
 					e.printStackTrace();
 			}

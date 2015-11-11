@@ -45,8 +45,7 @@ public interface NamingService {
 	 * @return
 	 * @throws Exception
 	 */
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass)
-			throws Exception;
+	public <T extends Service> T lookup(String ref, Class<T> serviceClass) throws Exception;
 
 	/**
 	 * This method registers a given Service in the naming service.
@@ -74,6 +73,13 @@ public interface NamingService {
 	 */
 	public Map<String, ServiceInfo> list() throws Exception;
 
-	public void addContainer(String key, NamingService remoteNamingService)
-			throws Exception;
+	/**
+	 * 
+	 * @param key
+	 * @param remoteNamingService
+	 * @throws Exception
+	 * @deprecated This functionality should not be exported via the
+	 *             NamingService interface, but by the implementing class.
+	 */
+	public void addContainer(String key, NamingService remoteNamingService) throws Exception;
 }

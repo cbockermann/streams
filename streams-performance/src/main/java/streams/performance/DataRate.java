@@ -32,17 +32,17 @@ import stream.AbstractProcessor;
 import stream.Data;
 import stream.ProcessContext;
 import stream.data.Statistics;
-import stream.statistics.StatisticsService;
+import streams.logging.Rlog;
 
-public class DataRate extends AbstractProcessor implements StatisticsService {
+public class DataRate extends AbstractProcessor {
 
 	final DecimalFormat fmt = new DecimalFormat("0.000");
 	static Logger log = LoggerFactory.getLogger(DataRate.class);
 
-	Rlog rlog = new Rlog(DataRate.class);
+	Rlog rlog = null;
 	String clock = null;
 	Long count = 0L;
-	Long start = null;
+	Long start = 0L;
 
 	Long windowCount = 0L;
 	Long last = 0L;
@@ -103,35 +103,11 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	@Override
 	public Data process(Data input) {
 
-		if (start == null)
+		if (start == 0L)
 			start = System.currentTimeMillis();
-		// Long now = System.currentTimeMillis();
-		//
-		// if (clock != null) {
-		// now = new Long(input.get(clock) + "");
-		// if (last == 0L)
-		// last = now;
-		// // log.info( "Timestamp: {}, last: {}", now, last );
-		// }
-		//
-		// Double seconds = Math.abs(last - now) / 1000.0d;
-		// if (now > last) {
-		// elapsed += seconds;
-		// rate = windowCount / seconds;
-		// // log.debug("data rate: {} (overall: {})", rate, count / elapsed);
-		// last = now;
-		// windowCount = 1L;
-		//
-		// if (key != null) {
-		// input.put("time", new Double(elapsed));
-		// input.put(key, new Double(rate));
-		// }
-		//
-		// } else {
-		// windowCount++;
-		// }
 
 		count++;
+
 		if (every != null && count % every.intValue() == 0) {
 			printDataRate(System.currentTimeMillis());
 		}
@@ -151,10 +127,13 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	}
 
 	protected void printDataRate(Long now) {
-		Long sec = (now - start) / 1000;
-		if (sec > 0)
+		Double sec = (now - start) / 1000.0;
+		if (sec > 0) {
 			log.info("Data rate '" + getId() + "': {} items processed, data-rate is: {}/second", count,
 					fmt.format(count.doubleValue() / sec.doubleValue()));
+
+			rlog.message().add("items-per-second", count.doubleValue() / sec.doubleValue()).send();
+		}
 	}
 
 	/**
@@ -177,7 +156,6 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		}
 	}
 
-	@Override
 	public void reset() throws Exception {
 		count = 0L;
 		windowCount = 1L;
@@ -185,7 +163,6 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 		start = null;
 	}
 
-	@Override
 	public Statistics getStatistics() {
 		Statistics st = new Statistics();
 		synchronized (rate) {
@@ -208,5 +185,4 @@ public class DataRate extends AbstractProcessor implements StatisticsService {
 	public void setEvery(Integer every) {
 		this.every = every;
 	}
-
 }

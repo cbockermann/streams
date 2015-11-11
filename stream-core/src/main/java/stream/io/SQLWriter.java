@@ -58,7 +58,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 	static Logger log = LoggerFactory.getLogger(SQLWriter.class);
 	boolean dropTable = false;
 	String table;
-	Keys keys;
+	Keys keys = new Keys("*");
 
 	final LinkedHashSet<String> keysToStore = new LinkedHashSet<String>();
 	Map<String, Class<?>> tableSchema = null;
@@ -82,8 +82,6 @@ public class SQLWriter extends AbstractSQLProcessor {
 	public void setTable(String table) {
 		this.table = table;
 	}
-
-
 
 	/**
 	 * @param keys
@@ -150,8 +148,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 				log.error("Failed to drop table: {}", e.getMessage());
 			}
 		} else {
-			Map<String, Class<?>> schema = dialect.getTableSchema(connection,
-					getTable());
+			Map<String, Class<?>> schema = dialect.getTableSchema(connection, getTable());
 			if (schema != null) {
 				log.debug("Using existing table schema: {}", schema);
 
@@ -196,22 +193,18 @@ public class SQLWriter extends AbstractSQLProcessor {
 			try {
 				init();
 			} catch (Exception e) {
-				throw new ProcessorException(this,
-						"Failed to initialize database connection: "
-								+ e.getMessage());
+				throw new ProcessorException(this, "Failed to initialize database connection: " + e.getMessage());
 			}
 		}
 
 		if (tableSchema == null) {
-			log.debug("No table-schema found, does table exist? {}",
-					this.hasTable(getTable()));
+			log.debug("No table-schema found, does table exist? {}", this.hasTable(getTable()));
 
 			tableSchema = dialect.getTableSchema(connection, getTable());
 			log.debug("Tried to read schema from database: {}", tableSchema);
 
 			if (tableSchema == null) {
-				log.debug("Creating new table {} from first item {}",
-						getTable(), input);
+				log.debug("Creating new table {} from first item {}", getTable(), input);
 				Data sample = DataFactory.create();
 
 				Set<String> ks = keys.select(input);
@@ -223,9 +216,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 				if (createTable(getTable(), schema)) {
 					tableSchema = schema;
 				} else {
-					throw new ProcessorException(this,
-							"Failed to create table " + getTable()
-									+ " for item: " + input);
+					throw new ProcessorException(this, "Failed to create table " + getTable() + " for item: " + input);
 				}
 			}
 		}
@@ -236,12 +227,8 @@ public class SQLWriter extends AbstractSQLProcessor {
 				for (String key : keys.select(input)) {
 					Serializable value = input.get(key);
 					if (value == null)
-						throw new ProcessorException(
-								this,
-								"Cannot determine type of key '"
-										+ key
-										+ "' for table creation! First item does not provide a value for '"
-										+ key + "'!");
+						throw new ProcessorException(this, "Cannot determine type of key '" + key
+								+ "' for table creation! First item does not provide a value for '" + key + "'!");
 
 					tableSchema.put(key, value.getClass());
 				}
@@ -252,8 +239,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 			}
 
 			if (!this.createTable(getTable(), tableSchema)) {
-				throw new ProcessorException(this, "Failed to create table '"
-						+ getTable() + "'!");
+				throw new ProcessorException(this, "Failed to create table '" + getTable() + "'!");
 			} else {
 				this.tableExists = true;
 			}
@@ -288,8 +274,7 @@ public class SQLWriter extends AbstractSQLProcessor {
 			insert.append(values.toString());
 
 			log.debug("INSERT statement is: {}", insert);
-			PreparedStatement ps = connection.prepareStatement(insert
-					.toString());
+			PreparedStatement ps = connection.prepareStatement(insert.toString());
 			for (int i = 0; i < valueObject.size(); i++) {
 				ps.setObject(i + 1, valueObject.get(i));
 			}

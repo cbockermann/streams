@@ -38,6 +38,7 @@ import stream.data.PrintData;
 import stream.flow.Delay;
 import stream.io.CyclicMockLineStream;
 import stream.monitor.DataRate;
+import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
 /**
@@ -63,9 +64,11 @@ public class ParseStringTest {
 
 			ParseString parser = new ParseString();
 			parser.setKey("LINE");
-			parser.setFormat("%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"");
+			parser.setFormat(
+					"%(REMOTE_ADDR) %(HOST) %(REMOTE_USER) [%(DAY)/%(MONTH)/%(YEAR):%(TIME)] \"%(METHOD) %(URI) %(PROTOCOL)\" %(STATUS) %(SIZE) \"%(d)\" \"%(USER_AGENT)\"");
 
-			ProcessContext pc = new ProcessContextImpl();
+			ContainerContext cc = new ContainerContext("application:0");
+			ProcessContext pc = new ProcessContextImpl("process:0", cc);
 			ProcessorList list = new ProcessorList();
 
 			DataRate rate = new DataRate();

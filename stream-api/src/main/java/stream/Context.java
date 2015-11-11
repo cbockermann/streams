@@ -33,10 +33,13 @@ package stream;
  * This general definition of a context is a read-only context.
  * </p>
  * 
- * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt; Hendrik Blom
+ * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt; Hendrik
+ *         Blom
  * 
  */
 public interface Context {
+
+	public final static String PATH_SEPARATOR = "/";
 
 	/**
 	 * This constant defines the name of the data item context, i.e. when
@@ -59,6 +62,8 @@ public interface Context {
 	 */
 	public final static String CONTAINER_CONTEXT_NAME = "container";
 
+	public String getId();
+
 	/**
 	 * This method can be used to look up a variable in the context.
 	 * 
@@ -66,7 +71,11 @@ public interface Context {
 	 * @return
 	 */
 	public Object resolve(String key); // TODO: Shouldn't we rename this
-											// method to 'get(String)' ??
-	
+										// method to 'get(String)' ??
+
 	public boolean contains(String key);
+
+	public Context getParent();
+
+	public String path();
 }

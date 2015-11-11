@@ -25,6 +25,7 @@ package stream.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +43,27 @@ import stream.service.ServiceInfo;
 public class ProcessContextImpl implements ProcessContext {
 
 	static Logger log = LoggerFactory.getLogger(ProcessContextImpl.class);
-	final ContainerContext containerContext;
+	final ApplicationContext containerContext;
 	final Map<String, Object> context = new HashMap<String, Object>();
-	
+
+	String processId;
+
 	public ProcessContextImpl() {
-		containerContext = null;
+		this(UUID.randomUUID().toString());
 	}
 
-	public ProcessContextImpl(Context ctx) {
-		this();
+	public ProcessContextImpl(String id) {
+		this.processId = id;
+		containerContext = new LocalContext();
 	}
 
-	public ProcessContextImpl(ContainerContext ctx) {
+	public ProcessContextImpl(String id, ApplicationContext ctx) {
+		this.processId = id;
+		this.containerContext = (ApplicationContext) ctx;
+	}
+
+	public ProcessContextImpl(String id, ContainerContext ctx) {
+		this.processId = id;
 		containerContext = ctx;
 		log.debug("Creating new ProcessContext, parent context is {}", ctx);
 	}
@@ -105,7 +115,7 @@ public class ProcessContextImpl implements ProcessContext {
 		if (!variable.startsWith("process.")) {
 			if (containerContext == null)
 				return null;
-
+			log.debug("resolving '{}' with parent context {}", variable, containerContext);
 			return containerContext.resolve(variable);
 		}
 
@@ -116,10 +126,8 @@ public class ProcessContextImpl implements ProcessContext {
 	 * @see stream.service.NamingService#addContainer(java.lang.String,
 	 *      stream.service.NamingService)
 	 */
-	public void addContainer(String key, NamingService remoteNamingService)
-			throws Exception {
-		throw new Exception(
-				"Addition of remote naming services is not supported by local context!");
+	public void addContainer(String key, NamingService remoteNamingService) throws Exception {
+		throw new Exception("Addition of remote naming services is not supported by local context!");
 	}
 
 	@Override
@@ -130,5 +138,33 @@ public class ProcessContextImpl implements ProcessContext {
 	@Override
 	public boolean contains(String key) {
 		return context.containsKey(key);
+	}
+
+	/**
+	 * @see stream.Context#getId()
+	 */
+	@Override
+	public String getId() {
+		return this.processId;
+	}
+
+	/**
+	 * @see stream.Context#getParent()
+	 */
+	@Override
+	public Context getParent() {
+		return this.containerContext;
+	}
+
+	/**
+	 * @see stream.Context#path()
+	 */
+	@Override
+	public String path() {
+		if (getParent() != null) {
+			return this.getParent().path() + Context.PATH_SEPARATOR + "process:" + getId();
+		} else {
+			return "process:" + getId();
+		}
 	}
 }

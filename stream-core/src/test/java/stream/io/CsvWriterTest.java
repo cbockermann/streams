@@ -6,6 +6,7 @@ package stream.io;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.Keys;
 import stream.data.DataFactory;
+import stream.runtime.ContainerContext;
 import stream.runtime.ProcessContextImpl;
 
 /**
@@ -41,6 +43,8 @@ public class CsvWriterTest {
 	@Test
 	public void test() {
 
+		ContainerContext container = new ContainerContext(UUID.randomUUID().toString());
+
 		List<Data> items = new ArrayList<Data>();
 		items.add(create("x1=1.0,x2=2.0,x3=3.0"));
 
@@ -53,7 +57,8 @@ public class CsvWriterTest {
 
 			writer.setUrl("file:" + tmp.getAbsolutePath());
 			writer.setKeys(new Keys("*,!x3"));
-			writer.init(new ProcessContextImpl());
+
+			writer.init(new ProcessContextImpl("0", container));
 
 			for (Data item : items) {
 				writer.process(item);

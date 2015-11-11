@@ -81,6 +81,7 @@ public class ParseBob implements Processor {
 		try {
 			Class<?> clazz = Class.forName(serializer);
 			this.serializer = (Codec<Data>) clazz.newInstance();
+			log.info("Using serializer: {}", serializer);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

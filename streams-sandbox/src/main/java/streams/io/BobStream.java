@@ -26,6 +26,10 @@ public class BobStream extends AbstractStream {
 	long count = 0L;
 	final Object lock = new Object();
 
+	long bytesRead = 0L;
+	long firstItem = 0L;
+	long lastItem = 0L;
+
 	public BobStream(SourceURL url) {
 		super(url);
 	}
@@ -49,6 +53,25 @@ public class BobStream extends AbstractStream {
 		try {
 			synchronized (lock) {
 				final byte[] block = BobCodec.readBlock(in);
+
+				if (count == 0) {
+					firstItem = System.currentTimeMillis();
+				}
+
+				bytesRead += BobCodec.MAGIC_CODE.length;
+				bytesRead += 4;
+				bytesRead += block.length;
+
+				lastItem = System.currentTimeMillis();
+
+				if (block.length == 0) {
+					Double seconds = (lastItem - firstItem) / 1000.0;
+					Double gbit = bytesRead * 8 / 1000.0 / 1000.0 / 1000.0;
+					DecimalFormat fmt = new DecimalFormat("0.00");
+					log.debug("{} blocks read, {} blocks/sec => " + fmt.format(gbit / seconds) + " GBit/s", count,
+							fmt.format(count / seconds));
+					return null;
+				}
 
 				final Data item = DataFactory.create();
 				item.put("data", block);

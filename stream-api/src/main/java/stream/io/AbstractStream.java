@@ -41,12 +41,12 @@ public abstract class AbstractStream implements Stream {
 	static Logger log = LoggerFactory.getLogger(AbstractStream.class);
 
 	protected SourceURL url;
-	protected Long limit = -1L;
-	protected Long count = 0L;
+	protected Long limit = new Long(-1L);
+	protected Long count = new Long(0L);
 	protected String prefix = null;
 	protected String id;
 	protected InputStream in;
-	boolean closed = false;
+	protected boolean closed = false;
 	protected SequenceID seqId = new SequenceID();
 	protected String sequenceKey = null;
 
@@ -127,7 +127,7 @@ public abstract class AbstractStream implements Stream {
 	/**
 	 * @see stream.io.Stream#read()
 	 */
-	public Data read() throws Exception {
+	public synchronized Data read() throws Exception {
 
 		if (closed || (limit > 0 && count >= limit))
 			return null;
@@ -139,7 +139,7 @@ public abstract class AbstractStream implements Stream {
 		}
 
 		if (this.id != null)
-			datum.put("@stream", this.id);
+			datum.put(SOURCE_KEY, this.id);
 
 		if (this.sequenceKey != null) {
 			SequenceID next = this.seqId.getAndIncrement();

@@ -24,11 +24,11 @@
 package stream.data.filter;
 
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import stream.Data;
 import stream.data.DataFactory;
 import stream.expressions.Expression;

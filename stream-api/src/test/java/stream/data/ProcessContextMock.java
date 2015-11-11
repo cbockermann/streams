@@ -25,7 +25,9 @@ package stream.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import stream.Context;
 import stream.ProcessContext;
 import stream.service.Service;
 
@@ -37,6 +39,16 @@ public class ProcessContextMock implements ProcessContext {
 
 	final Map<String, Service> services = new HashMap<String, Service>();
 	final Map<String, Object> ctx = new HashMap<String, Object>();
+
+	final String processId;
+
+	public ProcessContextMock() {
+		this(UUID.randomUUID().toString());
+	}
+
+	public ProcessContextMock(String pid) {
+		this.processId = pid;
+	}
 
 	/**
 	 * @see stream.Context#resolve(java.lang.String)
@@ -83,5 +95,33 @@ public class ProcessContextMock implements ProcessContext {
 	@Override
 	public boolean contains(String key) {
 		return ctx.containsKey(key);
+	}
+
+	/**
+	 * @see stream.Context#getId()
+	 */
+	@Override
+	public String getId() {
+		return processId;
+	}
+
+	/**
+	 * @see stream.Context#getParent()
+	 */
+	@Override
+	public Context getParent() {
+		return null;
+	}
+
+	/**
+	 * @see stream.Context#path()
+	 */
+	@Override
+	public String path() {
+		if (getParent() != null) {
+			return this.getParent().path() + Context.PATH_SEPARATOR + "process:" + getId();
+		} else {
+			return "process:" + getId();
+		}
 	}
 }

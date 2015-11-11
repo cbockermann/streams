@@ -13,7 +13,7 @@
 	</parent>
 	
 	<properties>
-		<streams.version>0.9.23-SNAPSHOT</streams.version>
+		<streams.version>0.9.24-SNAPSHOT</streams.version>
 	</properties>
 
 	<distributionManagement>

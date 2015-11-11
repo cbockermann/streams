@@ -1,7 +1,7 @@
 <application>
 
 
-	<stream id="test" class="stream.io.TimeStream" interval="10ms" limit="1000"/>
+	<stream id="test" class="stream.io.TimeStream" interval="5ms" limit="500"/>
 	
 	<process input="test">
 		<streams.performance.DataRate every="100" id="datarate-test"/>

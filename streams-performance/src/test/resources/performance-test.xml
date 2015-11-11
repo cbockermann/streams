@@ -1,12 +1,9 @@
 <application>
 
 
-	<stream id="test" class="stream.io.TimeStream" interval="10ms" limit="100000"/>
+	<stream id="test" class="stream.io.TimeStream" interval="5ms" limit="500"/>
 	
 	<process input="test">
-	<!-- 
-		<streams.performance.DataRate every="1" />
-	 -->
 		<streams.performance.Performance every="100" />
 	</process>
 

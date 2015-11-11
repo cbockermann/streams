@@ -3,6 +3,8 @@
  */
 package streams.performance;
 
+import org.junit.Test;
+
 /**
  * Test sending performance to a server
  *
@@ -10,10 +12,8 @@ package streams.performance;
  */
 public class DataRateTest {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void testDataRate() throws Exception {
         stream.run.main(DataRateTest.class.getResource("/datarate-test.xml"));
     }
 

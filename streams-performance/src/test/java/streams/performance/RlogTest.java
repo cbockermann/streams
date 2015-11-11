@@ -3,6 +3,8 @@
  */
 package streams.performance;
 
+import org.junit.Test;
+
 import stream.Data;
 import stream.data.DataFactory;
 import stream.util.Variables;
@@ -14,10 +16,8 @@ import streams.logging.Rlog;
  */
 public class RlogTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	@Test
+	public void testRlog(){
 
 		Variables vars = stream.runtime.StreamRuntime.loadUserProperties();
 		// System.setProperty("javax.net.debug", "ssl=handshake");

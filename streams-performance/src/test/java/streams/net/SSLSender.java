@@ -3,6 +3,8 @@
  */
 package streams.net;
 
+import org.junit.Assert;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +40,8 @@ public class SSLSender {
 		return JSONObject.toJSONString(msg);
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
+	@Test
+	public void testSSLSender() throws Exception {
 
 		Socket client = SecureConnect.connect("performance.sfb876.de", 6001);
 
@@ -49,7 +50,7 @@ public class SSLSender {
 		List<String> outgoing = new ArrayList<String>();
 		int sent = 0;
 		for (int i = 0; i < 1000; i++) {
-			String msg = format(m.add("count", new Integer(i)));
+			String msg = format(m.add("count", i));
 			outgoing.add(msg);
 			out.println(msg);
 			sent++;
@@ -61,14 +62,19 @@ public class SSLSender {
 		String re = null;
 		int acked = 0;
 		do {
-			re = reader.readLine();
-			if (re != null) {
-				acked++;
+			if (reader.ready()) {
+				re = reader.readLine();
+				if (re != null) {
+					acked++;
+				}
 			}
 		} while (re != null && acked < sent);
 
 		out.close();
 		reader.close();
+
+		Assert.assertSame(acked, sent);
+
 	}
 
 }

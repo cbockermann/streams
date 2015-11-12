@@ -33,13 +33,17 @@ public class PerformanceReceiver extends Thread {
 	static Logger log = LoggerFactory.getLogger(PerformanceReceiver.class);
 
 	final ServerSocket server;
-	PerformanceTree perfTree;
 
 	static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<String, PerformanceTree>();
 	static MultiSet<String> updateCount = new MultiSet<String>();
 
 	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 
+	/**
+	 * Create performance receiver on a given port using SSL server connection.
+	 * @param port number for service's port
+	 * @throws Exception
+     */
 	public PerformanceReceiver(int port) throws Exception {
 		// server = new ServerSocket(port);
 		SSLServerSocket server = SecureConnect.openServer(port);
@@ -60,9 +64,7 @@ public class PerformanceReceiver extends Thread {
 		}
 
 		public void run() {
-
 			try {
-
 				while (true) {
 					DataInputStream dis = new DataInputStream(socket.getInputStream());
 					byte[] block = BobCodec.readBlock(dis);
@@ -72,6 +74,7 @@ public class PerformanceReceiver extends Thread {
 					}
 					Data message = codec.decode(block);
 
+                    // extract performance block from the message
 					Serializable id = message.get("performance.id");
 					if (id != null) {
 

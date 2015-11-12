@@ -68,6 +68,8 @@ public class PerformanceReceiver extends Thread {
 					byte[] block = BobCodec.readBlock(dis);
 					if (block == null) {
 						log.debug("Received null block - exiting receiver...");
+						Dump dump = new Dump();
+						dump.run();
 						return;
 					}
 					Data message = codec.decode(block);

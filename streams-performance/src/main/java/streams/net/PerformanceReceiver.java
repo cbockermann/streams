@@ -195,12 +195,22 @@ public class PerformanceReceiver extends Thread {
 	}
 
 	/**
-	 * @param args
+	 * Start performance receiver on a server.
 	 */
 	public static void main(String[] args) throws Exception {
+        int port = 6001;
+        if (args.length == 1) {
+            try {
+                port = Integer.parseInt(args[0]);
+            }
+            catch (Exception e) {
+                log.error("You can only define port number as a parameter. "
+                        + " Using default: 6001." + args[0]);
+            }
+        }
 		Runtime.getRuntime().addShutdownHook(new Dump());
 
-		PerformanceReceiver receiver = new PerformanceReceiver(6001);
+		PerformanceReceiver receiver = new PerformanceReceiver(port);
 		log.info("Starting performance-receiver on port {}", receiver.server.getLocalPort());
 		receiver.run();
 	}

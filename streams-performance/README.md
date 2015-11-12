@@ -10,6 +10,7 @@ java -cp target/streams-performance.jar streams.net.PerformanceReceiver
 ```
 
 The receiver is running on the machine on port 6001.
+If you want to define your own port, just add that certain number as an argument while starting Performance Receiver.
 In your configuration XML you can now add the lines:
 
 ```

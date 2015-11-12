@@ -120,7 +120,8 @@ public class PerformanceReceiver extends Thread {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+                log.error("Receiver thread has been stopped or " +
+                        "was interrupted by some exception:" + e);
 			}
 		}
 
@@ -155,6 +156,9 @@ public class PerformanceReceiver extends Thread {
 		}
 	}
 
+    /**
+     * Updater thread that is started by the performance receiver thread.
+     */
 	public static class Updater extends Thread {
 
 		public void run() {
@@ -181,12 +185,16 @@ public class PerformanceReceiver extends Thread {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
+                    log.error("Updater thread has been stopped or " +
+                            "was interrupted by some exception:" + e);
 				}
 			}
 		}
 	}
 
+    /**
+     * Dump thread that is used as shutdown hook for the output of performance trees.
+     */
 	public static class Dump extends Thread {
 
 		public void run() {

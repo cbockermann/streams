@@ -3,6 +3,8 @@
  */
 package streams.performance;
 
+import org.junit.Test;
+
 import stream.Data;
 import stream.data.DataFactory;
 import stream.util.Variables;
@@ -14,16 +16,15 @@ import streams.logging.Rlog;
  */
 public class RlogTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	@Test
+	public void testRlog(){
 
 		Variables vars = stream.runtime.StreamRuntime.loadUserProperties();
 		// System.setProperty("javax.net.debug", "ssl=handshake");
 
 		System.setProperty("rlog.host", "performance.sfb876.de");
-		System.setProperty("rlog.token", vars.get("rlog.token"));
+		System.setProperty("rlog.token", "ab09cfe1d60b602cb7600b5729da939f");
+//		System.setProperty("rlog.token", vars.get("rlog.token"));
 
 		Rlog rlog = new Rlog();
 		rlog.log("Dies ist ein test!");

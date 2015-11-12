@@ -4,7 +4,7 @@
 	<stream id="test" class="stream.io.TimeStream" interval="5ms" limit="500"/>
 	
 	<process input="test">
-		<streams.performance.Performance every="100" />
+		<streams.performance.DataRate every="100" id="datarate-test"/>
 	</process>
 
 </application>

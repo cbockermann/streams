@@ -36,11 +36,11 @@ public class MessageQueue {
 	private static Sender sender;
 
 	static {
-		System.out.println("Initializing global MessageQueue");
+		log.info("Initializing global MessageQueue");
 
 		String host = System.getProperty("rlog.host");
 		if (host == null) {
-			System.out.println("'rlog.host' not set, disabling rlog-sender");
+			log.error("'rlog.host' not set, disabling rlog-sender");
 			sender = null;
 		} else {
 			sender = new Sender(host, messages);
@@ -115,10 +115,9 @@ public class MessageQueue {
 				}
 
 				byte[] bytes = mc.encode(DataFactory.create(m));
-				// System.out.println("Encoded message to " + bytes.length + "
-				// bytes");
-				BobCodec.writeBlock(bytes, out);
-				// System.out.println(written + " bytes written to socket...");
+				log.debug("Encoded message to " + bytes.length + " bytes");
+				int written = BobCodec.writeBlock(bytes, out);
+				log.debug(written + " bytes written to socket...");
 				out.flush();
 
 			} catch (Exception e) {

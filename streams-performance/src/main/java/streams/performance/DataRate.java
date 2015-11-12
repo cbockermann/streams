@@ -47,7 +47,7 @@ public class DataRate extends AbstractProcessor {
 	Long windowCount = 0L;
 	Long last = 0L;
 	Double elapsed = 0.0d;
-	Double rate = new Double(0.0);
+	Double rate = 0.0;
 
 	Integer every = null;
 	String key = "dataRate";
@@ -98,6 +98,7 @@ public class DataRate extends AbstractProcessor {
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		// start = System.currentTimeMillis();
+		rlog = new Rlog();
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class DataRate extends AbstractProcessor {
 
 		count++;
 
-		if (every != null && count % every.intValue() == 0) {
+		if (every != null && count % every == 0) {
 			printDataRate(System.currentTimeMillis());
 		}
 
@@ -129,10 +130,11 @@ public class DataRate extends AbstractProcessor {
 	protected void printDataRate(Long now) {
 		Double sec = (now - start) / 1000.0;
 		if (sec > 0) {
-			log.info("Data rate '" + getId() + "': {} items processed, data-rate is: {}/second", count,
-					fmt.format(count.doubleValue() / sec.doubleValue()));
+            double rate = count.doubleValue() / sec;
+			log.info("Data rate '" + getId() + "': {} items processed, data-rate is: {}/second",
+                    count, fmt.format(rate));
 
-			rlog.message().add("items-per-second", count.doubleValue() / sec.doubleValue()).send();
+			rlog.message().add("items-per-second", rate).send();
 		}
 	}
 
@@ -146,7 +148,8 @@ public class DataRate extends AbstractProcessor {
 		if (start != null) {
 			Long now = System.currentTimeMillis();
 			Long sec = (now - start);
-			log.info("DataRate processor '" + id + "' has been running for {} ms, {} items.", sec, count.doubleValue());
+			log.info("DataRate processor '" + id + "' has been running for {} ms, {} items.",
+                    sec, count.doubleValue());
 			Double s = sec.doubleValue() / 1000.0d;
 			if (s > 0)
 				log.info("Overall average data-rate for processor '{}' is: {}/second", id,

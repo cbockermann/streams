@@ -84,6 +84,10 @@
 
     <profiles>
         <profile>
+            <!--
+            Install streams-storm locally. Another local project can import this locally
+            installed jar as it is the most current version.
+            -->
             <id>local install</id>
             <activation>
                 <property>
@@ -97,6 +101,11 @@
             </properties>
         </profile>
         <profile>
+            <!--
+            This profile can be used to produce JAR file that can be used to run locally and
+            transform streams XML configuration into a valid storm topology.
+            It contains 'storm' itself to run StormSubmitter.
+            -->
             <id>
                 standalone
             </id>
@@ -168,6 +177,10 @@
             </build>
         </profile>
         <profile>
+            <!--
+            This profile can be used to produce JAR file that can be deployed to storm cluster.
+            It doesn't contain 'storm' itself.
+            -->
             <id>
                 deploy
             </id>

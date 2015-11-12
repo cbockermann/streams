@@ -33,13 +33,17 @@ public class PerformanceReceiver extends Thread {
 	static Logger log = LoggerFactory.getLogger(PerformanceReceiver.class);
 
 	final ServerSocket server;
-	PerformanceTree perfTree;
 
 	static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<String, PerformanceTree>();
 	static MultiSet<String> updateCount = new MultiSet<String>();
 
 	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 
+	/**
+	 * Create performance receiver on a given port using SSL server connection.
+	 * @param port number for service's port
+	 * @throws Exception
+     */
 	public PerformanceReceiver(int port) throws Exception {
 		// server = new ServerSocket(port);
 		SSLServerSocket server = SecureConnect.openServer(port);
@@ -48,7 +52,31 @@ public class PerformanceReceiver extends Thread {
 		this.setDaemon(true);
 	}
 
-	public static class Receiver extends Thread {
+    /**
+     * Run method for the performance receiver thread. It starts the updater and receiver daemons.
+     */
+    public void run() {
+        try {
+            Updater updater = new Updater();
+            updater.setDaemon(true);
+            updater.start();
+
+            while (true) {
+                Socket client = server.accept();
+                log.info("client connection from {}", client);
+                Receiver receiver = new Receiver(client, this);
+                receiver.start();
+            }
+        } catch (Exception e) {
+            log.error("Performance thread has been stopped or " +
+                    "was interrupted by some exception:" + e);
+        }
+    }
+
+    /**
+     * Receiver thread that is started by the performance receiver thread
+     */
+    public static class Receiver extends Thread {
 		final Socket socket;
 		final Codec<Data> codec = new JavaCodec<Data>();
 		final PerformanceReceiver parent;
@@ -60,9 +88,7 @@ public class PerformanceReceiver extends Thread {
 		}
 
 		public void run() {
-
 			try {
-
 				while (true) {
 					DataInputStream dis = new DataInputStream(socket.getInputStream());
 					byte[] block = BobCodec.readBlock(dis);
@@ -74,6 +100,7 @@ public class PerformanceReceiver extends Thread {
 					}
 					Data message = codec.decode(block);
 
+                    // extract performance block from the message
 					Serializable id = message.get("performance.id");
 					if (id != null) {
 
@@ -95,7 +122,8 @@ public class PerformanceReceiver extends Thread {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+                log.error("Receiver thread has been stopped or " +
+                        "was interrupted by some exception:" + e);
 			}
 		}
 
@@ -120,27 +148,6 @@ public class PerformanceReceiver extends Thread {
 		}
 	}
 
-	public void run() {
-		try {
-
-			Updater updater = new Updater();
-			updater.setDaemon(true);
-			updater.start();
-
-			while (true) {
-
-				Socket client = server.accept();
-				log.info("client connection from {}", client);
-				Receiver receiver = new Receiver(client, this);
-				receiver.start();
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static class Update {
 		final String path;
 		final ProcessorStatistics stats;
@@ -151,6 +158,9 @@ public class PerformanceReceiver extends Thread {
 		}
 	}
 
+    /**
+     * Updater thread that is started by the performance receiver thread.
+     */
 	public static class Updater extends Thread {
 
 		public void run() {
@@ -177,12 +187,16 @@ public class PerformanceReceiver extends Thread {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
+                    log.error("Updater thread has been stopped or " +
+                            "was interrupted by some exception:" + e);
 				}
 			}
 		}
 	}
 
+    /**
+     * Dump thread that is used as shutdown hook for the output of performance trees.
+     */
 	public static class Dump extends Thread {
 
 		public void run() {
@@ -197,12 +211,22 @@ public class PerformanceReceiver extends Thread {
 	}
 
 	/**
-	 * @param args
+	 * Start performance receiver on a server.
 	 */
 	public static void main(String[] args) throws Exception {
+        int port = 6001;
+        if (args.length == 1) {
+            try {
+                port = Integer.parseInt(args[0]);
+            }
+            catch (Exception e) {
+                log.error("You can only define port number as a parameter. "
+                        + " Using default: 6001." + args[0]);
+            }
+        }
 		Runtime.getRuntime().addShutdownHook(new Dump());
 
-		PerformanceReceiver receiver = new PerformanceReceiver(6001);
+		PerformanceReceiver receiver = new PerformanceReceiver(port);
 		log.info("Starting performance-receiver on port {}", receiver.server.getLocalPort());
 		receiver.run();
 	}

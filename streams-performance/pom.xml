@@ -13,7 +13,7 @@
 	</parent>
 	
 	<properties>
-		<streams.version>0.9.24-SNAPSHOT</streams.version>
+		<streams.version>0.9.23-SNAPSHOT</streams.version>
 	</properties>
 
 	<distributionManagement>
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-api</artifactId>
-			<version>${streams.version}</version>
+			<version>0.9.24-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.minidev</groupId>
@@ -77,8 +77,10 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
-			<version>${streams.version}</version>
+			<version>0.9.24-SNAPSHOT</version>
+			<!-- 
 			<scope>test</scope>
+			 -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -88,7 +90,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-core</artifactId>
-			<version>${streams.version}</version>
+			<version>0.9.24-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -130,12 +132,14 @@
 				<dependency>
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-runtime</artifactId>
-					<version>${streams.version}</version>
+					<version>0.9.24-SNAPSHOT</version>
+					<scope>compile</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-core</artifactId>
-					<version>${streams.version}</version>
+					<version>0.9.24-SNAPSHOT</version>
+					<scope>compile</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>

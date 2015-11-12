@@ -1,0 +1,12 @@
+<application>
+
+   <stream id="data" class="stream.generator.GaussianStream" attributes="0,1,0,1,1,1,1,2,5,1,5,0.5" />
+
+   <process input="data">
+   	  <streams.performance.Performance host="127.0.0.1" every="10">
+   		<PrintData/>
+   		<stream.flow.Delay time="500ms" />
+	  </streams.performance.Performance>
+   </process>
+
+</application>

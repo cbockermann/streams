@@ -96,7 +96,7 @@ public class SecureConnect {
 		// return new Socket(host, port);
 		// }
 
-		return connect("performance.sfb876.de", 6001);
+		return connect("performance.sfb876.de", PerformanceReceiver.port);
 	}
 
 	public static SSLServerSocket openServer(int port) throws Exception {

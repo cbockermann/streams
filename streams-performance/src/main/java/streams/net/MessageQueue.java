@@ -92,8 +92,9 @@ public class MessageQueue {
 			while (running || !messages.isEmpty()) {
 				try {
 					Message m = messages.poll(1000, TimeUnit.MILLISECONDS);
-					if (m != null)
-						send(m);
+					if (m != null) {
+                        send(m);
+                    }
 					// System.out.println("Sending message " + m);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -102,7 +103,7 @@ public class MessageQueue {
 		}
 
 		protected Socket connect() throws Exception {
-			Socket socket = SecureConnect.connect(host, 6001);
+			Socket socket = SecureConnect.connect(host, PerformanceReceiver.port);
 			out = new DataOutputStream(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			return socket;
@@ -134,6 +135,10 @@ public class MessageQueue {
 		}
 	}
 
+	/**
+	 * Shutdown thread that is used as ShutdownHook. In this case we wait for senders to finish
+	 * their message queues.
+	 */
 	public static class Shutdown extends Thread {
 		public void run() {
 			log.info("Shutting down message queue...");
@@ -145,7 +150,7 @@ public class MessageQueue {
 						log.info("Waiting for sender to finish ({} messages pending)...", messages.size());
 						sender.join(1000);
 					} catch (Exception e) {
-
+						log.error("Waiting for sender was interrupted: " + e);
 					}
 				}
 			}

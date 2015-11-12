@@ -39,6 +39,8 @@ public class PerformanceReceiver extends Thread {
 
 	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 
+    static int port = 6001;
+
 	/**
 	 * Create performance receiver on a given port using SSL server connection.
 	 * @param port number for service's port
@@ -212,7 +214,6 @@ public class PerformanceReceiver extends Thread {
 	 * Start performance receiver on a server.
 	 */
 	public static void main(String[] args) throws Exception {
-        int port = 6001;
         if (args.length == 1) {
             try {
                 port = Integer.parseInt(args[0]);

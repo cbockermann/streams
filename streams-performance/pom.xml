@@ -78,7 +78,9 @@
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-runtime</artifactId>
 			<version>0.9.24-SNAPSHOT</version>
+			<!-- 
 			<scope>test</scope>
+			 -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -131,11 +133,13 @@
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-runtime</artifactId>
 					<version>0.9.24-SNAPSHOT</version>
+					<scope>compile</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.jwall</groupId>
 					<artifactId>streams-core</artifactId>
 					<version>0.9.24-SNAPSHOT</version>
+					<scope>compile</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>

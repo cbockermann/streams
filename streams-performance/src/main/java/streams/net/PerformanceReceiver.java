@@ -52,7 +52,31 @@ public class PerformanceReceiver extends Thread {
 		this.setDaemon(true);
 	}
 
-	public static class Receiver extends Thread {
+    /**
+     * Run method for the performance receiver thread. It starts the updater and receiver daemons.
+     */
+    public void run() {
+        try {
+            Updater updater = new Updater();
+            updater.setDaemon(true);
+            updater.start();
+
+            while (true) {
+                Socket client = server.accept();
+                log.info("client connection from {}", client);
+                Receiver receiver = new Receiver(client, this);
+                receiver.start();
+            }
+        } catch (Exception e) {
+            log.error("Performance thread has been stopped or " +
+                    "was interrupted by some exception:" + e);
+        }
+    }
+
+    /**
+     * Receiver thread that is started by the performance receiver thread
+     */
+    public static class Receiver extends Thread {
 		final Socket socket;
 		final Codec<Data> codec = new JavaCodec<Data>();
 		final PerformanceReceiver parent;
@@ -118,27 +142,6 @@ public class PerformanceReceiver extends Thread {
 			log.info("| streams.performance.Performance statistics:");
 			log.info("|    {}", performance);
 			log.info("+---------------------------------------------------------------------------");
-		}
-	}
-
-	public void run() {
-		try {
-
-			Updater updater = new Updater();
-			updater.setDaemon(true);
-			updater.start();
-
-			while (true) {
-
-				Socket client = server.accept();
-				log.info("client connection from {}", client);
-				Receiver receiver = new Receiver(client, this);
-				receiver.start();
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

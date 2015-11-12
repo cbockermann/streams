@@ -29,5 +29,6 @@ receiver every 10 items.
 You need to start the `PerformanceReceiver` as mentioned above and then use the same `streams-performance.jar`
 to run the example:
 
-       # java -jar target/streams-performance.jar examples/test.xml
+       # java -cp target/streams-performance.jar stream.run examples/test.xml
+
 

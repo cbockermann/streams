@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author chris
  *
  */
+//TODO do we need this class?
 public class PerfClient {
 
 	static Logger log = LoggerFactory.getLogger(PerfClient.class);

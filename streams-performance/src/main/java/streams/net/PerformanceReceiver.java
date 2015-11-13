@@ -3,6 +3,9 @@
  */
 package streams.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataInputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
@@ -12,9 +15,6 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.net.ssl.SSLServerSocket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.io.Codec;
@@ -117,7 +117,8 @@ public class PerformanceReceiver extends Thread {
 								ProcessorStatistics performance = (ProcessorStatistics) perfs;
 								updates.add(new Update(id.toString(), performance));
 								for (int i = 0; i < stats.length; i++) {
-									updates.add(new Update(id.toString() + "/processor:" + i, stats[i]));
+									updates.add(new Update(id.toString() + "/processor:" + i + ":"
+											+ stats[i].className, stats[i]));
 								}
 							}
 						}

@@ -6,7 +6,7 @@ package streams.performance;
 import org.junit.Test;
 
 /**
- * Test sending performance to a server
+ * Test data rate
  *
  * @author chris
  */

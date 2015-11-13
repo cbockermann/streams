@@ -12,8 +12,10 @@ import java.util.Map;
 import stream.Processor;
 
 /**
- * @author chris
+ * Statistics for some processor such as number of processed items, time used for those items to be
+ * processed and so on.
  *
+ * @author chris
  */
 public class ProcessorStatistics implements Serializable {
 
@@ -58,8 +60,13 @@ public class ProcessorStatistics implements Serializable {
 		this.m2 = p.m2;
 	}
 
-	public Map<String, Serializable> toMap() {
-		Map<String, Serializable> map = new LinkedHashMap<String, Serializable>();
+    /**
+     * Put statistic values into a serializable map.
+     *
+     * @return map containing values about processor
+     */
+    public Map<String, Serializable> toMap() {
+		Map<String, Serializable> map = new LinkedHashMap<>();
 		map.put("class", className);
 		map.put("ref", objectReference);
 		map.put("items", itemsProcessed);
@@ -74,7 +81,10 @@ public class ProcessorStatistics implements Serializable {
 		return map;
 	}
 
-	public String toString() {
+    /**
+     * Transform processor statistics into a string for output.
+     */
+    public String toString() {
 		DecimalFormat fmt = new DecimalFormat("0.000");
 		DecimalFormat f = new DecimalFormat("######");
 		Double t = processingTime;
@@ -134,8 +144,9 @@ public class ProcessorStatistics implements Serializable {
 	}
 
 	public double timeVariance() {
-		if (itemsProcessed < 2)
+		if (itemsProcessed < 2) {
 			return 0.0;
+		}
 		return m2 / (itemsProcessed - 1);
 	}
 
@@ -148,7 +159,7 @@ public class ProcessorStatistics implements Serializable {
 		dfs.setDecimalSeparator('.');
 		DecimalFormat df = new DecimalFormat("0.0000", dfs);
 		double avg = this.processingTime / this.itemsProcessed.doubleValue();
-		return "{" + "'class':'" + this.className + "', 'min':" + df.format(min) + ", 'max':" + df.format(max)
-				+ ", 'avg:'" + df.format(avg) + "}";
+		return "{" + "'class':'" + this.className + "', 'min':" + df.format(min)
+				+ ", 'max':" + df.format(max) + ", 'avg:'" + df.format(avg) + "}";
 	}
 }

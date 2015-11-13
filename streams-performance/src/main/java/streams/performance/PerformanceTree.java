@@ -108,6 +108,9 @@ public class PerformanceTree {
 		}
 	}
 
+    /**
+     * Print collected statistics to system output.
+     */
 	public void print() {
 		for (int i = 0; i < depth(); i++) {
 			System.out.print("  ");
@@ -129,8 +132,8 @@ public class PerformanceTree {
                         + (statistics.end() - statistics.start()) + " ms  => "
                         + f.format(items.doubleValue() / secs) + " items/second");
             } else {
-
-				System.out.println("-->" + id + "  :: " + allItemsProcessed() + " items processed in " + f.format(secs)
+				System.out.println("-->" + id + "  :: " + allItemsProcessed()
+                        + " items processed in " + f.format(secs)
 						+ " seconds => " + f.format(items.doubleValue() / secs) + " items/second");
 			}
 		}
@@ -145,8 +148,8 @@ public class PerformanceTree {
 			min = Math.min(statistics.start(), min);
 		}
 
-		for (PerformanceTree t : sibblings) {
-			min = Math.min(t.startInterval(), min);
+		for (PerformanceTree tree : sibblings) {
+			min = Math.min(tree.startInterval(), min);
 		}
 
 		return min;
@@ -158,12 +161,12 @@ public class PerformanceTree {
 			max = statistics.end() * 1.0;
 		}
 
-		for (PerformanceTree t : sibblings) {
+		for (PerformanceTree tree : sibblings) {
 			if (max == null) {
-				max = t.endInterval();
+				max = tree.endInterval();
 			}
 
-			max = Math.max(t.endInterval(), max);
+			max = Math.max(tree.endInterval(), max);
 		}
 
 		return max;

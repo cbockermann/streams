@@ -43,9 +43,9 @@ public class PerformanceReceiver extends Thread {
 
 	/**
 	 * Create performance receiver on a given port using SSL server connection.
+	 *
 	 * @param port number for service's port
-	 * @throws Exception
-     */
+	 */
 	public PerformanceReceiver(int port) throws Exception {
 		// server = new ServerSocket(port);
 		SSLServerSocket server = SecureConnect.openServer(port);
@@ -134,8 +134,8 @@ public class PerformanceReceiver extends Thread {
 
 			log.info("+------------------------- Performance Report ------------------------------");
 			log.info("|");
-			log.info("| Performance recorded based on {} events processed in {} ms", performance.itemsProcessed(),
-					performance.end() - performance.start());
+			log.info("| Performance recorded based on {} events processed in {} ms",
+					performance.itemsProcessed(), performance.end() - performance.start());
 			// log.info("| Average performance is {} ms/item => {} items/sec",
 			// performance.f.format(msPerItem), f.format(items / sec));
 			log.info("|");

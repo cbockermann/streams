@@ -142,8 +142,13 @@ public class PerformanceTree {
 		}
 	}
 
-	public double startInterval() {
-		Double min = Double.MAX_VALUE;
+    /**
+     * Find out recursively start of measuring processing time.
+     *
+     * @return start of measurement
+     */
+    public double startInterval() {
+		double min = Double.MAX_VALUE;
 		if (statistics != null) {
 			min = Math.min(statistics.start(), min);
 		}
@@ -155,6 +160,11 @@ public class PerformanceTree {
 		return min;
 	}
 
+    /**
+     * Find out recursively end of measuring processing time so far.
+     *
+     * @return end of measurement
+     */
 	public double endInterval() {
 		Double max = null;
 		if (statistics != null) {
@@ -186,7 +196,6 @@ public class PerformanceTree {
 			}
 			return items;
 		} else {
-
 			if (statistics != null) {
 				return statistics.itemsProcessed();
 			}

@@ -180,9 +180,13 @@ public class Performance extends ProcessorList {
         return ps;
     }
 
+    /**
+     * Send performance data to performance receiver. This method is called in the finish method of
+     * Performance processor. Furthermore, if 'every' parameter was defined in the XML, then after
+     * every X-th item performance is sent to receiver.
+     */
     public void logPerformance() {
-        Long count = items;
-        if (count > 1) {
+        if (items > 1) {
             // log.info("current performance: {} items/sec",
             // (count.doubleValue() / seconds));
             Message m = rlog.message().add("performance.id", context.path());

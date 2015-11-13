@@ -93,12 +93,22 @@ public class ProcessorStatistics implements Serializable {
 				+ fmt.format(count / (t / 1000.0)) + " items/sec   " + objectReference;
 	}
 
+    /**
+     * Update statistics by adding milliseconds to processed time and counting processed items.
+     *
+     * @param millis long value of milliseconds
+     */
 	public void addMillis(Long millis) {
 		double nanos = millis.doubleValue() / 1000000.0;
 		addNanoDelta(nanos);
 	}
 
-	public void addNanos(Long nanoSeconds) {
+    /**
+     * Update statistics by adding nanoseconds to processed time and counting processed items.
+     *
+     * @param nanoSeconds long value of nanoseconds
+     */
+    public void addNanos(Long nanoSeconds) {
 		addNanoDelta(nanoSeconds.doubleValue());
 	}
 

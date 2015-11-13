@@ -3,39 +3,72 @@
  */
 package streams.performance;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * @author chris
+ * Performance tree class is collector class for processor statistics. Possible tree can be as
+ * following:
+ * --> application
+ *      --> process
+ *          --> processor:0
+ *          --> processor:1
+ *          ...
  *
+ * @author chris
  */
 public class PerformanceTree {
 
 	static Logger log = LoggerFactory.getLogger(PerformanceTree.class);
-	final String id;
-	final PerformanceTree parent;
-	final List<PerformanceTree> sibblings = new ArrayList<PerformanceTree>();
-	ProcessorStatistics value;
+
+    /**
+     *
+     */
+    final String id;
+
+    /**
+     * Link to a parent tree (contains one node more). The 'root' tree has no parent (null).
+     */
+    final PerformanceTree parent;
+
+    /**
+     * List of performance trees. First one is the highest node in the tree with each next tree in
+     * the list containing a subtree. It goes on until some performance tree contains no further
+     * children trees (leaf) and such trees contain statistics about processors.
+     */
+    final List<PerformanceTree> sibblings = new ArrayList<PerformanceTree>();
+
+    /**
+     * Processor statistics for a given performance tree.
+     */
+    ProcessorStatistics statistics;
 
 	public PerformanceTree(String id, PerformanceTree parent) {
 		this.id = id;
 		this.parent = parent;
 	}
 
-	public void update(String[] path, ProcessorStatistics data) {
+    /**
+     * Update method is called in PerformanceReceiver.Updater every time when there is new processor
+     * statistics available. This method is updating the list of all performance trees and goes
+     * recursively through all the children performance tree nodes.
+     *
+     * @param path String representation of performance tree
+     * @param data new processor statistics data
+     */
+    public void update(String[] path, ProcessorStatistics data) {
 		int depth = depth();
 		log.debug("Looking for node at level '{}'", depth());
 		if (depth < path.length) {
 			String next = path[depth];
 			PerformanceTree down = getChild(next);
 			if (down == null) {
-				log.info("Creating new child for '{}' at node '{}'", next, id);
+				log.info("Creating new child tree for '{}' at node '{}'", next, id);
 				down = new PerformanceTree(next, this);
 				sibblings.add(down);
 			}
@@ -43,14 +76,20 @@ public class PerformanceTree {
 			down.update(path, data);
 		} else {
 			log.debug("Updating data for node '{}'", id);
-			value = data;
+			statistics = data;
 		}
 	}
 
-	public PerformanceTree getChild(String id) {
-		for (PerformanceTree ch : sibblings) {
-			if (ch.id.equals(id)) {
-				return ch;
+    /**
+     * Find child node with a given id in a performance tree.
+     *
+     * @param id node id to be find
+     * @return child node if such node exists, otherwise null
+     */
+    public PerformanceTree getChild(String id) {
+		for (PerformanceTree child : sibblings) {
+			if (child.id.equals(id)) {
+				return child;
 			}
 		}
 		return null;
@@ -68,7 +107,12 @@ public class PerformanceTree {
 		return null;
 	}
 
-	public int depth() {
+    /**
+     * Calculate recursively depth of a performance tree using the depth of its parent.
+     *
+     * @return depth of performance tree
+     */
+    public int depth() {
 		if (parent == null) {
 			return 0;
 		} else {
@@ -89,13 +133,14 @@ public class PerformanceTree {
 			Double secs = (endInterval() - startInterval()) / 1000.0;
 			Long items = allItemsProcessed();
 
-			if (value != null) {
-				secs = value.processingTime() / 1000.0d;
-				System.out.println("-->" + id + " >>  " + this.value.itemsProcessed() + " items processed in "
-						+ f.format(value.processingTime) + " ms  during overall interval of "
-						+ (value.end() - value.start()) + " ms  => " + f.format(items.doubleValue() / secs)
-						+ " items/second");
-			} else {
+			if (statistics != null) {
+				secs = statistics.processingTime() / 1000.0d;
+                System.out.println("-->" + id + " >>  "
+                        + this.statistics.itemsProcessed() + " items processed in "
+                        + f.format(statistics.processingTime) + " ms  during overall interval of "
+                        + (statistics.end() - statistics.start()) + " ms  => "
+                        + f.format(items.doubleValue() / secs) + " items/second");
+            } else {
 
 				System.out.println("-->" + id + "  :: " + allItemsProcessed() + " items processed in " + f.format(secs)
 						+ " seconds => " + f.format(items.doubleValue() / secs) + " items/second");
@@ -108,8 +153,8 @@ public class PerformanceTree {
 
 	public double startInterval() {
 		Double min = Double.MAX_VALUE;
-		if (value != null) {
-			min = Math.min(value.start(), min);
+		if (statistics != null) {
+			min = Math.min(statistics.start(), min);
 		}
 
 		for (PerformanceTree t : sibblings) {
@@ -121,8 +166,8 @@ public class PerformanceTree {
 
 	public double endInterval() {
 		Double max = null;
-		if (value != null) {
-			max = value.end() * 1.0;
+		if (statistics != null) {
+			max = statistics.end() * 1.0;
 		}
 
 		for (PerformanceTree t : sibblings) {
@@ -136,18 +181,23 @@ public class PerformanceTree {
 		return max;
 	}
 
-	public long allItemsProcessed() {
+    /**
+     * Calculate recursively number of all processed items.
+     *
+     * @return number of processed items
+     */
+    public long allItemsProcessed() {
 		long items = 0;
 
-		if (value == null && !this.sibblings.isEmpty()) {
-			for (PerformanceTree t : sibblings) {
-				items += t.allItemsProcessed();
+		if (statistics == null && !sibblings.isEmpty()) {
+			for (PerformanceTree tree : sibblings) {
+				items += tree.allItemsProcessed();
 			}
 			return items;
 		} else {
 
-			if (this.value != null) {
-				return value.itemsProcessed();
+			if (statistics != null) {
+				return statistics.itemsProcessed();
 			}
 		}
 		return items;

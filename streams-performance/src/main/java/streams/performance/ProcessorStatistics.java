@@ -52,10 +52,10 @@ public class ProcessorStatistics implements Serializable {
 	public ProcessorStatistics(ProcessorStatistics p) {
 		this.className = p.className;
 		this.objectReference = p.objectReference;
-		this.itemsProcessed = new Long(p.itemsProcessed);
-		this.processingTime = new Double(p.processingTime);
-		this.start = new Long(p.start);
-		this.end = new Long(p.end);
+		this.itemsProcessed = p.itemsProcessed;
+		this.processingTime = p.processingTime;
+		this.start = p.start;
+		this.end = p.end;
 		this.timeMean = p.timeMean;
 		this.m2 = p.m2;
 	}
@@ -74,10 +74,10 @@ public class ProcessorStatistics implements Serializable {
 		map.put("time.max", max);
 		map.put("time.avg", processingTime / itemsProcessed);
 		map.put("time.total", processingTime);
-		map.put("time.mean", timeMean());
+		map.put("time.mean", timeMean);
 		map.put("time.variance", timeVariance());
-		map.put("time.start", start());
-		map.put("time.end", end());
+		map.put("time.start", start);
+		map.put("time.end", end);
 		return map;
 	}
 
@@ -103,7 +103,7 @@ public class ProcessorStatistics implements Serializable {
 	}
 
 	private void addNanoDelta(Double nanoSeconds) {
-		double nanos = nanoSeconds.doubleValue();
+		double nanos = nanoSeconds;
 		long now = System.currentTimeMillis();
 		Double millis = nanos / 1000000.0d;
 		if (itemsProcessed == 0) {
@@ -132,11 +132,11 @@ public class ProcessorStatistics implements Serializable {
 	}
 
 	public long start() {
-		return start.longValue();
+		return start;
 	}
 
 	public long end() {
-		return end.longValue();
+		return end;
 	}
 
 	public double timeMean() {

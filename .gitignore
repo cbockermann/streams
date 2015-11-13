@@ -25,3 +25,4 @@ stream-core/pom.xml.releaseBackup
 #intellij stuff
 .idea/
 *.iml
+dependency-reduced-pom.xml

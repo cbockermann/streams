@@ -112,16 +112,17 @@ public class PerformanceTree {
      * Print collected statistics to system output.
      */
 	public void print() {
-		for (int i = 0; i < depth(); i++) {
+        int treeDepth = depth();
+		for (int i = 0; i < treeDepth; i++) {
 			System.out.print("  ");
 		}
-		if (depth() < 1) {
+		if (treeDepth < 1) {
 			System.out.println("-->" + id);
 		} else {
 			final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 			dfs.setDecimalSeparator('.');
 			final DecimalFormat f = new DecimalFormat("0.0000", dfs);
-			Double secs = (endInterval() - startInterval()) / 1000.0;
+			double secs = (endInterval() - startInterval()) / 1000.0;
 			Long items = allItemsProcessed();
 
 			if (statistics != null) {
@@ -166,16 +167,12 @@ public class PerformanceTree {
      * @return end of measurement
      */
 	public double endInterval() {
-		Double max = null;
+		double max = Double.MIN_VALUE;
 		if (statistics != null) {
 			max = statistics.end() * 1.0;
 		}
 
 		for (PerformanceTree tree : sibblings) {
-			if (max == null) {
-				max = tree.endInterval();
-			}
-
 			max = Math.max(tree.endInterval(), max);
 		}
 

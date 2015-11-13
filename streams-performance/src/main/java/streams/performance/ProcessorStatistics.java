@@ -87,10 +87,10 @@ public class ProcessorStatistics implements Serializable {
     public String toString() {
 		DecimalFormat fmt = new DecimalFormat("0.000");
 		DecimalFormat f = new DecimalFormat("######");
-		Double t = processingTime;
-		Double count = 1.0 * itemsProcessed;
-		return f.format(processingTime) + " ms, " + fmt.format(t / count) + " ms/item => "
-				+ fmt.format(count / (t / 1000.0)) + " items/sec   " + objectReference;
+		double count = itemsProcessed.doubleValue();
+		return f.format(processingTime) + " ms, " + fmt.format(processingTime / count)
+                + " ms/item => " + fmt.format(count / (processingTime / 1000.0))
+                + " items/sec   " + objectReference;
 	}
 
     /**
@@ -112,10 +112,9 @@ public class ProcessorStatistics implements Serializable {
 		addNanoDelta(nanoSeconds.doubleValue());
 	}
 
-	private void addNanoDelta(Double nanoSeconds) {
-		double nanos = nanoSeconds;
+	private void addNanoDelta(double nanoSeconds) {
 		long now = System.currentTimeMillis();
-		Double millis = nanos / 1000000.0d;
+		Double millis = nanoSeconds / 1000000.0d;
 		if (itemsProcessed == 0) {
 			start = now;
 			min = millis;

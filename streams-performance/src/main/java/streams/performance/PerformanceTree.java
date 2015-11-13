@@ -95,18 +95,6 @@ public class PerformanceTree {
 		return null;
 	}
 
-	public void add(PerformanceTree child) {
-		sibblings.add(child);
-	}
-
-	public boolean isLeaf() {
-		return sibblings.isEmpty();
-	}
-
-	public ProcessorStatistics value() {
-		return null;
-	}
-
     /**
      * Calculate recursively depth of a performance tree using the depth of its parent.
      *

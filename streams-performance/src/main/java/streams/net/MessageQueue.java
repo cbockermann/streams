@@ -3,6 +3,9 @@
  */
 package streams.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -11,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import stream.Data;
 import stream.data.DataFactory;
@@ -36,14 +36,18 @@ public class MessageQueue {
 	private static Sender sender;
 
 	static {
-		log.info("Initializing global MessageQueue");
 
-		String host = System.getProperty("rlog.host");
+        String host = System.getProperty("rlog.host");
+
+        log.info("Initializing global MessageQueue rlog {}", host);
+
 		if (host == null) {
-			log.error("'rlog.host' not set, disabling rlog-sender");
+			log.info("'rlog.host' not set, disabling rlog-sender");
 			sender = null;
 		} else {
-			sender = new Sender(host, messages);
+            //TODO use default port number
+			sender = new Sender(host, 6001, messages);
+			log.info("rlog.host={} using port={}", host, 6001);
 			sender.setDaemon(true);
 			sender.start();
 		}
@@ -51,7 +55,12 @@ public class MessageQueue {
 		Runtime.getRuntime().addShutdownHook(new Shutdown());
 	}
 
-	public static void add(Message m) {
+    /**
+     * Add a message to a queue of messages to be sent to performance receiver.
+     *
+     * @param m Message with performance statistics
+     */
+    public static void add(Message m) {
 		if (sender != null) {
 			messages.offer(m);
 		}
@@ -59,29 +68,70 @@ public class MessageQueue {
 
 	public static class Sender extends Thread {
 
-		final Codec<Data> mc = new JavaCodec<Data>();
+		final Codec<Data> mc = new JavaCodec<>();
+        private final int port;
 
-		DataOutputStream out;
+        DataOutputStream out;
 		final String host;
 		BufferedReader in;
 		final LinkedBlockingQueue<Message> messages;
 		boolean running = false;
 
-		public Sender() {
-			setDaemon(true);
-			this.host = System.getProperty("rlog.host");
-			this.messages = new LinkedBlockingQueue<Message>();
+        /**
+         * Create sender thread to be able to connect to performance receiver. This constructor type
+         * uses the system property 'rlog.host' if it is set. Otherwise use another constructor with
+         * a given host address as string variable.
+         */
+        public Sender() {
+            this(System.getProperty("rlog.host"));
 		}
 
-		public Sender(String host) {
-			this(host, new LinkedBlockingQueue<Message>());
+        /**
+         * Create sender thread to be able to connect to performance receiver. This constructor uses
+         * host address given as parameter.
+         *
+         * @param host String value of host address
+         */
+        public Sender(String host) {
+            //TODO define default port somewhere as constant
+			this(host, 6001, new LinkedBlockingQueue<Message>());
 		}
 
-		public Sender(String host, LinkedBlockingQueue<Message> msgs) {
+        /**
+         * Create sender thread to be able to connect to performance receiver. This constructor uses
+         * host address given as parameter.
+         *
+         * @param host String value of host address
+         */
+        public Sender(String host, int port) {
+            this(host, port, new LinkedBlockingQueue<Message>());
+        }
+
+        /**
+         * Create sender thread to be able to connect to performance receiver. This constructor uses
+         * host address given as parameter.
+         *
+         * @param host String value of host address
+         * @param messages linked blocking queue of messages to be sent
+         */
+		public Sender(String host, int port, LinkedBlockingQueue<Message> messages) {
 			this.host = host;
-			this.messages = msgs;
+            this.port = port;
+			this.messages = messages;
 			this.setDaemon(true);
 		}
+
+        /**
+         * Connect to the specified host and port.
+         *
+         * @return Socket connection
+         */
+        protected Socket connect() throws Exception {
+            Socket socket = SecureConnect.connect(host, port);
+            out = new DataOutputStream(socket.getOutputStream());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            return socket;
+        }
 
 		public void run() {
 			running = true;
@@ -100,13 +150,6 @@ public class MessageQueue {
 					e.printStackTrace();
 				}
 			}
-		}
-
-		protected Socket connect() throws Exception {
-			Socket socket = SecureConnect.connect(host, PerformanceReceiver.port);
-			out = new DataOutputStream(socket.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			return socket;
 		}
 
 		public void send(Message m) {

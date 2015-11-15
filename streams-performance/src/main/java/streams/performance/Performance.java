@@ -53,7 +53,16 @@ public class Performance extends ProcessorList {
     File output;
     String hostname;
     String path;
+
+    /**
+     * Host where performance receiver can be found
+     */
     String host;
+
+    /**
+     * Port for performance receiver
+     */
+    int port;
     Sender sender;
 
     public Performance() {
@@ -71,7 +80,7 @@ public class Performance extends ProcessorList {
         rlog.define("trace", appId);
         String pid = context.getId();
         // log.info("Process ID is: '{}'", pid);
-        rlog.define("process.id", context.getId());
+        rlog.define("process.id", pid);
 
         path = appId + "/" + pid;
 
@@ -89,7 +98,7 @@ public class Performance extends ProcessorList {
 
         if (host != null) {
             log.info("Starting my own messenger...");
-            sender = new Sender(host);
+            sender = new Sender(host, port);
             sender.start();
         }
     }
@@ -240,7 +249,8 @@ public class Performance extends ProcessorList {
     /**
      * @param every the every to set
      */
-    @Parameter(description = "Determines the interval after which performance stats are emitted/written out, e.g. every 10 items.", required = false)
+    @Parameter(description = "Determines the interval after which performance stats are " +
+            "emitted/written out, e.g. every 10 items.", required = false)
     public void setEvery(int every) {
         this.every = every;
     }
@@ -255,7 +265,8 @@ public class Performance extends ProcessorList {
     /**
      * @param ignoreFirst the ignoreFirst to set
      */
-    @Parameter(description = "The number of items to be ignored in the beginning - to provide a gap for just-in-time compilation to kick in.", required = false)
+    @Parameter(description = "The number of items to be ignored in the beginning - to provide a " +
+            "gap for just-in-time compilation to kick in.", required = false)
     public void setIgnoreFirst(long ignoreFirst) {
         this.ignoreFirst = ignoreFirst;
     }
@@ -274,8 +285,25 @@ public class Performance extends ProcessorList {
     /**
      * @param host the host to set
      */
-    @Parameter(description = "The host where to send the statistics to. If not set, the default setting from rlog.host will be used.", required = false)
+    @Parameter(description = "The host where to send the statistics to. If not set, the default " +
+            "setting from rlog.host will be used.", required = false)
     public void setHost(String host) {
         this.host = host;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    @Parameter(description = "The host where to send the statistics to. If not set, the default " +
+            "setting from rlog.host will be used.", required = false)
+    public void setPort(int port) {
+        this.port = port;
     }
 }

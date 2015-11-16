@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -106,12 +107,25 @@ public class MessageQueue {
          *
          * @return Socket connection
          */
-        protected Socket connect() throws Exception {
-            Socket socket = SecureConnect.connect(host, port);
-            out = new DataOutputStream(socket.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            return socket;
-        }
+		protected boolean connect() {
+			Socket socket;
+			try {
+				socket = SecureConnect.connect(host, port);
+			} catch (Exception e) {
+				log.error("Connection could have not been build to {}:{}\nError message: {}",
+						host, port, e.toString());
+				return false;
+			}
+			try {
+				out = new DataOutputStream(socket.getOutputStream());
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException e) {
+				log.error("Error while creating output and input readers using " +
+						"socket connection: {}", e.toString());
+				return false;
+			}
+			return true;
+		}
 
 		public void run() {
 			running = true;
@@ -135,7 +149,10 @@ public class MessageQueue {
 		public void send(Message m) {
 			try {
 				if (out == null || in == null) {
-					connect();
+					if(!connect()){
+						log.error("Connection could not have been established.");
+						return;
+					}
 				}
 
 				byte[] bytes = mc.encode(DataFactory.create(m));
@@ -145,7 +162,7 @@ public class MessageQueue {
 				out.flush();
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Error while writing message to output stream: {}", e.toString());
 			}
 		}
 

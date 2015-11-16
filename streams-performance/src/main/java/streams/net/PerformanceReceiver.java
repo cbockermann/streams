@@ -34,10 +34,10 @@ public class PerformanceReceiver extends Thread {
 
 	final ServerSocket server;
 
-	static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<String, PerformanceTree>();
-	static MultiSet<String> updateCount = new MultiSet<String>();
+	static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<>();
+	static MultiSet<String> updateCount = new MultiSet<>();
 
-	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
+	static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<>();
 
     static int port = 6001;
 
@@ -80,7 +80,7 @@ public class PerformanceReceiver extends Thread {
      */
     public static class Receiver extends Thread {
 		final Socket socket;
-		final Codec<Data> codec = new JavaCodec<Data>();
+		final Codec<Data> codec = new JavaCodec<>();
 		final PerformanceReceiver parent;
 
 		public Receiver(Socket socket, PerformanceReceiver parent) {

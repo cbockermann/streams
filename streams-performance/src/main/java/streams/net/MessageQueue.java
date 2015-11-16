@@ -77,27 +77,7 @@ public class MessageQueue {
 		final LinkedBlockingQueue<Message> messages;
 		boolean running = false;
 
-        /**
-         * Create sender thread to be able to connect to performance receiver. This constructor type
-         * uses the system property 'rlog.host' if it is set. Otherwise use another constructor with
-         * a given host address as string variable.
-         */
-        public Sender() {
-            this(System.getProperty("rlog.host"));
-		}
-
-        /**
-         * Create sender thread to be able to connect to performance receiver. This constructor uses
-         * host address given as parameter.
-         *
-         * @param host String value of host address
-         */
-        public Sender(String host) {
-            //TODO define default port somewhere as constant
-			this(host, 6001, new LinkedBlockingQueue<Message>());
-		}
-
-        /**
+		/**
          * Create sender thread to be able to connect to performance receiver. This constructor uses
          * host address given as parameter.
          *

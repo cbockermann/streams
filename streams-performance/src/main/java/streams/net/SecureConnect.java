@@ -85,20 +85,6 @@ public class SecureConnect {
 		ctx.init(km, tm, new SecureRandom());
 	}
 
-	public static Socket connect() throws Exception {
-
-		// String host = System.getProperty("rlog.host",
-		// "performance.sfb876.de");
-		// Integer port = new Integer(System.getProperty("rlog.port", "6001"));
-		// if (!host.equalsIgnoreCase("performance.sfb876.de")) {
-		// System.err.println("Connecting to host " + host + ":" + port + " via
-		// plain tcp connection...");
-		// return new Socket(host, port);
-		// }
-
-		return connect("performance.sfb876.de", PerformanceReceiver.port);
-	}
-
 	public static SSLServerSocket openServer(int port) throws Exception {
 		init();
 

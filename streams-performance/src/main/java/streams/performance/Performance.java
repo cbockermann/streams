@@ -60,9 +60,9 @@ public class Performance extends ProcessorList {
     String host;
 
     /**
-     * Port for performance receiver
+     * Port for performance receiver. Default value: 6001.
      */
-    int port;
+    int port = 6001;
     Sender sender;
 
     public Performance() {

@@ -47,38 +47,11 @@ public class Emitter extends ConditionedProcessor {
 	protected String[] keys;
 	protected boolean skip = false;
 
-	public String[] getKeys() {
-		return keys;
-	}
-
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
-
-	public void setSink(Sink sink) {
-		if (sink != null) {
-			this.keys = new String[] {};
-			this.sinks = new Sink[] { sink };
-		}
-
-	}
-
-	public void setSinks(Sink[] sinks) {
-		if (sinks != null) {
-			this.sinks = sinks;
-		}
-	}
-
-	public void setSkip(Boolean skip) {
-		this.skip = skip;
-	}
-
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
 		super.init(ctx);
 		if (sinks == null)
 			throw new IllegalArgumentException("sinks are not set");
-
 	}
 
 	/**
@@ -92,27 +65,24 @@ public class Emitter extends ConditionedProcessor {
 	}
 
 	protected void emit(Data data) {
-		for (int i = 0; i < sinks.length; i++) {
+		for (Sink sink : sinks) {
 			Data d = data.createCopy();
 			try {
-				sinks[i].write(d);
+				log.debug("emitting to {}", sink.getId());
+				sink.write(d);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// }
-
 		}
 	}
 
 	protected void emit(Data[] data) {
-		for (int i = 0; i < sinks.length; i++) {
+		for (Sink sink : sinks) {
 			try {
-				sinks[i].write(Arrays.asList(data));
+				sink.write(Arrays.asList(data));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// }
-
 		}
 	}
 
@@ -127,23 +97,25 @@ public class Emitter extends ConditionedProcessor {
 			log.debug("Closing no Sinks...");
 			return;
 		}
+		int numberSinks = sinks.length;
 		log.debug("Closing all Sinks...");
 
-		boolean[] isEmpty = new boolean[sinks.length];
+		boolean[] isEmpty = new boolean[numberSinks];
 		int sum = 0;
-		while (sum < sinks.length) {
+		while (sum < numberSinks) {
 			sum = 0;
-			for (int i = 0; i < sinks.length; i++) {
-				if (isEmpty[i])
+			for (int i = 0; i < numberSinks; i++) {
+				if (isEmpty[i]) {
 					sum++;
-				else {
+				} else {
 					Sink s = sinks[i];
 
-					if (s == null)
+					if (s == null) {
 						isEmpty[i] = true;
-					else {
-						if (s instanceof Queue && ((Queue) s).getSize() > 0)
+					} else {
+						if (s instanceof Queue && ((Queue) s).getSize() > 0) {
 							continue;
+						}
 						s.close();
 						isEmpty[i] = true;
 						sum++;
@@ -159,4 +131,28 @@ public class Emitter extends ConditionedProcessor {
 				+ Arrays.toString(keys) + "]";
 	}
 
+	public String[] getKeys() {
+		return keys;
+	}
+
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
+
+	public void setSink(Sink sink) {
+		if (sink != null) {
+			this.keys = new String[] {};
+			this.sinks = new Sink[] { sink };
+		}
+	}
+
+	public void setSinks(Sink[] sinks) {
+		if (sinks != null) {
+			this.sinks = sinks;
+		}
+	}
+
+	public void setSkip(Boolean skip) {
+		this.skip = skip;
+	}
 }

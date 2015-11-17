@@ -135,11 +135,11 @@ public class MessageQueue {
 
 			while (running || !messages.isEmpty()) {
 				try {
-					Message m = messages.poll(1000, TimeUnit.MILLISECONDS);
+					Message m = messages.take();
 					if (m != null) {
                         send(m);
                     }
-					// System.out.println("Sending message " + m);
+					log.debug("Sending message " + m);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

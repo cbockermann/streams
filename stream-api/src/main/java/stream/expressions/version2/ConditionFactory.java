@@ -23,14 +23,14 @@
  */
 package stream.expressions.version2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Hendrik Blom
@@ -140,38 +140,63 @@ public class ConditionFactory {
 		return null;
 	}
 
+	/**
+	 * Create equals-true-condition out of a given string expression.
+	 *
+	 * @param expr expression value as string
+	 * @return condition
+	 */
+	private Condition extractEqualsTrueExpression(String expr) {
+		Expression<Double> de = dExps.get(expr);
+		if (de != null) {
+			return new EqualsTrueCondition(new BooleanExpression(de.getExpression()));
+		}
+		return null;
+	}
+
+	/**
+	 * Create equals-false-condition out of a given string expression.
+	 *
+	 * @param expr expression value as string
+	 * @return condition
+	 */
+	private Condition extractEqualsFalseExpression(String expr) {
+		Expression<Double> de = dExps.get(expr);
+		if (de != null) {
+			return new EqualsFalseCondition(new BooleanExpression(de.getExpression()));
+		}
+		return null;
+	}
+
+	/**
+	 * Check if given expression contains upper or lower case of given value (true or false)
+	 *
+	 * @param expr  expression value
+	 * @param value boolean value, true or false
+	 * @return true or false
+	 */
+	private boolean containsBool (String expr, String value) {
+		return expr.contains(value.toUpperCase()) || expr.contains(value.toLowerCase());
+	}
+
 	private Condition createBooleanCondition(String c) {
-		Expression<Boolean> ex = null;
 		// ==
 		if (c.contains("==")) {
 			String[] exps = c.split("==");
 			if (exps.length != 2)
 				throw new IllegalArgumentException("Bad ConditionString" + c);
 
-			if (exps[0].contains("TRUE") || exps[0].contains("true")) {
-
-				Expression<Double> de = dExps.get(exps[1]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsTrueCondition(ex);
+			if (containsBool(exps[0], "TRUE")) {
+				return extractEqualsTrueExpression(exps[1]);
 			}
-			if (exps[1].contains("TRUE") || exps[1].contains("true")) {
-				Expression<Double> de = dExps.get(exps[0]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsTrueCondition(ex);
+			if (containsBool(exps[1], "TRUE")) {
+				return extractEqualsTrueExpression(exps[0]);
 			}
-			if (exps[0].contains("FALSE") || exps[0].contains("false")) {
-				Expression<Double> de = dExps.get(exps[1]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsFalseCondition(ex);
+			if (containsBool(exps[0], "FALSE")) {
+				return extractEqualsFalseExpression(exps[1]);
 			}
-			if (exps[1].contains("FALSE") || exps[1].contains("false")) {
-				Expression<Double> de = dExps.get(exps[0]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsFalseCondition(ex);
+			if (containsBool(exps[1], "FALSE")) {
+				return extractEqualsFalseExpression(exps[0]);
 			}
 		}
 		// !=
@@ -180,29 +205,17 @@ public class ConditionFactory {
 			if (exps.length != 2)
 				throw new IllegalArgumentException("Bad ConditionString" + c);
 
-			if (exps[0].contains("TRUE") || exps[0].contains("true")) {
-				Expression<Double> de = dExps.get(exps[0]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsFalseCondition(ex);
+			if (containsBool(exps[0], "TRUE")) {
+				return extractEqualsFalseExpression(exps[0]);
 			}
-			if (exps[1].contains("TRUE") || exps[1].contains("true")) {
-				Expression<Double> de = dExps.get(exps[0]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsFalseCondition(ex);
+			if (containsBool(exps[1], "TRUE")) {
+				return extractEqualsFalseExpression(exps[0]);
 			}
-			if (exps[0].contains("FALSE") || exps[0].contains("false")) {
-				Expression<Double> de = dExps.get(exps[1]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsTrueCondition(ex);
+			if (containsBool(exps[0], "FALSE")) {
+				return extractEqualsTrueExpression(exps[1]);
 			}
-			if (exps[1].contains("FALSE") || exps[1].contains("false")) {
-				Expression<Double> de = dExps.get(exps[0]);
-				if (de != null)
-					ex = new BooleanExpression(de.getExpression());
-				return ex == null ? null : new EqualsTrueCondition(ex);
+			if (containsBool(exps[1], "FALSE")) {
+				return extractEqualsTrueExpression(exps[0]);
 			}
 		}
 		if("FALSE".equals(c.trim()) || "false".equals(c.trim()))
@@ -711,59 +724,33 @@ public class ConditionFactory {
 			return s.toString();
 		}
 
+		private void evalRecursive(String[] split){
+			left.root = split[0];
+			right.root = split[1];
+			leaf = false;
+			left.init();
+			right.init();
+			left.eval();
+			right.eval();
+			eval = true;
+		}
+
 		public void eval() {
 			String[] split = root.split("or|OR", 2);
 			if (split.length == 2) {
-				left.root = split[0];
-				right.root = split[1];
+				evalRecursive(split);
 				op = "OR";
-				leaf = false;
-				left.init();
-				right.init();
-				left.eval();
-				right.eval();
-				eval = true;
 				return;
 			}
 			// split = root.split("||", 2);
-			// if (split.length == 2) {
-			// left.root = split[0];
-			// right.root = split[1];
-			// op = "OR";
-			// leaf = false;
-			// left.init();
-			// right.init();
-			// left.eval();
-			// right.eval();
-			// eval = true;
-			// return;
-			// }
+
 			split = root.split("and|AND", 2);
 			if (split.length == 2) {
-				left.root = split[0];
-				right.root = split[1];
+				evalRecursive(split);
 				op = "AND";
-				leaf = false;
-				left.init();
-				right.init();
-				left.eval();
-				right.eval();
-				eval = true;
 				return;
 			}
 			// split = root.split("&&", 2);
-			// if (split.length == 2) {
-			// left.root = split[0];
-			// right.root = split[1];
-			// op = "AND";
-			// leaf = false;
-			// left.init();
-			// right.init();
-			// left.eval();
-			// right.eval();
-			// eval = true;
-			// return;
-			// }
 
 			if (root.contains(":subc_")) {
 				root = subCond.get(root);
@@ -775,8 +762,8 @@ public class ConditionFactory {
 	}
 
 	private void reset() {
-		subCond = new HashMap<String, String>();
-		dExps = new HashMap<String, Expression<Double>>();
-		sExps = new HashMap<String, Expression<String>>();
+		subCond = new HashMap<>();
+		dExps = new HashMap<>();
+		sExps = new HashMap<>();
 	}
 }

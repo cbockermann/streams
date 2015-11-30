@@ -30,6 +30,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import net.minidev.json.JSONObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Data;
 import stream.data.DataFactory;
 
@@ -43,6 +47,8 @@ import stream.data.DataFactory;
  * 
  */
 public class JSONWriter extends AbstractWriter {
+
+	static Logger log = LoggerFactory.getLogger(JSONWriter.class);
 
 	PrintStream p;
 
@@ -68,6 +74,10 @@ public class JSONWriter extends AbstractWriter {
 			if (datum.containsKey(key))
 				item.put(key, datum.get(key));
 		}
-		p.println(JSONObject.toJSONString(item));
+        if (p != null) {
+		    p.println(JSONObject.toJSONString(item));
+        } else {
+            log.error("JSONWriter has not been set right: PrintStream is null.");
+        }
 	}
 }

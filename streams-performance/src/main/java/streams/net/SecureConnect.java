@@ -3,6 +3,9 @@
  */
 package streams.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.Socket;
 import java.net.URL;
 import java.security.KeyStore;
@@ -16,9 +19,6 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a convenient wrapper to create SSL connections based on
@@ -43,8 +43,8 @@ public class SecureConnect {
 		if (km != null && tm != null) {
 			// already initialized
 			if (debug) {
-				log.debug("SecureConnect already initialized. {} key managers and {} trust managers available.",
-						km.length, tm.length);
+				log.debug("SecureConnect already initialized. {} key managers " +
+						"and {} trust managers available.", km.length, tm.length);
 			}
 			return;
 		}
@@ -85,20 +85,6 @@ public class SecureConnect {
 		ctx.init(km, tm, new SecureRandom());
 	}
 
-	public static Socket connect() throws Exception {
-
-		// String host = System.getProperty("rlog.host",
-		// "performance.sfb876.de");
-		// Integer port = new Integer(System.getProperty("rlog.port", "6001"));
-		// if (!host.equalsIgnoreCase("performance.sfb876.de")) {
-		// System.err.println("Connecting to host " + host + ":" + port + " via
-		// plain tcp connection...");
-		// return new Socket(host, port);
-		// }
-
-		return connect("performance.sfb876.de", PerformanceReceiver.port);
-	}
-
 	public static SSLServerSocket openServer(int port) throws Exception {
 		init();
 
@@ -115,19 +101,32 @@ public class SecureConnect {
 		return socket;
 	}
 
+	/**
+	 * Try to build first a SSL connection and if it is not possible, use plain TCP connection.
+	 *
+	 * @param host address for connection
+	 * @param port port used for conneciton on host
+	 * @return Socket connection
+	 */
 	public static Socket connect(String host, int port) throws Exception {
 
 		try {
-			SSLSocket socket = connectSSL(host, port);
-			return socket;
+			return connectSSL(host, port);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("SSL connection couldn't have been established: {}", e.toString());
 		}
 
 		log.debug("Establishing plain TCP connection...");
 		return new Socket(host, port);
 	}
 
+	/**
+	 * Try to build SSL connection a given host with specified port.
+	 *
+	 * @param host address for connection
+	 * @param port port used for connection on host
+	 * @return SSLSocket
+	 */
 	public static SSLSocket connectSSL(String host, int port) throws Exception {
 		log.debug("Establishing SSL connection...");
 		init();

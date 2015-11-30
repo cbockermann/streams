@@ -5,12 +5,12 @@ package streams.net;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +36,18 @@ public class MessageQueue {
     private static Sender sender;
 
     static {
-        log.info("Initializing global MessageQueue");
 
         String host = System.getProperty("rlog.host");
+
+        log.info("Initializing global MessageQueue rlog {}", host);
+
         if (host == null) {
-            log.error("'rlog.host' not set, disabling rlog-sender");
+            log.info("'rlog.host' not set, disabling rlog-sender");
             sender = null;
         } else {
-            sender = new Sender(host, messages);
+            // TODO use default port number
+            sender = new Sender(host, 6001, messages);
+            log.info("rlog.host={} using port={}", host, 6001);
             sender.setDaemon(true);
             sender.start();
         }
@@ -51,6 +55,12 @@ public class MessageQueue {
         Runtime.getRuntime().addShutdownHook(new Shutdown());
     }
 
+    /**
+     * Add a message to a queue of messages to be sent to performance receiver.
+     *
+     * @param m
+     *            Message with performance statistics
+     */
     public static void add(Message m) {
         if (sender != null) {
             messages.offer(m);
@@ -60,6 +70,7 @@ public class MessageQueue {
     public static class Sender extends Thread {
 
         final Codec<Data> mc = new DefaultCodec<Data>();
+        private final int port;
 
         DataOutputStream out;
         final String host;
@@ -67,20 +78,55 @@ public class MessageQueue {
         final LinkedBlockingQueue<Message> messages;
         boolean running = false;
 
-        public Sender() {
-            setDaemon(true);
-            this.host = System.getProperty("rlog.host");
-            this.messages = new LinkedBlockingQueue<Message>();
+        /**
+         * Create sender thread to be able to connect to performance receiver.
+         * This constructor uses host address given as parameter.
+         *
+         * @param host
+         *            String value of host address
+         */
+        public Sender(String host, int port) {
+            this(host, port, new LinkedBlockingQueue<Message>());
         }
 
-        public Sender(String host) {
-            this(host, new LinkedBlockingQueue<Message>());
-        }
-
-        public Sender(String host, LinkedBlockingQueue<Message> msgs) {
+        /**
+         * Create sender thread to be able to connect to performance receiver.
+         * This constructor uses host address given as parameter.
+         *
+         * @param host
+         *            String value of host address
+         * @param messages
+         *            linked blocking queue of messages to be sent
+         */
+        public Sender(String host, int port, LinkedBlockingQueue<Message> messages) {
             this.host = host;
-            this.messages = msgs;
+            this.port = port;
+            this.messages = messages;
             this.setDaemon(true);
+        }
+
+        /**
+         * Connect to the specified host and port.
+         *
+         * @return Socket connection
+         */
+        protected boolean connect() {
+            Socket socket;
+            try {
+                socket = SecureConnect.connect(host, port);
+            } catch (Exception e) {
+                log.error("Connection could have not been build to {}:{}\nError message: {}", host, port, e.toString());
+                return false;
+            }
+            try {
+                out = new DataOutputStream(socket.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            } catch (IOException e) {
+                log.error("Error while creating output and input readers using " + "socket connection: {}",
+                        e.toString());
+                return false;
+            }
+            return true;
         }
 
         public void run() {
@@ -91,28 +137,24 @@ public class MessageQueue {
 
             while (running || !messages.isEmpty()) {
                 try {
-                    Message m = messages.poll(1000, TimeUnit.MILLISECONDS);
+                    Message m = messages.take();
                     if (m != null) {
                         send(m);
                     }
-                    // System.out.println("Sending message " + m);
+                    log.debug("Sending message " + m);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        protected Socket connect() throws Exception {
-            Socket socket = SecureConnect.connect(host, PerformanceReceiver.port);
-            out = new DataOutputStream(socket.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            return socket;
-        }
-
         public void send(Message m) {
             try {
                 if (out == null || in == null) {
-                    connect();
+                    if (!connect()) {
+                        log.error("Connection could not have been established.");
+                        return;
+                    }
                 }
 
                 byte[] bytes = mc.encode(DataFactory.create(m));
@@ -122,7 +164,7 @@ public class MessageQueue {
                 out.flush();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error while writing message to output stream: {}", e.toString());
             }
         }
 

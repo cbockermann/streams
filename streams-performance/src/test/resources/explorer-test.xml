@@ -1,0 +1,14 @@
+<application>
+
+
+	<stream id="test" class="stream.io.TimeStream" interval="5ms" limit="50"/>
+	
+	<process input="test">
+		<streams.data.Fields>
+			<streams.Performance every="10" />
+			<stream.logger.Message message="Value is %{data.@timestamp}" />
+			<SetValue key="threshold" value="42.0" />
+		</streams.data.Fields>		
+	</process>
+
+</application>

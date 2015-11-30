@@ -21,6 +21,8 @@ import streams.codec.Codec;
 import streams.codec.DefaultCodec;
 import streams.io.BobCodec;
 import streams.logging.Message;
+import streams.runtime.Hook;
+import streams.runtime.Signals;
 
 /**
  * @author chris
@@ -52,7 +54,7 @@ public class MessageQueue {
             sender.start();
         }
 
-        Runtime.getRuntime().addShutdownHook(new Shutdown());
+        Signals.register(new Shutdown());
     }
 
     /**
@@ -181,18 +183,28 @@ public class MessageQueue {
      * Shutdown thread that is used as ShutdownHook. In this case we wait for
      * senders to finish their message queues.
      */
-    public static class Shutdown extends Thread {
+    public static class Shutdown extends Thread implements Hook {
         public void run() {
-            log.info("Shutting down message queue...");
-            for (Sender sender : senders) {
-                sender.running = false;
+            signal(Signals.SHUTDOWN);
+        }
 
-                while (sender != null && !messages.isEmpty()) {
-                    try {
-                        log.info("Waiting for sender to finish ({} messages pending)...", messages.size());
-                        sender.join(1000);
-                    } catch (Exception e) {
-                        log.error("Waiting for sender was interrupted: " + e);
+        /**
+         * @see streams.runtime.Hook#signal(int)
+         */
+        @Override
+        public void signal(int flags) {
+            if (flags == Signals.SHUTDOWN) {
+                log.info("Shutting down message queue...");
+                for (Sender sender : senders) {
+                    sender.running = false;
+
+                    while (sender != null && !messages.isEmpty()) {
+                        try {
+                            log.info("Waiting for sender to finish ({} messages pending)...", messages.size());
+                            sender.join(1000);
+                        } catch (Exception e) {
+                            log.error("Waiting for sender was interrupted: " + e);
+                        }
                     }
                 }
             }

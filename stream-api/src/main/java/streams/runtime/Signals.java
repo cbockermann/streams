@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Signals extends Thread {
 
+    public final static int SHUTDOWN = 0;
+
     static Logger log = LoggerFactory.getLogger(Signals.class);
     final static ArrayList<Hook> hooks = new ArrayList<Hook>();
 

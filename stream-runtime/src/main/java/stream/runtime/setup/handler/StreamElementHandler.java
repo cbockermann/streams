@@ -54,104 +54,107 @@ import stream.util.Variables;
  */
 public class StreamElementHandler implements ElementHandler {
 
-	static Logger log = LoggerFactory.getLogger(StreamElementHandler.class);
-	final ObjectFactory objectFactory;
-	final ProcessorFactory processorFactory;
+    static Logger log = LoggerFactory.getLogger(StreamElementHandler.class);
+    final ObjectFactory objectFactory;
+    final ProcessorFactory processorFactory;
 
-	public StreamElementHandler(ObjectFactory objectFactory) {
-		this.objectFactory = objectFactory;
-		this.processorFactory = new ProcessorFactory(objectFactory);
-	}
+    public StreamElementHandler(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory;
+        this.processorFactory = new ProcessorFactory(objectFactory);
+    }
 
-	/**
-	 * @see stream.runtime.ElementHandler#getKey()
-	 */
-	@Override
-	public String getKey() {
-		return "Stream";
-	}
+    /**
+     * @see stream.runtime.ElementHandler#getKey()
+     */
+    @Override
+    public String getKey() {
+        return "Stream";
+    }
 
-	/**
-	 * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
-	 */
-	@Override
-	public boolean handlesElement(Element element) {
-		if (element == null)
-			return false;
+    /**
+     * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
+     */
+    @Override
+    public boolean handlesElement(Element element) {
+        if (element == null)
+            return false;
 
-		return "Stream".equalsIgnoreCase(element.getNodeName()) || "DataStream".equalsIgnoreCase(element.getNodeName());
-	}
+        return "Stream".equalsIgnoreCase(element.getNodeName()) || "DataStream".equalsIgnoreCase(element.getNodeName());
+    }
 
-	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
-	 *      , org.w3c.dom.Element)
-	 */
-	@Override
-	public void handleElement(ProcessContainer container, Element element, Variables variables,
-			DependencyInjection dependencyInjection) throws Exception {
-		try {
-			final ComputeGraph computeGraph = container.computeGraph();
-			Map<String, String> attr = objectFactory.getAttributes(element);
-			String id = attr.get("id");
+    /**
+     * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer
+     *      , org.w3c.dom.Element)
+     */
+    @Override
+    public void handleElement(ProcessContainer container, Element element, Variables variables,
+            DependencyInjection dependencyInjection) throws Exception {
+        try {
+            final ComputeGraph computeGraph = container.computeGraph();
+            Map<String, String> attr = objectFactory.getAttributes(element);
+            String id = attr.get("id");
 
-			List<Copy> cp = new ArrayList<Copy>();
-			String copies = element.getAttribute("copies");
+            List<Copy> cp = new ArrayList<Copy>();
+            String copies = element.getAttribute("copies");
+            log.debug("found 'copies' attribute, value is: '{}'", copies);
 
-			// Single stream
-			if (copies == null || copies.trim().isEmpty()) {
-				id = variables.expand(id);
-				Copy c = new Copy();
-				c.setId(id);
-				cp.add(c);
-			}
-			// multiple streams
-			else {
-				copies = variables.expand(copies);
-				cp = Arrays.asList(CopiesUtils.parse(copies));
-			}
+            // Single stream
+            if (copies == null || copies.trim().isEmpty()) {
+                log.debug("Processing single-stream (no copies)");
+                id = variables.expand(id);
+                Copy c = new Copy();
+                c.setId(id);
+                cp.add(c);
+            }
+            // multiple streams
+            else {
+                log.debug("Processing multiple copies of the stream element...");
+                copies = variables.expand(copies);
+                cp = Arrays.asList(CopiesUtils.parse(copies));
+            }
 
-			for (Copy copy : cp) {
-				log.debug("Creating stream for copy '{}'", copy.getId());
-				Variables local = new Variables(variables);
+            for (Copy copy : cp) {
+                log.debug("Creating stream for copy '{}'", copy.getId());
+                Variables local = new Variables(variables);
 
-				CopiesUtils.addCopyIds(local, copy);
+                CopiesUtils.addCopyIds(local, copy);
 
-				String lid = local.expand(id);
+                String lid = local.expand(id);
 
-				Stream stream = StreamFactory.createStream(objectFactory, element, local);
-				if (stream != null) {
-					if (lid == null)
-						lid = "" + stream;
-					stream.setId(lid);
+                Stream stream = StreamFactory.createStream(objectFactory, element, local);
+                if (stream != null) {
+                    if (lid == null)
+                        lid = "" + stream;
+                    stream.setId(lid);
 
-					try {
-						Method m = stream.getClass().getMethod("read", null);
-						int mod = m.getModifiers();
-						if (!Modifier.isSynchronized(mod)) {
-							log.warn("DANGER: Use of non-synchronized read() method in stream implementation!");
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+                    try {
+                        Method m = stream.getClass().getMethod("read", (Class<?>[]) null);
+                        int mod = m.getModifiers();
+                        if (!Modifier.isSynchronized(mod)) {
+                            log.warn("DANGER: Use of non-synchronized read() method in stream implementation!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-					computeGraph.addStream(lid, stream);
-					container.registerStream(lid, stream);
-				}
+                    computeGraph.addStream(lid, stream);
+                    container.registerStream(lid, stream);
+                }
 
-				if (stream instanceof Service) {
-					container.getContext().register(lid, (Service) stream);
-				}
-			}
-		} catch (FileNotFoundException fnfe) {
-			throw new Exception("Cannot create stream from referenced file: " + fnfe.getMessage());
-		} catch (Exception e) {
+                if (stream instanceof Service) {
+                    container.getContext().register(lid, (Service) stream);
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            throw new Exception("Cannot create stream from referenced file: " + fnfe.getMessage());
+        } catch (Exception e) {
 
-			if (e.getCause() != null)
-				throw new Exception(e.getCause());
+            if (e.getCause() != null)
+                throw new Exception(e.getCause());
 
-			log.error("Failed to create stream-object: {}", e.getMessage());
-			e.printStackTrace();
-			throw new Exception("Failed to create data-stream: " + e.getMessage());
-		}
-	}
+            log.error("Failed to create stream-object: {}", e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Failed to create data-stream: " + e.getMessage());
+        }
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package stream.io;
+package streams.codec;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  *
  */
-public class JavaCodec<T extends Serializable> implements Codec<T> {
+public class DefaultCodec<T extends Serializable> implements Codec<T> {
 
 	/**
 	 * @see stream.io.Codec#decode(byte[])

@@ -1,38 +1,34 @@
 /**
  * 
  */
-package streams.io;
+package streams.codec;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 import stream.Data;
 import stream.data.DataFactory;
-import streams.codec.Codec;
 
 /**
+ * This class implements a data item codec using an internal Kryo instance. The
+ * kryo instance is shared, so the calls to decode and encode are <b>not</b>
+ * thread-safe.
  * 
  * @author Christian Bockermann
  *
  */
-public class KryoCodec implements Codec<Data> {
+public class Kryo implements Codec<Data> {
 
-    final static Map<String, Serializable> template = new LinkedHashMap<String, Serializable>();
-    final Kryo kryo;
+    final HashMap<String, Serializable> template = new HashMap<String, Serializable>();
+    final com.esotericsoftware.kryo.Kryo codec = new com.esotericsoftware.kryo.Kryo();
 
-    public KryoCodec() {
-        kryo = new Kryo();
-    }
-
-    public Kryo serializer() {
-        return kryo;
+    public Kryo() {
     }
 
     /**
@@ -40,11 +36,10 @@ public class KryoCodec implements Codec<Data> {
      */
     @Override
     public Data decode(byte[] rawBytes) throws Exception {
-        ByteArrayInputStream bais = new ByteArrayInputStream(rawBytes);
-
         @SuppressWarnings("unchecked")
-        Data item = DataFactory.create(kryo.readObject(new Input(bais), template.getClass()));
-        bais.close();
+        Map<String, Serializable> values = codec.readObject(new Input(new ByteArrayInputStream(rawBytes)),
+                template.getClass());
+        Data item = DataFactory.create(values);
         return item;
     }
 
@@ -53,12 +48,11 @@ public class KryoCodec implements Codec<Data> {
      */
     @Override
     public byte[] encode(Data object) throws Exception {
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Output out = new Output(baos);
-        kryo.writeObject(out, object);
+        codec.writeObject(out, object);
+        out.flush();
         out.close();
-
         return baos.toByteArray();
     }
 }

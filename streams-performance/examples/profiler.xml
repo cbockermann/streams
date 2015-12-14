@@ -1,0 +1,18 @@
+<application>
+
+	<stream id="data" class="stream.generator.GaussianStream"
+		attributes="0,1,0,1,1,1,1,2,5,1,5,0.5" limit="10" />
+
+	<process input="data" class="streams.profiler.Process">
+		<!-- <PrintData/> -->
+		<stream.flow.Delay time="50ms" />
+
+		<SetValue key="t" value="42.0" />
+
+      <WithKeys keys="x*">
+         <SetValue key="checked" value="true" />
+      </WithKeys>
+
+	</process>
+
+</application>

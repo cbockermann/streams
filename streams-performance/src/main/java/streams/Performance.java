@@ -3,12 +3,23 @@
  */
 package streams;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import stream.Data;
 import stream.ProcessContext;
@@ -21,9 +32,10 @@ import streams.net.MessageQueue.Sender;
 import streams.performance.ProcessorStatistics;
 
 /**
- * This class implements a processor list which aggregates timing information about all its inner
- * processors during execution. The timing is performed based on the wall-clock time (using
- * System.nanoTime()) and is determined with every processed item.
+ * This class implements a processor list which aggregates timing information
+ * about all its inner processors during execution. The timing is performed
+ * based on the wall-clock time (using System.nanoTime()) and is determined with
+ * every processed item.
  *
  * @author Christian Bockermann
  */
@@ -102,6 +114,10 @@ public class Performance extends ProcessorList {
             sender = new Sender(host, port);
             sender.start();
         }
+
+        if (output != null) {
+            log.info("Writing final performance results to {}", output);
+        }
     }
 
     public Data executeInnerProcessors(Data data) {
@@ -167,11 +183,10 @@ public class Performance extends ProcessorList {
      */
     @Override
     public void finish() throws Exception {
-        log.debug("Performance.finish()...");
+        log.info("Performance.finish()...");
         super.finish();
 
         logPerformance();
-
         while (sender != null && sender.messagesPending() > 0) {
             log.debug("Waiting for sender to finish... {} messages pending", sender.messagesPending());
             try {
@@ -179,6 +194,35 @@ public class Performance extends ProcessorList {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        if (output != null) {
+            log.info("Writing performance measurements to {}", output);
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = db.newDocument();
+            Element perf = doc.createElement("performances");
+            doc.appendChild(perf);
+
+            for (ProcessorStatistics ps : this.statistics) {
+                Element proc = doc.createElement("processor");
+                proc.setAttribute("class", ps.className);
+
+                Element stats = doc.createElement("performance");
+                stats.setAttribute("items", ps.itemsProcessed() + "");
+                stats.setAttribute("time", ps.processingTime() + "");
+                stats.setAttribute("start", ps.start() + "");
+                stats.setAttribute("end", ps.end() + "");
+
+                proc.appendChild(stats);
+                perf.appendChild(proc);
+            }
+
+            Transformer tf = TransformerFactory.newInstance().newTransformer();
+            tf.setOutputProperty(OutputKeys.INDENT, "yes");
+            tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            tf.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(output)));
+        } else {
+            log.info("Attribute 'file' not specified. Not writing performance output...");
         }
     }
 
@@ -191,22 +235,19 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * Send performance data to performance receiver. This method is called in the finish method of
-     * Performance processor. Furthermore, if 'every' parameter was defined in the XML, then after
-     * every X-th item performance is sent to receiver.
+     * Send performance data to performance receiver. This method is called in
+     * the finish method of Performance processor. Furthermore, if 'every'
+     * parameter was defined in the XML, then after every X-th item performance
+     * is sent to receiver.
      */
     public void logPerformance() {
-        if (items > 1) {
+        if (sender != null && items > 1) {
             // log.info("current performance: {} items/sec",
             // (count.doubleValue() / seconds));
             Message m = rlog.message().add("performance.id", context.path());
             m.add("performance.stats", new ProcessorStatistics(this.myStatistics));
             m.add("processors", this.getProcessorStatistics());
-            if (sender != null) {
-                sender.add(m);
-            } else {
-                m.send();
-            }
+            sender.add(m);
         }
     }
 
@@ -218,7 +259,8 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     @Parameter(description = "A custom identifier to associate with all the timing data produced by this processor list.")
     public void setId(String id) {
@@ -228,15 +270,17 @@ public class Performance extends ProcessorList {
     /**
      * @return the output
      */
-    public File getOutput() {
+    public File getFile() {
         return output;
     }
 
     /**
-     * @param output the output to set
+     * @param output
+     *            the output to set
      */
-    @Parameter(description = "An optional output file, to which all performance stats shall be appended in CSV format.", required = false)
-    public void setOutput(File output) {
+    @Parameter(description = "An optional output file, to which performance stats will be written in XML format.", required = false)
+    public void setFile(File output) {
+        log.info("Setting output = {}", output);
         this.output = output;
     }
 
@@ -248,10 +292,11 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * @param every the every to set
+     * @param every
+     *            the every to set
      */
-    @Parameter(description = "Determines the interval after which performance stats are " +
-            "emitted/written out, e.g. every 10 items.", required = false)
+    @Parameter(description = "Determines the interval after which performance stats are "
+            + "emitted/written out, e.g. every 10 items.", required = false)
     public void setEvery(int every) {
         this.every = every;
     }
@@ -264,10 +309,11 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * @param ignoreFirst the ignoreFirst to set
+     * @param ignoreFirst
+     *            the ignoreFirst to set
      */
-    @Parameter(description = "The number of items to be ignored in the beginning - to provide a " +
-            "gap for just-in-time compilation to kick in.", required = false)
+    @Parameter(description = "The number of items to be ignored in the beginning - to provide a "
+            + "gap for just-in-time compilation to kick in.", required = false)
     public void setIgnoreFirst(long ignoreFirst) {
         this.ignoreFirst = ignoreFirst;
     }
@@ -284,10 +330,11 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * @param host the host to set
+     * @param host
+     *            the host to set
      */
-    @Parameter(description = "The host where to send the statistics to. If not set, the default " +
-            "setting from rlog.host will be used.", required = false)
+    @Parameter(description = "The host where to send the statistics to. If not set, the default "
+            + "setting from rlog.host will be used.", required = false)
     public void setHost(String host) {
         this.host = host;
     }
@@ -300,10 +347,11 @@ public class Performance extends ProcessorList {
     }
 
     /**
-     * @param port the port to set
+     * @param port
+     *            the port to set
      */
-    @Parameter(description = "The host where to send the statistics to. If not set, the default " +
-            "setting from rlog.host will be used.", required = false)
+    @Parameter(description = "The host where to send the statistics to. If not set, the default "
+            + "setting from rlog.host will be used.", required = false)
     public void setPort(int port) {
         this.port = port;
     }

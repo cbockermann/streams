@@ -6,9 +6,6 @@ package streams.data;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -28,8 +25,10 @@ import stream.Data;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
-import stream.data.DataImpl;
+import stream.data.DataFactory;
 import stream.runtime.setup.ParameterInjection;
+import streams.profiler.DataWrapper;
+import streams.profiler.TypeMap;
 
 /**
  * @author chris
@@ -37,7 +36,7 @@ import stream.runtime.setup.ParameterInjection;
  */
 public class Fields extends ProcessorList {
 
-    Logger log = LoggerFactory.getLogger(Fields.class);
+    static Logger log = LoggerFactory.getLogger(Fields.class);
     String currentProcessor = "";
     TypeMap types[];
 
@@ -54,7 +53,8 @@ public class Fields extends ProcessorList {
         int size = this.processors.size();
         types = new TypeMap[size];
         for (int i = 0; i < processors.size(); i++) {
-            types[i] = new TypeMap(processors.get(i));
+            Processor p = processors.get(i);
+            types[i] = new TypeMap(p);
         }
     }
 
@@ -63,6 +63,7 @@ public class Fields extends ProcessorList {
      */
     @Override
     public Data process(Data input) {
+        log.info("Executing...");
         current = 0;
         Data data = input;
 
@@ -77,7 +78,7 @@ public class Fields extends ProcessorList {
             }
 
         }
-        return data;
+        return DataFactory.create(data);
     }
 
     /**
@@ -96,8 +97,8 @@ public class Fields extends ProcessorList {
 
         for (TypeMap map : types) {
             Element proc = doc.createElement("processor");
-            proc.setAttribute("class", map.p.getClass().getName());
-            Map<String, String> params = ParameterInjection.extract(map.p);
+            proc.setAttribute("class", map.processor().getClass().getName());
+            Map<String, String> params = ParameterInjection.extract(map.processor());
             for (String param : params.keySet()) {
                 proc.setAttribute(param, params.get(param));
             }
@@ -106,8 +107,9 @@ public class Fields extends ProcessorList {
             proc.appendChild(fields);
 
             for (String field : map.keySet()) {
-                String[] kv = field.split(":");
+                String[] kv = field.split(":", 2);
                 String type = map.get(field);
+                log.debug("Field '{}' => key = '{}'", field, kv[1]);
 
                 Element f = doc.createElement(kv[0]);
                 f.setAttribute("key", kv[1]);
@@ -140,106 +142,5 @@ public class Fields extends ProcessorList {
      */
     public void setFile(File file) {
         this.file = file;
-    }
-
-    public class DataWrapper extends DataImpl {
-
-        private static final long serialVersionUID = 8251825785784938452L;
-        transient TypeMap types;
-
-        public DataWrapper(Data item, TypeMap explorer) {
-            super.putAll(item);
-            this.types = explorer;
-        }
-
-        /**
-         * @see stream.data.DataImpl#createCopy()
-         */
-        @Override
-        public Data createCopy() {
-            DataWrapper wrapper = new DataWrapper(this, types);
-            return wrapper;
-        }
-
-        /**
-         * @see java.util.LinkedHashMap#get(java.lang.Object)
-         */
-        @Override
-        public Serializable get(Object key) {
-            Serializable value = super.get(key);
-            types.read(key.toString(), value);
-            return value;
-        }
-
-        /**
-         * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public Serializable put(String key, Serializable value) {
-            types.write(key, value);
-            return super.put(key, value);
-        }
-
-        /**
-         * @see java.util.HashMap#putAll(java.util.Map)
-         */
-        @Override
-        public void putAll(Map<? extends String, ? extends Serializable> m) {
-            for (String k : m.keySet()) {
-                put(k, m.get(k));
-            }
-        }
-
-        /**
-         * @see java.util.HashMap#remove(java.lang.Object)
-         */
-        @Override
-        public Serializable remove(Object key) {
-            Serializable value = super.remove(key);
-            if (types != null) {
-                types.remove(key.toString(), value);
-            }
-            return value;
-        }
-    }
-
-    public static class TypeMap extends LinkedHashMap<String, String> {
-
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 2987143663959753791L;
-
-        Processor p;
-
-        public TypeMap(Processor p) {
-            this.p = p;
-        }
-
-        public void read(String key, Serializable value) {
-            put("read:" + key, typeOf(value));
-        }
-
-        public void write(String key, Serializable value) {
-            put("write:" + key, typeOf(value));
-
-        }
-
-        public void remove(String key, Serializable value) {
-            put("remove:" + key, typeOf(value));
-        }
-
-        public String typeOf(Serializable value) {
-            if (value != null) {
-                if (value.getClass().isArray()) {
-                    Class<?> comp = value.getClass().getComponentType();
-                    return comp.getCanonicalName() + "[" + Array.getLength(value) + "]";
-                } else {
-                    return value.getClass().getCanonicalName();
-                }
-            }
-
-            return "?";
-        }
     }
 }

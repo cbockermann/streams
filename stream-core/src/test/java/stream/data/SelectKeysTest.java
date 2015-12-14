@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.Keys;
 import stream.Processor;
 
 /**
@@ -38,45 +39,42 @@ import stream.Processor;
  */
 public class SelectKeysTest {
 
-	static Logger log = LoggerFactory.getLogger(SelectKeysTest.class);
+    static Logger log = LoggerFactory.getLogger(SelectKeysTest.class);
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
 
-		WithKeys selector = new WithKeys();
-		selector.setKeys(new String[] { "x1", "!x2", "user:*", "!user:name" });
+        WithKeys selector = new WithKeys();
+        selector.setKeys(new Keys("x1,!x2,user:*,!user:name"));
 
-		Processor check = new Processor() {
-			@Override
-			public Data process(Data input) {
-				boolean ok = input.containsKey("x1")
-						&& !input.containsKey("x2")
-						&& input.containsKey("user:id")
-						&& !input.containsKey("testKey");
-				if (!ok)
-					fail("Test failed. Unexpected set of keys found in data item: "
-							+ input.keySet());
-				else
-					log.info("Selection works!");
+        Processor check = new Processor() {
+            @Override
+            public Data process(Data input) {
+                boolean ok = input.containsKey("x1") && !input.containsKey("x2") && input.containsKey("user:id")
+                        && !input.containsKey("testKey");
+                if (!ok)
+                    fail("Test failed. Unexpected set of keys found in data item: " + input.keySet());
+                else
+                    log.info("Selection works!");
 
-				input.put("processed", "true");
+                input.put("processed", "true");
 
-				return input;
-			}
-		};
+                return input;
+            }
+        };
 
-		selector.getProcessors().add(check);
+        selector.getProcessors().add(check);
 
-		Data item = DataFactory.create();
-		item.put("x1", 1.0);
-		item.put("x2", 2.0);
-		item.put("testKey", "streams for the world!");
-		item.put("user:id", "chris");
-		item.put("user:name", "Christian");
+        Data item = DataFactory.create();
+        item.put("x1", 1.0);
+        item.put("x2", 2.0);
+        item.put("testKey", "streams for the world!");
+        item.put("user:id", "chris");
+        item.put("user:name", "Christian");
 
-		item = selector.process(item);
-		log.info("Data item: {}", item);
-		// fail("Not yet implemented");
-	}
+        item = selector.process(item);
+        log.info("Data item: {}", item);
+        // fail("Not yet implemented");
+    }
 
 }

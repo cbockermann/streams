@@ -26,3 +26,5 @@ stream-core/pom.xml.releaseBackup
 .idea/
 *.iml
 dependency-reduced-pom.xml
+streams-performance/doc/streams-performance.log
+streams-performance/doc/streams-performance.pdf

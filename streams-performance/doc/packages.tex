@@ -1,0 +1,66 @@
+
+\usepackage{tikz}
+\usetikzlibrary{mindmap}
+\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri,decorations.markings,calc,decorations.pathmorphing,patterns,fadings}
+
+\pgfdeclaredecoration{penciline}{initial}{
+    \state{initial}[width=+\pgfdecoratedinputsegmentremainingdistance,auto corner on length=1mm,]{
+        \pgfpathcurveto%
+        {% From
+            \pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}
+                            {\pgfdecorationsegmentamplitude}
+        }
+        {%  Control 1
+        \pgfmathrand
+        \pgfpointadd{\pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}{0pt}}
+                        {\pgfqpoint{-\pgfdecorationsegmentaspect\pgfdecoratedinputsegmentremainingdistance}%
+                                        {\pgfmathresult\pgfdecorationsegmentamplitude}
+                        }
+        }
+        {%TO 
+        \pgfpointadd{\pgfpointdecoratedinputsegmentlast}{\pgfpoint{1pt}{1pt}}
+        }
+    }
+    \state{final}{}
+}
+
+\usepackage{color}
+
+\usepackage{listings}
+
+\lstset{language=XML,
+%  otherkeywords={stream,container,process,service},
+  basewidth={0.5em,0.45em},
+  fontadjust=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\ttfamily\color{black!60},       % comment style
+  showstringspaces=false,
+  stringstyle=\color{darkGreen},
+  keywordstyle=[2]{\color{blue}},
+  morekeywords=[3]{org.jwall.example.Identity}
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstdefinelanguage{Java}{
+  keywordstyle=[2]{\color{javaKeyword}},
+  keywordstyle=[3]{\color{javaType}},
+  keywordstyle=[4]{\color{blue}},
+  stringstyle=\color{javaString}\ttfamily,
+  morekeywords=[2]{public,class,final,protected,implements,return,package,import},
+  morekeywords=[3]{Data,org.jwall.example,Identity}
+}

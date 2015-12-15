@@ -64,4 +64,10 @@ public class TypeMap extends LinkedHashMap<String, String> {
 
         return "?";
     }
+
+    public class Type {
+        String type;
+        int minLength = 0;
+        int maxLength = 0;
+    }
 }

@@ -5,7 +5,7 @@ package streams.profiler;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.net.URL;
 
 import org.junit.Test;
 
@@ -13,12 +13,13 @@ import org.junit.Test;
  * @author chris
  *
  */
-public class ProfilerTest {
+public class ProfilerExample {
 
     @Test
     public void test() {
+        URL url = ProfilerExample.class.getResource("/profiler-example.xml");
         try {
-            stream.run.main(new File("examples/profiler.xml").toURI().toURL());
+            stream.run.main(url);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Test failed: " + e.getMessage());

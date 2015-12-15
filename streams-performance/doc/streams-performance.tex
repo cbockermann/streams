@@ -1,0 +1,157 @@
+\documentclass[german,a4,12pt]{scrartcl}
+
+\input{packages}
+\input{colors}
+\input{macros}
+\input{streams.pkg}
+
+\title{The {\em streams-performance} Package}
+\author{Christian Bockermann}
+\date{\normalsize Version 0.9.24}
+
+\parindent0cm
+\parskip1ex
+
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Debugging and profiling data flows can be quite cumbersome from time to time. It is
+even more challenging, if parts of the data flow are built from components, which are
+provided by third-party libraries or other groups. The
+{\em streams-performance} package provides a set of processors and process implementations
+that can be embedded into a \textsf{streams} application to reveal data accesses and
+execution times.
+\end{abstract}
+
+\section{Introduction}
+Within data stream processing, applications are modelled by their data flow. The data
+flow constitutes a processing pipeline of functions, which are executed for the data
+items, produced by some data sources. Within the \textsf{streams} framework, the data
+flow graph of an application is defined by an XML definition as shown in Figure \ref{fig:xml}.
+The performance of a data flow can be assessed by the throughput of events processed
+over time. In addition, it might be interesting, which parts of the data have been used
+and at which stages of a processing pipeline the relevant aspects are being produced.
+
+\begin{figure}[h!]
+\centering
+\input{figures/streams-xml}
+\caption{\label{fig:xml}The definition of a streaming application using XML elements.}
+\end{figure}
+
+
+Despite the specification of {\em process} elements of a data flow, the \textsf{streams}
+framework allows for a more fine-grained control by defining each process by means of
+a sequence of user-defined functions, called {\em processors}. These processors are
+executed sequentially, each being applied to the data items, read by a process. Figure
+\ref{fig:pipeline} shows the pipeline of user-defined functions (processors) for a process.
+The profiling of these processor functions is the goal of the {\em streams-performance}
+package.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=0.75,transform shape]
+\input{figures/process-queue-process}
+\end{tikzpicture}
+\caption{\label{fig:pipeline}The execution pipeline of processors, defined within a process element.}
+\end{figure}
+
+
+\section{Profiling Processes}
+The following objectives set the scene for the {\em streams-performance} package:
+\begin{enumerate}
+\item How much time does a specific processor require for each item?
+\item What is the latency from reading an event to the time it is fully processed?
+\item Which parts of the data item are read/written by each processor?
+\end{enumerate}
+
+The first two questions obviously aim at optimizing the individual processors. Improvements
+here are generally code-based optimizations. With this aspect, the profiling provides an 
+insight to easily identify the performance bottlenecks of a data flow graph. 
+Figure \ref{fig:performancePlot} shows the accumulated processing times for a pipeline of
+processors. The {\ttfamily CreateImage} processor is the element requiring the largest
+amount of processing time.
+
+\begin{figure}[h!]
+\centering
+\input{figures/performance-plot}
+\caption{\label{fig:performancePlot}Plot of the elapsed processing time for each processor.}
+\end{figure}
+
+Profiling the data access patterns of each processor can be seen as a more re-engineering
+approach to determining which parts of the messages are relevant and might result in a
+re-scheduling of the internal pipeline of the process executing the processors. For example,
+if two processors compute and change disjoint properties of the messages, they might be
+executing in parallel instead of a strict sequential execution.
+
+Figure \ref{fig:access-graph} shows the access pattern of the same processing pipeline. As
+can be seen in this figure, the {\ttfamily Sum} processor accesses the {\ttfamily data:normalized}
+attribute and creates a new element {\ttfamily data:normalized:sum},
+which in turn is not used by any of the succeeding functions. Thus, it would be safe to execute
+the {\ttfamily CreateImage} and {\ttfamily WriteImage} functions in parallel to the {\ttfamily Sum}
+processor.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\draw[white] (-6,0) rectangle (9,3);
+\input{figures/access-graph}
+\begin{scope}[scale=0.75,transform shape,shift={(2.5,-1)}]
+\node[circle,fill=orangeRand,inner sep=0pt,minimum height=1.5ex,minimum width=1.5ex] at (5,0) {};
+\node[anchor=west,scale=0.75] at (5.25,0) {\ttfamily write access};
+\node[circle,fill=gruen1,inner sep=0pt,minimum height=1.5ex,minimum width=1.5ex] at (5,-0.5) {};
+\node[anchor=west,scale=0.75] at (5.25,-0.5) {\ttfamily read access};
+\node[circle,fill=gruen1!50,inner sep=0pt,minimum height=1.5ex,minimum width=1.5ex] at (5,-1) {};
+\node[anchor=west,scale=0.75] at (5.25,-1) {\ttfamily read access to written field};
+\end{scope}
+
+\end{tikzpicture}
+\caption{\label{fig:access-graph}Access graph of a processing pipeline of four processors.}
+\end{figure}
+
+
+\section{Profiling streams Applications}
+The profiler of the {\em streams-performance} package is a drop-in implementation for replacing
+the default {\em process} implementation of \textsf{streams}. By using the {\ttfamily class}
+attribute of the process element, the implementation {\ttfamily streams.profiler.Process} can
+be used to monitor processor performances and data accesses. The resulting profile will be
+written to an XML file, which holds the process configuration, enriched by performance numbers
+and field access information.
+
+Figure \ref{fig:profilerExample} show the process specification for profiling a simple processor
+pipeline using the {\em streams-performance} package. The {\ttfamily file} attribute is used to
+define the output file for the profiling information.
+
+\begin{figure}[h!]
+\centering
+\begin{lstlisting}[language=XML]
+        <process input="data" class="streams.profiler.Process"
+                  file="/profiling.xml">
+           <example.Normalization />
+           <example.Sum />
+           <example.CreateImage />
+           <example.WriteImage />
+        </process>
+\end{lstlisting}
+\caption{\label{fig:profilerExample}Replacing the default process implementation to gain profiling information.}
+\end{figure}
+
+As mentioned before, the profiling data is written to an XML file. The package provides Java classes
+to parse and plot these files. The output is written as TeX files using the {\em tikz} package. To
+produce a performance plot from XML produced by the profiler, you need to run:
+\begin{center}
+\begin{tikzpicture}
+  \node[scale=0.8,anchor=west] at (0,0) {\ttfamily \# java -cp \$JAR profiler.tools.PerformancePlot /path/to/profile.xml};
+\end{tikzpicture}
+\end{center}
+where {\ttfamily \$JAR} denotes the {\em streams-performance} Java archive file.
+
+With the {\ttfamily profiler.tools.AccessGraph} class, the data access graph can be plotted from the
+same XML data file:
+\begin{center}
+\begin{tikzpicture}
+  \node[scale=0.8,anchor=west] at (0,0) {\ttfamily \# java -cp \$JAR profiler.tools.AccessGraph /path/to/profile.xml};
+\end{tikzpicture}
+\end{center}
+
+\end{document}

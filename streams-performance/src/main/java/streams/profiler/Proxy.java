@@ -13,10 +13,9 @@ import stream.StatefulProcessor;
 import stream.data.DataFactory;
 
 /**
- * @author chris
+ * @author Christian Bockermann
  *
  */
-
 public class Proxy implements StatefulProcessor {
 
     static Logger log = LoggerFactory.getLogger(Proxy.class);
@@ -25,10 +24,19 @@ public class Proxy implements StatefulProcessor {
     Long items = 0L;
     Long nanos = 0L;
     final TypeMap map;
+    final boolean trackTime;
+    final boolean trackKeys;
 
     public Proxy(Processor p) {
+        this(p, true, true);
+    }
+
+    public Proxy(Processor p, boolean recordTime, boolean recordKeys) {
         this.delegate = p;
-        map = new TypeMap(delegate);
+        this.trackTime = recordTime;
+        this.trackKeys = recordKeys;
+        log.info("processor: {}, tracking keys? {}", p, trackKeys);
+        this.map = new TypeMap(delegate);
     }
 
     public TypeMap types() {
@@ -41,19 +49,39 @@ public class Proxy implements StatefulProcessor {
     @Override
     public Data process(Data input) {
         items++;
-        Data data = new DataWrapper(input, map);
+        Data data = input;
 
-        // log.trace("processing delegate {} ({}) (items processed: {})",
-        // delegate, input, items);
-        final long t0 = System.nanoTime();
-        final Data result = delegate.process(data);
-        final long t1 = System.nanoTime();
-        nanos += t1 - t0;
+        if (trackKeys)
+            data = wrap(input);
+
+        final Data result;
+
+        if (trackTime) {
+            final long t0 = System.nanoTime();
+            result = delegate.process(data);
+            final long t1 = System.nanoTime();
+            nanos += t1 - t0;
+        } else {
+            result = delegate.process(data);
+        }
+
         if (result == null) {
             return null;
         }
 
-        return DataFactory.create(result);
+        if (trackKeys)
+            return unwrap(result);
+        else
+            return result;
+    }
+
+    public Data wrap(Data item) {
+        log.debug("Wrapping item to record attribute accesses");
+        return new DataWrapper(item, map);
+    }
+
+    public Data unwrap(Data item) {
+        return DataFactory.create(item);
     }
 
     /**

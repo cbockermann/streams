@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+\node[rectangle, rounded corners, fill=black!10, draw=black!60, minimum width=8cm, minimum height=3.75cm] (A) at (0,0) {};
+\node[anchor=west] at (-4,1.6) {\scriptsize{\ttfamily <application>}};
+\node[anchor=west] at (-4,-1.6) {\scriptsize{\ttfamily </application>}};
+
+\node[stream,scale=0.7] (S) at (-2.75,0.75) {};
+\node at (-2.75,0.25) {\scriptsize{\ttfamily <stream/>}};
+
+\node[process',scale=0.7] (P1) at (-1,0.75) {};
+\node at (-1,0.25) {\scriptsize{\ttfamily <process/>}};
+
+\node[stream,scale=0.7] (Q) at (0,-0.5) {};
+\node at (0,-1) {\scriptsize{\ttfamily <queue/>}};
+
+\node[process',scale=0.7] (P2) at (2,0.75) {};
+\node at (2,0.25) {\scriptsize{\ttfamily <process/>}};
+
+\node[process',scale=0.7] (P3) at (2,-0.5) {};
+\node at (2,-1) {\scriptsize{\ttfamily <process/>}};
+
+\draw[edge] (S) -- (P1);
+\draw[edge,fill=none] (P1) -- (0,0.75) -- (Q);
+\draw[edge,fill=none] (Q) -- (1,0.75) -- (P2);
+\draw[edge] (Q) -- (P3);
+
+\draw[draw=white] (-5,-2) rectangle (5,2.25);
+\end{tikzpicture}

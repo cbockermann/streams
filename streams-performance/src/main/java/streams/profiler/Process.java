@@ -41,6 +41,7 @@ public class Process extends DefaultProcess {
     final List<ProxyNode> proxies = new ArrayList<ProxyNode>();
 
     File file;
+    String[] profile = new String[] { "*" };
 
     /**
      * @see stream.runtime.AbstractProcess#init(stream.runtime.ApplicationContext)

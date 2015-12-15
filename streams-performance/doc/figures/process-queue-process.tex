@@ -1,0 +1,40 @@
+\node[stream] (S) at (0,0) {
+	\textsf{S}
+};
+\node[scale=0.75] at (0,-0.875){
+	\color{gruenRand}\textsf{Stream}
+};
+
+\node[stream] (Q) at (7.5,-2) {
+	\textsf{Q}
+};
+\node[scale=0.75] at (7.5,-2.875){
+	\color{gruenRand}\textsf{Queue}
+};
+
+\node[anchor=west,scale=0.75] at (10,-1.25) {
+	\color{blauRand}\textsf{Process $P_2$}
+};
+\node[process',minimum width=3.25cm] (P2) at (11.5,-2) {};
+\node[processor,minimum width=1.25cm,opacity=0.5] at (10.75,-2) {};
+\node[processor,minimum width=1.25cm,opacity=0.5] at (12.25,-2) {};
+
+\node[anchor=west,scale=0.75] at (3.125,0.75) {
+	\color{blauRand}\textsf{Process $P_1$}
+};
+
+\node[process',minimum width=5cm] (P1) at (5.5,0) {};
+\node[processor,minimum width=1.25cm,opacity=0.5] at (4,0) {};
+\node[processor,minimum width=1.25cm] (EN) at (5.5,0) {};
+\node[processor,minimum width=1.25cm,opacity=0.5] at (7,0) {};
+
+\draw[edge] (S) -- (P1);
+
+\draw[hellblauRand] (EN.north) -- +(0,0.75) -- +(0.5,0.75);
+\node[anchor=west] at (6,1.15) {
+	\color{hellblauRand}{\ttfamily stream.flow.Enqueue}
+};
+
+\draw[edge,fill=none,shorten <=0pt] (5.5,-0.25) -- (5.5,-2) -- (Q);
+\draw[fill=black!60,draw=black!60] (5.5,-0.25) circle (0.5ex);
+\draw[edge] (Q)  -- (P2);

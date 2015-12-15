@@ -1,0 +1,11 @@
+<application>
+
+   <stream id="data" class="example.DataStream" limit="100"/>
+
+   <process input="data" class="streams.profiler.Process" file="/tmp/example-profile.xml">
+    	<example.Normalization />
+    	<example.Sum/>
+    	<example.CreateImage/>
+    	<example.WriteImage/>
+   </process>
+</application>

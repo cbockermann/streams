@@ -1,0 +1,9 @@
+<application>
+
+	<stream id="data" class="stream.test.TestStream" limit="10" />
+	
+	<process input="data">
+		<streams.runtime.ProcessorWithFields key="answer" answer="42.0" />
+		<PrintData />
+	</process>
+</application>

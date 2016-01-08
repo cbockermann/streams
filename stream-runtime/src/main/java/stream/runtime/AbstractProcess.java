@@ -168,7 +168,7 @@ public abstract class AbstractProcess implements stream.Process {
      * @see stream.Process#execute()
      */
     @Override
-    public void execute() {
+    public void execute() throws Exception {
 
         try {
             if (getInput() == null) {
@@ -204,7 +204,7 @@ public abstract class AbstractProcess implements stream.Process {
             log.debug("No more items could be read, exiting this process.");
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw e;
         }
 
         try {

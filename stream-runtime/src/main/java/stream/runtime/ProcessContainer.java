@@ -180,6 +180,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
     protected Long startTime = 0L;
     protected Variables containerVariables = new Variables();
+    private Exception failFastReason = null;
 
     final static String[] extensions = new String[] { "stream.moa.MoaObjectFactory",
             "stream.script.JavaScriptProcessorFactory" };
@@ -669,6 +670,14 @@ public class ProcessContainer implements IContainer, Runnable {
                     log.info("Process {} finished!", p);
                     depGraph.remove(p);
                 }
+
+                @Override
+                public void processError(Process p, Exception e) {
+                    log.error("Process {} signaled an error: {}", p, e.getMessage());
+                    log.debug("Forcing fail-fast shutdown of application...");
+                    failFastReason = e;
+                    shutdown();
+                }
             });
 
             log.debug("Initializing stream-process [{}]", spu);
@@ -698,6 +707,11 @@ public class ProcessContainer implements IContainer, Runnable {
         long end = System.currentTimeMillis();
         log.trace("Running processes: {}", processes);
         log.debug("ProcessContainer finished all processes after {} ms", (end - start));
+
+        if (failFastReason != null) {
+            throw failFastReason;
+        }
+
         return end - start;
     }
 

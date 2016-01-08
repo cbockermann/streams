@@ -43,116 +43,122 @@ import org.slf4j.LoggerFactory;
  */
 public class ProcessThread extends Thread {
 
-	static Logger log = LoggerFactory.getLogger(ProcessThread.class);
+    static Logger log = LoggerFactory.getLogger(ProcessThread.class);
 
-	static final Map<String, Integer> PRIORITY_NAMES = new LinkedHashMap<String, Integer>();
+    static final Map<String, Integer> PRIORITY_NAMES = new LinkedHashMap<String, Integer>();
 
-	static {
-		PRIORITY_NAMES.put("lowest", Thread.MIN_PRIORITY);
-		PRIORITY_NAMES.put("low", 2);
-		PRIORITY_NAMES.put("normal", Thread.NORM_PRIORITY);
-		PRIORITY_NAMES.put("high", 7);
-		PRIORITY_NAMES.put("highest", Thread.MAX_PRIORITY);
-	}
+    static {
+        PRIORITY_NAMES.put("lowest", Thread.MIN_PRIORITY);
+        PRIORITY_NAMES.put("low", 2);
+        PRIORITY_NAMES.put("normal", Thread.NORM_PRIORITY);
+        PRIORITY_NAMES.put("high", 7);
+        PRIORITY_NAMES.put("highest", Thread.MAX_PRIORITY);
+    }
 
-	final stream.Process process;
-	final ApplicationContext context;
-	boolean running = false;
+    final stream.Process process;
+    final ApplicationContext context;
+    boolean running = false;
 
-	protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
+    protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
-	public ProcessThread(stream.Process process, ApplicationContext ctx) {
+    public ProcessThread(stream.Process process, ApplicationContext ctx) {
 
-		Integer prio = Thread.NORM_PRIORITY;
-		try {
-			String prioValue = process.getProperties().get("priority");
-			if (prioValue == null)
-				prioValue = "normal";
+        Integer prio = Thread.NORM_PRIORITY;
+        try {
+            String prioValue = process.getProperties().get("priority");
+            if (prioValue == null)
+                prioValue = "normal";
 
-			if (PRIORITY_NAMES.containsKey(prioValue)) {
-				prioValue = PRIORITY_NAMES.get(prioValue).toString();
-			}
+            if (PRIORITY_NAMES.containsKey(prioValue)) {
+                prioValue = PRIORITY_NAMES.get(prioValue).toString();
+            }
 
-			prio = new Integer(prioValue);
-		} catch (Exception e) {
-			prio = Thread.NORM_PRIORITY;
-		}
+            prio = new Integer(prioValue);
+        } catch (Exception e) {
+            prio = Thread.NORM_PRIORITY;
+        }
 
-		if (prio > Thread.MAX_PRIORITY)
-			prio = Thread.MAX_PRIORITY;
+        if (prio > Thread.MAX_PRIORITY)
+            prio = Thread.MAX_PRIORITY;
 
-		if (prio < Thread.MIN_PRIORITY)
-			prio = Thread.MIN_PRIORITY;
+        if (prio < Thread.MIN_PRIORITY)
+            prio = Thread.MIN_PRIORITY;
 
-		this.setPriority(prio);
-		this.process = process;
-		this.context = ctx;
-	}
+        this.setPriority(prio);
+        this.process = process;
+        this.context = ctx;
+    }
 
-	public void addListener(ProcessListener l) {
-		processListener.add(l);
-	}
+    public void addListener(ProcessListener l) {
+        processListener.add(l);
+    }
 
-	public void removeListener(ProcessListener l) {
-		processListener.remove(l);
-	}
+    public void removeListener(ProcessListener l) {
+        processListener.remove(l);
+    }
 
-	public boolean isRunning() {
-		return running;
-	}
+    public boolean isRunning() {
+        return running;
+    }
 
-	public stream.Process getProcess() {
-		return process;
-	}
+    public stream.Process getProcess() {
+        return process;
+    }
 
-	public void init() throws Exception {
-		log.debug("Initializing process with process-context...");
-		process.init(context);
-	}
+    public void init() throws Exception {
+        log.debug("Initializing process with process-context...");
+        process.init(context);
+    }
 
-	public void run() {
-		running = true;
-		try {
+    public void run() {
+        running = true;
+        try {
 
-			log.debug("Starting process {}, notifying listeners {}", process, processListener);
-			for (ProcessListener l : this.processListener) {
-				log.debug("Calling process-listener {}", l);
-				l.processStarted(process);
-			}
+            log.debug("Starting process {}, notifying listeners {}", process, processListener);
+            for (ProcessListener l : this.processListener) {
+                log.debug("Calling process-listener {}", l);
+                l.processStarted(process);
+            }
 
-			process.execute();
-		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String exceptionDetails = sw.toString();
-			log.error(exceptionDetails);
-			e.printStackTrace();
-			try {
-				process.finish();
-			} catch (Exception fe) {
-				sw = new StringWriter();
-				fe.printStackTrace(new PrintWriter(sw));
-				exceptionDetails = sw.toString();
-				log.error(exceptionDetails);
-			}
-		} finally {
+            process.execute();
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String exceptionDetails = sw.toString();
+            log.error(exceptionDetails);
+            // e.printStackTrace();
+            try {
+                process.finish();
+            } catch (Exception fe) {
+                sw = new StringWriter();
+                fe.printStackTrace(new PrintWriter(sw));
+                exceptionDetails = sw.toString();
+                log.error(exceptionDetails);
+            }
 
-			try {
-				log.debug("Process {} finished, notifying listeners: {}", process, processListener);
-				for (ProcessListener l : this.processListener) {
-					log.debug("   Calling listener {}", l);
-					l.processFinished(process);
-				}
-			} catch (Exception e) {
-				StringWriter sw = new StringWriter();
-				e.printStackTrace(new PrintWriter(sw));
-				String exceptionDetails = sw.toString();
-				log.error("Failed to call process listeners: {}", exceptionDetails);
-				// if (log.isDebugEnabled())
-				e.printStackTrace();
-			}
+            for (ProcessListener l : this.processListener) {
+                log.debug("Calling process-listener {} for error handling", l);
+                l.processError(process, e);
+            }
 
-			running = false;
-		}
-	}
+        } finally {
+
+            try {
+                log.debug("Process {} finished, notifying listeners: {}", process, processListener);
+                for (ProcessListener l : this.processListener) {
+                    log.debug("   Calling listener {}", l);
+                    l.processFinished(process);
+                }
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                String exceptionDetails = sw.toString();
+                log.error("Failed to call process listeners: {}", exceptionDetails);
+                // if (log.isDebugEnabled())
+                e.printStackTrace();
+            }
+
+            running = false;
+        }
+    }
 }

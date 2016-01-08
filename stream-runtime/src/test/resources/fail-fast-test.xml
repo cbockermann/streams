@@ -1,0 +1,9 @@
+<application>
+
+	<stream id="data" class="stream.test.TestStream" limit="10" />
+	
+	<process input="data">
+		<PrintData />
+		<stream.test.ThrowException every="4" />
+	</process>
+</application>

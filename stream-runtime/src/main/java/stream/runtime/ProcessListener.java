@@ -29,7 +29,9 @@ package stream.runtime;
  */
 public interface ProcessListener {
 
-	public void processStarted(stream.Process p);
+    public void processStarted(stream.Process p);
 
-	public void processFinished(stream.Process p);
+    public void processError(stream.Process p, Exception e);
+
+    public void processFinished(stream.Process p);
 }

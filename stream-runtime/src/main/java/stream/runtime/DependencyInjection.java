@@ -34,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.app.ComputeGraph;
-import stream.app.Reference;
 import stream.app.ComputeGraph.ServiceRef;
 import stream.app.ComputeGraph.SinkRef;
 import stream.app.ComputeGraph.SourceRef;
+import stream.app.Reference;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
@@ -53,313 +53,288 @@ import stream.service.Service;
  */
 public class DependencyInjection {
 
-	static Logger log = LoggerFactory.getLogger(DependencyInjection.class);
+    static Logger log = LoggerFactory.getLogger(DependencyInjection.class);
 
-	final List<Reference> refs = new ArrayList<Reference>();
+    final List<Reference> refs = new ArrayList<Reference>();
 
-	public void add(Reference ref) {
-		refs.add(ref);
-	}
+    public void add(Reference ref) {
+        refs.add(ref);
+    }
 
-	public void addAll(Collection<Reference> refs) {
-		this.refs.addAll(refs);
-	}
+    public void addAll(Collection<Reference> refs) {
+        this.refs.addAll(refs);
+    }
 
-	public void injectDependencies(ComputeGraph graph,
-			NamingService namingService) throws Exception {
+    public void injectDependencies(ComputeGraph graph, NamingService namingService) throws Exception {
 
-		log.debug("Found {} references to be resolved...", refs);
+        log.debug("Found {} references to be resolved...", refs);
 
-		Iterator<Reference> it = refs.iterator();
-		while (it.hasNext()) {
-			Reference ref = it.next();
-			log.debug("next unresolved reference is {}", ref);
-			boolean success = inject(ref, graph, namingService);
-			if (success) {
-				log.debug("Successfully injected dependency {}", ref);
-				it.remove();
-			} else {
-				log.error("Failed to resolve dependency {}", ref);
-			}
-		}
+        Iterator<Reference> it = refs.iterator();
+        while (it.hasNext()) {
+            Reference ref = it.next();
+            log.debug("next unresolved reference is {}", ref);
+            boolean success = inject(ref, graph, namingService);
+            if (success) {
+                log.debug("Successfully injected dependency {}", ref);
+                it.remove();
+            } else {
+                log.error("Failed to resolve dependency {}", ref);
+            }
+        }
 
-		if (!refs.isEmpty()) {
-			throw new Exception(refs.size() + " unresolved dependencies!");
-		}
-	}
+        if (!refs.isEmpty()) {
+            throw new Exception(refs.size() + " unresolved dependencies!");
+        }
+    }
 
-	private boolean inject(Reference ref, ComputeGraph graph,
-			NamingService namingService) throws Exception {
+    private boolean inject(Reference ref, ComputeGraph graph, NamingService namingService) throws Exception {
 
-		if (ref instanceof SinkRef)
-			return inject((SinkRef) ref, graph);
+        if (ref instanceof SinkRef)
+            return inject((SinkRef) ref, graph);
 
-		if (ref instanceof SourceRef)
-			return inject((SourceRef) ref, graph);
+        if (ref instanceof SourceRef)
+            return inject((SourceRef) ref, graph);
 
-		if (ref instanceof ServiceRef)
-			return inject((ServiceRef) ref, graph, namingService);
+        if (ref instanceof ServiceRef)
+            return inject((ServiceRef) ref, graph, namingService);
 
-		return false;
-	}
+        return false;
+    }
 
-	private boolean inject(SinkRef ref, ComputeGraph graph) throws Exception {
-		log.debug("Injecting sink reference {}", ref);
-		String[] refs = ref.ids();
-		Sink[] sinks = new Sink[refs.length];
-		for (int i = 0; i < sinks.length; i++) {
-			sinks[i] = graph.sinks().get(refs[i]);
-			if (sinks[i] == null) {
-				Queue queue = new stream.io.BlockingQueue();
-				queue.setId(refs[i]);
-				graph.addQueue(refs[i], queue);
+    private boolean inject(SinkRef ref, ComputeGraph graph) throws Exception {
+        log.debug("Injecting sink reference {}", ref);
+        String[] refs = ref.ids();
+        Sink[] sinks = new Sink[refs.length];
+        for (int i = 0; i < sinks.length; i++) {
+            sinks[i] = graph.sinks().get(refs[i]);
+            if (sinks[i] == null) {
+                Queue queue = new stream.io.DefaultBlockingQueue();
+                queue.setId(refs[i]);
+                graph.addQueue(refs[i], queue);
 
-				if (queue instanceof Service) {
-					graph.addService(refs[i], (Service) queue);
-				}
-				log.debug("Creating implicitly defined queue: {}", queue);
-				sinks[i] = queue;
-			}
-			graph.add(ref.object(), sinks[i]);
-		}
-		return injectResolvedReferences(ref.object(), ref.property(), sinks);
-	}
+                if (queue instanceof Service) {
+                    graph.addService(refs[i], (Service) queue);
+                }
+                log.debug("Creating implicitly defined queue: {}", queue);
+                sinks[i] = queue;
+            }
+            graph.add(ref.object(), sinks[i]);
+        }
+        return injectResolvedReferences(ref.object(), ref.property(), sinks);
+    }
 
-	private boolean inject(SourceRef ref, ComputeGraph graph) throws Exception {
-		log.debug("Injecting source reference {}", ref);
-		String[] refs = ref.ids();
-		Source[] sources = new Source[refs.length];
-		for (int i = 0; i < sources.length; i++) {
-			sources[i] = graph.sources().get(refs[i]);
-			// TODO Create Queue
-			if (sources[i] == null) {
-				Queue queue = new stream.io.BlockingQueue();
-				queue.setId(refs[i]);
-				graph.addQueue(refs[i], queue);
+    private boolean inject(SourceRef ref, ComputeGraph graph) throws Exception {
+        log.debug("Injecting source reference {}", ref);
+        String[] refs = ref.ids();
+        Source[] sources = new Source[refs.length];
+        for (int i = 0; i < sources.length; i++) {
+            sources[i] = graph.sources().get(refs[i]);
 
-				if (queue instanceof Service) {
-					graph.addService(refs[i], (Service) queue);
-				}
-				log.info("Created new Queue:{} {}", queue.getId(), queue);
-				sources[i] = queue;
-			}
+            if (sources[i] == null) {
+                Queue queue = new stream.io.DefaultBlockingQueue();
+                queue.setId(refs[i]);
+                graph.addQueue(refs[i], queue);
 
-			graph.add(sources[i], ref.object());
-		}
+                if (queue instanceof Service) {
+                    graph.addService(refs[i], (Service) queue);
+                }
+                log.info("Created new Queue:{} {}", queue.getId(), queue);
+                sources[i] = queue;
+            }
 
-		return injectResolvedReferences(ref.object(), ref.property(), sources);
-	}
+            graph.add(sources[i], ref.object());
+        }
 
-	private boolean inject(ServiceRef ref, ComputeGraph graph,
-			NamingService namingService) throws Exception {
-		log.debug("Injecting service reference {}", ref);
+        return injectResolvedReferences(ref.object(), ref.property(), sources);
+    }
 
-		String[] refs = ref.ids();
-		Service[] services = new Service[refs.length];
-		for (int i = 0; i < services.length; i++) {
-			services[i] = namingService.lookup(refs[i], ref.type());
-			if (services[i] == null) {
-				log.error("Referenced service '{}' not found!", refs[i]);
-				String obj = ref.object() + "";
-				if (ref.object() != null) {
-					obj = ref.object().getClass().getName();
-				}
+    private boolean inject(ServiceRef ref, ComputeGraph graph, NamingService namingService) throws Exception {
+        log.debug("Injecting service reference {}", ref);
 
-				throw new Exception("Service '" + refs[i] + "' referenced by "
-						+ obj + " can not be found!");
-			}
-		}
+        String[] refs = ref.ids();
+        Service[] services = new Service[refs.length];
+        for (int i = 0; i < services.length; i++) {
+            services[i] = namingService.lookup(refs[i], ref.type());
+            if (services[i] == null) {
+                log.error("Referenced service '{}' not found!", refs[i]);
+                String obj = ref.object() + "";
+                if (ref.object() != null) {
+                    obj = ref.object().getClass().getName();
+                }
 
-		return injectResolvedReferences(ref.object(), ref.property(), services);
-	}
+                throw new Exception("Service '" + refs[i] + "' referenced by " + obj + " can not be found!");
+            }
+        }
 
-	public boolean injectResolvedReferences(Object o, String property,
-			Object[] resolvedRefs) throws Exception {
-		String name = "set" + property.toLowerCase();
+        return injectResolvedReferences(ref.object(), ref.property(), services);
+    }
 
-		for (Method m : o.getClass().getMethods()) {
-			if (m.getName().toLowerCase().equalsIgnoreCase(name)
-					&& m.getParameterTypes().length == 1) {
+    public boolean injectResolvedReferences(Object o, String property, Object[] resolvedRefs) throws Exception {
+        String name = "set" + property.toLowerCase();
 
-				Class<?> type = m.getParameterTypes()[0];
-				if (type.isArray()) {
+        for (Method m : o.getClass().getMethods()) {
+            if (m.getName().toLowerCase().equalsIgnoreCase(name) && m.getParameterTypes().length == 1) {
 
-					Object values = Array.newInstance(type.getComponentType(),
-							resolvedRefs.length);
-					for (int i = 0; i < Array.getLength(values); i++) {
-						Array.set(values, i, (resolvedRefs[i]));
-					}
-					log.debug("Injecting   '{}'.{}   <-- " + values, o,
-							property);
-					log.debug("Calling method  '{}'", m);
-					// try {
-					m.invoke(o, values);
-					// } catch (IllegalArgumentException e) {
-					// throw new IllegalArgumentException(
-					// "IllegalArgumentException" + o + ":"
-					// + values.toString());
-					//
-					// }
-				} else {
-					log.debug("Injecting   '{}'.{}   <-- " + resolvedRefs[0],
-							o, property);
-					log.debug("Calling method  '{}' with arg '{}'", m,
-							resolvedRefs[0]);
-					// try {
-					m.invoke(o, new Object[] { resolvedRefs[0] });
-					// } catch (IllegalArgumentException e) {
-					// throw new IllegalArgumentException(
-					// "IllegalArgumentException" + o + ":"
-					// + resolvedRefs[0]);
-					// }
-				}
-				return true;
-			}
-		}
+                Class<?> type = m.getParameterTypes()[0];
+                if (type.isArray()) {
 
-		return false;
-	}
+                    Object values = Array.newInstance(type.getComponentType(), resolvedRefs.length);
+                    for (int i = 0; i < Array.getLength(values); i++) {
+                        Array.set(values, i, (resolvedRefs[i]));
+                    }
+                    log.debug("Injecting   '{}'.{}   <-- " + values, o, property);
+                    log.debug("Calling method  '{}'", m);
+                    m.invoke(o, values);
 
-	@SuppressWarnings("unchecked")
-	public static Class<? extends Sink> hasSinkSetter(String name, Object o) {
+                } else {
+                    log.debug("Injecting   '{}'.{}   <-- " + resolvedRefs[0], o, property);
+                    log.debug("Calling method  '{}' with arg '{}'", m, resolvedRefs[0]);
+                    m.invoke(o, new Object[] { resolvedRefs[0] });
+                }
+                return true;
+            }
+        }
 
-		for (Method m : o.getClass().getMethods()) {
+        return false;
+    }
 
-			if (!m.getName().toLowerCase().equals("set" + name))
-				continue;
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Sink> hasSinkSetter(String name, Object o) {
 
-			if (ParameterInjection.isQueueSetter(m)) {
-				return (Class<? extends Sink>) m.getParameterTypes()[0];
-			}
+        for (Method m : o.getClass().getMethods()) {
 
-		}
+            if (!m.getName().toLowerCase().equals("set" + name))
+                continue;
 
-		return null;
-	}
+            if (ParameterInjection.isQueueSetter(m)) {
+                return (Class<? extends Sink>) m.getParameterTypes()[0];
+            }
 
-	@SuppressWarnings("unchecked")
-	public static Class<? extends Service> hasServiceSetter(String name,
-			Object o) {
-		try {
+        }
 
-			for (Method m : o.getClass().getMethods()) {
-				if (m.getName().equalsIgnoreCase("set" + name)
-						&& isServiceSetter(m)) {
-					return (Class<? extends Service>) m.getParameterTypes()[0];
-				}
-			}
+        return null;
+    }
 
-			return null;
-		} catch (Exception e) {
-			log.error("Failed to determine service-setter: {}", e.getMessage());
-			return null;
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Service> hasServiceSetter(String name, Object o) {
+        try {
 
-	/**
-	 * This method checks whether the provided method is a service setter, i.e.
-	 * it is a setter method to inject service references into the object.
-	 * 
-	 * This requires the method to provide the following characteristics:
-	 * <ol>
-	 * <li>Its names starts with <code>set</code> and provides additional
-	 * characters, i.e. <code>set</code> alone is not enough.</li>
-	 * <li>It takes a single parameter, which is a service implementation</li>
-	 * </ol>
-	 * 
-	 * @param m
-	 * @return
-	 */
-	public static boolean isServiceSetter(Method m) {
+            for (Method m : o.getClass().getMethods()) {
+                if (m.getName().equalsIgnoreCase("set" + name) && isServiceSetter(m)) {
+                    return (Class<? extends Service>) m.getParameterTypes()[0];
+                }
+            }
 
-		if (!m.getName().startsWith("set"))
-			return false;
+            return null;
+        } catch (Exception e) {
+            log.error("Failed to determine service-setter: {}", e.getMessage());
+            return null;
+        }
+    }
 
-		Class<?>[] paramTypes = m.getParameterTypes();
-		if (paramTypes.length != 1)
-			return false;
+    /**
+     * This method checks whether the provided method is a service setter, i.e.
+     * it is a setter method to inject service references into the object.
+     * 
+     * This requires the method to provide the following characteristics:
+     * <ol>
+     * <li>Its names starts with <code>set</code> and provides additional
+     * characters, i.e. <code>set</code> alone is not enough.</li>
+     * <li>It takes a single parameter, which is a service implementation</li>
+     * </ol>
+     * 
+     * @param m
+     * @return
+     */
+    public static boolean isServiceSetter(Method m) {
 
-		return isServiceImplementation(paramTypes[0]);
-	}
+        if (!m.getName().startsWith("set"))
+            return false;
 
-	public static boolean isSourceSetter(Method m) {
-		if (!m.getName().startsWith("set"))
-			return false;
+        Class<?>[] paramTypes = m.getParameterTypes();
+        if (paramTypes.length != 1)
+            return false;
 
-		Class<?>[] paramTypes = m.getParameterTypes();
-		if (paramTypes.length != 1)
-			return false;
+        return isServiceImplementation(paramTypes[0]);
+    }
 
-		return Source.class.isAssignableFrom(paramTypes[0]);
-	}
+    public static boolean isSourceSetter(Method m) {
+        if (!m.getName().startsWith("set"))
+            return false;
 
-	public static boolean isSinkSetter(Method m) {
-		return isSetter(m, Sink.class);
-	}
+        Class<?>[] paramTypes = m.getParameterTypes();
+        if (paramTypes.length != 1)
+            return false;
 
-	public static boolean isSinkArraySetter(Method m) {
-		return isArraySetter(m, Sink.class);
-	}
+        return Source.class.isAssignableFrom(paramTypes[0]);
+    }
 
-	public static boolean isSetter(Method m, Class<?> type) {
-		if (!m.getName().startsWith("set")) {
-			return false;
-		}
+    public static boolean isSinkSetter(Method m) {
+        return isSetter(m, Sink.class);
+    }
 
-		Class<?>[] paramTypes = m.getParameterTypes();
-		if (paramTypes.length != 1) {
-			return false;
-		}
+    public static boolean isSinkArraySetter(Method m) {
+        return isArraySetter(m, Sink.class);
+    }
 
-		if (paramTypes[0].isArray()) {
-			return type.isAssignableFrom(paramTypes[0].getComponentType());
-		} else {
-			return type.isAssignableFrom(paramTypes[0]);
-		}
-	}
+    public static boolean isSetter(Method m, Class<?> type) {
+        if (!m.getName().startsWith("set")) {
+            return false;
+        }
 
-	public static boolean isArraySetter(Method m, Class<?> type) {
-		if (isSetter(m, type)) {
-			return m.getParameterTypes()[0].isArray();
-		}
-		return false;
-	}
+        Class<?>[] paramTypes = m.getParameterTypes();
+        if (paramTypes.length != 1) {
+            return false;
+        }
 
-	/**
-	 * This method checks whether the given class implements the Service
-	 * interface.
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public static boolean isServiceImplementation(Class<?> clazz) {
+        if (paramTypes[0].isArray()) {
+            return type.isAssignableFrom(paramTypes[0].getComponentType());
+        } else {
+            return type.isAssignableFrom(paramTypes[0]);
+        }
+    }
 
-		if (clazz == Service.class)
-			return true;
+    public static boolean isArraySetter(Method m, Class<?> type) {
+        if (isSetter(m, type)) {
+            return m.getParameterTypes()[0].isArray();
+        }
+        return false;
+    }
 
-		if (clazz.isArray()) {
-			log.debug("checking array component-type for service implementation");
-			return isServiceImplementation(clazz.getComponentType());
-			// log.debug("Injection of arrays of service references is not yet supported!");
-			// return false;
-		}
+    /**
+     * This method checks whether the given class implements the Service
+     * interface.
+     * 
+     * @param clazz
+     * @return
+     */
+    public static boolean isServiceImplementation(Class<?> clazz) {
 
-		// TODO: Is 'isAssignableFrom(..)' the better way here?
-		//
-		if (Service.class.isAssignableFrom(clazz))
-			return true;
+        if (clazz == Service.class)
+            return true;
 
-		for (Class<?> intf : clazz.getInterfaces()) {
-			log.trace("Checking if {} = {}", intf, Service.class);
-			if (intf.equals(Service.class) || intf == Service.class) {
-				log.trace("Yes, class {} implements the service interface!",
-						clazz);
-				return true;
-			}
-		}
+        if (clazz.isArray()) {
+            log.debug("checking array component-type for service implementation");
+            return isServiceImplementation(clazz.getComponentType());
+            // log.debug("Injection of arrays of service references is not yet
+            // supported!");
+            // return false;
+        }
 
-		log.trace("No, class {} does not implement the service interface!",
-				clazz);
-		return false;
-	}
+        // TODO: Is 'isAssignableFrom(..)' the better way here?
+        //
+        if (Service.class.isAssignableFrom(clazz))
+            return true;
+
+        for (Class<?> intf : clazz.getInterfaces()) {
+            log.trace("Checking if {} = {}", intf, Service.class);
+            if (intf.equals(Service.class) || intf == Service.class) {
+                log.trace("Yes, class {} implements the service interface!", clazz);
+                return true;
+            }
+        }
+
+        log.trace("No, class {} does not implement the service interface!", clazz);
+        return false;
+    }
 }

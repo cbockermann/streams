@@ -46,76 +46,78 @@ import stream.util.Variables;
  */
 public class QueueElementHandler implements ElementHandler {
 
-	static Logger log = LoggerFactory.getLogger(QueueElementHandler.class);
+    static Logger log = LoggerFactory.getLogger(QueueElementHandler.class);
 
-	/**
-	 * @see stream.runtime.ElementHandler#getKey()
-	 */
-	@Override
-	public String getKey() {
-		return "Queue";
-	}
+    final static String DEFAULT_QUEUE_IMPL = "stream.io.DefaultBlockingQueue";
 
-	/**
-	 * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
-	 */
-	@Override
-	public boolean handlesElement(Element element) {
-		return getKey().equalsIgnoreCase(element.getNodeName());
-	}
+    /**
+     * @see stream.runtime.ElementHandler#getKey()
+     */
+    @Override
+    public String getKey() {
+        return "Queue";
+    }
 
-	/**
-	 * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer,
-	 *      org.w3c.dom.Element)
-	 */
-	@Override
-	public void handleElement(ProcessContainer container, Element element, Variables variables,
-			DependencyInjection dependencyInjection) throws Exception {
+    /**
+     * @see stream.runtime.ElementHandler#handlesElement(org.w3c.dom.Element)
+     */
+    @Override
+    public boolean handlesElement(Element element) {
+        return getKey().equalsIgnoreCase(element.getNodeName());
+    }
 
-		final ComputeGraph computeGraph = container.computeGraph();
+    /**
+     * @see stream.runtime.ElementHandler#handleElement(stream.container.ProcessContainer,
+     *      org.w3c.dom.Element)
+     */
+    @Override
+    public void handleElement(ProcessContainer container, Element element, Variables variables,
+            DependencyInjection dependencyInjection) throws Exception {
 
-		String className = element.getAttribute("class");
-		if (className == null || className.trim().isEmpty())
-			className = "stream.io.DefaultBlockingQueue";
+        final ComputeGraph computeGraph = container.computeGraph();
 
-		Map<String, String> params = container.getObjectFactory().getAttributes(element);
-		if (!params.containsKey("class")) {
-			params.put("class", "stream.io.DefaultBlockingQueue");
-		}
+        String className = element.getAttribute("class");
+        if (className == null || className.trim().isEmpty())
+            className = DEFAULT_QUEUE_IMPL;
 
-		String id = element.getAttribute("id");
-		if (id == null || id.trim().isEmpty())
-			throw new Exception("No 'id' attribute defined for queue!");
+        Map<String, String> params = container.getObjectFactory().getAttributes(element);
+        if (!params.containsKey("class")) {
+            params.put("class", DEFAULT_QUEUE_IMPL);
+        }
 
-		String copiesString = element.getAttribute("copies");
-		Copy[] copies = null;
-		if (copiesString != null && !copiesString.isEmpty()) {
-			copiesString = variables.expand(copiesString);
-			copies = CopiesUtils.parse(copiesString);
-		} else {
-			Copy c = new Copy();
-			c.setId(id);
-			copies = new Copy[] { c };
-		}
-		if (copies == null) {
-			log.info("queues where not created, due to 'zero' copies");
-			return;
-		}
-		for (Copy copy : copies) {
-			Variables local = new Variables(variables);
+        String id = element.getAttribute("id");
+        if (id == null || id.trim().isEmpty())
+            throw new Exception("No 'id' attribute defined for queue!");
 
-			CopiesUtils.addCopyIds(local, copy);
-			String cid = local.expand(id);
+        String copiesString = element.getAttribute("copies");
+        Copy[] copies = null;
+        if (copiesString != null && !copiesString.isEmpty()) {
+            copiesString = variables.expand(copiesString);
+            copies = CopiesUtils.parse(copiesString);
+        } else {
+            Copy c = new Copy();
+            c.setId(id);
+            copies = new Copy[] { c };
+        }
+        if (copies == null) {
+            log.info("queues where not created, due to 'zero' copies");
+            return;
+        }
+        for (Copy copy : copies) {
+            Variables local = new Variables(variables);
 
-			Queue queue = (Queue) container.getObjectFactory().create(className, params,
-					ObjectFactory.createConfigDocument(element), local);
-			container.registerQueue(copy.getId(), queue, true);
-			computeGraph.addQueue(cid, queue);
+            CopiesUtils.addCopyIds(local, copy);
+            String cid = local.expand(id);
 
-			if (queue instanceof Service) {
-				container.getContext().register(cid, (Service) queue);
-				computeGraph.addService(cid, (Service) queue);
-			}
-		}
-	}
+            Queue queue = (Queue) container.getObjectFactory().create(className, params,
+                    ObjectFactory.createConfigDocument(element), local);
+            container.registerQueue(copy.getId(), queue, true);
+            computeGraph.addQueue(cid, queue);
+
+            if (queue instanceof Service) {
+                container.getContext().register(cid, (Service) queue);
+                computeGraph.addService(cid, (Service) queue);
+            }
+        }
+    }
 }

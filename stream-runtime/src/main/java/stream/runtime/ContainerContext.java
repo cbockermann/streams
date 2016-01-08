@@ -40,152 +40,153 @@ import stream.service.ServiceInfo;
  */
 public class ContainerContext implements ApplicationContext {
 
-	final static String CONTEXT_NAME = "container";
-	static Logger log = LoggerFactory.getLogger(ContainerContext.class);
-	final Map<String, String> properties = new LinkedHashMap<String, String>();
-	NamingService namingService;
-	String name;
+    final static String CONTEXT_NAME = "container";
+    static Logger log = LoggerFactory.getLogger(ContainerContext.class);
+    final Map<String, String> properties = new LinkedHashMap<String, String>();
+    NamingService namingService;
+    String name;
 
-	final String id;
-	final Map<String, NamingService> remoteContainers = new LinkedHashMap<String, NamingService>();
+    final String id;
+    final Map<String, NamingService> remoteContainers = new LinkedHashMap<String, NamingService>();
 
-	public ContainerContext(String id) {
-		this(id, new DefaultNamingService());
-	}
+    public ContainerContext(String id) {
+        this(id, new DefaultNamingService());
+    }
 
-	public ContainerContext(String id, NamingService ns) {
-		this(id, "local", ns);
-	}
+    public ContainerContext(String id, NamingService ns) {
+        this(id, "local", ns);
+    }
 
-	public ContainerContext(String id, String name, NamingService ns) {
-		this.id = id;
-		this.namingService = ns;
-		log.debug("Creating experiment-context '{}'", name);
-		this.name = name;
-	}
+    public ContainerContext(String id, String name, NamingService ns) {
+        this.id = id;
+        this.namingService = ns;
+        log.debug("Creating experiment-context '{}'", name);
+        this.name = name;
+    }
 
-	/**
-	 * @see stream.Context#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
+    /**
+     * @see stream.Context#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the namingService
-	 */
-	public NamingService getNamingService() {
-		return namingService;
-	}
+    /**
+     * @return the namingService
+     */
+    public NamingService getNamingService() {
+        return namingService;
+    }
 
-	/**
-	 * @param namingService
-	 *            the namingService to set
-	 */
-	public void setNamingService(NamingService namingService) {
-		this.namingService = namingService;
-	}
+    /**
+     * @param namingService
+     *            the namingService to set
+     */
+    public void setNamingService(NamingService namingService) {
+        this.namingService = namingService;
+    }
 
-	public Map<String, String> getProperties() {
-		return properties;
-	}
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
-	public void setProperty(String key, String value) {
-		if (value == null)
-			properties.remove(key);
-		else
-			properties.put(key, value);
-	}
+    public void setProperty(String key, String value) {
+        if (value == null)
+            properties.remove(key);
+        else
+            properties.put(key, value);
+    }
 
-	/**
-	 * @see stream.Context#resolve(java.lang.String)
-	 */
-	@Override
-	public Object resolve(String variable) {
+    /**
+     * @see stream.Context#resolve(java.lang.String)
+     */
+    @Override
+    public Object resolve(String variable) {
 
-		if ("application.id".equals(variable) || "id".equals(variable)) {
-			return id;
-		}
+        if ("application.id".equals(variable) || "id".equals(variable)) {
+            return id;
+        }
 
-		if (variable == null)
-			return null;
+        if (variable == null)
+            return null;
 
-		String var = variable.trim();
-		if (var.startsWith("container.")) {
-			String key = var.substring(CONTEXT_NAME.length() + 1);
-			if (properties.containsKey(key))
-				return properties.get(key);
-		}
+        String var = variable.trim();
+        if (var.startsWith("container.")) {
+            String key = var.substring(CONTEXT_NAME.length() + 1);
+            if (properties.containsKey(key))
+                return properties.get(key);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
-	 */
-	// @Override
-	public <T extends Service> T lookup(String ref, Class<T> serviceClass) throws Exception {
-		return namingService.lookup(ref, serviceClass);
-	}
+    /**
+     * @see stream.runtime.DefaultNamingService#lookup(java.lang.String)
+     */
+    // @Override
+    public <T extends Service> T lookup(String ref, Class<T> serviceClass) throws Exception {
+        return namingService.lookup(ref, serviceClass);
+    }
 
-	/**
-	 * @see stream.runtime.DefaultNamingService#register(java.lang.String,
-	 *      stream.service.Service)
-	 */
-	public void register(String ref, Service p) throws Exception {
-		namingService.register(ref, p);
-	}
+    /**
+     * @see stream.runtime.DefaultNamingService#register(java.lang.String,
+     *      stream.service.Service)
+     */
+    public void register(String ref, Service p) throws Exception {
+        namingService.register(ref, p);
+    }
 
-	/**
-	 * @see stream.runtime.DefaultNamingService#unregister(java.lang.String)
-	 */
-	public void unregister(String ref) throws Exception {
-		namingService.unregister(ref);
-	}
+    /**
+     * @see stream.runtime.DefaultNamingService#unregister(java.lang.String)
+     */
+    public void unregister(String ref) throws Exception {
+        namingService.unregister(ref);
+    }
 
-	public Map<String, ServiceInfo> list() throws Exception {
-		return namingService.list();
-	}
+    public Map<String, ServiceInfo> list() throws Exception {
+        return namingService.list();
+    }
 
-	/**
-	 * @see stream.service.NamingService#addContainer(java.lang.String,
-	 *      stream.service.NamingService)
-	 */
-	public void addContainer(String key, NamingService remoteNamingService) throws Exception {
-		log.info("Adding remote container '{}' at {}", key, remoteNamingService);
-		// remoteContainers.put(key, remoteNamingService);
-		this.namingService.addContainer(key, remoteNamingService);
-	}
+    /**
+     * @see stream.service.NamingService#addContainer(java.lang.String,
+     *      stream.service.NamingService)
+     * @deprecated
+     */
+    public void addContainer(String key, NamingService remoteNamingService) throws Exception {
+        log.info("Adding remote container '{}' at {}", key, remoteNamingService);
+        // remoteContainers.put(key, remoteNamingService);
+        this.namingService.addContainer(key, remoteNamingService);
+    }
 
-	@Override
-	public boolean contains(String key) {
-		if (key.startsWith("container.")) {
-			key = key.substring(CONTEXT_NAME.length() + 1);
-			return properties.containsKey(key);
-		}
-		if (key.startsWith("application.")) {
-			key = key.substring("application.".length());
-			return properties.containsKey("key");
-		}
+    @Override
+    public boolean contains(String key) {
+        if (key.startsWith("container.")) {
+            key = key.substring(CONTEXT_NAME.length() + 1);
+            return properties.containsKey(key);
+        }
+        if (key.startsWith("application.")) {
+            key = key.substring("application.".length());
+            return properties.containsKey("key");
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * @see stream.Context#getParent()
-	 */
-	@Override
-	public Context getParent() {
-		// A container context is the root context
-		return null;
-	}
+    /**
+     * @see stream.Context#getParent()
+     */
+    @Override
+    public Context getParent() {
+        // A container context is the root context
+        return null;
+    }
 
-	/**
-	 * @see stream.Context#path()
-	 */
-	@Override
-	public String path() {
-		return "application:" + getId();
-	}
+    /**
+     * @see stream.Context#path()
+     */
+    @Override
+    public String path() {
+        return "application:" + getId();
+    }
 }

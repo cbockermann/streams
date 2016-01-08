@@ -50,230 +50,228 @@ import stream.io.Source;
  */
 public abstract class AbstractProcess implements stream.Process {
 
-	static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
+    static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
-	private String id = UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
 
-	protected Context parentContext;
-	protected ProcessContext processContext;
+    protected Context parentContext;
+    protected ProcessContext processContext;
 
-	protected Source source;
-	protected Sink sink;
+    protected Source source;
+    protected Sink sink;
 
-	protected final List<Processor> processors = new ArrayList<Processor>();
+    protected final List<Processor> processors = new ArrayList<Processor>();
 
-	protected final Map<String, String> properties = new LinkedHashMap<String, String>();
+    protected final Map<String, String> properties = new LinkedHashMap<String, String>();
 
-	protected Priority priority = new Priority();
+    protected Priority priority = new Priority();
 
-	protected String onError = "exit";
+    protected String onError = "exit";
 
-	/**
-	 * @see stream.Process#setInput(stream.io.Source)
-	 */
-	@Override
-	public void setInput(Source ds) {
-		this.source = ds;
-	}
+    /**
+     * @see stream.Process#setInput(stream.io.Source)
+     */
+    @Override
+    public void setInput(Source ds) {
+        this.source = ds;
+    }
 
-	/**
-	 * @see stream.Process#getInput()
-	 */
-	@Override
-	public Source getInput() {
-		return this.source;
-	}
+    /**
+     * @see stream.Process#getInput()
+     */
+    @Override
+    public Source getInput() {
+        return this.source;
+    }
 
-	/**
-	 * @see stream.Process#setOutput(stream.io.Sink)
-	 */
-	@Override
-	public void setOutput(Sink sink) {
-		this.sink = sink;
-	}
+    /**
+     * @see stream.Process#setOutput(stream.io.Sink)
+     */
+    @Override
+    public void setOutput(Sink sink) {
+        this.sink = sink;
+    }
 
-	/**
-	 * @see stream.Process#getOutput()
-	 */
-	@Override
-	public Sink getOutput() {
-		return this.sink;
-	}
+    /**
+     * @see stream.Process#getOutput()
+     */
+    @Override
+    public Sink getOutput() {
+        return this.sink;
+    }
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	public Data process(Data data) {
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    public Data process(Data data) {
 
-		log.trace("{}: processing data {}", this, data);
+        log.trace("{}: processing data {}", this, data);
 
-		for (Processor proc : processors) {
-			data = proc.process(data);
-			if (data == null)
-				return null;
-		}
+        for (Processor proc : processors) {
+            data = proc.process(data);
+            if (data == null)
+                return null;
+        }
 
-		return data;
-	}
+        return data;
+    }
 
-	/**
-	 * @see stream.DataProcessor#init(stream.runtime.Context)
-	 */
-	public void init(ApplicationContext context) throws Exception {
+    /**
+     * @see stream.DataProcessor#init(stream.runtime.Context)
+     */
+    public void init(ApplicationContext context) throws Exception {
 
-		parentContext = context;
-		processContext = new ProcessContextImpl(this.getId(), context);
+        parentContext = context;
+        processContext = new ProcessContextImpl(this.getId(), context);
 
-		for (Processor proc : processors) {
-			if (proc instanceof StatefulProcessor)
-				((StatefulProcessor) proc).init(processContext);
-		}
-		log.debug("Process {} (source: {}) initialized, processors: ", this, getInput());
-	}
+        for (Processor proc : processors) {
+            if (proc instanceof StatefulProcessor)
+                ((StatefulProcessor) proc).init(processContext);
+        }
+        log.debug("Process {} (source: {}) initialized, processors: ", this, getInput());
+    }
 
-	/**
-	 * @see stream.DataProcessor#finish()
-	 */
-	public void finish() throws Exception {
-		log.debug("Finishing process {} (source: {})...", this, this.getInput());
-		for (Processor proc : processors) {
-			if (proc instanceof StatefulProcessor) {
-				try {
-					log.debug("Finishing processor {}", proc);
-					((StatefulProcessor) proc).finish();
-				} catch (Exception e) {
-					log.error("Failed to finish processor '{}': {}", proc, e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+    /**
+     * @see stream.DataProcessor#finish()
+     */
+    public void finish() throws Exception {
+        log.debug("Finishing process {} (source: {})...", this, this.getInput());
+        for (Processor proc : processors) {
+            if (proc instanceof StatefulProcessor) {
+                try {
+                    log.debug("Finishing processor {}", proc);
+                    ((StatefulProcessor) proc).finish();
+                } catch (Exception e) {
+                    log.error("Failed to finish processor '{}': {}", proc, e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-	/**
-	 * @see stream.Process#execute()
-	 */
-	@Override
-	public void execute() {
+    /**
+     * @see stream.Process#execute()
+     */
+    @Override
+    public void execute() {
 
-		try {
-			if (getInput() == null) {
-				log.error("Could not read from input!");
-				throw new IOException("Can't read from input");
-			}
-			Data item = getInput().read();
+        try {
+            if (getInput() == null) {
+                log.error("Could not read from input!");
+                throw new IOException("Can't read from input");
+            }
+            Data item = getInput().read();
 
-			while (item != null) {
-				// process the item
-				//
-				try {
-					item = process(item);
+            while (item != null) {
+                // process the item
+                //
+                try {
+                    item = process(item);
 
-					if (item != null && getOutput() != null) {
-						log.trace("Sending process output to connected sink {}", getOutput());
-						getOutput().write(item);
-					}
+                    if (item != null && getOutput() != null) {
+                        log.trace("Sending process output to connected sink {}", getOutput());
+                        getOutput().write(item);
+                    }
 
-					// obtain the next item to be processed
-					//
-					item = getInput().read();
+                    // obtain the next item to be processed
+                    //
+                    item = getInput().read();
 
-				} catch (Exception e) {
-					if ("continue".equalsIgnoreCase(onError)) {
-						log.error("Error while processing data: {}", e.getMessage());
-						log.error("   continuing with next item...");
-					} else {
-						throw e;
-					}
-				}
-			}
-			log.debug("No more items could be read, exiting this process.");
+                } catch (Exception e) {
+                    if ("continue".equalsIgnoreCase(onError)) {
+                        log.error("Error while processing data: {}", e.getMessage());
+                        log.error("   continuing with next item...");
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            log.debug("No more items could be read, exiting this process.");
 
-		} catch (Exception e) {
-			// TODO ExceptionHandling
-			log.error("Aborting process due to errors: {}", e.getMessage());
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-		try {
-			finish();
-		} catch (Exception e) {
-			log.warn("Error while finishing process: {}", e.getMessage());
-			e.printStackTrace();
-		}
-	}
+        try {
+            finish();
+        } catch (Exception e) {
+            log.warn("Error while finishing process: {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * @return the context
-	 */
-	public ProcessContext getContext() {
-		return processContext;
-	}
+    /**
+     * @return the context
+     */
+    public ProcessContext getContext() {
+        return processContext;
+    }
 
-	public void add(Processor p) {
-		processors.add(p);
-	}
+    public void add(Processor p) {
+        processors.add(p);
+    }
 
-	public void remove(Processor p) {
-		processors.remove(p);
-	}
+    public void remove(Processor p) {
+        processors.remove(p);
+    }
 
-	public List<Processor> getProcessors() {
-		return processors;
-	}
+    public List<Processor> getProcessors() {
+        return processors;
+    }
 
-	public Map<String, String> getProperties() {
-		return this.properties;
-	}
+    public Map<String, String> getProperties() {
+        return this.properties;
+    }
 
-	/**
-	 * @return the priority
-	 */
-	public Priority getPriority() {
-		return priority;
-	}
+    /**
+     * @return the priority
+     */
+    public Priority getPriority() {
+        return priority;
+    }
 
-	/**
-	 * @param priority
-	 *            the priority to set
-	 */
-	public void setPriority(Priority priority) {
-		this.priority = priority;
-	}
+    /**
+     * @param priority
+     *            the priority to set
+     */
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
 
-	/**
-	 * @return the onError
-	 */
-	public String getOnError() {
-		return onError;
-	}
+    /**
+     * @return the onError
+     */
+    public String getOnError() {
+        return onError;
+    }
 
-	/**
-	 * @param onError
-	 *            the onError to set
-	 */
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    /**
+     * @param onError
+     *            the onError to set
+     */
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
 
-	public String toString() {
-		if (id != null)
-			return getClass().getSimpleName() + "['" + id + "']";
+    public String toString() {
+        if (id != null)
+            return getClass().getSimpleName() + "['" + id + "']";
 
-		return this.getClass().getSimpleName() + "['" + super.toString() + "']";
-	}
+        return this.getClass().getSimpleName() + "['" + super.toString() + "']";
+    }
 }

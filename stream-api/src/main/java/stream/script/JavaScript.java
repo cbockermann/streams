@@ -47,151 +47,149 @@ import stream.util.URLUtilities;
  */
 @Description(group = "Data Stream.Processing.Script")
 public class JavaScript extends Script {
-	static Logger log = LoggerFactory.getLogger(JavaScript.class);
+    static Logger log = LoggerFactory.getLogger(JavaScript.class);
 
-	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-	final static String preamble = URLUtilities
-			.readContentOrEmpty(JavaScript.class
-					.getResource("/stream/data/JavaScript.preamble"));
+    final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+    final static String preamble = URLUtilities
+            .readContentOrEmpty(JavaScript.class.getResource("/stream/data/JavaScript.preamble"));
 
-	transient String theScript = null;
-	String script = null;
+    transient String theScript = null;
+    String script = null;
 
-	Invocable impl;
+    Invocable impl;
 
-	/**
-	 * @param engine
-	 */
-	public JavaScript() {
-		super(scriptEngineManager.getEngineByName("JavaScript"));
-	}
+    /**
+     * @param engine
+     */
+    public JavaScript() {
+        super(scriptEngineManager.getEngineByName("JavaScript"));
+    }
 
-	/**
-	 * @see stream.data.AbstractProcessor#init(stream.Context)
-	 */
-	@Override
-	public void init(ProcessContext ctx) throws Exception {
-		super.init(ctx);
-		this.script = loadScript();
+    /**
+     * @see stream.data.AbstractProcessor#init(stream.Context)
+     */
+    @Override
+    public void init(ProcessContext ctx) throws Exception {
+        super.init(ctx);
+        this.script = loadScript();
 
-		try {
-			this.initScript();
+        try {
+            this.initScript();
 
-			if (impl != null && (impl instanceof StatefulProcessor)) {
-				try {
-					((StatefulProcessor) impl).init(ctx);
-				} catch (NoSuchMethodException nsm) {
-					log.warn("No init() function defined in JavaScript.");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+            if (impl != null && (impl instanceof StatefulProcessor)) {
+                try {
+                    ((StatefulProcessor) impl).init(ctx);
+                } catch (NoSuchMethodException nsm) {
+                    log.warn("No init() function defined in JavaScript.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
-		} catch (Exception e) {
-			log.error("Error while initializing script: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            log.error("Error while initializing script: {}", e.getMessage());
+            if (log.isDebugEnabled())
+                e.printStackTrace();
+        }
+    }
 
-	/**
-	 * @see stream.data.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data data) {
+    /**
+     * @see stream.data.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data data) {
 
-		try {
-			if (script == null) {
-				log.debug("No script loaded, skipping script execution...");
-				return data;
-			}
+        try {
+            if (script == null) {
+                log.debug("No script loaded, skipping script execution...");
+                return data;
+            }
 
-			if (impl != null) {
-				try {
-					log.debug("Calling JavaScript implementation of processor interface...");
-					data = (Data) impl.invokeFunction("process", data);
-					return data;
-					// return ((Processor) impl).process(data);
-				} catch (NoSuchMethodException nsme) {
-					log.warn("No function 'process(data)' defined, evaluating running script code!");
-				}
-			}
+            if (impl != null) {
+                try {
+                    log.debug("Calling JavaScript implementation of processor interface...");
+                    data = (Data) impl.invokeFunction("process", data);
+                    return data;
+                    // return ((Processor) impl).process(data);
+                } catch (NoSuchMethodException nsme) {
+                    log.warn("No function 'process(data)' defined, evaluating running script code!");
+                }
+            }
 
-			log.debug("Script loaded is:\n{}", script);
+            log.debug("Script loaded is:\n{}", script);
 
-			ScriptContext ctx = scriptEngine.getContext();
-			scriptEngine.put("data", data);
-			scriptEngine.put("process", this.context);
+            ScriptContext ctx = scriptEngine.getContext();
+            scriptEngine.put("data", data);
+            scriptEngine.put("process", this.context);
 
-			log.debug("Evaluating script...");
-			scriptEngine.eval(script, ctx);
+            log.debug("Evaluating script...");
+            scriptEngine.eval(script, ctx);
 
-		} catch (Exception e) {
-			log.error("Failed to execute script: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+        } catch (Exception e) {
+            log.error("Failed to execute script: {}", e.getMessage());
+            if (log.isDebugEnabled())
+                e.printStackTrace();
 
-			throw new RuntimeException("Script execution error: "
-					+ e.getMessage());
-		}
+            throw new RuntimeException("Script execution error: " + e.getMessage());
+        }
 
-		log.debug("Returning data: {}", data);
-		return data;
-	}
+        log.debug("Returning data: {}", data);
+        return data;
+    }
 
-	protected String loadScript() throws Exception {
+    protected String loadScript() throws Exception {
 
-		if (embedded != null) {
-			log.debug("Using embedded content...");
-			theScript = preamble + "\n" + embedded.getContent();
-			return theScript;
-		}
+        if (embedded != null) {
+            log.debug("Using embedded content...");
+            theScript = preamble + "\n" + embedded.getContent();
+            return theScript;
+        }
 
-		if (file != null) {
-			log.debug("Reading script from file {}", file);
-			theScript = loadScript(new FileInputStream(file));
-			return theScript;
-		}
+        if (file != null) {
+            log.debug("Reading script from file {}", file);
+            theScript = loadScript(new FileInputStream(file));
+            return theScript;
+        }
 
-		throw new Exception("Neither embedded script not script file provided!");
-	}
+        throw new Exception("Neither embedded script not script file provided!");
+    }
 
-	protected String loadScript(InputStream in) throws Exception {
-		log.debug("Loading script from input-stream {}", in);
-		StringBuffer s = new StringBuffer();
-		s.append(preamble);
-		s.append("\n");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		String line = reader.readLine();
-		while (line != null) {
-			s.append(line + "\n");
-			log.debug("Appending line: {}", line);
-			line = reader.readLine();
-		}
-		reader.close();
-		return s.toString();
-	}
+    protected String loadScript(InputStream in) throws Exception {
+        log.debug("Loading script from input-stream {}", in);
+        StringBuffer s = new StringBuffer();
+        s.append(preamble);
+        s.append("\n");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String line = reader.readLine();
+        while (line != null) {
+            s.append(line + "\n");
+            log.debug("Appending line: {}", line);
+            line = reader.readLine();
+        }
+        reader.close();
+        return s.toString();
+    }
 
-	private void initScript() throws Exception {
+    private void initScript() throws Exception {
 
-		log.debug("Script loaded is:\n{}", script);
+        log.debug("Script loaded is:\n{}", script);
 
-		ScriptContext ctx = scriptEngine.getContext();
-		scriptEngine.put("process", this.context);
+        ScriptContext ctx = scriptEngine.getContext();
+        scriptEngine.put("process", this.context);
 
-		log.debug("Evaluating script...");
-		scriptEngine.eval(script, ctx);
+        log.debug("Evaluating script...");
+        scriptEngine.eval(script, ctx);
 
-		if (scriptEngine instanceof Invocable) {
-			Invocable invocable = (Invocable) scriptEngine;
-			impl = invocable; // invocable.getInterface(StatefulProcessor.class);
-			if (impl != null) {
-				log.debug("JavaScript implements StatefulProcessor interface!!");
-				return;
-			}
+        if (scriptEngine instanceof Invocable) {
+            Invocable invocable = (Invocable) scriptEngine;
+            impl = invocable; // invocable.getInterface(StatefulProcessor.class);
+            if (impl != null) {
+                log.debug("JavaScript implements StatefulProcessor interface!!");
+                return;
+            }
 
-			// impl = invocable.getInterface(Processor.class);
-			log.debug("Found JavaScript implementation of processor interface...");
-		}
-	}
+            // impl = invocable.getInterface(Processor.class);
+            log.debug("Found JavaScript implementation of processor interface...");
+        }
+    }
 }

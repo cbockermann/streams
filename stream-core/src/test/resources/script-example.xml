@@ -11,12 +11,15 @@
 	<Process input="log" output="logData">
  		
  		<JavaScript>
- 			println( "Test" );
- 			var uri = data.get( "REQUEST_URI" );
- 			println( "uri=" + uri );
- 			data.put( "@id", "test" );
- 			data.put( "test", new java.lang.Double( 1.0 ) );
- 			println( data );
+ 			function process(data) {
+	 			//println( "Test" );
+ 				var uri = data.get( "REQUEST_URI" );
+ 				//println( "uri=" + uri );
+ 				data.put( "@id", "test" );
+ 				data.put( "test", new java.lang.Double( 1.0 ) );
+ 				//println( data );
+ 				return data;
+ 			}
  		</JavaScript>
  		
  		<stream.data.PrintData />

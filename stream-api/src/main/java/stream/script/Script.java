@@ -35,8 +35,10 @@ import javax.script.ScriptEngineManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 import stream.AbstractProcessor;
+import stream.Configurable;
 import stream.Data;
 import stream.annotations.BodyContent;
 import stream.annotations.Parameter;
@@ -45,124 +47,135 @@ import stream.annotations.Parameter;
  * @author chris
  * 
  */
-public abstract class Script extends AbstractProcessor {
+public abstract class Script extends AbstractProcessor implements Configurable {
 
-	static Logger log = LoggerFactory.getLogger(Script.class);
+    static Logger log = LoggerFactory.getLogger(Script.class);
 
-	final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+    final static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
-	protected BodyContent embedded = null;
+    protected BodyContent embedded = null;
 
-	protected ScriptEngine scriptEngine;
+    protected ScriptEngine scriptEngine;
 
-	protected File file;
-	transient protected String theScript = null;
+    protected File file;
+    transient protected String theScript = null;
 
-	public Script(ScriptEngine engine) {
-		if (engine == null)
-			throw new RuntimeException("No ScriptEngine found!");
-		this.scriptEngine = engine;
-	}
+    public Script(ScriptEngine engine) {
+        if (engine == null)
+            throw new RuntimeException("No ScriptEngine found!");
+        this.scriptEngine = engine;
+    }
 
-	protected Script() {
-	}
+    protected Script() {
+    }
 
-	/**
-	 * @return the file
-	 */
-	public File getFile() {
-		return file;
-	}
+    /**
+     * @return the file
+     */
+    public File getFile() {
+        return file;
+    }
 
-	/**
-	 * @param file
-	 *            the file to set
-	 */
-	@Parameter(required = false)
-	public void setFile(File file) {
-		this.file = file;
-	}
+    /**
+     * @param file
+     *            the file to set
+     */
+    @Parameter(required = false)
+    public void setFile(File file) {
+        this.file = file;
+    }
 
-	/**
-	 * @return the embedded
-	 */
-	public BodyContent getScript() {
-		return embedded;
-	}
+    /**
+     * @return the embedded
+     */
+    public BodyContent getScript() {
+        return embedded;
+    }
 
-	/**
-	 * @param embedded
-	 *            the embedded to set
-	 */
-	@Parameter(required = false)
-	public void setScript(BodyContent embedded) {
-		this.embedded = embedded;
-	}
+    /**
+     * @param embedded
+     *            the embedded to set
+     */
+    @Parameter(required = false)
+    public void setScript(BodyContent embedded) {
+        this.embedded = embedded;
+    }
 
-	/**
-	 * @see stream.data.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data data) {
+    /**
+     * @see stream.data.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data data) {
 
-		try {
-			String script = loadScript();
-			log.info("Script loaded is:\n{}", script);
+        try {
+            String script = loadScript();
+            log.info("Script loaded is:\n{}", script);
 
-			ScriptContext ctx = scriptEngine.getContext();
+            ScriptContext ctx = scriptEngine.getContext();
 
-			// log.info( "Binding data-item to 'data'" );
-			ctx.setAttribute("data", data, ScriptContext.ENGINE_SCOPE);
+            // log.info( "Binding data-item to 'data'" );
+            ctx.setAttribute("data", data, ScriptContext.ENGINE_SCOPE);
 
-			scriptEngine.put("data", data);
+            scriptEngine.put("data", data);
 
-			log.info("Evaluating script...");
-			scriptEngine.eval(script, ctx);
+            log.info("Evaluating script...");
+            scriptEngine.eval(script, ctx);
 
-		} catch (Exception e) {
-			log.error("Failed to execute script: {}", e.getMessage());
-			if (log.isDebugEnabled())
-				e.printStackTrace();
+        } catch (Exception e) {
+            log.error("Failed to execute script: {}", e.getMessage());
+            if (log.isDebugEnabled())
+                e.printStackTrace();
 
-			throw new RuntimeException("Script execution error: "
-					+ e.getMessage());
-		}
+            throw new RuntimeException("Script execution error: " + e.getMessage());
+        }
 
-		log.info("Returning data: {}", data);
-		return data;
-	}
+        log.info("Returning data: {}", data);
+        return data;
+    }
 
-	protected String loadScript() throws Exception {
+    protected String loadScript() throws Exception {
 
-		if (theScript == null) {
+        if (theScript == null) {
 
-			if (embedded != null) {
-				log.info("Using embedded content...");
-				theScript = embedded.getContent();
-				return theScript;
-			}
+            if (embedded != null) {
+                log.info("Using embedded content...");
+                theScript = embedded.getContent();
+                return theScript;
+            }
 
-			if (file != null) {
-				log.debug("Reading script from file {}", file);
-				theScript = loadScript(new FileInputStream(file));
-				return theScript;
-			}
-		}
+            if (file != null) {
+                log.debug("Reading script from file {}", file);
+                theScript = loadScript(new FileInputStream(file));
+                return theScript;
+            }
+        }
 
-		return theScript;
-	}
+        return theScript;
+    }
 
-	protected String loadScript(InputStream in) throws Exception {
-		log.debug("Loading script from input-stream {}", in);
-		StringBuffer s = new StringBuffer();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		String line = reader.readLine();
-		while (line != null) {
-			s.append(line + "\n");
-			log.debug("Appending line: {}", line);
-			line = reader.readLine();
-		}
-		reader.close();
-		return s.toString();
-	}
+    protected String loadScript(InputStream in) throws Exception {
+        log.debug("Loading script from input-stream {}", in);
+        StringBuffer s = new StringBuffer();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String line = reader.readLine();
+        while (line != null) {
+            s.append(line + "\n");
+            log.debug("Appending line: {}", line);
+            line = reader.readLine();
+        }
+        reader.close();
+        return s.toString();
+    }
+
+    /**
+     * @see stream.Configurable#configure(org.w3c.dom.Element)
+     */
+    @Override
+    public void configure(Element document) {
+        String txt = document.getTextContent();
+        if (txt != null && !txt.trim().isEmpty()) {
+            this.embedded = new BodyContent(txt);
+            log.info("Using script code from element content:\n{}", txt);
+        }
+    }
 }

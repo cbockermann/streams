@@ -4,12 +4,14 @@
 package profiler.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,25 +23,37 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import stream.util.XMLUtils;
-import streams.tikz.Point;
-import streams.tikz.Tikz;
 
 /**
  * @author chris
  *
  */
-public class AccessGraph {
+public class DependencyGraph {
 
-    static Logger log = LoggerFactory.getLogger(AccessGraph.class);
+    static Logger log = LoggerFactory.getLogger(DependencyGraph.class);
 
     final static String readColor = "gruen1!60";
     final static String firstColor = "gruen1";
     final static String writeColor = "orangeRand";
 
+    public static Map<String, Dependency> available = new HashMap<String, Dependency>();
+
+    public static Dependency get(String key) {
+        if (!available.containsKey(key)) {
+            return new Dependency(key);
+            // available.put(key, new Dependency(":input:"));
+        }
+        Dependency dep = available.get(key);
+        return dep;
+    }
+
     /**
      * @param args
      */
     public static void main(String[] params) throws Exception {
+
+        Map<String, String> currentlyAvailable = new HashMap<String, String>();
+        Map<String, Dependency> deps = new HashMap<String, Dependency>();
 
         String[] args = params;
         args = "/Users/chris/fact-tools-profiling.xml".split(",");
@@ -58,8 +72,6 @@ public class AccessGraph {
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.parse(input);
-
-        PrintStream p = new PrintStream(new FileOutputStream(output));
 
         List<String> ks = new ArrayList<String>();
 
@@ -92,35 +104,15 @@ public class AccessGraph {
 
                 log.info("Found processor '{}'", className);
 
-                p.println("\\node[rotate=" + Tikz.format(rotateLabel) + ",anchor=west,scale=" + Tikz.format(scaleLabel)
-                        + "] at " + new Point(i * stretch, -1 * scaleY - 0.25) + " {\\ttfamily " + simple + "};");
-
-                double x = i;
+                Set<String> readAccess = new LinkedHashSet<String>();
 
                 NodeList reads = e.getElementsByTagName("read");
                 for (int r = 0; r < reads.getLength(); r++) {
                     Element read = (Element) reads.item(r);
                     String key = read.getAttribute("key");
 
-                    String color = readColor;
-                    if (!produced.contains(key) & !accessed.contains(key)) {
-                        color = firstColor;
-                    }
-
                     accessed.add(key);
-
-                    int idx = ks.indexOf(key);
-                    if (idx < 0) {
-                        ks.add(key);
-                        idx = ks.indexOf(key);
-                    }
-
-                    Point dot = new Point((x - 0.25) * stretch, idx * scaleY);
-                    p.println("\\draw[thin,draw=black!20] " + dot + " -- " + new Point(x * stretch, idx * scaleY)
-                            + " -- " + new Point(x * stretch, -1.0 * scaleY) + " ;");
-
-                    p.println("\\node[circle,fill=" + color
-                            + ",inner sep=0pt,minimum height=1.5ex,minimum width=1.5ex] at " + dot + " {};");
+                    readAccess.add(key);
                 }
 
                 NodeList writes = e.getElementsByTagName("write");
@@ -132,34 +124,62 @@ public class AccessGraph {
                         String key = write.getAttribute("key");
                         produced.add(key);
 
-                        int idx = ks.indexOf(key);
-                        if (idx < 0) {
-                            ks.add(key);
-                            idx = ks.indexOf(key);
+                        Dependency dep = new Dependency(key);
+                        for (String read : readAccess) {
+                            dep.add(get(read));
                         }
-
-                        Point dot = new Point((x + 0.25) * stretch, idx * scaleY);
-                        p.println("\\draw[thin,draw=black!20] " + dot + " -- " + new Point(x * stretch, idx * scaleY)
-                                + " -- " + new Point(x * stretch, -1.0 * scaleY) + " ;");
-
-                        p.println("\\node[circle,fill=" + writeColor
-                                + ",inner sep=0pt,minimum height=1.5ex,minimum width=1.5ex] at " + dot + " {};");
+                        available.put(key, dep);
                     }
                 }
-                // Point c = new Point(2.0, y);
-                // p.println(
-                // "\\node[rectangle,minimum width=1cm,minimum height=1cm,inner
-                // sep=0pt,draw=black!70,fill=black!6] at "
-                // + c + " {};");
-            }
-
-            for (String k : ks) {
-                int idx = ks.indexOf(k);
-                p.println("\\node[anchor=east,scale=" + Tikz.format(scaleLabel) + "] at " + new Point(-1, idx * scaleY)
-                        + " {\\color{black!80}{\\ttfamily " + k.replaceAll("_", ":") + "}};");
             }
         }
 
-        p.close();
+        for (Dependency d : new TreeSet<Dependency>(available.values())) {
+            System.out.print("'" + d.key + "' depends in: ");
+            for (String dep : closure(d)) {
+                System.out.print(" '" + dep + "'");
+            }
+            System.out.println();
+            // System.out.println(d.toString());
+        }
+    }
+
+    public static Set<String> closure(Dependency d) {
+        Set<String> keys = new HashSet<String>();
+        for (Dependency dp : d) {
+            keys.add(dp.key);
+            keys.addAll(closure(dp));
+        }
+        return keys;
+    }
+
+    public static class Dependency extends LinkedHashSet<Dependency>implements Comparable<Dependency> {
+        private static final long serialVersionUID = 4966485400551562354L;
+        final String key;
+
+        public Dependency(String key) {
+            this.key = key;
+        }
+
+        public String toString() {
+            if (isEmpty()) {
+                return "(" + key + ")";
+            }
+
+            StringBuffer s = new StringBuffer("('" + key + "' dependes on {");
+            for (Dependency d : this) {
+                s.append(d.toString() + " ");
+            }
+            s.append("})");
+            return s.toString();
+        }
+
+        /**
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(Dependency o) {
+            return key.compareTo(o.key);
+        }
     }
 }

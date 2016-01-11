@@ -21,6 +21,7 @@ import org.w3c.dom.NodeList;
 import stream.util.XMLUtils;
 import streams.tikz.Path;
 import streams.tikz.Point;
+import streams.tikz.Tikz;
 
 /**
  * @author chris
@@ -33,7 +34,10 @@ public class PerformancePlot {
     /**
      * @param args
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] params) throws Exception {
+
+        String[] args = params;
+        args = "/Users/chris/fact-tools-profiling.xml".split(",");
 
         if (args.length < 1) {
             System.err.println("Usage:");
@@ -57,37 +61,49 @@ public class PerformancePlot {
             Element process = (Element) processes.item(i);
 
             List<Element> ps = XMLUtils.getElements(process);
+
             for (Element processor : ps) {
 
                 String className = processor.getNodeName();
                 log.info("Found processor {}", className);
+
+                boolean interest = className.contains("features"); // ||
+                                                                   // className.contains("BasicExtraction");
+
+                if (!interest) {
+                    log.info("  >>> skipping");
+                    continue;
+                }
+
                 List<Element> ch = XMLUtils.getElements(processor);
 
                 for (Element c : ch) {
                     if (c.getNodeName().equalsIgnoreCase("performance")) {
                         String nanos = c.getAttribute("nanos");
-                        columns.put(className, Math.log10(new Double(nanos)));
+                        columns.put(className, new Double(nanos));
                     }
                 }
             }
         }
 
-        Double width = 1.0;
-        Double margin = 0.1;
-        Double scaleY = 0.001;
+        Double width = new Double(System.getProperty("column.width", "1.0"));
+        Double margin = new Double(System.getProperty("column.margin", "0.1"));
+        Double scaleY = new Double(System.getProperty("scale.y", "0.001"));
+        Double labelScale = new Double(System.getProperty("label.scale", "0.65"));
+        Double labelRotate = new Double(System.getProperty("label.rotate", "-30.0"));
 
         Double max = 0.0;
         for (Double d : columns.values()) {
             max = Math.max(d, max);
         }
 
-        double maxY = 2.0;
+        double maxY = 10.0;
         double maxX = columns.size() * (width + margin) + 0.25;
 
         scaleY = maxY / max;
 
         PrintStream p = new PrintStream(new FileOutputStream(output));
-        p.println("\\begin{tikzpicture}");
+        // p.println("\\begin{tikzpicture}");
 
         double xoff = 0.0;
 
@@ -103,13 +119,14 @@ public class PerformancePlot {
 
             p.println(col.toString());
 
-            p.println("\\node[anchor=west,scale=0.65,rotate=-30] at " + new Point(xoff + 0.5 * width, -0.25)
-                    + " {\\ttfamily " + key.replace("example.", "") + "};");
+            p.println("\\node[anchor=west,scale=" + Tikz.format(labelScale) + ",rotate=" + Tikz.format(labelRotate)
+                    + " ] at " + new Point(xoff + 0.5 * width, -0.25) + " {\\ttfamily " + key.replace("example.", "")
+                    + "};");
             xoff += (width + margin);
         }
 
         Path xaxis = new Path();
-        xaxis.set("draw", "black!70").set("thick", "");
+        xaxis.set("draw", "black!70"); // .set("thick", "");
         xaxis.add(new Point(-0.25, 0));
         xaxis.add(new Point(maxX, 0));
         p.println(xaxis.toString());
@@ -120,7 +137,7 @@ public class PerformancePlot {
         // yaxis.add(new Point(0, maxY));
         // p.println(yaxis.toString());
 
-        p.println("\\end{tikzpicture}");
+        // p.println("\\end{tikzpicture}");
 
         p.close();
     }

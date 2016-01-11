@@ -1,4 +1,4 @@
-\documentclass[german,a4,12pt]{scrartcl}
+\documentclass[german,a4]{scrartcl}
 
 \input{packages}
 \input{colors}
@@ -124,6 +124,8 @@ define the output file for the profiling information.
 
 \begin{figure}[h!]
 \centering
+\begin{tikzpicture}
+\node at (0,0) {
 \begin{lstlisting}[language=XML]
         <process input="data" class="streams.profiler.Process"
                   file="/profiling.xml">
@@ -133,6 +135,11 @@ define the output file for the profiling information.
            <example.WriteImage />
         </process>
 \end{lstlisting}
+};
+\draw[thick,orangeRand] (-0.3,1.05) rectangle (5.85,1.5);
+\draw[thick,orangeRand] (5,1.05) -- (5,0.5);
+\node[scale=0.65] at (5,0.2) {\textsf{Profiler Process Implementation}};
+\end{tikzpicture}
 \caption{\label{fig:profilerExample}Replacing the default process implementation to gain profiling information.}
 \end{figure}
 

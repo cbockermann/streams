@@ -96,7 +96,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
-			<scope>test</scope>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jwall</groupId>
+			<artifactId>streams-plotter</artifactId>
+			<version>[0.9.16,)</version>
 		</dependency>
 	</dependencies>
 

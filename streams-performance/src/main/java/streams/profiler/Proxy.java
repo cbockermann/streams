@@ -35,7 +35,7 @@ public class Proxy implements StatefulProcessor {
         this.delegate = p;
         this.trackTime = recordTime;
         this.trackKeys = recordKeys;
-        log.info("processor: {}, tracking keys? {}", p, trackKeys);
+        log.debug("processor: {}, tracking keys? {}", p, trackKeys);
         this.map = new TypeMap(delegate);
     }
 

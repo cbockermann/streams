@@ -12,10 +12,11 @@
 		sequenceKey="@source:item" />
 
 
-	<queue id="ordered" class="stream.io.BlockingQueue" capacity="88" />
+	<queue id="ordered" class="stream.io.DefaultBlockingQueue" capacity="88" />
 
 
 	<process id="reader" input="random">
+		<PrintData />
 		<stream.test.AddTimeSinceLastItem />
 		<stream.flow.Enqueue queue="ordered" />
 	</process>

@@ -70,6 +70,10 @@ public class ParameterInjection {
     public static Set<String> inject(Object o, Map<String, ?> params, Variables variableContext) throws Exception {
         log.debug("Injecting parameters {} into object {}", params, o);
 
+        // check for double parameter definitions
+        //
+        ParameterValidator.checkClassParameters(o.getClass());
+
         // the set contains parameters that have been successfully been set
         Set<String> alreadySet = new HashSet<String>();
 

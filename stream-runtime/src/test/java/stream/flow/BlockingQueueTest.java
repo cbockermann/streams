@@ -25,12 +25,11 @@ package stream.flow;
 
 import java.net.URL;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import junit.framework.Assert;
 import stream.runtime.ProcessContainer;
 import stream.test.CollectorService;
 
@@ -40,35 +39,33 @@ import stream.test.CollectorService;
  */
 public class BlockingQueueTest {
 
-	static Logger log = LoggerFactory.getLogger(BlockingQueueTest.class);
+    static Logger log = LoggerFactory.getLogger(BlockingQueueTest.class);
 
-	@Test
-	public void test() throws Exception {
+    @Test
+    public void test() throws Exception {
 
-		URL url = BlockingQueueTest.class
-				.getResource("/test-blocking-queue.xml");
-		ProcessContainer c = new ProcessContainer(url);
+        URL url = BlockingQueueTest.class.getResource("/queues/test-blocking-queue.xml");
+        ProcessContainer c = new ProcessContainer(url);
 
-		long time = c.execute();
-		log.info("Container required {} ms for running.", time);
+        long time = c.execute();
+        log.info("Container required {} ms for running.", time);
 
-		CollectorService col = c.getContext().lookup("collected",
-				CollectorService.class);
-		log.info("Collector service: {}", col);
+        CollectorService col = c.getContext().lookup("collected", CollectorService.class);
+        log.info("Collector service: {}", col);
 
-		int colSize = col.getCollection().size();
-		log.info("Number of collected elements: {}", colSize);
+        int colSize = col.getCollection().size();
+        log.info("Number of collected elements: {}", colSize);
 
-		// int cnt = 0;
-		// for (Data item : col.getCollection()) {
-		// log.info("   {}", item);
-		// SequenceID id = (SequenceID) item.get("@source:item");
-		// log.info("     => {}",
-		// Long.parseLong(id.toString().substring(2), 16));
-		// cnt++;
-		// }
-		// log.info("cnt = {}", cnt);
+        // int cnt = 0;
+        // for (Data item : col.getCollection()) {
+        // log.info(" {}", item);
+        // SequenceID id = (SequenceID) item.get("@source:item");
+        // log.info(" => {}",
+        // Long.parseLong(id.toString().substring(2), 16));
+        // cnt++;
+        // }
+        // log.info("cnt = {}", cnt);
 
-		Assert.assertEquals(110, colSize);
-	}
+        Assert.assertEquals(110, colSize);
+    }
 }

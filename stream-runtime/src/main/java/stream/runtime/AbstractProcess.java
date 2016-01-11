@@ -190,6 +190,7 @@ public abstract class AbstractProcess implements stream.Process {
 
                     // obtain the next item to be processed
                     //
+                    log.debug("Reading next item from input '{}'", getInput());
                     item = getInput().read();
 
                 } catch (Exception e) {
@@ -201,9 +202,10 @@ public abstract class AbstractProcess implements stream.Process {
                     }
                 }
             }
-            log.debug("No more items could be read, exiting this process.");
+            log.debug("No more items could be read, exiting process {}", getId());
 
         } catch (Exception e) {
+            log.error("Error occurred in process '{}': {}", getId(), e.getMessage());
             throw e;
         }
 

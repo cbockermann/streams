@@ -47,180 +47,171 @@ import stream.annotations.Parameter;
  */
 public class ParameterDiscovery {
 
-	/* The global logger for this class */
-	static Logger log = LoggerFactory.getLogger(ParameterDiscovery.class);
+    /* The global logger for this class */
+    static Logger log = LoggerFactory.getLogger(ParameterDiscovery.class);
 
-	/**
-	 * Check the given class for any @parameter annotated fields.
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public static Map<String, Class<?>> discoverParameters(Class<?> clazz) {
+    /**
+     * Check the given class for any @parameter annotated fields.
+     * 
+     * @param clazz
+     * @return
+     */
+    public static Map<String, Class<?>> discoverParameters(Class<?> clazz) {
 
-		Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
+        Map<String, Class<?>> types = new LinkedHashMap<String, Class<?>>();
 
-		for (Method m : clazz.getMethods()) {
+        for (Method m : clazz.getMethods()) {
 
-			if (ParameterDiscovery.isSetter(m)) {
+            if (ParameterDiscovery.isSetter(m)) {
 
-				log.debug("Found setter '{}'", m.getName());
-				String key = m.getName().substring(3, 4).toLowerCase();
-				if (m.getName().length() > 4)
-					key += m.getName().substring(4);
+                log.debug("Found setter '{}'", m.getName());
+                String key = m.getName().substring(3, 4).toLowerCase();
+                if (m.getName().length() > 4)
+                    key += m.getName().substring(4);
 
-				Parameter param = m.getAnnotation(Parameter.class);
-				if (param != null) {
-					log.debug("setter-method is annotated: {}", param);
-					if (param.name() != null && !param.name().isEmpty()) {
-						key = param.name();
-					}
-				}
+                Parameter param = m.getAnnotation(Parameter.class);
+                if (param != null) {
+                    log.debug("setter-method is annotated: {}", param);
+                    if (param.name() != null && !param.name().isEmpty()) {
+                        key = param.name();
+                    }
+                }
 
-				if (!types.containsKey(key)) {
-					log.debug("  => parameter '{}'", key);
-					types.put(key, m.getParameterTypes()[0]);
-				} else
-					log.debug(
-							"Parameter {} already defined by field-annotation",
-							key);
-			}
-		}
+                if (!types.containsKey(key)) {
+                    log.debug("  => parameter '{}'", key);
+                    types.put(key, m.getParameterTypes()[0]);
+                } else
+                    log.debug("Parameter {} already defined by field-annotation", key);
+            }
+        }
 
-		return types;
-	}
+        return types;
+    }
 
-	/**
-	 * This method returns the parameter annotation from the given class for the
-	 * specified parameter key. If attribute has been annotated with the given
-	 * key as name, then this method will return <code>null</code>.
-	 * 
-	 * @param clazz
-	 * @param key
-	 * @return
-	 */
-	public static Parameter getParameterAnnotation(Class<?> clazz, String key) {
+    /**
+     * This method returns the parameter annotation from the given class for the
+     * specified parameter key. If attribute has been annotated with the given
+     * key as name, then this method will return <code>null</code>.
+     * 
+     * @param clazz
+     * @param key
+     * @return
+     */
+    public static Parameter getParameterAnnotation(Class<?> clazz, String key) {
 
-		for (Method m : clazz.getMethods()) {
-			if (m.getName().toLowerCase().equals("set" + key.toLowerCase())) {
-				Parameter p = m.getAnnotation(Parameter.class);
-				log.debug("Found parameter annotation for class {}, key {}: "
-						+ p, clazz, key);
-				return p;
-			}
-		}
-		return null;
-	}
+        for (Method m : clazz.getMethods()) {
+            if (m.getName().toLowerCase().equals("set" + key.toLowerCase())) {
+                Parameter p = m.getAnnotation(Parameter.class);
+                log.debug("Found parameter annotation for class {}, key {}: " + p, clazz, key);
+                return p;
+            }
+        }
+        return null;
+    }
 
-	public static Class<?> getParameterType(Class<?> clazz, String name) {
+    public static Class<?> getParameterType(Class<?> clazz, String name) {
 
-		for (Method m : clazz.getMethods()) {
-			if (ParameterDiscovery.isSetter(m)
-					&& m.getName().toLowerCase()
-							.equals("set" + name.toLowerCase())) {
-				return m.getParameterTypes()[0];
-			}
-		}
+        for (Method m : clazz.getMethods()) {
+            if (ParameterDiscovery.isSetter(m) && m.getName().toLowerCase().equals("set" + name.toLowerCase())) {
+                return m.getParameterTypes()[0];
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public static List<Parameter> discoverParameterAnnotations(Class<?> clazz) {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		Field[] fields = clazz.getDeclaredFields();
+    public static List<Parameter> discoverParameterAnnotations(Class<?> clazz) {
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        Field[] fields = clazz.getDeclaredFields();
 
-		log.debug("Found {} fields", fields.length);
+        log.debug("Found {} fields", fields.length);
 
-		for (Method m : clazz.getMethods()) {
-			Parameter param = m.getAnnotation(Parameter.class);
-			if (param != null) {
-				log.debug("Found @parameter annotated field '{}'", m.getName());
-				log.debug("    field.getType() = {}",
-						(Object[]) m.getParameterTypes());
-				parameters.add(param);
-			} else {
-				log.debug("Field '{}' is not annotated as parameter",
-						m.getName());
-			}
-		}
-		return parameters;
-	}
+        for (Method m : clazz.getMethods()) {
+            Parameter param = m.getAnnotation(Parameter.class);
+            if (param != null) {
+                log.debug("Found @parameter annotated field '{}'", m.getName());
+                log.debug("    field.getType() = {}", (Object[]) m.getParameterTypes());
+                parameters.add(param);
+            } else {
+                log.debug("Field '{}' is not annotated as parameter", m.getName());
+            }
+        }
+        return parameters;
+    }
 
-	public static String getParameterName(Method m) {
-		if (isGetter(m) || isSetter(m)) {
+    public static String getParameterName(Method m) {
+        if (isGetter(m) || isSetter(m)) {
 
-			String key = m.getName().substring(3, 4).toLowerCase();
-			if (m.getName().length() > 3)
-				key += m.getName().substring(4);
+            String key = m.getName().substring(3, 4).toLowerCase();
+            if (m.getName().length() > 3)
+                key += m.getName().substring(4);
 
-			Parameter an = m.getAnnotation(Parameter.class);
-			if (an != null && an.name() != null && !an.name().trim().isEmpty()) {
-				log.debug("Method is annotated with 'name' attribute '{}'!", an
-						.name().trim());
-				key = an.name().trim();
-			}
+            Parameter an = m.getAnnotation(Parameter.class);
+            if (an != null && an.name() != null && !an.name().trim().isEmpty()) {
+                log.debug("Method is annotated with 'name' attribute '{}'!", an.name().trim());
+                key = an.name().trim();
+            }
 
-			return key;
-		}
+            return key;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * This method defines whether a method matches all requirements of being a
-	 * get-Method. Basically this requires the name to start with
-	 * <code>get</code> and the return type to be any of the ones supported for
-	 * injection.
-	 * 
-	 * @param m
-	 * @return
-	 */
-	public static boolean isGetter(Method m) {
-		if (m.getName().toLowerCase().startsWith("get")) {
-			Class<?> rt = m.getReturnType();
-			if (ParameterInjection.isTypeSupported(rt))
-				return true;
-		}
-		return false;
-	}
+    /**
+     * This method defines whether a method matches all requirements of being a
+     * get-Method. Basically this requires the name to start with
+     * <code>get</code> and the return type to be any of the ones supported for
+     * injection.
+     * 
+     * @param m
+     * @return
+     */
+    public static boolean isGetter(Method m) {
+        if (m.getName().toLowerCase().startsWith("get")) {
+            Class<?> rt = m.getReturnType();
+            if (ParameterInjection.isTypeSupported(rt))
+                return true;
+        }
+        return false;
+    }
 
-	/**
-	 * This method defines whether a method matches all requirements of being a
-	 * get-Method. Basically this requires the name to start with
-	 * <code>set</code> and the single (!) parameter type to be any of the ones
-	 * supported for injection.
-	 * 
-	 * @param m
-	 * @return
-	 */
-	public static boolean isSetter(Method m) {
-		if (m.getName().toLowerCase().startsWith("set")
-				&& m.getParameterTypes().length == 1) {
-			Class<?> rt = m.getParameterTypes()[0];
-			if (ParameterInjection.isTypeSupported(rt))
-				return true;
-		}
-		return false;
-	}
+    /**
+     * This method defines whether a method matches all requirements of being a
+     * get-Method. Basically this requires the name to start with
+     * <code>set</code> and the single (!) parameter type to be any of the ones
+     * supported for injection.
+     * 
+     * @param m
+     * @return
+     */
+    public static boolean isSetter(Method m) {
+        if (m.getName().toLowerCase().startsWith("set") && m.getParameterTypes().length == 1) {
+            Class<?> rt = m.getParameterTypes()[0];
+            if (ParameterInjection.isTypeSupported(rt))
+                return true;
+        }
+        return false;
+    }
 
-	public static Map<String, String> getProperties(String prefix, Properties p) {
-		String pre = prefix;
-		if (!pre.endsWith("."))
-			pre = pre + ".";
+    public static Map<String, String> getProperties(String prefix, Properties p) {
+        String pre = prefix;
+        if (!pre.endsWith("."))
+            pre = pre + ".";
 
-		Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-		for (Object o : p.keySet()) {
-			String key = o.toString();
-			if (key.startsWith(pre)) {
-				params.put(key.substring(pre.length()), p.getProperty(key));
-			}
-		}
+        for (Object o : p.keySet()) {
+            String key = o.toString();
+            if (key.startsWith(pre)) {
+                params.put(key.substring(pre.length()), p.getProperty(key));
+            }
+        }
 
-		return params;
-	}
+        return params;
+    }
 
-	public static Map<String, String> getSystemProperties(String prefix) {
-		return getProperties(prefix, System.getProperties());
-	}
+    public static Map<String, String> getSystemProperties(String prefix) {
+        return getProperties(prefix, System.getProperties());
+    }
 }

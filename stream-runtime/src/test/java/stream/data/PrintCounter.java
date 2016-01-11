@@ -23,8 +23,12 @@
  */
 package stream.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Data;
 import stream.Processor;
+import stream.data.stats.CountService;
 
 /**
  * @author chris
@@ -32,36 +36,38 @@ import stream.Processor;
  */
 public class PrintCounter implements Processor {
 
-	CounterService counter;
+    static Logger log = LoggerFactory.getLogger(PrintCounter.class);
+    CountService counter;
 
-	/**
-	 * @return the counter
-	 */
-	public CounterService getCounter() {
-		return counter;
-	}
+    /**
+     * @return the counter
+     */
+    public CountService getCounter() {
+        return counter;
+    }
 
-	/**
-	 * @param counter
-	 *            the counter to set
-	 */
-	public void setCounter(CounterService counter) {
-		this.counter = counter;
-	}
+    /**
+     * @param counter
+     *            the counter to set
+     */
+    public void setCounter(CountService counter) {
+        log.info("Received reference to counter: {}", counter);
+        this.counter = counter;
+    }
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data input) {
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data input) {
 
-		if (counter != null) {
-			System.out.println("Counter has value: " + counter.getCount());
-			if (input != null) {
-				input.put("counter", counter.getCount());
-			}
-		}
+        if (counter != null) {
+            System.out.println("Counter has value: " + counter.getCount());
+            if (input != null) {
+                input.put("counter", counter.getCount());
+            }
+        }
 
-		return input;
-	}
+        return input;
+    }
 }

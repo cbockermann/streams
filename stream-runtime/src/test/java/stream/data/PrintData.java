@@ -23,6 +23,9 @@
  */
 package stream.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.ConditionedProcessor;
 import stream.Data;
 import stream.annotations.Description;
@@ -38,16 +41,18 @@ import stream.annotations.Description;
 @Description(group = "Data Stream.Monitoring", name = "Print Data")
 public class PrintData extends ConditionedProcessor {
 
-	/**
-	 * @see stream.DataProcessor#process(stream.Data)
-	 */
-	@Override
-	public Data processMatchingData(Data data) {
+    static Logger log = LoggerFactory.getLogger(PrintData.class);
 
-		if (data == null)
-			return null;
+    /**
+     * @see stream.DataProcessor#process(stream.Data)
+     */
+    @Override
+    public Data processMatchingData(Data data) {
 
-		System.out.println("data-item: " + data);
-		return data;
-	}
+        if (data == null)
+            return null;
+
+        log.info("data-item: {}", data);
+        return data;
+    }
 }

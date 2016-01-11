@@ -5,9 +5,12 @@ package stream.runtime.setup;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import stream.annotations.ParameterException;
 
 /**
  * This class provides the mapping of an input string to the desired output
@@ -24,7 +27,7 @@ public class ParameterValueMapper {
 
     static Logger log = LoggerFactory.getLogger(ParameterValueMapper.class);
 
-    public Object createValue(Class<? extends Object> type, Object str) throws Exception {
+    public Object createValue(Class<? extends Object> type, Object str) throws ParameterException {
         Object po = null;
 
         if (type.equals(str.getClass())) {
@@ -60,16 +63,29 @@ public class ParameterValueMapper {
                 log.debug("setter is an array, using split(,) and array creation...");
                 String[] args = ParameterUtils.split(str.toString());
 
-                Class<?> content = type.getComponentType();
-                Constructor<?> c = content.getConstructor(String.class);
-                Object array = Array.newInstance(content, args.length);
+                try {
+                    Class<?> content = type.getComponentType();
+                    Constructor<?> c = content.getConstructor(String.class);
+                    Object array = Array.newInstance(content, args.length);
 
-                for (int i = 0; i < args.length; i++) {
-                    Object value = c.newInstance(args[i]);
-                    Array.set(array, i, value);
+                    for (int i = 0; i < args.length; i++) {
+                        Object value = c.newInstance(args[i]);
+                        Array.set(array, i, value);
+                    }
+                    po = array;
+                } catch (NoSuchMethodException nsm) {
+                    throw new ParameterException(
+                            "Class '" + type.getComponentType() + "' does not provide String-arg constructor!");
+                } catch (InvocationTargetException ite) {
+                    throw new ParameterException("InvocationTargetException while creating object of class '"
+                            + type.getComponentType() + "' from string '" + str + "'!");
+                } catch (IllegalAccessException iae) {
+                    throw new ParameterException(
+                            "No access to call String-arg constructor for class '" + type.getComponentType() + "'!");
+                } catch (InstantiationException ie) {
+                    throw new ParameterException(
+                            "Failed to instantiate object from class '" + type.getComponentType() + "'!");
                 }
-
-                po = array;
             } else {
 
                 try {
@@ -78,7 +94,17 @@ public class ParameterValueMapper {
                     po = c.newInstance(s);
                     log.debug("Invoking {}({})", po);
                 } catch (NoSuchMethodException nsm) {
-                    log.error("No String-constructor found for type {}", type);
+                    throw new ParameterException(
+                            "Class '" + type.getComponentType() + "' does not provide String-arg constructor!");
+                } catch (InvocationTargetException ite) {
+                    throw new ParameterException("InvocationTargetException while creating object of class '"
+                            + type.getComponentType() + "' from string '" + str + "'!");
+                } catch (IllegalAccessException iae) {
+                    throw new ParameterException(
+                            "No access to call String-arg constructor for class '" + type.getComponentType() + "'!");
+                } catch (InstantiationException ie) {
+                    throw new ParameterException(
+                            "Failed to instantiate object from class '" + type.getComponentType() + "'!");
                 }
             }
         }

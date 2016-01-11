@@ -30,7 +30,7 @@ public class FailFastTest {
                 stream.run.main(url);
             } catch (Exception rte) {
                 log.info("Caught exception: {}", rte.getMessage());
-                rte.printStackTrace();
+                // rte.printStackTrace();
                 syntheticErrors++;
             }
 

@@ -19,22 +19,21 @@ import stream.test.ExpectedItems;
  */
 public class QueueClosingTest {
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
 
-		try {
-			URL url = QueueClosingTest.class
-					.getResource("/queue-closing-test.xml");
-			ProcessContainer pc = new ProcessContainer(url);
-			pc.run();
+        try {
+            URL url = QueueClosingTest.class.getResource("/queues/queue-closing-test.xml");
+            ProcessContainer pc = new ProcessContainer(url);
+            pc.run();
 
-			Thread.sleep(2000);
+            Thread.sleep(2000);
 
-			Assert.assertTrue(ExpectedItems.finishMethodPerformed.get());
+            Assert.assertTrue(ExpectedItems.finishMethodPerformed.get());
 
-		} catch (Exception e) {
-			fail("Error: " + e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            fail("Error: " + e.getMessage());
+        }
+    }
 
 }

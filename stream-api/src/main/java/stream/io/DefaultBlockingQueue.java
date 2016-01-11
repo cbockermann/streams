@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.data.DataFactory;
 
 /**
  * @author chris
@@ -19,6 +20,8 @@ import stream.Data;
 public class DefaultBlockingQueue implements Queue {
 
     static Logger log = LoggerFactory.getLogger(DefaultBlockingQueue.class);
+
+    final Data END_OF_STREAM = DataFactory.create();
 
     String id;
     final AtomicBoolean closed = new AtomicBoolean(false);
@@ -66,7 +69,7 @@ public class DefaultBlockingQueue implements Queue {
      */
     @Override
     public boolean write(Data item) throws Exception {
-        log.info("Receiving item {}", item);
+        log.debug("Receiving item {}", item);
         synchronized (closed) {
             if (closed.get()) {
                 log.debug("Attempt to write into closed queue!");
@@ -100,7 +103,13 @@ public class DefaultBlockingQueue implements Queue {
      */
     @Override
     public void close() throws Exception {
-        closed.set(true);
+        log.debug("Closing queue...");
+        synchronized (closed) {
+            closed.set(true);
+
+            queue.add(END_OF_STREAM);
+            closed.notifyAll();
+        }
     }
 
     /**
@@ -110,15 +119,26 @@ public class DefaultBlockingQueue implements Queue {
     public Data read() throws Exception {
         synchronized (closed) {
             if (closed.get() && queue.isEmpty()) {
+                log.debug("queue '{}' closed, read() => null", this.getId());
                 return null;
             }
 
             while (queue.isEmpty()) {
+                log.debug("Waiting for new data to arrive {}", Thread.currentThread());
                 closed.wait();
+
+                if (closed.get()) {
+                    return null;
+                }
             }
 
-            log.debug("calling .take() on queue with {} elements", queue.size());
-            return queue.take();
+            log.debug("calling .take() on queue[closed={}] with {} elements", closed.get(), queue.size());
+            Data item = queue.take();
+            if (item == END_OF_STREAM) {
+                log.debug("Found EOF!");
+                return null;
+            }
+            return item;
         }
     }
 
@@ -144,5 +164,9 @@ public class DefaultBlockingQueue implements Queue {
     @Override
     public Integer getCapacity() {
         return Integer.MAX_VALUE;
+    }
+
+    public String toString() {
+        return super.toString() + "#['" + getId() + "']";
     }
 }

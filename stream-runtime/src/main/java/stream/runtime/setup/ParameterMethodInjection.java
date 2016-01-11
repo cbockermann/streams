@@ -70,8 +70,7 @@ public class ParameterMethodInjection extends ParameterValueMapper {
                 log.debug("Handling set-method '{}'", m.getName());
 
                 boolean required = false;
-                String key = m.getName().substring(3);
-                key = Character.toLowerCase(key.charAt(0)) + key.substring(1);
+                String key = getParameterName(m);
 
                 Parameter p = m.getAnnotation(Parameter.class);
                 if (p != null) {
@@ -103,12 +102,30 @@ public class ParameterMethodInjection extends ParameterValueMapper {
         return alreadySet;
     }
 
-    public boolean isSetter(Method m) {
+    public static boolean isSetter(Method m) {
         if (!m.getName().startsWith("set")) {
             return false;
         }
 
         Class<?>[] types = m.getParameterTypes();
         return types.length == 1;
+    }
+
+    public static String getParameterName(Method m) {
+        if (!isSetter(m)) {
+            return null;
+        }
+
+        String key = null;
+
+        Parameter p = m.getAnnotation(Parameter.class);
+        if (p != null && p.name() != null && !p.name().isEmpty()) {
+            key = p.name();
+        } else {
+            key = m.getName().substring(3);
+            key = Character.toLowerCase(key.charAt(0)) + key.substring(1);
+        }
+
+        return key;
     }
 }

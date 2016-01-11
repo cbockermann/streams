@@ -6,7 +6,7 @@
 
      <PrintData />
        <!-- invalid parameters should throw exception -->
-      <stream.annotations.AnnotationTestProcessor optional="Hello"  />
+      <stream.annotations.AnnotatedProcessor optional="Hello"  />
    </process>
 
 </container>

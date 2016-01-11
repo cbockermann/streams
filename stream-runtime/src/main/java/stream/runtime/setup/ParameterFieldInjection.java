@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
+import stream.annotations.ParameterException;
 import stream.util.Variables;
 
 /**
@@ -27,7 +28,7 @@ public class ParameterFieldInjection extends ParameterValueMapper {
 
     static Logger log = LoggerFactory.getLogger(ParameterFieldInjection.class);
 
-    public Set<String> inject(final Object o, Map<String, ?> params, Variables context) throws Exception {
+    public Set<String> inject(final Object o, Map<String, ?> params, Variables context) throws ParameterException {
         Set<String> injected = new HashSet<String>();
 
         Field[] fields = o.getClass().getDeclaredFields();
@@ -45,16 +46,18 @@ public class ParameterFieldInjection extends ParameterValueMapper {
 
             Parameter p = field.getAnnotation(Parameter.class);
             String name = p.name();
+            log.info("Found parameter annotation with name '{}' for field '{}'", name, field.getName());
             if (name == null || name.isEmpty()) {
+                log.info("Parameter annotation for field '{}' has no name, using field name.", field.getName());
                 name = field.getName();
             } else {
-                log.debug("Using property '{}' as defined by annotation, instead of field name '{}'", p.name(),
+                log.info("Using property '{}' as defined by annotation, instead of field name '{}'", p.name(),
                         field.getName());
             }
 
             if (p.required() && !params.containsKey(name)) {
-                log.error("parameter {} is required, but no value is provided for it!", name);
-                throw new Exception("Missing value for required parameter '" + name + "'!");
+                log.error("Parameter '{}' is required, but no value is provided for it!", name);
+                throw new ParameterException("Missing value for required parameter '" + name + "'!");
             }
 
             Object value = params.get(name);

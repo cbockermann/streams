@@ -12,7 +12,7 @@
 		<stream.data.Counter id="learner" />
 		<stream.flow.Delay time="100 ms" />
 		<stream.data.PrintCounter counter="learner" />	
-		<stream.data.stats.CountCheck />
+		<stream.data.stats.CountCheck countService="learner" />
 		<PrintData />
 	</Process>
 	<!-- 

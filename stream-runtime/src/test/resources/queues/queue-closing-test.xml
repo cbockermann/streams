@@ -9,7 +9,9 @@
     
     
     <process id="consumer" input="q1">
+    <!-- 
         <PrintData />
+     -->
         <stream.test.ExpectedItems count="10" />
     </process>
     

@@ -32,40 +32,40 @@ import stream.Data;
  */
 public class CountCheck extends AbstractProcessor {
 
-	Long myCount = 0L;
+    Long myCount = 0L;
 
-	CountService countService = null;
+    CountService countService = null;
 
-	/**
-	 * @return the countService
-	 */
-	public CountService getCountService() {
-		return countService;
-	}
+    /**
+     * @return the countService
+     */
+    public CountService getCountService() {
+        return countService;
+    }
 
-	/**
-	 * @param countService
-	 *            the countService to set
-	 */
-	public void setCountService(CountService countService) {
-		this.countService = countService;
-	}
+    /**
+     * @param countService
+     *            the countService to set
+     */
+    public void setCountService(CountService countService) {
+        this.countService = countService;
+    }
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data input) {
-		myCount++;
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data input) {
+        myCount++;
 
-		if (countService == null)
-			throw new RuntimeException("No countService has been injected!");
+        if (countService == null)
+            throw new RuntimeException("No countService has been injected!");
 
-		Long count = countService.getCount();
-		if (!myCount.equals(count)) {
-			throw new RuntimeException("Count of CountService mismatches!");
-		}
+        Long count = countService.getCount();
+        if (!myCount.equals(count)) {
+            throw new RuntimeException("Count of CountService mismatches!");
+        }
 
-		return input;
-	}
+        return input;
+    }
 }

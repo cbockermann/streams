@@ -21,43 +21,58 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.data;
+package stream.annotations;
 
 import stream.Data;
 import stream.Processor;
-import stream.data.stats.CountService;
 
 /**
- * @author chris
- * 
+ * Test processor for xmlAnnotations Created by bruegge on 3/5/14.
  */
-public class Counter implements CountService, Processor {
 
-    Long count = 0L;
+public class AnnotatedProcessorWithDoubleAnnotations implements Processor {
 
-    /**
-     * @see stream.service.Service#reset()
-     */
-    @Override
-    public void reset() throws Exception {
-        count = 0L;
-    }
+    @Parameter(name = "differentXMLName")
+    private String namedParameter;
 
-    /**
-     * @see stream.Processor#process(stream.Data)
-     */
+    @Parameter(required = true)
+    private String nonoptional;
+
+    @Parameter
+    private String optional;
+
     @Override
     public Data process(Data input) {
-        if (input != null)
-            count++;
+        System.out.println("Annotation test processor:  ");
+        System.out.println("nonoptional: " + nonoptional);
+        System.out.println("optional: " + optional);
         return input;
     }
 
-    /**
-     * @see stream.data.CounterService#getCount()
-     */
-    @Override
-    public Long getCount() {
-        return new Long(count);
+    // getter and setter crap for our fields
+
+    public String getNonoptional() {
+        return nonoptional;
+    }
+
+    public void setNonoptional(String nonoptional) {
+        this.nonoptional = nonoptional;
+    }
+
+    public String getOptional() {
+        return optional;
+    }
+
+    @Parameter
+    public void setOptional(String optional) {
+        this.optional = optional;
+    }
+
+    public String getNamedParameter() {
+        return namedParameter;
+    }
+
+    public void setNamedParameter(String namedParameter) {
+        this.namedParameter = namedParameter;
     }
 }

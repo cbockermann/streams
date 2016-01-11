@@ -647,6 +647,8 @@ public class ProcessContainer implements IContainer, Runnable {
             lc.init(context);
         }
 
+        final Supervisor supervisor = new Supervisor(computeGraph());
+
         log.info("Creating {} active processes...", processes.size());
         long start = System.currentTimeMillis();
         for (Process spu : processes) {
@@ -660,6 +662,7 @@ public class ProcessContainer implements IContainer, Runnable {
             // spu.init(ctx);
 
             ProcessThread worker = new ProcessThread(spu, context);
+            worker.addListener(supervisor);
             worker.addListener(new ProcessListener() {
                 @Override
                 public void processStarted(Process p) {
@@ -710,6 +713,15 @@ public class ProcessContainer implements IContainer, Runnable {
 
         if (failFastReason != null) {
             throw failFastReason;
+        }
+
+        while (supervisor.processesRunning() > 0) {
+            log.info("{} processes still running...", supervisor.processesRunning());
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return end - start;

@@ -103,7 +103,9 @@ public class DefaultBlockingQueue implements Queue {
      */
     @Override
     public void close() throws Exception {
-        log.debug("Closing queue...");
+        log.debug("Closing queue {}", this.toString());
+        // Thread.dumpStack();
+
         synchronized (closed) {
             closed.set(true);
 

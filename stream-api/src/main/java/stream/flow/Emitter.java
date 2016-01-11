@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import stream.Data;
 import stream.ProcessContext;
 import stream.expressions.version2.ConditionedProcessor;
-import stream.io.Queue;
 import stream.io.Sink;
 
 /**
@@ -40,119 +39,79 @@ import stream.io.Sink;
  */
 public class Emitter extends ConditionedProcessor {
 
-	static Logger log = LoggerFactory.getLogger(Enqueue.class);
+    static Logger log = LoggerFactory.getLogger(Enqueue.class);
 
-	protected Sink[] sinks;
+    protected Sink[] sinks;
 
-	protected String[] keys;
-	protected boolean skip = false;
+    protected String[] keys;
+    protected boolean skip = false;
 
-	@Override
-	public void init(ProcessContext ctx) throws Exception {
-		super.init(ctx);
-		if (sinks == null)
-			throw new IllegalArgumentException("sinks are not set");
-	}
+    @Override
+    public void init(ProcessContext ctx) throws Exception {
+        super.init(ctx);
+        if (sinks == null)
+            throw new IllegalArgumentException("sinks are not set");
+    }
 
-	/**
-	 * @throws Exception
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data processMatchingData(Data data) throws Exception {
-		emit(data);
-		return data;
-	}
+    /**
+     * @throws Exception
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data processMatchingData(Data data) throws Exception {
+        emit(data);
+        return data;
+    }
 
-	protected void emit(Data data) {
-		for (Sink sink : sinks) {
-			Data d = data.createCopy();
-			try {
-				log.debug("emitting to {}", sink.getId());
-				sink.write(d);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    protected void emit(Data data) {
+        for (Sink sink : sinks) {
+            Data d = data.createCopy();
+            try {
+                log.debug("emitting to {}", sink.getId());
+                sink.write(d);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	protected void emit(Data[] data) {
-		for (Sink sink : sinks) {
-			try {
-				sink.write(Arrays.asList(data));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    protected void emit(Data[] data) {
+        for (Sink sink : sinks) {
+            try {
+                sink.write(Arrays.asList(data));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	/**
-	 * @see stream.AbstractProcessor#finish()
-	 */
-	@Override
-	public void finish() throws Exception {
-		super.finish();
+    @Override
+    public String toString() {
+        return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys=" + Arrays.toString(keys) + "]";
+    }
 
-		if (sinks == null || sinks.length == 0) {
-			log.debug("Closing no Sinks...");
-			return;
-		}
-		int numberSinks = sinks.length;
-		log.debug("Closing all Sinks...");
+    public String[] getKeys() {
+        return keys;
+    }
 
-		boolean[] isEmpty = new boolean[numberSinks];
-		int sum = 0;
-		while (sum < numberSinks) {
-			sum = 0;
-			for (int i = 0; i < numberSinks; i++) {
-				if (isEmpty[i]) {
-					sum++;
-				} else {
-					Sink s = sinks[i];
+    public void setKeys(String[] keys) {
+        this.keys = keys;
+    }
 
-					if (s == null) {
-						isEmpty[i] = true;
-					} else {
-						if (s instanceof Queue && ((Queue) s).getSize() > 0) {
-							continue;
-						}
-						s.close();
-						isEmpty[i] = true;
-						sum++;
-					}
-				}
-			}
-		}
-	}
+    public void setSink(Sink sink) {
+        if (sink != null) {
+            this.keys = new String[] {};
+            this.sinks = new Sink[] { sink };
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys="
-				+ Arrays.toString(keys) + "]";
-	}
+    public void setSinks(Sink[] sinks) {
+        if (sinks != null) {
+            this.sinks = sinks;
+        }
+    }
 
-	public String[] getKeys() {
-		return keys;
-	}
-
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
-
-	public void setSink(Sink sink) {
-		if (sink != null) {
-			this.keys = new String[] {};
-			this.sinks = new Sink[] { sink };
-		}
-	}
-
-	public void setSinks(Sink[] sinks) {
-		if (sinks != null) {
-			this.sinks = sinks;
-		}
-	}
-
-	public void setSkip(Boolean skip) {
-		this.skip = skip;
-	}
+    public void setSkip(Boolean skip) {
+        this.skip = skip;
+    }
 }

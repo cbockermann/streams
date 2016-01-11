@@ -647,7 +647,20 @@ public class ProcessContainer implements IContainer, Runnable {
             lc.init(context);
         }
 
-        final Supervisor supervisor = new Supervisor(computeGraph());
+        final Supervisor supervisor = new Supervisor(computeGraph()) {
+            /**
+             * @see stream.runtime.Supervisor#processError(stream.Process,
+             *      java.lang.Exception)
+             */
+            @Override
+            public void processError(Process p, Exception e) {
+                super.processError(p, e);
+                log.error("Process {} signaled an error: {}", p, e.getMessage());
+                log.debug("Forcing fail-fast shutdown of application...");
+                failFastReason = e;
+                shutdown();
+            }
+        };
 
         log.info("Creating {} active processes...", processes.size());
         long start = System.currentTimeMillis();
@@ -663,25 +676,6 @@ public class ProcessContainer implements IContainer, Runnable {
 
             ProcessThread worker = new ProcessThread(spu, context);
             worker.addListener(supervisor);
-            worker.addListener(new ProcessListener() {
-                @Override
-                public void processStarted(Process p) {
-                }
-
-                @Override
-                public void processFinished(Process p) {
-                    log.info("Process {} finished!", p);
-                    depGraph.remove(p);
-                }
-
-                @Override
-                public void processError(Process p, Exception e) {
-                    log.error("Process {} signaled an error: {}", p, e.getMessage());
-                    log.debug("Forcing fail-fast shutdown of application...");
-                    failFastReason = e;
-                    shutdown();
-                }
-            });
 
             log.debug("Initializing stream-process [{}]", spu);
             worker.init();

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>streams</artifactId>
 		<groupId>org.jwall</groupId>
-		<version>0.9.24-SNAPSHOT</version>
+		<version>0.9.24</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>streams-core</artifactId>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-sandbox</artifactId>
-			<version>0.9.24-SNAPSHOT</version>
+			<version>0.9.24</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

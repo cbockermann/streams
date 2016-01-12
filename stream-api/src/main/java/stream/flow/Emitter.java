@@ -63,26 +63,34 @@ public class Emitter extends ConditionedProcessor {
         return data;
     }
 
-    protected void emit(Data data) {
+    protected int emit(Data data) {
+        int written = 0;
         for (Sink sink : sinks) {
             Data d = data.createCopy();
             try {
                 log.debug("emitting to {}", sink.getId());
-                sink.write(d);
+                if (sink.write(d)) {
+                    written++;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return written;
     }
 
-    protected void emit(Data[] data) {
+    protected int emit(Data[] data) {
+        int written = 0;
         for (Sink sink : sinks) {
             try {
-                sink.write(Arrays.asList(data));
+                if (sink.write(Arrays.asList(data))) {
+                    written += data.length;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return written;
     }
 
     @Override

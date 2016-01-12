@@ -16,13 +16,17 @@
 
 
 	<process id="reader" input="random">
+	<!-- 
 		<PrintData />
+	 -->
 		<stream.test.AddTimeSinceLastItem />
-		<stream.flow.Enqueue queue="ordered" />
+		<stream.flow.TestEnqueue queue="ordered" />
 	</process>
 
 	<process id="orderedQueue" input="ordered">
+	<!-- 
 		<PrintData />
+	 -->
 		<!-- <stream.test.AddDelayAfter100Items /> -->
 		<stream.test.Collector id="collected" />
 	</process>

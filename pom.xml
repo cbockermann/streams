@@ -13,10 +13,10 @@
 	</properties>
 
 	<modules>
-		<module>stream-api</module>
-		<module>stream-core</module>
-		<module>stream-runtime</module>
-		<module>stream-plotter</module>
+		<module>streams-api</module>
+		<module>streams-core</module>
+		<module>streams-runtime</module>
+		<module>streams-plotter</module>
 		<module>streams-sandbox</module>
 		<module>streams-performance</module>
 	</modules>

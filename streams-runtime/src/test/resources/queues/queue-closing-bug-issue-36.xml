@@ -1,0 +1,17 @@
+<container>
+    <property name="num_copies" value="2" />
+
+    <stream id="random" class="stream.test.TestStream" limit="2000"/>
+
+    <queue id="result" />
+
+    <process id="1" input="random" copies="${num_copies}">
+
+        <Enqueue queue="result"/>
+
+    </process>
+
+    <process input="result" id="egal" >
+        <PrintData/>
+    </process>
+</container> 

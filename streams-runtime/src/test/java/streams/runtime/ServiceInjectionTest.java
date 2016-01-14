@@ -63,6 +63,7 @@ public class ServiceInjectionTest {
 
 
 	/**
+	 * Old method to test injection for ServiceInjection
 	 * Test method for service injection
 	 *
 	 * @throws Exception

@@ -215,13 +215,17 @@ public class DependencyInjection {
         return null;
     }
 
+    //Lying method name. This needs to be renamed.
     @SuppressWarnings("unchecked")
     public static Class<? extends Service> hasServiceSetter(String name, Object o) {
         try {
 
             for (Method m : o.getClass().getMethods()) {
                 if (m.getName().equalsIgnoreCase("set" + name) && isServiceSetter(m)) {
-                    return (Class<? extends Service>) m.getParameterTypes()[0];
+                    Class<?>[] types = m.getParameterTypes();
+                    if (types.length > 0){
+                        return (Class<? extends Service>) m.getParameterTypes()[0];
+                    }
                 }
             }
 
@@ -309,32 +313,9 @@ public class DependencyInjection {
      * @return
      */
     public static boolean isServiceImplementation(Class<?> clazz) {
-
-        if (clazz == Service.class)
+        if (Service.class.isAssignableFrom(clazz)){
             return true;
-
-        if (clazz.isArray()) {
-            log.debug("checking array component-type for service implementation");
-            return isServiceImplementation(clazz.getComponentType());
-            // log.debug("Injection of arrays of service references is not yet
-            // supported!");
-            // return false;
         }
-
-        // TODO: Is 'isAssignableFrom(..)' the better way here?
-        //
-        if (Service.class.isAssignableFrom(clazz))
-            return true;
-
-        for (Class<?> intf : clazz.getInterfaces()) {
-            log.trace("Checking if {} = {}", intf, Service.class);
-            if (intf.equals(Service.class) || intf == Service.class) {
-                log.trace("Yes, class {} implements the service interface!", clazz);
-                return true;
-            }
-        }
-
-        log.trace("No, class {} does not implement the service interface!", clazz);
         return false;
     }
 }

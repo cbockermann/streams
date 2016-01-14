@@ -149,25 +149,7 @@ public class ServiceInjection {
 			}
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public static Class<? extends Service> hasServiceSetter(String name,
-			Object o) {
-		try {
-
-			for (Method m : o.getClass().getMethods()) {
-				if (m.getName().equalsIgnoreCase("set" + name)
-						&& isServiceSetter(m)) {
-					return (Class<? extends Service>) m.getParameterTypes()[0];
-				}
-			}
-
-			return null;
-		} catch (Exception e) {
-			log.error("Failed to determine service-setter: {}", e.getMessage());
-			return null;
-		}
-	}
+	
 
 	/**
 	 * This method returns a setter method of the given object for the specified

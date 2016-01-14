@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
 import stream.annotations.ParameterException;
+import stream.runtime.DependencyInjection;
+import stream.service.Service;
 import stream.util.Variables;
 
 /**
@@ -29,16 +31,17 @@ public class ParameterFieldInjection extends ParameterValueMapper {
     static Logger log = LoggerFactory.getLogger(ParameterFieldInjection.class);
 
     public Set<String> inject(final Object o, Map<String, ?> params, Variables context) throws ParameterException {
-        Set<String> injected = new HashSet<String>();
+        Set<String> injected = new HashSet<>();
 
         Field[] fields = o.getClass().getDeclaredFields();
         for (final Field field : fields) {
 
             // skip fields that are not annotated as parameters
             if (!field.isAnnotationPresent(Parameter.class)) {
-                log.debug("Skipping field '{}' without parameter annoation...", field.getName());
+                log.debug("Skipping field '{}' without parameter annotation...", field.getName());
                 continue;
             }
+
 
             // allow for restoring the original access level to the field
             boolean accessLevel = field.isAccessible();
@@ -57,7 +60,9 @@ public class ParameterFieldInjection extends ParameterValueMapper {
 
             if (p.required() && !params.containsKey(name)) {
                 log.error("Parameter '{}' is required, but no value is provided for it!", name);
-                throw new ParameterException("Missing value for required parameter '" + name + "'!");
+
+                throw new ParameterException("Missing value for required parameter '" +
+                        name + "' in class '" + o.getClass().getSimpleName() + "'!");
             }
 
             Object value = params.get(name);

@@ -1,0 +1,18 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+<application>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+	<Process input="input">
+	
+		<stream.data.stats.CountServiceLearner id="metaData" />
+		
+		<stream.data.stats.CountCheck countService="metaData" />
+
+		<stream.test.LogData />
+		
+	</Process>
+	
+</application>

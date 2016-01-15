@@ -1,0 +1,25 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+<application>
+
+	<stream id="input" class="stream.test.TestStream" limit = "10" />
+	
+	<!--  A mockup of a service providing a sequence of IDs: {1,2,3,...}  -->
+	<service id="extId" class="streams.service.ExternalDatabaseMock" />
+
+	<process input="input">
+
+		<!--  a processor merging the output of the external database to each data item -->	
+		<streams.service.LookupMethod database = "extId" />
+	
+		<!--  Check whether the external ID matches the one obtained from the TestStream -->
+		<!-- 
+		<stream.service.Assert condition="%{data.@id} = %{data.ext:id}" />
+		 -->
+	
+	
+		<PrintData />		
+	</process>
+	
+</application>

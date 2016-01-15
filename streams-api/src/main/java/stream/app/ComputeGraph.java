@@ -557,11 +557,6 @@ public class ComputeGraph {
     public final static class ServiceRef extends Reference {
         final Class<? extends Service> type;
 
-        public ServiceRef(Object o, String property, String queueId, Class<? extends Service> type) {
-            super(o, property, queueId);
-            this.type = type;
-        }
-
         public ServiceRef(Object o, String property, String[] queueId, Class<? extends Service> type) {
             super(o, property, queueId);
             this.type = type;

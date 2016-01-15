@@ -47,6 +47,7 @@ import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
 import stream.runtime.ProcessContextImpl;
+import stream.runtime.setup.ServiceFieldInjection;
 import stream.runtime.setup.handler.ProcessElementHandler;
 import stream.service.Service;
 import stream.util.Variables;
@@ -326,6 +327,17 @@ public class DefaultProcessFactory implements ProcessFactory {
                             "Processor '{}' specifies an ID attribute '{}' but does not implement a Service interface. Processor will *not* be registered!",
                             o.getClass().getName(), params.get("id"));
                 }
+            }
+
+            //
+            // create list of ServiceRefs for all service fields (service field
+            // injection)
+            //
+            List<ServiceRef> sr = new ServiceFieldInjection().getServiceRefsForFields((Processor) o, params);
+            log.info("Found the following service fields: {}", sr);
+            for (ServiceRef ref : sr) {
+                computeGraph.addReference(ref);
+                dependencyInjection.add(ref);
             }
 
             // For all keys do Service- and Sink-injection

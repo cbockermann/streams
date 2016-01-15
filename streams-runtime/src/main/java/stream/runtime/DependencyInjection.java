@@ -24,6 +24,7 @@
 package stream.runtime;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -170,6 +171,55 @@ public class DependencyInjection {
     }
 
     public boolean injectResolvedReferences(Object o, String property, Object[] resolvedRefs) throws Exception {
+
+        for (Field field : o.getClass().getDeclaredFields()) {
+
+            if (DependencyInjection.isServiceImplementation(field.getType())) {
+                log.info("Checking service-field {}", field.getName());
+
+                String prop = field.getName();
+                stream.annotations.Service sa = field.getAnnotation(stream.annotations.Service.class);
+                if (sa != null && !sa.name().isEmpty()) {
+                    prop = sa.name();
+                }
+
+                log.info("Service field '{}' relates to property '{}'", field.getName(), prop);
+                if (prop.equals(property)) {
+                    Class<?> valueType;
+
+                    if (field.getType().isArray()) {
+                        valueType = field.getType().getComponentType();
+                        if (valueType.isAssignableFrom(resolvedRefs.getClass().getComponentType())) {
+                            boolean orig = field.isAccessible();
+                            field.setAccessible(true);
+                            field.set(o, resolvedRefs);
+                            field.setAccessible(orig);
+                            return true;
+                        } else {
+                            throw new Exception("Array type mis-match! Field '" + field.getName() + "' of type "
+                                    + field.getType().getComponentType() + "[] is not assignable from "
+                                    + resolvedRefs.getClass().getComponentType() + "[]!");
+                        }
+
+                    } else {
+                        valueType = field.getType();
+                        if (valueType.isAssignableFrom(resolvedRefs[0].getClass())) {
+                            boolean orig = field.isAccessible();
+                            field.setAccessible(true);
+                            field.set(o, resolvedRefs[0]);
+                            field.setAccessible(orig);
+                            return true;
+                        } else {
+                            throw new Exception("Field '" + field.getName() + "' is not assignable with object of type "
+                                    + valueType);
+                        }
+                    }
+
+                }
+
+            }
+        }
+
         String name = "set" + property.toLowerCase();
 
         for (Method m : o.getClass().getMethods()) {
@@ -215,13 +265,17 @@ public class DependencyInjection {
         return null;
     }
 
+    // Lying method name. This needs to be renamed.
     @SuppressWarnings("unchecked")
     public static Class<? extends Service> hasServiceSetter(String name, Object o) {
         try {
 
             for (Method m : o.getClass().getMethods()) {
                 if (m.getName().equalsIgnoreCase("set" + name) && isServiceSetter(m)) {
-                    return (Class<? extends Service>) m.getParameterTypes()[0];
+                    Class<?>[] types = m.getParameterTypes();
+                    if (types.length > 0) {
+                        return (Class<? extends Service>) m.getParameterTypes()[0];
+                    }
                 }
             }
 
@@ -309,32 +363,9 @@ public class DependencyInjection {
      * @return
      */
     public static boolean isServiceImplementation(Class<?> clazz) {
-
-        if (clazz == Service.class)
+        if (Service.class.isAssignableFrom(clazz)) {
             return true;
-
-        if (clazz.isArray()) {
-            log.debug("checking array component-type for service implementation");
-            return isServiceImplementation(clazz.getComponentType());
-            // log.debug("Injection of arrays of service references is not yet
-            // supported!");
-            // return false;
         }
-
-        // TODO: Is 'isAssignableFrom(..)' the better way here?
-        //
-        if (Service.class.isAssignableFrom(clazz))
-            return true;
-
-        for (Class<?> intf : clazz.getInterfaces()) {
-            log.trace("Checking if {} = {}", intf, Service.class);
-            if (intf.equals(Service.class) || intf == Service.class) {
-                log.trace("Yes, class {} implements the service interface!", clazz);
-                return true;
-            }
-        }
-
-        log.trace("No, class {} does not implement the service interface!", clazz);
         return false;
     }
 }

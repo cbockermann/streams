@@ -21,31 +21,36 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.test;
+package stream.annotations;
 
-import junit.framework.Assert;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.junit.Test;
+/**
+ * This annotation is used to mark fields as service reference. A field marked
+ * as service reference will be populated by looking up the property value of
+ * the annotation 'name' field and inject the field with the service that is
+ * returned using this 'name' value.
+ * 
+ * If the 'name' value is empty, the field-name will be used.
+ * 
+ * 
+ * @author Christian Bockermann
+ * 
+ */
+@Documented
+@Target({ ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Service {
 
-import stream.runtime.DependencyInjection;
-
-public class ServiceSetterDetectionTest {
-
-	@Test
-	public void testIsServiceImpl() {
-		Assert.assertTrue(DependencyInjection
-				.isServiceImplementation(TestService.class));
-	}
-
-	@Test
-	public void testIsServiceImpl_neg() {
-		Assert.assertFalse(DependencyInjection
-				.isServiceImplementation(Object.class));
-	}
-
-	@Test
-	public void testIsServiceImpl_Level2Service() {
-		Assert.assertTrue(DependencyInjection
-				.isServiceImplementation(Level2Service.class));
-	}
+    /**
+     * An optional name for the parameter, which determines the <b>external</b>
+     * name of that parameter, i.e. within a configuration file.
+     * 
+     * @return
+     */
+    String name() default "";
 }

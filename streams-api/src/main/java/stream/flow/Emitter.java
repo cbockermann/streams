@@ -71,6 +71,8 @@ public class Emitter extends ConditionedProcessor {
                 log.debug("emitting to {}", sink.getId());
                 if (sink.write(d)) {
                     written++;
+                } else {
+                    log.warn("Failed to write item '{}' to queue {}", d, sink.getId());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -211,7 +211,7 @@ public class DependencyInjection {
                             return true;
                         } else {
                             throw new Exception("Field '" + field.getName() + "' is not assignable with object of type "
-                                    + valueType);
+                                    + resolvedRefs[0].getClass());
                         }
                     }
 

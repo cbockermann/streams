@@ -2,6 +2,7 @@
 
 	<stream id="data" class="stream.test.TestStream" limit="10" />
 	<service class="streams.runtime.TestService" id="testService"/>
+	
 	<process input="data">
 		<streams.runtime.ProcessorWithFields key="answer" answer="42.0" service="testService" />
 		<PrintData />

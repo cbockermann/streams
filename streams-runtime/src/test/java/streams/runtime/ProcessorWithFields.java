@@ -6,11 +6,13 @@ package streams.runtime;
 import stream.Data;
 import stream.Processor;
 import stream.annotations.Parameter;
-import stream.flow.OnChange;
-import stream.learner.PredictionService;
+import stream.annotations.Service;
+import stream.service.EchoService;
 
 /**
- * Test processor for testing the injection of values and dependencies from a test .xml into a processor.
+ * Test processor for testing the injection of values and dependencies from a
+ * test .xml into a processor.
+ * 
  * @author chris, kai
  *
  */
@@ -22,8 +24,8 @@ public class ProcessorWithFields implements Processor {
     @Parameter(required = true)
     Double answer;
 
-    @Parameter(required = true)
-    OnChange service;
+    @Service
+    EchoService service;
 
     /**
      * @see stream.Processor#process(stream.Data)

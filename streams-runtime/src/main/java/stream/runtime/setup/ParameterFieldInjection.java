@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.annotations.Parameter;
 import stream.annotations.ParameterException;
+import stream.service.Service;
 import stream.util.Variables;
 
 /**
@@ -38,6 +39,11 @@ public class ParameterFieldInjection extends ParameterValueMapper {
             if (!field.isAnnotationPresent(Parameter.class)) {
                 log.debug("Skipping field '{}' without parameter annotation...", field.getName());
                 continue;
+            }
+
+            if (Service.class.isAssignableFrom(field.getType())) {
+                throw new ParameterException(
+                        "Field '" + field.getName() + "' represents a service, but is annotated with '@Parameter'!");
             }
 
             // allow for restoring the original access level to the field

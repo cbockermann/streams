@@ -42,8 +42,8 @@ public class ParameterFieldInjection extends ParameterValueMapper {
             }
 
             if (Service.class.isAssignableFrom(field.getType())) {
-                throw new ParameterException(
-                        "Field '" + field.getName() + "' represents a service, but is annotated with '@Parameter'!");
+                throw new ParameterException("Field '" + field.getName() + "' of class '" + o.getClass().getSimpleName()
+                        + "' represents a service, but is annotated with '@Parameter'!");
             }
 
             // allow for restoring the original access level to the field

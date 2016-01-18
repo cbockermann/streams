@@ -74,7 +74,13 @@ public class ParameterValidator {
             }
 
             if (params.containsKey(name) && p != null) {
-                throw new ParameterException("Parameter '" + name + "' already defined by field annotation!");
+                Class<?> mtype = method.getParameterTypes()[0];
+                if (!mtype.equals(params.get(name))) {
+                    throw new ParameterException(
+                            "Input type '" + mtype.getName() + "' of set-method '" + clazz.getSimpleName() + "."
+                                    + method.getName() + "' for parameter '" + name + "' does not match type '"
+                                    + params.get(name).getName() + "' defined by field annotation!");
+                }
             }
 
             params.put(name, method.getParameterTypes()[0]);

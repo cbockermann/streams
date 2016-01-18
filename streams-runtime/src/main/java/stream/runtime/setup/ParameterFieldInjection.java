@@ -42,13 +42,10 @@ public class ParameterFieldInjection extends ParameterValueMapper {
             }
 
             if (Service.class.isAssignableFrom(field.getType())) {
-                throw new ParameterException("Field '" + field.getName() + "' of class '" + o.getClass().getSimpleName()
-                        + "' represents a service, but is annotated with '@Parameter'!");
+                throw new ParameterException(
+                        "Field '" + field.getName() + "' of class '" + o.getClass().getCanonicalName()
+                                + "' represents a service, but is annotated with '@Parameter'!");
             }
-
-            // allow for restoring the original access level to the field
-            boolean accessLevel = field.isAccessible();
-            field.setAccessible(true);
 
             Parameter p = field.getAnnotation(Parameter.class);
             String name = p.name();
@@ -60,6 +57,15 @@ public class ParameterFieldInjection extends ParameterValueMapper {
                 log.info("Using property '{}' as defined by annotation, instead of field name '{}'", p.name(),
                         field.getName());
             }
+
+            if (ParameterMethodInjection.hasSetterFor(o, name, field.getType())) {
+                log.warn("Set-method defined for parameter '{}', skipping field-injection for this parameter.", name);
+                continue;
+            }
+
+            // allow for restoring the original access level to the field
+            boolean accessLevel = field.isAccessible();
+            field.setAccessible(true);
 
             if (p.required() && !params.containsKey(name)) {
                 log.error("Parameter '{}' is required, but no value is provided for it!", name);

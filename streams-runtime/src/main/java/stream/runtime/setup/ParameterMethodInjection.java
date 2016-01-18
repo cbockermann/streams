@@ -128,4 +128,24 @@ public class ParameterMethodInjection extends ParameterValueMapper {
 
         return key;
     }
+
+    public static boolean hasSetterFor(Object o, String paramName, Class<?> type) {
+
+        for (Method m : o.getClass().getDeclaredMethods()) {
+
+            Class<?>[] types = m.getParameterTypes();
+            if (types.length != 1) {
+                continue;
+            }
+
+            String mn = m.getName();
+            if (mn.toLowerCase().equals("set" + paramName)) {
+                if (type.isAssignableFrom(types[0])) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

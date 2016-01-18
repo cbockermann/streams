@@ -53,4 +53,15 @@ public @interface Service {
      * @return
      */
     String name() default "";
+
+    /**
+     * By default, all service annotations define required references. This
+     * attribute allow marking a service reference as optional.
+     */
+    boolean required() default true;
+
+    /**
+     * An optional description, e.g. the use of the service referenced by this.
+     */
+    String description() default "";
 }

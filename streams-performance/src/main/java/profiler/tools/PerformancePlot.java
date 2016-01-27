@@ -18,6 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import stream.util.WildcardPattern;
 import stream.util.XMLUtils;
 import streams.tikz.Path;
 import streams.tikz.Point;
@@ -37,7 +38,6 @@ public class PerformancePlot {
     public static void main(String[] params) throws Exception {
 
         String[] args = params;
-        args = "/Users/chris/fact-tools-profiling.xml".split(",");
 
         if (args.length < 1) {
             System.err.println("Usage:");
@@ -51,6 +51,7 @@ public class PerformancePlot {
             output = new File(args[1]);
         }
 
+        String filter = System.getProperty("processors", "*");
         LinkedHashMap<String, Double> columns = new LinkedHashMap<String, Double>();
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -67,9 +68,9 @@ public class PerformancePlot {
                 String className = processor.getNodeName();
                 log.info("Found processor {}", className);
 
-                boolean interest = className.contains("features"); // ||
-                                                                   // className.contains("BasicExtraction");
-
+                // boolean interest = className.contains("features"); // ||
+                // // className.contains("BasicExtraction");
+                boolean interest = WildcardPattern.matches(filter, className);
                 if (!interest) {
                     log.info("  >>> skipping");
                     continue;

@@ -49,30 +49,36 @@ public class Proxy implements StatefulProcessor {
     @Override
     public Data process(Data input) {
         items++;
-        Data data = input;
+        try {
+            Data data = input;
 
-        if (trackKeys)
-            data = wrap(input);
+            if (trackKeys)
+                data = wrap(input);
 
-        final Data result;
+            final Data result;
 
-        if (trackTime) {
-            final long t0 = System.nanoTime();
-            result = delegate.process(data);
-            final long t1 = System.nanoTime();
-            nanos += t1 - t0;
-        } else {
-            result = delegate.process(data);
+            if (trackTime) {
+                final long t0 = System.nanoTime();
+                result = delegate.process(data);
+                final long t1 = System.nanoTime();
+                nanos += t1 - t0;
+            } else {
+                result = delegate.process(data);
+            }
+
+            if (result == null) {
+                return null;
+            }
+
+            if (trackKeys)
+                return unwrap(result);
+            else
+                return result;
+        } catch (RuntimeException e) {
+            log.error("proxied processor '{}' threw exception: {}", delegate.getClass().getCanonicalName(),
+                    e.getMessage());
+            throw e;
         }
-
-        if (result == null) {
-            return null;
-        }
-
-        if (trackKeys)
-            return unwrap(result);
-        else
-            return result;
     }
 
     public Data wrap(Data item) {

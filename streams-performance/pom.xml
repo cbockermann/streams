@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>org.jwall</groupId>
 			<artifactId>streams-plotter</artifactId>
-			<version>[0.9.22,)</version>
+			<version>0.9.25-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

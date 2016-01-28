@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import stream.Context;
 import stream.Processor;
+import stream.runtime.ApplicationContext;
 import stream.runtime.DefaultProcess;
 import stream.runtime.setup.ParameterInjection;
 import streams.profiler.ProxyInjection.ProxyNode;
@@ -47,7 +47,7 @@ public class Process extends DefaultProcess {
      * @see stream.runtime.AbstractProcess#init(stream.runtime.ApplicationContext)
      */
     @Override
-    public void init(Context context) throws Exception {
+    public void init(ApplicationContext context) throws Exception {
         super.init(context);
 
         ProxyInjection injection = new ProxyInjection();

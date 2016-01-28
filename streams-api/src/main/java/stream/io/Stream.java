@@ -23,6 +23,8 @@
  */
 package stream.io;
 
+import stream.Data;
+
 /**
  * <p>
  * A simple data stream interface, producing data items.
@@ -31,12 +33,12 @@ package stream.io;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public interface Stream extends Source {
+public interface Stream extends Source<Data> {
 
-	public final static String SOURCE_KEY = "@stream";
+    public final static String SOURCE_KEY = "@stream";
 
-	public Long getLimit();
+    public Long getLimit();
 
-	public void setLimit(Long limit);
+    public void setLimit(Long limit);
 
 }

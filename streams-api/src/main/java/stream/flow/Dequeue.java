@@ -40,39 +40,39 @@ import stream.io.QueueService;
  */
 public class Dequeue extends AbstractProcessor {
 
-	static Logger log = LoggerFactory.getLogger(Dequeue.class);
-	QueueService queue;
+    static Logger log = LoggerFactory.getLogger(Dequeue.class);
+    QueueService<Data> queue;
 
-	public QueueService getQueue() {
-		return queue;
-	}
+    public QueueService<Data> getQueue() {
+        return queue;
+    }
 
-	public void setQueue(QueueService queue) {
-		this.queue = queue;
-	}
+    public void setQueue(QueueService<Data> queue) {
+        this.queue = queue;
+    }
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data input) {
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data input) {
 
-		if (queue != null) {
+        if (queue != null) {
 
-			if (input == null)
-				input = DataFactory.create();
+            if (input == null)
+                input = DataFactory.create();
 
-			Data item = queue.take();
-			if (item != null) {
-				log.debug("Merging dequeued item '{}'", item);
-				input.putAll(item);
-			} else {
-				log.error("Dequeued 'null' from queue - unexpected?!");
-			}
-		} else {
-			log.debug("No queue defined, not dequeuing anything...");
-		}
+            Data item = queue.take();
+            if (item != null) {
+                log.debug("Merging dequeued item '{}'", item);
+                input.putAll(item);
+            } else {
+                log.error("Dequeued 'null' from queue - unexpected?!");
+            }
+        } else {
+            log.debug("No queue defined, not dequeuing anything...");
+        }
 
-		return input;
-	}
+        return input;
+    }
 }

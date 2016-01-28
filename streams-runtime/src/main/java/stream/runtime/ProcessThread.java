@@ -55,13 +55,13 @@ public class ProcessThread extends Thread {
         PRIORITY_NAMES.put("highest", Thread.MAX_PRIORITY);
     }
 
-    final stream.Process process;
+    final stream.Process<?> process;
     final ApplicationContext context;
     boolean running = false;
 
     protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
 
-    public ProcessThread(stream.Process process, ApplicationContext ctx) {
+    public ProcessThread(stream.Process<?> process, ApplicationContext ctx) {
 
         Integer prio = Thread.NORM_PRIORITY;
         try {
@@ -101,7 +101,7 @@ public class ProcessThread extends Thread {
         return running;
     }
 
-    public stream.Process getProcess() {
+    public stream.Process<?> getProcess() {
         return process;
     }
 

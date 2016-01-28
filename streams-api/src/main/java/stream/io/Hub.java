@@ -48,161 +48,161 @@ import stream.data.DataFactory;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public class Hub implements QueueService, HubService {
+public class Hub implements QueueService<Data>, HubService {
 
-	static Logger log = LoggerFactory.getLogger(Hub.class);
-	final List<DataStreamListener> listener = new CopyOnWriteArrayList<DataStreamListener>();
+    static Logger log = LoggerFactory.getLogger(Hub.class);
+    final List<DataStreamListener> listener = new CopyOnWriteArrayList<DataStreamListener>();
 
-	String id;
+    String id;
 
-	/**
-	 * @see stream.service.Service#reset()
-	 */
-	@Override
-	public void reset() throws Exception {
-	}
+    /**
+     * @see stream.service.Service#reset()
+     */
+    @Override
+    public void reset() throws Exception {
+    }
 
-	/**
-	 * @see stream.io.QueueService#poll()
-	 */
-	@Override
-	public Data poll() {
-		return null;
-	}
+    /**
+     * @see stream.io.QueueService#poll()
+     */
+    @Override
+    public Data poll() {
+        return null;
+    }
 
-	/**
-	 * @see stream.io.QueueService#take()
-	 */
-	@Override
-	public Data take() {
-		return null;
-	}
+    /**
+     * @see stream.io.QueueService#take()
+     */
+    @Override
+    public Data take() {
+        return null;
+    }
 
-	/**
-	 * @see stream.io.QueueService#enqueue(stream.Data)
-	 */
-	@Override
-	public boolean enqueue(Data item) {
-		//
-		// ENH: use a pool of dispatcher threads, which simultaneously
-		// dispatch the items to more than one listener at once.
-		//
-		for (DataStreamListener dsl : listener) {
-			try {
-				dsl.dataArrived(DataFactory.create(item));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+    /**
+     * @see stream.io.QueueService#enqueue(stream.Data)
+     */
+    @Override
+    public boolean enqueue(Data item) {
+        //
+        // ENH: use a pool of dispatcher threads, which simultaneously
+        // dispatch the items to more than one listener at once.
+        //
+        for (DataStreamListener dsl : listener) {
+            try {
+                dsl.dataArrived(DataFactory.create(item));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @see stream.io.HubService#register(stream.io.DataStreamListener)
-	 */
-	@Override
-	public void register(DataStreamListener listener) throws Exception {
-		this.listener.add(listener);
-	}
+    /**
+     * @see stream.io.HubService#register(stream.io.DataStreamListener)
+     */
+    @Override
+    public void register(DataStreamListener listener) throws Exception {
+        this.listener.add(listener);
+    }
 
-	/**
-	 * @see stream.io.HubService#unregister(stream.io.DataStreamListener)
-	 */
-	@Override
-	public void unregister(DataStreamListener listener) throws Exception {
-		this.listener.remove(listener);
-	}
+    /**
+     * @see stream.io.HubService#unregister(stream.io.DataStreamListener)
+     */
+    @Override
+    public void unregister(DataStreamListener listener) throws Exception {
+        this.listener.remove(listener);
+    }
 
-	/**
-	 * @see stream.io.QueueService#level()
-	 */
-	@Override
-	public int level() {
-		return 0;
-	}
+    /**
+     * @see stream.io.QueueService#level()
+     */
+    @Override
+    public int level() {
+        return 0;
+    }
 
-	/**
-	 * @see stream.io.QueueService#capacity()
-	 */
-	@Override
-	public int capacity() {
-		return 1;
-	}
+    /**
+     * @see stream.io.QueueService#capacity()
+     */
+    @Override
+    public int capacity() {
+        return 1;
+    }
 
-	/**
-	 * @see stream.io.Sink#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
+    /**
+     * @see stream.io.Sink#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @see stream.io.Sink#setId(java.lang.String)
-	 */
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * @see stream.io.Sink#setId(java.lang.String)
+     */
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @see stream.io.Sink#write(stream.Data)
-	 */
-	@Override
-	public boolean write(Data item) throws Exception {
-		return this.enqueue(item);
-	}
+    /**
+     * @see stream.io.Sink#write(stream.Data)
+     */
+    @Override
+    public boolean write(Data item) throws Exception {
+        return this.enqueue(item);
+    }
 
-	@Override
-	public void close() throws Exception {
-		// TODO Auto-generated method stub
+    @Override
+    public void close() throws Exception {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public boolean write(Collection<Data> data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean write(Collection<Data> data) throws Exception {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	/**
-	 * @see stream.io.Sink#init()
-	 */
-	@Override
-	public void init() throws Exception {
-	}
+    /**
+     * @see stream.io.Sink#init()
+     */
+    @Override
+    public void init() throws Exception {
+    }
 
-	/**
-	 * @see stream.io.Queue#getSize()
-	 */
-	@Override
-	public Integer getSize() {
-		return 0; // a hub is a queue of size 0
-	}
+    /**
+     * @see stream.io.Queue#getSize()
+     */
+    @Override
+    public Integer getSize() {
+        return 0; // a hub is a queue of size 0
+    }
 
-	/**
-	 * @see stream.io.Barrel#clear()
-	 */
-	@Override
-	public int clear() {
-		return 0;
-	}
+    /**
+     * @see stream.io.Barrel#clear()
+     */
+    @Override
+    public int clear() {
+        return 0;
+    }
 
-	/**
-	 * @see stream.io.Source#read()
-	 */
-	@Override
-	public Data read() throws Exception {
-		return null;
-	}
+    /**
+     * @see stream.io.Source#read()
+     */
+    @Override
+    public Data read() throws Exception {
+        return null;
+    }
 
-	@Override
-	public void setCapacity(Integer limit) {
-	}
+    @Override
+    public void setCapacity(Integer limit) {
+    }
 
-	@Override
-	public Integer getCapacity() {
-		return 0;
-	}
+    @Override
+    public Integer getCapacity() {
+        return 0;
+    }
 }

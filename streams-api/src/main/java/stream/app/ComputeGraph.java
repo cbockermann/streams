@@ -84,13 +84,13 @@ public class ComputeGraph {
     final Map<String, Service> services = new LinkedHashMap<String, Service>();
 
     /** The streams defined in the graph */
-    final Map<String, Source> sources = new LinkedHashMap<String, Source>();
+    final Map<String, Source<?>> sources = new LinkedHashMap<String, Source<?>>();
 
     /** The queues defined in the graph */
-    final Map<String, Sink> sinks = new LinkedHashMap<String, Sink>();
+    final Map<String, Sink<?>> sinks = new LinkedHashMap<String, Sink<?>>();
 
     /** The process nodes of the graph */
-    final Map<String, Process> processes = new LinkedHashMap<String, Process>();
+    final Map<String, Process<?>> processes = new LinkedHashMap<String, Process<?>>();
 
     final Set<Object> finished = new LinkedHashSet<Object>();
 
@@ -276,7 +276,7 @@ public class ComputeGraph {
                 try {
                     log.debug("Closing queue {}", o);
 
-                    ((Queue) o).close();
+                    ((Queue<?>) o).close();
                 } catch (Exception e) {
                     if (log.isDebugEnabled())
                         e.printStackTrace();
@@ -290,17 +290,17 @@ public class ComputeGraph {
         if (o instanceof Source) {
             finished.add(o);
             try {
-                log.debug("Removing and closing source {}", ((Source) o).getId());
+                log.debug("Removing and closing source {}", ((Source<?>) o).getId());
                 synchronized (o) {
                     if (!closed) { // a queue is a source as well, it will have
                                    // already been closed by the code above
-                        ((Source) o).close();
+                        ((Source<?>) o).close();
                         closed = true;
                     }
                 }
 
             } catch (Exception e) {
-                log.error("Failed to close source '{}': ", ((Source) o).getId(), e.getMessage());
+                log.error("Failed to close source '{}': ", ((Source<?>) o).getId(), e.getMessage());
                 if (log.isDebugEnabled())
                     e.printStackTrace();
             }
@@ -313,14 +313,14 @@ public class ComputeGraph {
         // queues.
         //
         if (o instanceof Process) {
-            List<Processor> processors = ((Process) o).getProcessors();
+            List<Processor> processors = ((Process<?>) o).getProcessors();
             log.debug("Removing {} nested processors of {}", processors.size(), o);
             for (Processor p : processors) {
                 remove(p, notify);
             }
 
             finished.add(o);
-            Source source = ((Process) o).getInput();
+            Source<?> source = ((Process<?>) o).getInput();
 
             Set<Object> refs = this.getTargets(source);
             log.debug("Source {} is referenced by {} nodes.", source.getId(), refs.size());
@@ -329,7 +329,7 @@ public class ComputeGraph {
                 remove(source, notify);
             }
 
-            Sink sink = ((Process) o).getOutput();
+            Sink<?> sink = ((Process<?>) o).getOutput();
             if (sink != null) {
                 refs = getTargets(sink);
                 if (refs.size() == 0) {
@@ -460,7 +460,7 @@ public class ComputeGraph {
         nodes.add(stream);
     }
 
-    public Map<String, Source> sources() {
+    public Map<String, Source<?>> sources() {
         return Collections.unmodifiableMap(sources);
     }
 
@@ -472,7 +472,7 @@ public class ComputeGraph {
      * @param process
      *            The instance of the process.
      */
-    public void addProcess(String id, Process process) {
+    public void addProcess(String id, Process<?> process) {
         if (processes.containsKey(id))
             throw new RuntimeException("A process with id '" + id + "' has already been defined!");
         this.processes.put(id, process);
@@ -486,29 +486,29 @@ public class ComputeGraph {
         }
     }
 
-    public Map<String, Process> processes() {
+    public Map<String, Process<?>> processes() {
         return Collections.unmodifiableMap(processes);
     }
 
-    public void addQueue(String id, stream.io.Queue queue) {
+    public void addQueue(String id, stream.io.Queue<?> queue) {
         addSource(id, queue);
         addSink(id, queue);
         nodes.add(queue);
     }
 
-    public void addSink(String id, Sink sink) {
+    public void addSink(String id, Sink<?> sink) {
         if (sinks.containsKey(id))
             throw new RuntimeException("A queue with id '" + id + "' has already been defined!");
         sinks.put(id, sink);
     }
 
-    public void addSource(String id, Source source) {
+    public void addSource(String id, Source<?> source) {
         if (sources.containsKey(id))
             throw new RuntimeException("A stream with id '" + id + "' has already been defined!");
         sources.put(id, source);
     }
 
-    public Map<String, Sink> sinks() {
+    public Map<String, Sink<?>> sinks() {
         return Collections.unmodifiableMap(sinks);
     }
 

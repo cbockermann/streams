@@ -147,20 +147,20 @@ public class ProcessContainer implements IContainer, Runnable {
     protected final ContainerContext context;
 
     /** The set of data streams (sources) */
-    protected final Map<String, Source> streams = new LinkedHashMap<String, Source>();
+    protected final Map<String, Source<?>> streams = new LinkedHashMap<String, Source<?>>();
 
     /** The set of sinks */
-    protected final Map<String, Sink> sinks = new LinkedHashMap<String, Sink>();
+    protected final Map<String, Sink<?>> sinks = new LinkedHashMap<String, Sink<?>>();
 
     /**
      * The list of data-stream-queues, that can be fed from external instances
      */
-    protected final Map<String, Queue> listeners = new LinkedHashMap<String, Queue>();
+    protected final Map<String, Queue<?>> listeners = new LinkedHashMap<String, Queue<?>>();
 
     /** The list of processes running in this container */
-    protected final List<Process> processes = new ArrayList<Process>();
+    protected final List<Process<?>> processes = new ArrayList<Process<?>>();
 
-    protected final Map<Process, ProcessContext> processContexts = new LinkedHashMap<Process, ProcessContext>();
+    protected final Map<Process<?>, ProcessContext> processContexts = new LinkedHashMap<Process<?>, ProcessContext>();
 
     protected final List<ProcessThread> worker = new ArrayList<ProcessThread>();
 
@@ -407,9 +407,10 @@ public class ProcessContainer implements IContainer, Runnable {
     /**
      * @see stream.runtime.IContainer#getStreams()
      */
+
     @Override
-    public Set<Source> getStreams() {
-        return new LinkedHashSet<Source>(this.streams.values());
+    public Set<Source<?>> getStreams() {
+        return new LinkedHashSet<Source<?>>(this.streams.values());
     }
 
     /**
@@ -444,7 +445,7 @@ public class ProcessContainer implements IContainer, Runnable {
      * @see stream.runtime.IContainer#getProcesses()
      */
     @Override
-    public List<Process> getProcesses() {
+    public List<Process<?>> getProcesses() {
         return processes;
     }
 
@@ -572,7 +573,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
     }
 
-    public void registerQueue(String id, Queue queue, boolean externalListener) throws Exception {
+    public void registerQueue(String id, Queue<?> queue, boolean externalListener) throws Exception {
         log.debug("A new queue '{}' is registered for id '{}'", queue, id);
         if (externalListener) {
             listeners.put(id, queue);
@@ -582,11 +583,11 @@ public class ProcessContainer implements IContainer, Runnable {
         // context.register(id, queue);
     }
 
-    public void registerSink(String id, Sink sink) {
+    public void registerSink(String id, Sink<?> sink) {
         sinks.put(id, sink);
     }
 
-    public void registerStream(String id, Source stream) {
+    public void registerStream(String id, Source<?> stream) {
         streams.put(id, stream);
     }
 
@@ -629,14 +630,14 @@ public class ProcessContainer implements IContainer, Runnable {
         if (streams.keySet().isEmpty())
             log.debug("No dataStreams to initialize");
         for (String name : streams.keySet()) {
-            Source stream = streams.get(name);
+            Source<?> stream = streams.get(name);
             log.debug("Initializing stream '{}'", name);
             stream.init();
         }
 
         log.debug("Initializing all Sinks...");
         for (String name : sinks.keySet()) {
-            Sink sink = sinks.get(name);
+            Sink<?> sink = sinks.get(name);
             log.debug("Initializing sink '{}'", name);
             sink.init();
         }
@@ -653,7 +654,7 @@ public class ProcessContainer implements IContainer, Runnable {
              *      java.lang.Exception)
              */
             @Override
-            public void processError(Process p, Exception e) {
+            public void processError(Process<?> p, Exception e) {
                 super.processError(p, e);
                 log.error("Process {} signaled an error: {}", p, e.getMessage());
                 log.debug("Forcing fail-fast shutdown of application...");
@@ -664,7 +665,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
         log.info("Creating {} active processes...", processes.size());
         long start = System.currentTimeMillis();
-        for (Process spu : processes) {
+        for (Process<?> spu : processes) {
 
             ProcessContext ctx = this.processContexts.get(spu);
             if (ctx == null) {
@@ -741,7 +742,10 @@ public class ProcessContainer implements IContainer, Runnable {
         if (listeners.containsKey(key)) {
             log.debug("Adding item {} into queue {}", item, key);
             try {
-                listeners.get(key).write(item);
+                @SuppressWarnings("unchecked")
+                Queue<Object> queue = (Queue<Object>) listeners.get(key);
+                queue.write(item);
+                // listeners.get(key).write((Object) item); // .write(item);
             } catch (Exception e) {
                 log.error("Failed to inject arriving data item into queue {}: {}", key, e.getMessage());
             }
@@ -799,7 +803,7 @@ public class ProcessContainer implements IContainer, Runnable {
      * @param process
      * @param ctx
      */
-    public void setProcessContext(stream.Process process, ProcessContext ctx) {
+    public void setProcessContext(stream.Process<?> process, ProcessContext ctx) {
         processContexts.put(process, ctx);
     }
 

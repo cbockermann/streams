@@ -105,11 +105,11 @@ public class DependencyInjection {
     private boolean inject(SinkRef ref, ComputeGraph graph) throws Exception {
         log.debug("Injecting sink reference {}", ref);
         String[] refs = ref.ids();
-        Sink[] sinks = new Sink[refs.length];
+        Sink<?>[] sinks = new Sink[refs.length];
         for (int i = 0; i < sinks.length; i++) {
             sinks[i] = graph.sinks().get(refs[i]);
             if (sinks[i] == null) {
-                Queue queue = new stream.io.DefaultBlockingQueue();
+                Queue<?> queue = new stream.io.DefaultBlockingQueue();
                 queue.setId(refs[i]);
                 graph.addQueue(refs[i], queue);
 
@@ -127,12 +127,12 @@ public class DependencyInjection {
     private boolean inject(SourceRef ref, ComputeGraph graph) throws Exception {
         log.debug("Injecting source reference {}", ref);
         String[] refs = ref.ids();
-        Source[] sources = new Source[refs.length];
+        Source<?>[] sources = new Source[refs.length];
         for (int i = 0; i < sources.length; i++) {
             sources[i] = graph.sources().get(refs[i]);
 
             if (sources[i] == null) {
-                Queue queue = new stream.io.DefaultBlockingQueue();
+                Queue<?> queue = new stream.io.DefaultBlockingQueue();
                 queue.setId(refs[i]);
                 graph.addQueue(refs[i], queue);
 
@@ -249,7 +249,7 @@ public class DependencyInjection {
     }
 
     @SuppressWarnings("unchecked")
-    public static Class<? extends Sink> hasSinkSetter(String name, Object o) {
+    public static Class<? extends Sink<?>> hasSinkSetter(String name, Object o) {
 
         for (Method m : o.getClass().getMethods()) {
 
@@ -257,7 +257,7 @@ public class DependencyInjection {
                 continue;
 
             if (ParameterInjection.isQueueSetter(m)) {
-                return (Class<? extends Sink>) m.getParameterTypes()[0];
+                return (Class<? extends Sink<?>>) m.getParameterTypes()[0];
             }
 
         }

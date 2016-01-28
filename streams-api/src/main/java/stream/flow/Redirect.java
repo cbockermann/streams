@@ -40,50 +40,51 @@ import stream.io.QueueService;
  */
 public class Redirect extends ConditionedProcessor {
 
-	static Logger log = LoggerFactory.getLogger(Redirect.class);
-	QueueService queues[];
+    static Logger log = LoggerFactory.getLogger(Redirect.class);
+    QueueService<Data> queues[];
 
-	/**
-	 * @return the queues
-	 */
-	public QueueService[] getQueues() {
-		return queues;
-	}
+    /**
+     * @return the queues
+     */
+    public QueueService<Data>[] getQueues() {
+        return queues;
+    }
 
-	/**
-	 * @param queues
-	 *            the queues to set
-	 */
-	public void setQueues(QueueService[] queues) {
-		this.queues = queues;
-	}
+    /**
+     * @param queues
+     *            the queues to set
+     */
+    public void setQueues(QueueService<Data>[] queues) {
+        this.queues = queues;
+    }
 
-	public void setQueue(QueueService queue) {
-		setQueues(new QueueService[] { queue });
-	}
+    @SuppressWarnings("unchecked")
+    public void setQueue(QueueService<Data> queue) {
+        setQueues((QueueService<Data>[]) new QueueService[] { queue });
+    }
 
-	/**
-	 * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
-	 */
-	@Override
-	public Data processMatchingData(Data data) {
+    /**
+     * @see stream.ConditionedProcessor#processMatchingData(stream.Data)
+     */
+    @Override
+    public Data processMatchingData(Data data) {
 
-		if (queues == null)
-			return null;
+        if (queues == null)
+            return null;
 
-		for (QueueService queue : queues) {
-			try {
-				if (queue.write(data)) {
-					log.debug("Redirected item to {}", queue);
-				} else {
-					log.error("Failed to redirect item to {}", queue);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        for (QueueService<Data> queue : queues) {
+            try {
+                if (queue.write(data)) {
+                    log.debug("Redirected item to {}", queue);
+                } else {
+                    log.error("Failed to redirect item to {}", queue);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

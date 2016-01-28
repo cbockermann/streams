@@ -26,7 +26,7 @@ public class Supervisor implements ProcessListener {
 
     static Logger log = LoggerFactory.getLogger(Supervisor.class);
 
-    List<stream.Process> runningProcesses = new ArrayList<stream.Process>();
+    List<stream.Process<?>> runningProcesses = new ArrayList<stream.Process<?>>();
 
     final AtomicInteger running = new AtomicInteger(0);
     final AtomicInteger errors = new AtomicInteger(0);
@@ -34,7 +34,7 @@ public class Supervisor implements ProcessListener {
 
     ComputeGraph dependencies;
 
-    Map<Process, Set<Sink>> processOutlets = new HashMap<Process, Set<Sink>>();
+    Map<Process<?>, Set<Sink<?>>> processOutlets = new HashMap<Process<?>, Set<Sink<?>>>();
 
     public Supervisor(ComputeGraph graph) {
         this.dependencies = graph;
@@ -44,7 +44,7 @@ public class Supervisor implements ProcessListener {
      * @see stream.runtime.ProcessListener#processStarted(stream.Process)
      */
     @Override
-    public void processStarted(Process p) {
+    public void processStarted(Process<?> p) {
         if (p instanceof Monitor) {
             log.info("Monitor #{} started", p);
             return;
@@ -54,7 +54,7 @@ public class Supervisor implements ProcessListener {
         int run = running.incrementAndGet();
         runningProcesses.add(p);
 
-        Set<Sink> sinks = collectSinks(p);
+        Set<Sink<?>> sinks = collectSinks(p);
         log.debug("   process #{} is writing to {} sinks", sinks.size());
         processOutlets.put(p, sinks);
 
@@ -67,7 +67,7 @@ public class Supervisor implements ProcessListener {
      *      java.lang.Exception)
      */
     @Override
-    public void processError(Process p, Exception e) {
+    public void processError(Process<?> p, Exception e) {
         errors.incrementAndGet();
     }
 
@@ -75,25 +75,25 @@ public class Supervisor implements ProcessListener {
      * @see stream.runtime.ProcessListener#processFinished(stream.Process)
      */
     @Override
-    public void processFinished(Process p) {
+    public void processFinished(Process<?> p) {
         int run = running.decrementAndGet();
         finished.incrementAndGet();
         runningProcesses.remove(p);
 
         log.debug("Process  #{}  finished.", p);
-        Set<Sink> outs = processOutlets.get(p);
+        Set<Sink<?>> outs = processOutlets.get(p);
         if (outs == null) {
-            outs = new HashSet<Sink>();
+            outs = new HashSet<Sink<?>>();
         }
 
         log.debug("   process has {} outgoing targets: {}", outs.size(), outs);
 
-        Set<Sink> outlets = processOutlets.remove(p);
-        for (Sink sink : outlets) {
+        Set<Sink<?>> outlets = processOutlets.remove(p);
+        for (Sink<?> sink : outlets) {
             int refCount = 0;
 
-            for (Process pr : processOutlets.keySet()) {
-                Set<Sink> prOuts = processOutlets.get(pr);
+            for (Process<?> pr : processOutlets.keySet()) {
+                Set<Sink<?>> prOuts = processOutlets.get(pr);
                 if (prOuts.contains(sink)) {
                     refCount++;
                 }
@@ -146,13 +146,13 @@ public class Supervisor implements ProcessListener {
         return running.get();
     }
 
-    public Set<Sink> collectSinks(Object p) {
-        Set<Sink> sinks = new HashSet<Sink>();
+    public Set<Sink<?>> collectSinks(Object p) {
+        Set<Sink<?>> sinks = new HashSet<Sink<?>>();
         Set<Object> outs = dependencies.getTargets(p);
 
         for (Object out : outs) {
             if (out instanceof Sink) {
-                sinks.add((Sink) out);
+                sinks.add((Sink<?>) out);
             } else {
                 sinks.addAll(collectSinks(out));
             }

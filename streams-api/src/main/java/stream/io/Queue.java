@@ -33,21 +33,21 @@ package stream.io;
  * @author Hendrik Blom, Christian Bockermann
  * 
  */
-public interface Queue extends Barrel {
+public interface Queue<D> extends Barrel<D> {
 
-	/**
-	 * The maximum size the implementation of this queue is able to hold.
-	 * 
-	 * @param limit
-	 */
-	public void setCapacity(Integer limit);
+    /**
+     * The maximum size the implementation of this queue is able to hold.
+     * 
+     * @param limit
+     */
+    public void setCapacity(Integer limit);
 
-	/**
-	 * Returns the maximum size of this queue implementation.
-	 * 
-	 * @return
-	 */
-	public Integer getSize();
+    /**
+     * Returns the maximum size of this queue implementation.
+     * 
+     * @return
+     */
+    public Integer getSize();
 
-	public Integer getCapacity();
+    public Integer getCapacity();
 }

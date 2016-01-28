@@ -31,41 +31,41 @@ import stream.Data;
  * @author Hendrik Blom
  *
  */
-public class TerminalSink implements Sink {
+public class TerminalSink implements Sink<Data> {
 
-	protected String id;
+    protected String id;
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public void init() throws Exception {
-	}
+    @Override
+    public void init() throws Exception {
+    }
 
-	@Override
-	public boolean write(Data item) throws Exception {
-		return true;
-	}
+    @Override
+    public boolean write(Data item) throws Exception {
+        return true;
+    }
 
-	@Override
-	public boolean write(Collection<Data> data) throws Exception {
-		return true;
-	}
+    @Override
+    public boolean write(Collection<Data> data) throws Exception {
+        return true;
+    }
 
-	@Override
-	public void close() throws Exception {
-	}
+    @Override
+    public void close() throws Exception {
+    }
 
-	@Override
-	public String toString() {
-		return "TerminalSink [id=" + id + "]";
-	}
+    @Override
+    public String toString() {
+        return "TerminalSink [id=" + id + "]";
+    }
 
 }

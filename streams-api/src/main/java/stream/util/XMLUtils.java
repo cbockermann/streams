@@ -96,7 +96,7 @@ public class XMLUtils {
         // tf.setAttribute("indent-number", new Integer(4));
         Transformer trans = tf.newTransformer();
         trans.setOutputProperty(OutputKeys.METHOD, "xml");
-        // trans.setOutputProperty(OutputKeys.INDENT, "yes");
+        trans.setOutputProperty(OutputKeys.INDENT, "yes");
         Source source = new DOMSource(doc);
         StringWriter out = new StringWriter();
         Result output = new StreamResult(out);

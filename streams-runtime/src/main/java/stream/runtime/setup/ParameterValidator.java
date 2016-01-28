@@ -25,7 +25,7 @@ public class ParameterValidator {
     public static boolean check(Object o, Map<String, Object> vals) throws ParameterException {
 
         Map<String, Class<?>> types = checkClassParameters(o.getClass());
-        log.info("Object {} has {} paramters: {}", o, types.size(), types);
+        log.debug("Object {} has {} paramters: {}", o, types.size(), types);
 
         return false;
     }
@@ -55,7 +55,7 @@ public class ParameterValidator {
                 if (name == null || name.isEmpty()) {
                     name = field.getName();
                 }
-                log.info("Found parameter '{}' for field '{}'", name, field.getName());
+                log.debug("Found parameter '{}' for field '{}'", name, field.getName());
                 params.put(name, field.getType());
             }
         }

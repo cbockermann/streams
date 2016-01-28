@@ -33,13 +33,13 @@ package stream.io;
  * @author Hendrik Blom, Christian Bockermann
  * 
  */
-public interface Barrel extends Sink, Source {
+public interface Barrel<D> extends Sink<D>, Source<D> {
 
-	/**
-	 * This method removes all elements currently stored in this barrel and
-	 * returns the number of elements discarded.
-	 * 
-	 * @return The number of elements removed from this barrel.
-	 */
-	public int clear();
+    /**
+     * This method removes all elements currently stored in this barrel and
+     * returns the number of elements discarded.
+     * 
+     * @return The number of elements removed from this barrel.
+     */
+    public int clear();
 }

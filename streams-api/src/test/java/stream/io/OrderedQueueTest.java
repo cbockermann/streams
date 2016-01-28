@@ -43,102 +43,102 @@ import stream.data.SequenceID;
  */
 public class OrderedQueueTest {
 
-	static Logger log = LoggerFactory.getLogger(OrderedQueueTest.class);
+    static Logger log = LoggerFactory.getLogger(OrderedQueueTest.class);
 
-	public ArrayList<Data> generateDataItems() {
+    public ArrayList<Data> generateDataItems() {
 
-		SequenceID sequence = new SequenceID();
-		ArrayList<Data> list = new ArrayList<Data>();
+        SequenceID sequence = new SequenceID();
+        ArrayList<Data> list = new ArrayList<Data>();
 
-		for (int i = 0; i < 100; i++) {
-			Data item = DataFactory.create();
-			item.put("@id", i);
-			item.put("@source:item", sequence.getAndIncrement());
-			list.add(item);
-		}
+        for (int i = 0; i < 100; i++) {
+            Data item = DataFactory.create();
+            item.put("@id", i);
+            item.put("@source:item", sequence.getAndIncrement());
+            list.add(item);
+        }
 
-		Collections.shuffle(list);
-		return list;
+        Collections.shuffle(list);
+        return list;
 
-	}
+    }
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
 
-		try {
-			final ArrayList<Data> results = new ArrayList<Data>();
-			final ArrayList<Data> inputs = generateDataItems();
+        try {
+            final ArrayList<Data> results = new ArrayList<Data>();
+            final ArrayList<Data> inputs = generateDataItems();
 
-			final OrderedQueue queue = new OrderedQueue();
-			queue.init();
+            final OrderedQueue queue = new OrderedQueue();
+            queue.init();
 
-			Consumer consumer = new Consumer(queue, results);
-			consumer.start();
+            Consumer consumer = new Consumer(queue, results);
+            consumer.start();
 
-			for (Data item : inputs) {
-				log.info("Writing item '{}' to queue", item);
-				queue.write(item);
-			}
+            for (Data item : inputs) {
+                log.info("Writing item '{}' to queue", item);
+                queue.write(item);
+            }
 
-			log.info("Closing queue...");
-			queue.close();
+            log.info("Closing queue...");
+            queue.close();
 
-			log.info("Waiting for consumer to finish...");
-			consumer.join();
+            log.info("Waiting for consumer to finish...");
+            consumer.join();
 
-			log.info("Consumer finished.");
-			log.info("Results: {}", results);
+            log.info("Consumer finished.");
+            log.info("Results: {}", results);
 
-			Data last = null;
-			for (int i = 0; i < results.size(); i++) {
+            Data last = null;
+            for (int i = 0; i < results.size(); i++) {
 
-				if (last == null) {
-					last = results.get(i);
-					continue;
-				}
+                if (last == null) {
+                    last = results.get(i);
+                    continue;
+                }
 
-				Data cur = results.get(i);
+                Data cur = results.get(i);
 
-				SequenceID lastId = (SequenceID) last.get("@source:item");
-				SequenceID curId = (SequenceID) cur.get("@source:item");
+                SequenceID lastId = (SequenceID) last.get("@source:item");
+                SequenceID curId = (SequenceID) cur.get("@source:item");
 
-				SequenceID lastPlusOne = lastId.nextValue();
+                SequenceID lastPlusOne = lastId.nextValue();
 
-				log.info(" {}  ==?==  {}", lastPlusOne, curId);
-				Assert.assertTrue(lastPlusOne.compareTo(curId) == 0);
-				last = cur;
-			}
+                log.info(" {}  ==?==  {}", lastPlusOne, curId);
+                Assert.assertTrue(lastPlusOne.compareTo(curId) == 0);
+                last = cur;
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Error: " + e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
 
-	public class Consumer extends Thread {
-		Logger log = LoggerFactory.getLogger(Consumer.class);
-		final Source source;
-		final ArrayList<Data> result;
+    public class Consumer extends Thread {
+        Logger log = LoggerFactory.getLogger(Consumer.class);
+        final Source<Data> source;
+        final ArrayList<Data> result;
 
-		public Consumer(Source source, ArrayList<Data> results) {
-			this.source = source;
-			this.result = results;
-		}
+        public Consumer(Source<Data> source, ArrayList<Data> results) {
+            this.source = source;
+            this.result = results;
+        }
 
-		public void run() {
-			try {
-				log.info("Starting consumer...");
-				Data item = source.read();
-				log.info("First item: {}", item);
-				while (item != null) {
-					log.info("Read item {} from queue.", item);
-					result.add(item);
-					item = source.read();
-				}
-				log.info("Read 'null', finishing up...");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        public void run() {
+            try {
+                log.info("Starting consumer...");
+                Data item = source.read();
+                log.info("First item: {}", item);
+                while (item != null) {
+                    log.info("Read item {} from queue.", item);
+                    result.add(item);
+                    item = source.read();
+                }
+                log.info("Read 'null', finishing up...");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

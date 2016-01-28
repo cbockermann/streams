@@ -30,7 +30,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import stream.runtime.ApplicationContext;
+import stream.Context;
 import stream.runtime.LifeCycle;
 
 /**
@@ -39,117 +39,117 @@ import stream.runtime.LifeCycle;
  */
 public class Dashboard implements DashboardService, LifeCycle {
 
-	protected JFrame frame;
+    protected JFrame frame;
 
-	protected String title = "";
-	protected Integer width = 1024;
-	protected Integer height = 768;
+    protected String title = "";
+    protected Integer width = 1024;
+    protected Integer height = 768;
 
-	final Map<String, JComponent> components = new HashMap<String, JComponent>();
+    final Map<String, JComponent> components = new HashMap<String, JComponent>();
 
-	/**
-	 * @see stream.service.Service#reset()
-	 */
-	@Override
-	public void reset() throws Exception {
-		if (frame != null) {
-			frame.getContentPane().removeAll();
-		}
-	}
+    /**
+     * @see stream.service.Service#reset()
+     */
+    @Override
+    public void reset() throws Exception {
+        if (frame != null) {
+            frame.getContentPane().removeAll();
+        }
+    }
 
-	/**
-	 * @see stream.service.DashboardService#addWidget(java.lang.String,
-	 *      javax.swing.JComponent)
-	 */
-	@Override
-	public String addWidget(String id, JComponent widget) {
+    /**
+     * @see stream.service.DashboardService#addWidget(java.lang.String,
+     *      javax.swing.JComponent)
+     */
+    @Override
+    public String addWidget(String id, JComponent widget) {
 
-		String wid = id;
-		if (wid == null)
-			wid = UUID.randomUUID().toString().toUpperCase();
+        String wid = id;
+        if (wid == null)
+            wid = UUID.randomUUID().toString().toUpperCase();
 
-		if (frame != null) {
+        if (frame != null) {
 
-			if (components.get(wid) != null) {
-				JComponent old = components.remove(wid);
-				frame.getContentPane().remove(old);
-			}
+            if (components.get(wid) != null) {
+                JComponent old = components.remove(wid);
+                frame.getContentPane().remove(old);
+            }
 
-			frame.getContentPane().add(widget);
-			components.put(wid, widget);
-			return wid;
-		} else
-			return null;
-	}
+            frame.getContentPane().add(widget);
+            components.put(wid, widget);
+            return wid;
+        } else
+            return null;
+    }
 
-	/**
-	 * @see stream.runtime.LifeCycle#init(stream.Context)
-	 */
-	@Override
-	public void init(ApplicationContext context) throws Exception {
-		frame = new JFrame();
+    /**
+     * @see stream.runtime.LifeCycle#init(stream.Context)
+     */
+    @Override
+    public void init(Context context) throws Exception {
+        frame = new JFrame();
 
-		if (title != null) {
-			frame.setTitle(title);
-		}
+        if (title != null) {
+            frame.setTitle(title);
+        }
 
-		if (width != null && height != null)
-			frame.setSize(width, height);
+        if (width != null && height != null)
+            frame.setSize(width, height);
 
-		frame.setVisible(true);
-	}
+        frame.setVisible(true);
+    }
 
-	/**
-	 * @see stream.runtime.LifeCycle#finish()
-	 */
-	@Override
-	public void finish() throws Exception {
-		frame.setVisible(false);
-		frame.dispose();
-	}
+    /**
+     * @see stream.runtime.LifeCycle#finish()
+     */
+    @Override
+    public void finish() throws Exception {
+        frame.setVisible(false);
+        frame.dispose();
+    }
 
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 * @param title
-	 *            the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    /**
+     * @param title
+     *            the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	/**
-	 * @return the width
-	 */
-	public Integer getWidth() {
-		return width;
-	}
+    /**
+     * @return the width
+     */
+    public Integer getWidth() {
+        return width;
+    }
 
-	/**
-	 * @param width
-	 *            the width to set
-	 */
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
+    /**
+     * @param width
+     *            the width to set
+     */
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
 
-	/**
-	 * @return the height
-	 */
-	public Integer getHeight() {
-		return height;
-	}
+    /**
+     * @return the height
+     */
+    public Integer getHeight() {
+        return height;
+    }
 
-	/**
-	 * @param height
-	 *            the height to set
-	 */
-	public void setHeight(Integer height) {
-		this.height = height;
-	}
+    /**
+     * @param height
+     *            the height to set
+     */
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
 }

@@ -17,7 +17,7 @@ import stream.data.DataFactory;
  * @author chris
  *
  */
-public class DefaultBlockingQueue implements Queue {
+public class DefaultBlockingQueue implements Queue<Data> {
 
     static Logger log = LoggerFactory.getLogger(DefaultBlockingQueue.class);
 
@@ -80,7 +80,7 @@ public class DefaultBlockingQueue implements Queue {
             if (added) {
                 closed.notifyAll();
             } else {
-                log.error( "Failed to add item to queue: {}", item);
+                log.error("Failed to add item to queue: {}", item);
             }
             return added;
         }

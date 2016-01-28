@@ -47,64 +47,64 @@ import stream.io.Sink;
  */
 public class SplitByRandom extends AbstractSplit {
 
-	static Logger log = LoggerFactory.getLogger(SplitByRandom.class);
-	protected final ArrayList<Sink> sinks = new ArrayList<Sink>();
-	protected final Random random = new Random();
+    static Logger log = LoggerFactory.getLogger(SplitByRandom.class);
+    protected final ArrayList<Sink<Data>> sinks = new ArrayList<Sink<Data>>();
+    protected final Random random = new Random();
 
-	/**
-	 * @see stream.io.Sink#write(stream.Data)
-	 */
-	@Override
-	public boolean write(Data item) throws Exception {
+    /**
+     * @see stream.io.Sink#write(stream.Data)
+     */
+    @Override
+    public boolean write(Data item) throws Exception {
 
-		int idx = random.nextInt(sinks.size());
-		Sink sink = sinks.get(idx);
-		if (sink != null) {
-			log.debug("Sending item to sink {}", sink.getId());
-			return sink.write(item);
-		} else {
-			log.error("No sink found for index '{}'", idx);
-		}
-		return false;
-	}
+        int idx = random.nextInt(sinks.size());
+        Sink<Data> sink = sinks.get(idx);
+        if (sink != null) {
+            log.debug("Sending item to sink {}", sink.getId());
+            return sink.write(item);
+        } else {
+            log.error("No sink found for index '{}'", idx);
+        }
+        return false;
+    }
 
-	/**
-	 * @see stream.flow.Split#getConditions()
-	 */
-	@Override
-	public List<Condition> getConditions() {
-		return Collections.unmodifiableList(new ArrayList<Condition>());
-	}
+    /**
+     * @see stream.flow.Split#getConditions()
+     */
+    @Override
+    public List<Condition> getConditions() {
+        return Collections.unmodifiableList(new ArrayList<Condition>());
+    }
 
-	/**
-	 * @see stream.flow.Split#add(stream.expressions.Condition, stream.io.Sink)
-	 */
-	@Override
-	public void add(Condition condition, Sink sink) {
-		sinks.add(sink);
-	}
+    /**
+     * @see stream.flow.Split#add(stream.expressions.Condition, stream.io.Sink)
+     */
+    @Override
+    public void add(Condition condition, Sink<Data> sink) {
+        sinks.add(sink);
+    }
 
-	@Override
-	public void close() throws Exception {
-		// TODO Auto-generated method stub
+    @Override
+    public void close() throws Exception {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/**
-	 * @see stream.io.Sink#init()
-	 */
-	@Override
-	public void init() throws Exception {
-		// TODO Auto-generated method stub
+    /**
+     * @see stream.io.Sink#init()
+     */
+    @Override
+    public void init() throws Exception {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/**
-	 * @see stream.io.Sink#write(java.util.Collection)
-	 */
-	@Override
-	public boolean write(Collection<Data> data) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /**
+     * @see stream.io.Sink#write(java.util.Collection)
+     */
+    @Override
+    public boolean write(Collection<Data> data) throws Exception {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

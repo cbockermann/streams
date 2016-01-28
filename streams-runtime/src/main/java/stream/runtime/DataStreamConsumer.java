@@ -35,25 +35,25 @@ import stream.io.Source;
  */
 public interface DataStreamConsumer {
 
-	/**
-	 * Returns the name of the data-stream the implementing instance want to
-	 * consume.
-	 * 
-	 * @return
-	 */
-	public String getInput();
+    /**
+     * Returns the name of the data-stream the implementing instance want to
+     * consume.
+     * 
+     * @return
+     */
+    public String getInput();
 
-	/**
-	 * Sets the data-stream of this consumer.
-	 * 
-	 * @param stream
-	 */
-	public void setSource(Source stream);
+    /**
+     * Sets the data-stream of this consumer.
+     * 
+     * @param stream
+     */
+    public void setSource(Source<?> stream);
 
-	/**
-	 * Returns the data-stream assigned to this consumer.
-	 * 
-	 * @return
-	 */
-	public Source getSource();
+    /**
+     * Returns the data-stream assigned to this consumer.
+     * 
+     * @return
+     */
+    public Source<?> getSource();
 }

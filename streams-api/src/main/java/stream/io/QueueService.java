@@ -23,52 +23,51 @@
  */
 package stream.io;
 
-import stream.Data;
 import stream.service.Service;
 
 /**
  * @author chris
  * 
  */
-public interface QueueService extends Service, Queue {
+public interface QueueService<D> extends Service, Queue<D> {
 
-	/**
-	 * This method removes the head of the queue. It will return
-	 * <code>null</code> if the queue is empty.
-	 * 
-	 * @return First element in the queue or <code>null</code> for an empty
-	 *         queue.
-	 */
-	public Data poll();
+    /**
+     * This method removes the head of the queue. It will return
+     * <code>null</code> if the queue is empty.
+     * 
+     * @return First element in the queue or <code>null</code> for an empty
+     *         queue.
+     */
+    public D poll();
 
-	public Data take();
+    public D take();
 
-	/**
-	 * This method will insert the given element into the queue. The method does
-	 * not block and will return <code>false</code> if insertion could not be
-	 * performed successfully.
-	 * 
-	 * @param item
-	 *            The item to insert.
-	 * @return <code>true</code> if item inserted, <code>false</code> otherwise.
-	 */
-	public boolean enqueue(Data item);
+    /**
+     * This method will insert the given element into the queue. The method does
+     * not block and will return <code>false</code> if insertion could not be
+     * performed successfully.
+     * 
+     * @param item
+     *            The item to insert.
+     * @return <code>true</code> if item inserted, <code>false</code> otherwise.
+     */
+    public boolean enqueue(D item);
 
-	/**
-	 * This method will return the current fill-level of the queue. Calls to
-	 * this method may return different results based on the current state.
-	 * 
-	 * @return
-	 */
-	public int level();
+    /**
+     * This method will return the current fill-level of the queue. Calls to
+     * this method may return different results based on the current state.
+     * 
+     * @return
+     */
+    public int level();
 
-	/**
-	 * This method returns the number if items that can be stored in this queue
-	 * at maximum. Calls to this method will return the same result every time.
-	 * 
-	 * @return
-	 */
-	public int capacity();
+    /**
+     * This method returns the number if items that can be stored in this queue
+     * at maximum. Calls to this method will return the same result every time.
+     * 
+     * @return
+     */
+    public int capacity();
 
-	public void close() throws Exception;
+    public void close() throws Exception;
 }

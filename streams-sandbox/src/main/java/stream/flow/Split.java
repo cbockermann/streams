@@ -25,6 +25,7 @@ package stream.flow;
 
 import java.util.List;
 
+import stream.Data;
 import stream.expressions.Condition;
 import stream.io.Sink;
 
@@ -42,20 +43,20 @@ import stream.io.Sink;
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
  * 
  */
-public interface Split extends Sink {
+public interface Split extends Sink<Data> {
 
-	/**
-	 * List the conditions registered at this split point.
-	 * 
-	 * @return
-	 */
-	public List<Condition> getConditions();
+    /**
+     * List the conditions registered at this split point.
+     * 
+     * @return
+     */
+    public List<Condition> getConditions();
 
-	/**
-	 * Adds a new sink with a given condition to the split.
-	 * 
-	 * @param condition
-	 * @param sink
-	 */
-	public void add(Condition condition, Sink sink);
+    /**
+     * Adds a new sink with a given condition to the split.
+     * 
+     * @param condition
+     * @param sink
+     */
+    public void add(Condition condition, Sink<Data> sink);
 }

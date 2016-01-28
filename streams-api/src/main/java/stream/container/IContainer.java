@@ -40,29 +40,29 @@ import stream.util.Variables;
  */
 public interface IContainer {
 
-	public abstract ComputeGraph computeGraph();
+    public abstract ComputeGraph computeGraph();
 
-	public abstract Set<Source> getStreams();
+    public abstract Set<Source<?>> getStreams();
 
-	/**
-	 * @return the name
-	 */
-	public abstract String getName();
+    /**
+     * @return the name
+     */
+    public abstract String getName();
 
-	public abstract Context getContext();
+    public abstract Context getContext();
 
-	/**
-	 * @return the processes
-	 */
-	public abstract List<Process> getProcesses();
+    /**
+     * @return the processes
+     */
+    public abstract List<Process<?>> getProcesses();
 
-	/**
-	 * @return the serviceRefs
-	 */
-	public abstract List<ServiceReference> getServiceRefs();
+    /**
+     * @return the serviceRefs
+     */
+    public abstract List<ServiceReference> getServiceRefs();
 
-	public abstract Variables getVariables();
-	
-	public abstract NamingService getNamingService();
+    public abstract Variables getVariables();
+
+    public abstract NamingService getNamingService();
 
 }

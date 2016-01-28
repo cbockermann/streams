@@ -48,7 +48,7 @@ import stream.io.Source;
  * @author Christian Bockermann &lt;christian.bockermann@udo.edu&gt;
  * 
  */
-public abstract class AbstractProcess implements stream.Process {
+public abstract class AbstractProcess implements stream.Process<Data> {
 
     static Logger log = LoggerFactory.getLogger(AbstractProcess.class);
 
@@ -57,8 +57,8 @@ public abstract class AbstractProcess implements stream.Process {
     protected Context parentContext;
     protected ProcessContext processContext;
 
-    protected Source source;
-    protected Sink sink;
+    protected Source<Data> source;
+    protected Sink<Data> sink;
 
     protected final List<Processor> processors = new ArrayList<Processor>();
 
@@ -72,7 +72,7 @@ public abstract class AbstractProcess implements stream.Process {
      * @see stream.Process#setInput(stream.io.Source)
      */
     @Override
-    public void setInput(Source ds) {
+    public void setInput(Source<Data> ds) {
         this.source = ds;
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractProcess implements stream.Process {
      * @see stream.Process#getInput()
      */
     @Override
-    public Source getInput() {
+    public Source<Data> getInput() {
         return this.source;
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractProcess implements stream.Process {
      * @see stream.Process#setOutput(stream.io.Sink)
      */
     @Override
-    public void setOutput(Sink sink) {
+    public void setOutput(Sink<Data> sink) {
         this.sink = sink;
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractProcess implements stream.Process {
      * @see stream.Process#getOutput()
      */
     @Override
-    public Sink getOutput() {
+    public Sink<Data> getOutput() {
         return this.sink;
     }
 
@@ -122,22 +122,28 @@ public abstract class AbstractProcess implements stream.Process {
 
         log.trace("{}: processing data {}", this, data);
 
+        int i = 0;
         for (Processor proc : processors) {
-            data = proc.process(data);
-            if (data == null)
-                return null;
+            try {
+                data = proc.process(data);
+                if (data == null)
+                    return null;
+            } catch (RuntimeException e) {
+                log.error("Error in processor '{}': {}", proc.getClass().getCanonicalName() + "#" + i, e.getMessage());
+                throw e;
+            }
+            i++;
         }
-
         return data;
     }
 
     /**
      * @see stream.DataProcessor#init(stream.runtime.Context)
      */
-    public void init(ApplicationContext context) throws Exception {
+    public void init(Context context) throws Exception {
 
         parentContext = context;
-        processContext = new ProcessContextImpl(this.getId(), context);
+        processContext = new ProcessContextImpl(this.getId(), (ApplicationContext) context);
 
         for (Processor proc : processors) {
             if (proc instanceof StatefulProcessor)
@@ -195,7 +201,6 @@ public abstract class AbstractProcess implements stream.Process {
 
                 } catch (Exception e) {
                     if ("continue".equalsIgnoreCase(onError)) {
-                        log.error("Error while processing data: {}", e.getMessage());
                         log.error("   continuing with next item...");
                     } else {
                         throw e;

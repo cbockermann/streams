@@ -3,6 +3,7 @@
  */
 package stream;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -10,83 +11,86 @@ import java.util.Map;
  * @author chris
  *
  */
-public abstract class AbstractContext implements Context {
+public abstract class AbstractContext implements Context, Serializable {
 
-	protected final Context parent;
-	protected final String id;
-	protected final Map<String, Object> values = new LinkedHashMap<String, Object>();
+    /** The unique class ID */
+    private static final long serialVersionUID = -8655916624016379698L;
 
-	public AbstractContext(String id) {
-		this(id, null);
-	}
+    protected final Context parent;
+    protected final String id;
+    protected final Map<String, Object> values = new LinkedHashMap<String, Object>();
 
-	public AbstractContext(String id, Context parent) {
-		this.parent = parent;
-		this.id = id;
-	}
+    public AbstractContext(String id) {
+        this(id, null);
+    }
 
-	/**
-	 * @see stream.Context#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
+    public AbstractContext(String id, Context parent) {
+        this.parent = parent;
+        this.id = id;
+    }
 
-	/**
-	 * @see stream.Context#resolve(java.lang.String)
-	 */
-	@Override
-	public Object resolve(String key) {
-		if ("id".equals(key)) {
-			return getId();
-		}
+    /**
+     * @see stream.Context#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
-		if (key.startsWith(scope() + ".")) {
-			return values.get(key.substring(scope().length() + 1));
-		}
+    /**
+     * @see stream.Context#resolve(java.lang.String)
+     */
+    @Override
+    public Object resolve(String key) {
+        if ("id".equals(key)) {
+            return getId();
+        }
 
-		if (parent != null) {
-			return parent.resolve(key);
-		}
+        if (key.startsWith(scope() + ".")) {
+            return values.get(key.substring(scope().length() + 1));
+        }
 
-		return null; // values.get(key);
-	}
+        if (parent != null) {
+            return parent.resolve(key);
+        }
 
-	/**
-	 * @see stream.Context#contains(java.lang.String)
-	 */
-	@Override
-	public boolean contains(String key) {
-		if ("id".equals(key)) {
-			return true;
-		}
+        return null; // values.get(key);
+    }
 
-		return values.containsKey(key);
-	}
+    /**
+     * @see stream.Context#contains(java.lang.String)
+     */
+    @Override
+    public boolean contains(String key) {
+        if ("id".equals(key)) {
+            return true;
+        }
 
-	/**
-	 * @see stream.Context#getParent()
-	 */
-	@Override
-	public Context getParent() {
-		return parent;
-	}
+        return values.containsKey(key);
+    }
 
-	public String name() {
-		return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "");
-	}
+    /**
+     * @see stream.Context#getParent()
+     */
+    @Override
+    public Context getParent() {
+        return parent;
+    }
 
-	public String scope() {
-		return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "");
-	}
+    public String name() {
+        return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "");
+    }
 
-	public String path() {
-		if (parent != null) {
-			return parent.path() + Context.PATH_SEPARATOR
-					+ this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "") + ":" + getId();
-		} else {
-			return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "") + ":" + getId();
-		}
-	}
+    public String scope() {
+        return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "");
+    }
+
+    public String path() {
+        if (parent != null) {
+            return parent.path() + Context.PATH_SEPARATOR
+                    + this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "") + ":" + getId();
+        } else {
+            return this.getClass().getSimpleName().toLowerCase().replaceAll("context$", "") + ":" + getId();
+        }
+    }
 }

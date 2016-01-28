@@ -41,7 +41,7 @@ public class Emitter extends ConditionedProcessor {
 
     static Logger log = LoggerFactory.getLogger(Enqueue.class);
 
-    protected Sink[] sinks;
+    protected Sink<Data>[] sinks;
 
     protected String[] keys;
     protected boolean skip = false;
@@ -65,7 +65,7 @@ public class Emitter extends ConditionedProcessor {
 
     protected int emit(Data data) {
         int written = 0;
-        for (Sink sink : sinks) {
+        for (Sink<Data> sink : sinks) {
             Data d = data.createCopy();
             try {
                 log.debug("emitting to {}", sink.getId());
@@ -83,7 +83,7 @@ public class Emitter extends ConditionedProcessor {
 
     protected int emit(Data[] data) {
         int written = 0;
-        for (Sink sink : sinks) {
+        for (Sink<Data> sink : sinks) {
             try {
                 if (sink.write(Arrays.asList(data))) {
                     written += data.length;
@@ -108,14 +108,15 @@ public class Emitter extends ConditionedProcessor {
         this.keys = keys;
     }
 
-    public void setSink(Sink sink) {
+    @SuppressWarnings("unchecked")
+    public void setSink(Sink<Data> sink) {
         if (sink != null) {
             this.keys = new String[] {};
-            this.sinks = new Sink[] { sink };
+            this.sinks = (Sink<Data>[]) new Sink<?>[] { sink };
         }
     }
 
-    public void setSinks(Sink[] sinks) {
+    public void setSinks(Sink<Data>[] sinks) {
         if (sinks != null) {
             this.sinks = sinks;
         }

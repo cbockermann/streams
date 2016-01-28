@@ -6,7 +6,7 @@
 	<description>Performance monitoring for streams graphs.</description>
 
 	<parent>
-		<groupId>org.jwall</groupId>
+		<groupId>de.sfb876</groupId>
 		<artifactId>streams</artifactId>
 		<version>0.9.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
@@ -65,7 +65,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-api</artifactId>
 			<version>0.9.25-SNAPSHOT</version>
 		</dependency>
@@ -75,12 +75,9 @@
 			<version>2.0-RC2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-runtime</artifactId>
 			<version>0.9.25-SNAPSHOT</version>
-			<!-- 
-			<scope>test</scope>
-			 -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -88,7 +85,7 @@
 			<version>4.11</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-core</artifactId>
 			<version>0.9.25-SNAPSHOT</version>
 		</dependency>
@@ -99,7 +96,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-plotter</artifactId>
 			<version>0.9.25-SNAPSHOT</version>
 		</dependency>
@@ -135,13 +132,13 @@
 					<version>2.0-RC2</version>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-runtime</artifactId>
 					<version>0.9.25-SNAPSHOT</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-core</artifactId>
 					<version>0.9.25-SNAPSHOT</version>
 					<scope>compile</scope>

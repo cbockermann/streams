@@ -40,43 +40,45 @@ import stream.runtime.LifeCycle;
  * @author Christian Bockermann, Hendrik Blom
  * 
  */
-public interface Process extends LifeCycle {
+public interface Process<D> extends LifeCycle {
 
-	/**
-	 * The data source of this process.
-	 * 
-	 * @param The
-	 *            data source of this process.
-	 */
-	public void setInput(Source ds);
+    /**
+     * The data source of this process.
+     * 
+     * @param The
+     *            data source of this process.
+     */
+    public void setInput(Source<D> ds);
 
-	/**
-	 * The data source of this process.
-	 * 
-	 * @return The data source of this process.
-	 */
-	public Source getInput();
+    /**
+     * The data source of this process.
+     * 
+     * @return The data source of this process.
+     */
+    public Source<D> getInput();
 
-	/**
-	 * 
-	 * @param sink
-	 */
-	public void setOutput(Sink sink);
+    /**
+     * 
+     * @param sink
+     */
+    public void setOutput(Sink<D> sink);
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Sink getOutput();
+    /**
+     * 
+     * @return
+     */
+    public Sink<D> getOutput();
 
-	public void add(Processor p);
+    public void add(Processor p);
 
-	public void remove(Processor p);
+    public void remove(Processor p);
 
-	public List<Processor> getProcessors();
+    public List<Processor> getProcessors();
 
-	public void execute() throws Exception;
+    public D process(D item);
 
-	public Map<String, String> getProperties();
+    public void execute() throws Exception;
+
+    public Map<String, String> getProperties();
 
 }

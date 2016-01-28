@@ -41,20 +41,20 @@ import stream.io.Sink;
  */
 public class SplitRoundRobin extends SplitByRandom {
 
-	static Logger log = LoggerFactory.getLogger(SplitRoundRobin.class);
+    static Logger log = LoggerFactory.getLogger(SplitRoundRobin.class);
 
-	protected AtomicInteger lastIndex = new AtomicInteger(0);
+    protected AtomicInteger lastIndex = new AtomicInteger(0);
 
-	/**
-	 * @see stream.flow.SplitByRandom#write(stream.Data)
-	 */
-	@Override
-	public boolean write(Data item) throws Exception {
+    /**
+     * @see stream.flow.SplitByRandom#write(stream.Data)
+     */
+    @Override
+    public boolean write(Data item) throws Exception {
 
-		int idx = lastIndex.getAndIncrement();
-		Sink destination = sinks.get(idx % sinks.size());
-		log.debug("Current index '{}' ~> {}", idx % sinks.size(), destination);
+        int idx = lastIndex.getAndIncrement();
+        Sink<Data> destination = sinks.get(idx % sinks.size());
+        log.debug("Current index '{}' ~> {}", idx % sinks.size(), destination);
 
-		return destination.write(item);
-	}
+        return destination.write(item);
+    }
 }

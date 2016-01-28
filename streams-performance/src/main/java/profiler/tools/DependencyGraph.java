@@ -56,7 +56,7 @@ public class DependencyGraph {
         Map<String, Dependency> deps = new HashMap<String, Dependency>();
 
         String[] args = params;
-        args = "/Users/chris/fact-tools-profiling.xml".split(",");
+        // args = "/Users/chris/fact-tools-profiling.xml".split(",");
 
         if (args.length < 1) {
             System.err.println("Usage:");
@@ -120,7 +120,7 @@ public class DependencyGraph {
                     log.info("found {} write accesses", writes.getLength());
                     for (int w = 0; w < writes.getLength(); w++) {
                         Element write = (Element) writes.item(w);
-                        log.info("write at {}: {}", w, write);
+                        log.info("write at {}: {}", w, write.getNodeName());
                         String key = write.getAttribute("key");
                         produced.add(key);
 

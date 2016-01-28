@@ -26,6 +26,7 @@ package stream.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import stream.Context;
 import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
@@ -37,78 +38,78 @@ import stream.util.parser.TimeParser;
  */
 public class Monitor extends DefaultProcess {
 
-	static Logger log = LoggerFactory.getLogger(Monitor.class);
-	private Long interval = 1000L;
-	private String intervalString = "1000ms";
-	private Long limit = -1l;
+    static Logger log = LoggerFactory.getLogger(Monitor.class);
+    private Long interval = 1000L;
+    private String intervalString = "1000ms";
+    private Long limit = -1l;
 
-	public Monitor() {
-	}
+    public Monitor() {
+    }
 
-	public Long getLimit() {
-		return limit;
-	}
+    public Long getLimit() {
+        return limit;
+    }
 
-	public void setLimit(Long limit) {
-		this.limit = limit;
-	}
+    public void setLimit(Long limit) {
+        this.limit = limit;
+    }
 
-	/**
-	 * @return the interval
-	 */
-	public String getInterval() {
-		return intervalString;
-	}
+    /**
+     * @return the interval
+     */
+    public String getInterval() {
+        return intervalString;
+    }
 
-	/**
-	 * @param interval
-	 *            the interval to set
-	 */
-	public void setInterval(String intervalString) {
-		this.intervalString = intervalString;
-	}
+    /**
+     * @param interval
+     *            the interval to set
+     */
+    public void setInterval(String intervalString) {
+        this.intervalString = intervalString;
+    }
 
-	/**
-	 * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
-	 */
-	@Override
-	public void init(ApplicationContext context) throws Exception {
-		super.init(context);
+    /**
+     * @see stream.runtime.AbstractProcess#init(stream.ProcessContext)
+     */
+    @Override
+    public void init(Context context) throws Exception {
+        super.init(context);
 
-		try {
-			interval = TimeParser.parseTime(getInterval());
-			log.debug("Monitor-interval is {} ms", interval);
+        try {
+            interval = TimeParser.parseTime(getInterval());
+            log.debug("Monitor-interval is {} ms", interval);
 
-			source = new MonitorStream();
+            source = new MonitorStream();
 
-		} catch (Exception e) {
-			interval = 1000L;
-			throw new Exception("Failed to initialize Monitor: " + e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            interval = 1000L;
+            throw new Exception("Failed to initialize Monitor: " + e.getMessage());
+        }
+    }
 
-	public Data process(Data item) {
+    public Data process(Data item) {
 
-		Data data = super.process(item);
+        Data data = super.process(item);
 
-		try {
-			Thread.sleep(interval);
-		} catch (InterruptedException e) {
-			log.debug("Monitor finished.");
-			return data;
-		}
-		return data;
-	}
+        try {
+            Thread.sleep(interval);
+        } catch (InterruptedException e) {
+            log.debug("Monitor finished.");
+            return data;
+        }
+        return data;
+    }
 
-	public String toString() {
-		return "Monitor[" + super.toString() + "]";
-	}
+    public String toString() {
+        return "Monitor[" + super.toString() + "]";
+    }
 
-	public class MonitorStream extends AbstractStream {
+    public class MonitorStream extends AbstractStream {
 
-		@Override
-		public Data readNext() throws Exception {
-			return DataFactory.create();
-		}
-	}
+        @Override
+        public Data readNext() throws Exception {
+            return DataFactory.create();
+        }
+    }
 }

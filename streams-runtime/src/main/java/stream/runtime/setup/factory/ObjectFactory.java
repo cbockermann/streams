@@ -178,6 +178,10 @@ public class ObjectFactory extends Variables {
         return new ObjectFactory();
     }
 
+    public RuntimeClassLoader getClassLoader() {
+        return this.classLoader;
+    }
+
     public static synchronized String getNextIdentifier(String obj) {
         Integer cur = globalObjectNumbers.get(obj);
         if (cur == null)
@@ -199,19 +203,10 @@ public class ObjectFactory extends Variables {
      * @throws Exception
      */
     public Object create(Element node, Map<String, String> params, Variables local) throws Exception {
-
-        //
-        // Map<String, String> params = getAttributes(node);
         log.debug("Creating object '{}' with attributes: {}", node.getNodeName(), params);
-
-        // String name = node.getNodeName();
-        // for (ObjectCreator creator : objectCreators) {
-        // if (name.startsWith(creator.getNamespace())) {
-        // return creator.create(name, params, local);
-        // }
-        // }
-
-        Object obj = create(this.findClassForElement(node), params, createConfigDocument(node), local);
+        Object obj = create(null, params, createConfigDocument(node), local);
+        // Object obj = create(this.findClassForElement(node), params,
+        // createConfigDocument(node), local);
         return obj;
     }
 
@@ -249,16 +244,19 @@ public class ObjectFactory extends Variables {
         // check if a custom creator is registered for that package
         //
         for (ObjectCreator creator : objectCreators) {
-            if (className.startsWith(creator.getNamespace())) {
+            if (creator.handles(config)) {
                 log.debug("Found object-creator {} for class {}", creator, className);
 
-                object = creator.create(className, parameter, local);
+                object = creator.create(className, parameter, local, config);
                 return object;
             }
         }
 
         // create an instance of this class using the "default way"
         //
+        if (className == null) {
+            className = findClassForElement(config);
+        }
         log.debug("Looking for class '{}'", className);
         Class<?> clazz = Class.forName(className, false, classLoader);
 

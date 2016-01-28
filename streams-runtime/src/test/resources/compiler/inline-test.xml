@@ -1,0 +1,22 @@
+<application>
+    
+    <stream id="data" class="stream.test.TestStream" limit="10" />
+    
+    <process input="data">
+        
+        <inline>
+        	data.clear();
+        	double val = 42.0;
+        	data.put( "@answer", 42.0);
+        	data.put( "x", 1.03);
+        	
+        	if( val > 0 ){
+        		//return null;
+        	}
+        </inline>
+        
+        <PrintData />
+        
+    </process>
+    
+</application>

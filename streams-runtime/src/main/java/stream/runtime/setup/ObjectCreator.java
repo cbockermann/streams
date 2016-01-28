@@ -25,6 +25,8 @@ package stream.runtime.setup;
 
 import java.util.Map;
 
+import org.w3c.dom.Element;
+
 import stream.util.Variables;
 
 /**
@@ -33,8 +35,10 @@ import stream.util.Variables;
  */
 public interface ObjectCreator {
 
-	public String getNamespace();
+    public String getNamespace();
 
-	public Object create(String className, Map<String, String> parameters,
-			Variables local) throws Exception;
+    public boolean handles(Element element);
+
+    public Object create(String className, Map<String, String> parameters, Variables local, Element element)
+            throws Exception;
 }

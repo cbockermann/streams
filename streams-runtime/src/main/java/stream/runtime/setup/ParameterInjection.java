@@ -72,7 +72,7 @@ public class ParameterInjection {
 
         // check for double parameter definitions
         //
-        ParameterValidator.checkClassParameters(o.getClass());
+        ParameterValidator.checkClassParameters(o.getClass(), params);
 
         // the set contains parameters that have been successfully been set
         Set<String> alreadySet = new HashSet<String>();

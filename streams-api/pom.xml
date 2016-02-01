@@ -3,7 +3,7 @@
 	<name>streams-api</name>
 	<artifactId>streams-api</artifactId>
 	<parent>
-		<groupId>org.jwall</groupId>
+		<groupId>de.sfb876</groupId>
 		<artifactId>streams</artifactId>
 		<version>0.9.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>

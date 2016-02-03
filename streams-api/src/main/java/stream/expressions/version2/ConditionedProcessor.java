@@ -71,10 +71,10 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 
 	public boolean matches(Data item) throws Exception {
 		if(condition==null)
-			return true;
-		final Boolean b=  condition.get(context, item);
+			return false;
+		final Boolean b = condition.get(context, item);
 		if(b == null)
-			return true;
+			return false;
 		return b;
 	}
 

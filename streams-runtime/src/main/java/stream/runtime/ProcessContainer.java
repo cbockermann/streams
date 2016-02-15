@@ -27,7 +27,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,7 +47,6 @@ import org.w3c.dom.NodeList;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
-import stream.app.ComputeGraph;
 import stream.container.IContainer;
 import stream.data.DataFactory;
 import stream.io.Queue;
@@ -69,14 +67,15 @@ import stream.runtime.setup.handler.ServiceElementHandler;
 import stream.runtime.setup.handler.SinkElementHandler;
 import stream.runtime.setup.handler.StreamElementHandler;
 import stream.runtime.setup.handler.SystemPropertiesHandler;
-import stream.runtime.shutdown.LocalShutdownCondition;
-import stream.runtime.shutdown.ServerShutdownCondition;
-import stream.runtime.shutdown.ShutdownCondition;
 import stream.service.NamingService;
 import stream.service.Service;
 import stream.util.Variables;
 import stream.util.XIncluder;
 import stream.util.XMLUtils;
+import streams.application.ComputeGraph;
+import streams.runtime.Hook;
+import streams.runtime.Signals;
+import streams.runtime.Supervisor;
 
 /**
  * A process-container is a collection of processes that run independently. Each
@@ -186,6 +185,8 @@ public class ProcessContainer implements IContainer, Runnable {
             "stream.script.JavaScriptProcessorFactory" };
 
     final static Map<String, ElementHandler> autoHandlers = new LinkedHashMap<String, ElementHandler>();
+
+    Supervisor supervisor;
 
     static {
 
@@ -428,6 +429,10 @@ public class ProcessContainer implements IContainer, Runnable {
         this.name = name;
     }
 
+    public List<LifeCycle> lifeCycles() {
+        return this.lifeCyleObjects;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -483,9 +488,7 @@ public class ProcessContainer implements IContainer, Runnable {
         for (DocumentHandler handle : documentHandler) {
             handle.handle(this, doc, containerVariables, dependencyInjection);
         }
-        // for (Entry<String, String> b : containerVariables.entrySet()) {
-        // System.out.println(b.getKey() + ":" + b.getValue());
-        // }
+
         objectFactory.addVariables(context.getProperties());
         objectFactory.addVariables(containerVariables);
 
@@ -603,6 +606,13 @@ public class ProcessContainer implements IContainer, Runnable {
 
         if (!container.contains(this)) {
             container.add(this);
+
+            Signals.register(new Hook() {
+                @Override
+                public void signal(int flags) {
+                    log.info("Handling signal {}", flags);
+                }
+            });
         }
 
         startTime = System.currentTimeMillis();
@@ -641,7 +651,6 @@ public class ProcessContainer implements IContainer, Runnable {
             sink.init();
         }
 
-        log.info("Initializing life-cycle objects...");
         for (LifeCycle lc : this.lifeCyleObjects) {
             log.info("Initializing life-cycle for {}", lc);
             lc.init(context);
@@ -649,7 +658,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
         final Supervisor supervisor = new Supervisor(computeGraph()) {
             /**
-             * @see stream.runtime.Supervisor#processError(stream.Process,
+             * @see streams.runtime.Supervisor#processError(stream.Process,
              *      java.lang.Exception)
              */
             @Override
@@ -661,9 +670,11 @@ public class ProcessContainer implements IContainer, Runnable {
                 shutdown();
             }
         };
+        this.supervisor = supervisor;
 
-        log.info("Creating {} active processes...", processes.size());
+        log.debug("Creating {} active processes...", processes.size());
         long start = System.currentTimeMillis();
+        int processesStarted = 0;
         for (Process spu : processes) {
 
             ProcessContext ctx = this.processContexts.get(spu);
@@ -671,8 +682,6 @@ public class ProcessContainer implements IContainer, Runnable {
                 ctx = new ProcessContextImpl("process:" + spu.hashCode(), context);
                 processContexts.put(spu, ctx);
             }
-            // log.debug("Initializing process with process-context...");
-            // spu.init(ctx);
 
             ProcessThread worker = new ProcessThread(spu, context);
             worker.addListener(supervisor);
@@ -682,42 +691,28 @@ public class ProcessContainer implements IContainer, Runnable {
 
             log.debug("Starting stream-process [{}]", spu);
             worker.start();
+
             log.debug("Stream-process started.");
+            processesStarted++;
         }
 
-        log.debug("Waiting for container to finish...");
-        ShutdownCondition con = null;
+        if (failFastReason != null) {
+            log.error("Exception occurred: {}", failFastReason.getMessage());
+            throw failFastReason;
+        }
 
-        if (server)
-            con = new ServerShutdownCondition();
-        else
-            con = new LocalShutdownCondition();
+        // Signals.register(supervisor);
 
-        log.debug("Waiting for shutdown-condition...");
-        con.waitForCondition(depGraph);
-        log.debug("Shutdown-condition met, container finished.");
-
-        // if the shutdown condition has properly been reached (no Ctrl+C), then
-        // we do not require the shutdown hook to be run...
-        runShutdownHook = false;
+        log.debug("{} processes started...", processesStarted);
+        while (supervisor.processesDone() < processesStarted) {
+            log.debug("Waiting for processes to finish...");
+            supervisor.waitForProcesses();
+            log.debug("{} of {} processes finished...", supervisor.processesDone(), processesStarted);
+        }
 
         long end = System.currentTimeMillis();
         log.trace("Running processes: {}", processes);
         log.debug("ProcessContainer finished all processes after {} ms", (end - start));
-
-        if (failFastReason != null) {
-            throw failFastReason;
-        }
-
-        while (supervisor.processesRunning() > 0) {
-            log.info("{} processes still running...", supervisor.processesRunning());
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         return end - start;
     }
 
@@ -751,48 +746,41 @@ public class ProcessContainer implements IContainer, Runnable {
     }
 
     public void shutdown() {
+        log.debug("shutdown()");
 
-        synchronized (runShutdownHook) {
-            if (!runShutdownHook)
-                return;
+        // SoftShutdown shut = new SoftShutdown(this);
+        // log.info("Starting shutdown object 'shut' = {}", shut);
+        // shut.start();
+        //
+        // synchronized (runShutdownHook) {
+        // if (!runShutdownHook)
+        // return;
+        //
+        // // ensure that the shutdown hook is only run *once*
+        // runShutdownHook = false;
+        // }
 
-            // ensure that the shutdown hook is only run *once*
-            runShutdownHook = false;
-        }
+        if (this.supervisor != null) {
 
-        log.debug("Graph has {} source elements", depGraph.getRootSources().size());
-        for (Object source : depGraph.getRootSources()) {
-            log.debug("Removing element {} from compute-graph", source);
-            List<LifeCycle> lifeCycles = depGraph.remove(source);
-            for (LifeCycle lf : lifeCycles) {
+            supervisor.signal(0);
+
+            log.debug("Waiting for remaining processes...");
+            while (supervisor.processesRunning() > 0) {
                 try {
-                    log.debug("Finishing LifeCycle object {}", lf);
-                    lf.finish();
+                    log.debug("    waiting for {} process(es) to finish...", supervisor.processesRunning());
+                    Thread.sleep(250);
                 } catch (Exception e) {
-                    log.error("Failed to end LifeCycle object {}: {}", lf, e.getMessage());
-                    if (log.isDebugEnabled())
-                        e.printStackTrace();
-                } finally {
-                    this.lifeCyleObjects.remove(lf);
+                    e.printStackTrace();
                 }
             }
         }
-
-        Iterator<LifeCycle> it = this.lifeCyleObjects.iterator();
-        while (it.hasNext()) {
-            LifeCycle lc = it.next();
-
-            try {
-                log.info("Finishing life-cycle object {}", lc);
-                lc.finish();
-            } catch (Exception e) {
-                log.error("Failed to end life-cycle object {}: {}", lc, e.getMessage());
-                if (log.isDebugEnabled())
-                    e.printStackTrace();
-            } finally {
-                it.remove();
-            }
-        }
+        //
+        // try {
+        // log.info("waiting on shut.join()...");
+        // shut.join();
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
     }
 
     /**

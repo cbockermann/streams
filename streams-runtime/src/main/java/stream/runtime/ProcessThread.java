@@ -29,9 +29,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import streams.runtime.Hook;
 
 /**
  * <p>
@@ -41,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author Christian Bockermann, Hendrik Blom
  * 
  */
-public class ProcessThread extends Thread {
+public class ProcessThread extends Thread implements Hook {
 
     static Logger log = LoggerFactory.getLogger(ProcessThread.class);
 
@@ -57,6 +60,8 @@ public class ProcessThread extends Thread {
 
     final stream.Process process;
     final ApplicationContext context;
+
+    final AtomicBoolean executing = new AtomicBoolean(false);
     boolean running = false;
 
     protected final List<ProcessListener> processListener = new ArrayList<ProcessListener>();
@@ -119,22 +124,19 @@ public class ProcessThread extends Thread {
                 log.debug("Calling process-listener {}", l);
                 l.processStarted(process);
             }
-
+            executing.set(true);
             process.execute();
+            executing.set(false);
+        } catch (InterruptedException ie) {
+            log.error("Process thread interruped while executing!?");
+            ie.printStackTrace();
+            executing.set(false);
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             String exceptionDetails = sw.toString();
             log.error(exceptionDetails);
             // e.printStackTrace();
-            try {
-                process.finish();
-            } catch (Exception fe) {
-                sw = new StringWriter();
-                fe.printStackTrace(new PrintWriter(sw));
-                exceptionDetails = sw.toString();
-                log.error(exceptionDetails);
-            }
 
             for (ProcessListener l : this.processListener) {
                 log.debug("Calling process-listener {} for error handling", l);
@@ -142,23 +144,36 @@ public class ProcessThread extends Thread {
             }
 
         } finally {
+            executing.set(false);
+            log.debug("ProcessThread shutting down...");
 
             try {
-                log.debug("Process {} finished, notifying listeners: {}", process, processListener);
-                for (ProcessListener l : this.processListener) {
-                    log.debug("   Calling listener {}", l);
-                    l.processFinished(process);
-                }
+                log.debug("Finishing processors...");
+                process.finish();
             } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                String exceptionDetails = sw.toString();
-                log.error("Failed to call process listeners: {}", exceptionDetails);
-                // if (log.isDebugEnabled())
+                log.error("Failed to finish: {}", e.getMessage());
                 e.printStackTrace();
             }
 
+            log.debug("Process {} finished, notifying listeners: {}", process, processListener);
+            for (ProcessListener l : this.processListener) {
+                log.debug(" Calling listener {}", l);
+                l.processFinished(process);
+            }
+
             running = false;
+        }
+    }
+
+    /**
+     * @see streams.runtime.Hook#signal(int)
+     */
+    @Override
+    public void signal(int flags) {
+        log.debug("Signaling ProcessThread {}", this);
+        if (executing.get()) {
+            log.debug("   process thread is executing, sending interrupt() signal");
+            this.interrupt();
         }
     }
 }

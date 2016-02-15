@@ -93,7 +93,7 @@ public class TexCompiler {
                 dump(p);
 
             long end = System.currentTimeMillis();
-            log.info("Compiling latex-file'{}' took {} ms", texFile, (end - time));
+            log.info("Compiling latex-file '{}' took {} ms, output is in {}", texFile, (end - time), pdfFile);
 
             //
             // cleanup

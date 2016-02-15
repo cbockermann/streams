@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 
 import stream.Process;
 import stream.Processor;
-import stream.app.ComputeGraph;
 import stream.io.Source;
 import stream.runtime.AbstractProcess;
 import stream.runtime.Monitor;
 import stream.utils.XMLFormatter;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris
@@ -46,7 +46,7 @@ public class LocalShutdownCondition extends AbstractShutdownCondition {
 	static Logger log = LoggerFactory.getLogger(LocalShutdownCondition.class);
 
 	/**
-	 * @see stream.runtime.ShutdownCondition#isMet(stream.app.ComputeGraph)
+	 * @see stream.runtime.ShutdownCondition#isMet(streams.application.ComputeGraph)
 	 */
 	@Override
 	public boolean isMet(ComputeGraph graph) {

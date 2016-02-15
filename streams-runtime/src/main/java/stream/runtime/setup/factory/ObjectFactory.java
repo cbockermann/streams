@@ -222,6 +222,8 @@ public class ObjectFactory extends Variables {
     public Object create(String className, Map<String, String> parameter, org.w3c.dom.Element config, Variables local)
             throws Exception {
 
+        log.debug("Creating object for class '{}'", className);
+        log.debug("parameters: {}", parameter);
         log.debug("Parameters for new class: {}", parameter);
         log.debug("local variables: {}", local);
 

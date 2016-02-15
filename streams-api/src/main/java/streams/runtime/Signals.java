@@ -19,7 +19,7 @@ public class Signals extends Thread {
     static Logger log = LoggerFactory.getLogger(Signals.class);
     final static ArrayList<Hook> hooks = new ArrayList<Hook>();
 
-    static Signals listener = null;
+    static Signals listener = new Signals();
 
     static {
         init();
@@ -27,14 +27,16 @@ public class Signals extends Thread {
 
     private synchronized static void init() {
         if (listener == null) {
-            log.info("Registering ShutdownListener...");
+            log.debug("Registering ShutdownListener...");
             listener = new Signals();
             Runtime.getRuntime().addShutdownHook(listener);
         }
     }
 
     public void run() {
+        log.debug("Running hooks...");
         for (Hook hook : hooks) {
+            log.debug("Signaling hook {}", hook);
             hook.signal(0);
         }
     }

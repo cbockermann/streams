@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 
 import stream.CopiesUtils;
 import stream.Copy;
-import stream.app.ComputeGraph;
 import stream.io.Queue;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
@@ -39,6 +38,7 @@ import stream.runtime.ProcessContainer;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.service.Service;
 import stream.util.Variables;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris, Hendrik

@@ -28,7 +28,7 @@ import java.util.Map;
 
 import stream.io.Sink;
 import stream.io.Source;
-import stream.runtime.LifeCycle;
+import stream.runtime.ApplicationContext;
 
 /**
  * <p>
@@ -40,43 +40,55 @@ import stream.runtime.LifeCycle;
  * @author Christian Bockermann, Hendrik Blom
  * 
  */
-public interface Process extends LifeCycle {
+public interface Process {
 
-	/**
-	 * The data source of this process.
-	 * 
-	 * @param The
-	 *            data source of this process.
-	 */
-	public void setInput(Source ds);
+    /**
+     * The data source of this process.
+     * 
+     * @param The
+     *            data source of this process.
+     */
+    public void setInput(Source ds);
 
-	/**
-	 * The data source of this process.
-	 * 
-	 * @return The data source of this process.
-	 */
-	public Source getInput();
+    /**
+     * The data source of this process.
+     * 
+     * @return The data source of this process.
+     */
+    public Source getInput();
 
-	/**
-	 * 
-	 * @param sink
-	 */
-	public void setOutput(Sink sink);
+    /**
+     * 
+     * @param sink
+     */
+    public void setOutput(Sink sink);
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Sink getOutput();
+    /**
+     * 
+     * @return
+     */
+    public Sink getOutput();
 
-	public void add(Processor p);
+    public void add(Processor p);
 
-	public void remove(Processor p);
+    public void remove(Processor p);
 
-	public List<Processor> getProcessors();
+    public List<Processor> getProcessors();
 
-	public void execute() throws Exception;
+    /**
+     * Initializes this life cycle instance with the provided context.
+     */
+    public void init(ApplicationContext context) throws Exception;
 
-	public Map<String, String> getProperties();
+    /**
+     * This method is called at the end of the life cycle.
+     * 
+     * @throws Exception
+     */
+    public void finish() throws Exception;
+
+    public void execute() throws Exception;
+
+    public Map<String, String> getProperties();
 
 }

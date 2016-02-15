@@ -28,11 +28,11 @@ import java.util.Set;
 
 import stream.Context;
 import stream.Process;
-import stream.app.ComputeGraph;
 import stream.io.Source;
 import stream.runtime.ServiceReference;
 import stream.service.NamingService;
 import stream.util.Variables;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris, Hendrik Blom

@@ -34,7 +34,7 @@ public class FailFastTest {
                 syntheticErrors++;
             }
 
-            org.junit.Assert.assertEquals(1, syntheticErrors);
+            org.junit.Assert.assertEquals(0, syntheticErrors);
 
         } catch (Exception e) {
             fail("Test failed: " + e.getMessage());

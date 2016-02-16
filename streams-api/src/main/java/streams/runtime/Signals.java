@@ -19,7 +19,7 @@ public class Signals extends Thread {
     static Logger log = LoggerFactory.getLogger(Signals.class);
     final static ArrayList<Hook> hooks = new ArrayList<Hook>();
 
-    static Signals listener = new Signals();
+    static Signals listener = null;
 
     static {
         init();

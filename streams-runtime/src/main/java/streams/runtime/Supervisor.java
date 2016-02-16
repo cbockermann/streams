@@ -211,6 +211,10 @@ public class Supervisor implements ProcessListener, Hook {
                 Iterator<Source> it = roots.iterator();
                 while (it.hasNext()) {
                     Source src = it.next();
+
+                    Set<Object> consumers = dependencies.getTargets(src);
+                    log.info("The following consumers are attached to the root {}:  {}", src, consumers);
+
                     try {
                         src.close();
                     } catch (Exception e) {

@@ -762,6 +762,7 @@ public class ProcessContainer implements IContainer, Runnable {
 
         if (this.supervisor != null) {
 
+            log.info("Calling supervisor.signal(0)!");
             supervisor.signal(0);
 
             log.debug("Waiting for remaining processes...");

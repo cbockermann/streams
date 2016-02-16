@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.app;
+package streams.application;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -112,9 +112,9 @@ public class ComputeGraph {
      * 
      * @return
      */
-    public synchronized Set<Object> getRootSources() {
+    public synchronized Set<Source> getRootSources() {
         Set<Object> sources = getSources();
-        Set<Object> srcs = new LinkedHashSet<Object>();
+        Set<Source> srcs = new LinkedHashSet<Source>();
         Iterator<Object> it = sources.iterator();
         while (it.hasNext()) {
             Object source = it.next();
@@ -123,7 +123,7 @@ public class ComputeGraph {
 
             if (source instanceof Source) {
                 if (getSourcesFor(source).isEmpty())
-                    srcs.add(source);
+                    srcs.add((Source) source);
             }
         }
         return srcs;
@@ -287,7 +287,7 @@ public class ComputeGraph {
             closed = true;
         }
 
-        if (o instanceof Source) {
+        if (o instanceof Source && !(o instanceof Queue)) {
             finished.add(o);
             try {
                 log.debug("Removing and closing source {}", ((Source) o).getId());

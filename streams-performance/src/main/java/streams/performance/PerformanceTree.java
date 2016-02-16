@@ -111,7 +111,7 @@ public class PerformanceTree {
     /**
      * Print collected statistics to system output.
      */
-	public void print() {
+	public synchronized void print() {
         int treeDepth = depth();
 		for (int i = 0; i < treeDepth; i++) {
 			System.out.print("  ");

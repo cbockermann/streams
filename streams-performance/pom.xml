@@ -1,12 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.sfb876</groupId>
 	<artifactId>streams-performance</artifactId>
 	<name>streams-performance</name>
 	<description>Performance monitoring for streams graphs.</description>
 
 	<parent>
-		<groupId>org.jwall</groupId>
+		<groupId>de.sfb876</groupId>
 		<artifactId>streams</artifactId>
 		<version>0.9.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
@@ -16,58 +15,11 @@
 		<streams.version>0.9.25-SNAPSHOT</streams.version>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>sonatype-releases</id>
-			<name>sonatype Maven Staging Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-		<snapshotRepository>
-			<id>sonatype-snapshots</id>
-			<name>sonatype Snapshot Repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<site>
-			<id>jwall-site</id>
-			<url>scp://jwall.org/var/www/sfb876.de/htdocs/streams/</url>
-		</site>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>sonatype-snapshots</id>
-			<name>sonatype Snapshot Repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
-
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://builder.sfb876.de/</url>
-	</ciManagement>
-
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License, Version 3</name>
-			<url>http://www.gnu.org/licenses/agpl-3.0-standalone.html</url>
-		</license>
-	</licenses>
-
-	<developers>
-		<developer>
-			<name>Christian Bockermann</name>
-			<email>christian.bockermann@cs.uni-dortmund.de</email>
-			<organization>Informatik LS8, TU-Dortmund</organization>
-			<organizationUrl>http://www-ai.cs.uni-dortmund.de</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-
 	<dependencies>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-api</artifactId>
-			<version>0.9.25-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.minidev</groupId>
@@ -75,12 +27,9 @@
 			<version>2.0-RC2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-runtime</artifactId>
-			<version>0.9.25-SNAPSHOT</version>
-			<!-- 
-			<scope>test</scope>
-			 -->
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -88,9 +37,9 @@
 			<version>4.11</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-core</artifactId>
-			<version>0.9.25-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -99,9 +48,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-plotter</artifactId>
-			<version>0.9.25-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -135,15 +84,15 @@
 					<version>2.0-RC2</version>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-runtime</artifactId>
-					<version>0.9.25-SNAPSHOT</version>
+					<version>${project.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-core</artifactId>
-					<version>0.9.25-SNAPSHOT</version>
+					<version>${project.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
@@ -169,7 +118,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<finalName>streams-performance-${project.version}</finalName>
+							<finalName>streams-performance</finalName>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>

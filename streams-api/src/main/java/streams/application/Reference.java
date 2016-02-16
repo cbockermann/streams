@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package stream.app;
+package streams.application;
 
 /**
  * <p>
@@ -36,7 +36,7 @@ public class Reference {
 	/** The object to inject the resolved reference later on */
 	final Object object;
 
-	/** The property of the object into which the reference it to be injected */
+	/** The property of the object into which the reference is to be injected */
 	final String property;
 
 	/** IDs of the referenced objects may be more than 1 for array injection */

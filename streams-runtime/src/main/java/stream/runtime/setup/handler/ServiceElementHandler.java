@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import stream.app.ComputeGraph.SourceRef;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ElementHandler;
 import stream.runtime.LifeCycle;
@@ -37,6 +36,7 @@ import stream.runtime.ProcessContainer;
 import stream.runtime.setup.factory.ObjectFactory;
 import stream.service.Service;
 import stream.util.Variables;
+import streams.application.ComputeGraph.SourceRef;
 
 /**
  * <p>

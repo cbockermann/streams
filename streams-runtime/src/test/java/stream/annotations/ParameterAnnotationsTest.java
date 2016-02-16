@@ -27,6 +27,7 @@ public class ParameterAnnotationsTest {
     public void test() {
 
         Map<String, Object> vals = new LinkedHashMap<String, Object>();
+        vals.put("nonoptional", "value");
 
         AnnotatedProcessor proc = new AnnotatedProcessor();
 

@@ -20,12 +20,12 @@ import org.w3c.dom.NodeList;
 
 import stream.Data;
 import stream.Processor;
-import stream.app.ComputeGraph;
 import stream.io.AbstractStream;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.io.SourceURL;
 import stream.runtime.ApplicationContext;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris

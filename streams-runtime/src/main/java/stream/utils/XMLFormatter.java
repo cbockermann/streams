@@ -38,13 +38,13 @@ import org.w3c.dom.Element;
 import stream.Processor;
 import stream.ProcessorList;
 import stream.annotations.BodyContent;
-import stream.app.ComputeGraph;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.io.Stream;
 import stream.runtime.AbstractProcess;
 import stream.util.XMLUtils;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris

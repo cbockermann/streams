@@ -428,12 +428,11 @@
       @import url("$relativePath/css/maven-theme.css");
       @import url("$relativePath/css/site.css");
     </style>
-    <script type="text/javascript" src="$relativePath/js/sh_main.js"></script>
-    <script type="text/javascript" src="$relativePath/js/sh_java.js"></script>
-    <script type="text/javascript" src="$relativePath/js/sh_xml.js"></script>
+    <script type="text/javascript" src="$relativePath/js/highlight.pack.js"></script>
     <link rel="stylesheet" href="$relativePath/css/print.css" type="text/css" media="print" />
     <link rel="stylesheet" href="$relativePath/css/site-local.css" type="text/css" />
-    <link type="text/css" rel="stylesheet" href="$relativePath/css/sh_nedit.css">
+    <link rel="stylesheet" href="$relativePath/css/open-sans.css" type="text/css" />
+    <link rel="stylesheet" href="$relativePath/css/zenburn.css" type="text/css" />
 
 	<meta name="skin" content="jwall.org Site Skin v0.0.2" />    
     #foreach( $author in $authors )

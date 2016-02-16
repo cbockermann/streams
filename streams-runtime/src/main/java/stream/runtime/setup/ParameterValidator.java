@@ -24,10 +24,10 @@ public class ParameterValidator {
 
     public static boolean check(Object o, Map<String, Object> vals) throws ParameterException {
 
-        Map<String, Class<?>> types = checkClassParameters(o.getClass());
-        log.info("Object {} has {} paramters: {}", o, types.size(), types);
+        Map<String, Class<?>> types = checkClassParameters(o.getClass(), vals);
+        log.debug("Object {} has {} paramters: {}", o, types.size(), types);
 
-        return false;
+        return true;
     }
 
     /**
@@ -42,7 +42,8 @@ public class ParameterValidator {
      * @return
      * @throws Exception
      */
-    public static Map<String, Class<?>> checkClassParameters(Class<?> clazz) throws ParameterException {
+    public static Map<String, Class<?>> checkClassParameters(Class<?> clazz, Map<String, ?> vals)
+            throws ParameterException {
 
         Map<String, Class<?>> params = new LinkedHashMap<String, Class<?>>();
 
@@ -55,8 +56,13 @@ public class ParameterValidator {
                 if (name == null || name.isEmpty()) {
                     name = field.getName();
                 }
-                log.info("Found parameter '{}' for field '{}'", name, field.getName());
+                log.debug("Found parameter '{}' for field '{}'", name, field.getName());
                 params.put(name, field.getType());
+
+                if (info.required() && !vals.containsKey(name)) {
+                    throw new ParameterException("Field '" + name + "' is missing required value!");
+                }
+
             }
         }
 
@@ -81,6 +87,10 @@ public class ParameterValidator {
                                     + method.getName() + "' for parameter '" + name + "' does not match type '"
                                     + params.get(name).getName() + "' defined by field annotation!");
                 }
+            }
+
+            if (p.required() && !vals.containsKey(name)) {
+                throw new ParameterException("Missing value for parameter '" + name + "'!");
             }
 
             params.put(name, method.getParameterTypes()[0]);

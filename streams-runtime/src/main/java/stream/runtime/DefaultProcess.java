@@ -32,5 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultProcess extends AbstractProcess {
 
-	static Logger log = LoggerFactory.getLogger(DefaultProcess.class);
+    static Logger log = LoggerFactory.getLogger(DefaultProcess.class);
+
 }

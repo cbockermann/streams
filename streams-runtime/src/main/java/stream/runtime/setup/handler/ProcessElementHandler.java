@@ -36,9 +36,6 @@ import org.w3c.dom.NodeList;
 import stream.CopiesUtils;
 import stream.Processor;
 import stream.ProcessorList;
-import stream.app.ComputeGraph;
-import stream.app.ComputeGraph.ServiceRef;
-import stream.app.ComputeGraph.SinkRef;
 import stream.container.IContainer;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
@@ -51,6 +48,9 @@ import stream.runtime.setup.factory.ProcessFactory;
 import stream.runtime.setup.factory.ProcessorFactory;
 import stream.service.Service;
 import stream.util.Variables;
+import streams.application.ComputeGraph;
+import streams.application.ComputeGraph.ServiceRef;
+import streams.application.ComputeGraph.SinkRef;
 
 /**
  * @author chris, Hendrik

@@ -48,7 +48,6 @@ import org.w3c.dom.NodeList;
 import stream.Data;
 import stream.Process;
 import stream.ProcessContext;
-import stream.app.ComputeGraph;
 import stream.container.IContainer;
 import stream.data.DataFactory;
 import stream.io.Queue;
@@ -77,6 +76,7 @@ import stream.service.Service;
 import stream.util.Variables;
 import stream.util.XIncluder;
 import stream.util.XMLUtils;
+import streams.application.ComputeGraph;
 
 /**
  * A process-container is a collection of processes that run independently. Each

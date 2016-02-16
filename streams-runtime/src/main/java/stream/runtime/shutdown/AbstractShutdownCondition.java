@@ -26,7 +26,7 @@ package stream.runtime.shutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.app.ComputeGraph;
+import streams.application.ComputeGraph;
 
 /**
  * @author hendrik

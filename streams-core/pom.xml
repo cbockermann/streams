@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>streams</artifactId>
-		<groupId>org.jwall</groupId>
+		<groupId>de.sfb876</groupId>
 		<version>0.9.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -12,7 +12,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -23,7 +23,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-runtime</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
@@ -57,7 +57,7 @@
             <version>3.0.3</version>
         </dependency>		
 		<dependency>
-			<groupId>org.jwall</groupId>
+			<groupId>de.sfb876</groupId>
 			<artifactId>streams-sandbox</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Process;
-import stream.app.ComputeGraph;
 import stream.io.Sink;
+import streams.application.ComputeGraph;
 
 /**
  * @author chris

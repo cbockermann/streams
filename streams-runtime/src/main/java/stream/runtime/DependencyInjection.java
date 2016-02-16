@@ -34,17 +34,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.app.ComputeGraph;
-import stream.app.ComputeGraph.ServiceRef;
-import stream.app.ComputeGraph.SinkRef;
-import stream.app.ComputeGraph.SourceRef;
-import stream.app.Reference;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.setup.ParameterInjection;
 import stream.service.NamingService;
 import stream.service.Service;
+import streams.application.ComputeGraph;
+import streams.application.ComputeGraph.ServiceRef;
+import streams.application.ComputeGraph.SinkRef;
+import streams.application.ComputeGraph.SourceRef;
+import streams.application.Reference;
 
 /**
  * 

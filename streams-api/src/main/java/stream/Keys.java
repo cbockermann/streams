@@ -1,7 +1,10 @@
 /**
- * 
+ *
  */
 package stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,9 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import stream.data.DataFactory;
 import stream.util.WildcardPattern;
@@ -25,7 +25,7 @@ import stream.util.WildcardPattern;
  * <code>*</code>. This allows for quickly specifying a list of keys from a data
  * item.
  * </p>
- * 
+ *
  * <p>
  * The basic data structure used within the <em>streams</em> framework is a
  * hashmap. Each message in <em>streams</em> is represented by a hashmap that
@@ -33,7 +33,7 @@ import stream.util.WildcardPattern;
  * <em>features</em> or simply <em>keys</em>. The following table shows an
  * example of this message representation:
  * </p>
- * 
+ *
  * <div style="margin: auto; text-align: center; width: 500px;" class="figure">
  * <table style="padding: 5px;">
  * <tr>
@@ -62,32 +62,32 @@ import stream.util.WildcardPattern;
  * </tr>
  * </table>
  * </div>
- * 
+ *
  * <p>
  * Sometimes it is useful, to restrict the action of a processor function to a
  * subset of the features, contained in a message or item. This is exactly, what
  * the <code>stream.Keys</code> class is suited for.
  * </p>
- * 
+ *
  * <p>
  * It allows for selecting a subset of keys from a set of strings using simple
  * wildcard patterns. Only the wildcards <code>*</code> and <code>?</code> are
  * used. In addition, the exclamation mark <code>!</code> can be used to
  * explicit <em>de-select</em> a previously selected key.
  * </p>
- * 
+ *
  * <p>
  * In the example of the item shown above, we can use the pattern
  * </p>
- * 
+ *
  * <div style="text-align: center;">
  * <code>feature:*,!feature:width</code> </div>
- * 
+ *
  * <p>
  * to select all keys, which start with the string <code>feature:</code> and
  * de-select the <code>feature:width</code> attribute.
  * </p>
- * 
+ *
  * <p>
  * The parts of the match are applied in the order as they appear in the pattern
  * list. Thus, if we reverse the list to <code>!feature:width,feature:*</code>,
@@ -95,10 +95,10 @@ import stream.util.WildcardPattern;
  * it is de-selected at first, but afterwards selected by the
  * <code>feature:*</code> part.
  * </p>
- * 
+ *
  * <h2><a name="a1070ed414a3234cb51da8c0771013a7"></a>Using Regular Expressions
  * </h2>
- * 
+ *
  * <p>
  * With the release of <em>streams</em> version 0.9.25, the use of regular
  * expressions is supported by the <code>stream.Keys</code> class. Regular
@@ -106,21 +106,21 @@ import stream.util.WildcardPattern;
  * like: <code>/pattern/</code>. They can be combined with the simple wildcard
  * patterns, but not within the same pattern element.
  * </p>
- * 
+ *
  * <p>
  * The following example selects all patterns with the
  * <code>feature:color</code> prefix and uses a regular expression to select the
  * pixel-features:
  * </p>
- * 
+ *
  * <div style="margin: auto; text-align: center;">
  * <code>feature:color*,/pixel:\d+/</code> </div>
- * 
+ *
  * <p>
  * Like the simple wildcard patterns, the regular expressions can be prefixed
  * with an exclamation mark to de-select elements from a set.
  * </p>
- * 
+ *
  * <p>
  * The regular expressions match, if the pattern is somehow found at any part of
  * the attribute name. If matching of the full attribute name is required, the
@@ -129,9 +129,9 @@ import stream.util.WildcardPattern;
  * include at least one digit. To limit this to attributes which only consist of
  * digits in their names, the pattern <code>/^\d+$/</code> needs to be used.
  * </p>
- * 
+ *
  * @author Christian Bockermann <christian.bockermann@udo.edu>
- * 
+ *
  */
 public final class Keys implements Serializable {
 
@@ -146,7 +146,7 @@ public final class Keys implements Serializable {
      * This constructor will split the argument string by occurences of the
      * <code>'</code> character and create a <code>Keys</code> instance of the
      * resulting substrings.
-     * 
+     *
      * @param kString
      */
     public Keys(String kString) {
@@ -156,16 +156,14 @@ public final class Keys implements Serializable {
     /**
      * This constructor creates an instance of <code>Keys</code> with the given
      * list of key names. Each key name may contain wildcards.
-     * 
-     * @param ks
+     *
+     * @param ks list of
      */
     protected Keys(String... ks) {
-        final ArrayList<String> keyValues = new ArrayList<String>();
+        final ArrayList<String> keyValues = new ArrayList<>();
 
         for (String k : ks) {
-            if (k.trim().isEmpty()) {
-                continue;
-            } else {
+            if (!k.trim().isEmpty()) {
                 keyValues.add(k.trim());
             }
         }
@@ -174,26 +172,21 @@ public final class Keys implements Serializable {
     }
 
     public Keys(Collection<String> ks) {
-        final ArrayList<String> keyValues = new ArrayList<String>();
-
-        for (String k : ks) {
-            if (k.trim().isEmpty()) {
-                continue;
-            } else {
-                keyValues.add(k.trim());
-            }
-        }
-
-        this.keyValues = keyValues.toArray(new String[keyValues.size()]);
+        this(ks.toArray(new String[ks.size()]));
     }
 
     public Set<String> select(Data item) {
         if (item == null) {
-            return new HashSet<String>();
+            return new HashSet<>();
         }
         return select(item.keySet());
     }
 
+    /**
+     * Select keys from the list of names (retrieved from data item).
+     *
+     * @param names key set retrieved from data item
+     */
     public Set<String> select(Collection<String> names) {
         return select(names, keyValues);
     }
@@ -201,12 +194,12 @@ public final class Keys implements Serializable {
     public final String toString() {
         StringBuffer s = new StringBuffer();
 
-        for (int i = 0; i < keyValues.length; i++) {
-            if (keyValues[i] != null && !keyValues[i].trim().isEmpty()) {
+        for (String keyValue : keyValues) {
+            if (keyValue != null && !keyValue.trim().isEmpty()) {
                 if (s.length() > 0) {
                     s.append(",");
                 }
-                s.append(keyValues[i].trim());
+                s.append(keyValue.trim());
             }
         }
 
@@ -253,16 +246,26 @@ public final class Keys implements Serializable {
         return select(item.keySet(), keys);
     }
 
+    /**
+     * Select from key set of a data item given keys.
+     *
+     * @param ks   key set retrieved from a data item
+     * @param keys keys given by wildcards etc.
+     */
     public static Set<String> select(Collection<String> ks, String[] keys) {
         Set<String> selected = new LinkedHashSet<String>();
         if (ks == null)
             return selected;
 
+        // if no keys defined, return all data item keys (should not happen normally)
         if (keys == null) {
+            log.info("No keys defined. Key set of a data item is returned.");
             selected.addAll(ks);
             return selected;
         }
 
+        // iterate through all keys from set of keys out of data item
+        // and add those matching (wildcard) keys
         for (String key : ks) {
             if (isSelected(key, keys))
                 selected.add(key);
@@ -271,10 +274,18 @@ public final class Keys implements Serializable {
         return selected;
     }
 
+    /**
+     * Check if given value matches any of keys.
+     *
+     * @param value string value of key from data item
+     * @param keys array of keys (e.g. using wildcards)
+     * @return true iff value matches any key; otherwise, false
+     */
     public static boolean isSelected(String value, String[] keys) {
 
-        if (keys == null || keys.length == 0)
+        if (keys == null || keys.length == 0) {
             return false;
+        }
 
         boolean included = false;
 
@@ -297,6 +308,13 @@ public final class Keys implements Serializable {
         return included;
     }
 
+    /**
+     * Check if given pattern matches value.
+     *
+     * @param pattern pattern using regular expression and/or wildcards
+     * @param value   string value
+     * @return true iff match, false otherwise
+     */
     private static boolean matches(String pattern, String value) {
 
         if (pattern.startsWith("/") && pattern.endsWith("/")) {
@@ -313,7 +331,7 @@ public final class Keys implements Serializable {
 
     /**
      * Get the strings which were used to build this object.
-     * 
+     *
      * @return the keys
      */
     public String[] getKeyValues() {

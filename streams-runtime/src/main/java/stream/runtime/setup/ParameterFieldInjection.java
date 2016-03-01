@@ -98,7 +98,8 @@ public class ParameterFieldInjection extends ParameterValueMapper {
                 log.debug("Successfully injected value for parameter '{}'", name);
                 injected.add(name);
             } else {
-                log.warn("Failed to set value for parameter '{}' using field-injection", name);
+                log.warn("Failed to set value for parameter '{}' of class '{}' using field-injection", name,
+                        o.getClass().getCanonicalName());
             }
 
             field.setAccessible(accessLevel);

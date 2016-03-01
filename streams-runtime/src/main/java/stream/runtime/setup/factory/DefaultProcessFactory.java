@@ -338,7 +338,7 @@ public class DefaultProcessFactory implements ProcessFactory {
             // injection)
             //
             List<ServiceRef> sr = new ServiceFieldInjection().getServiceRefsForFields((Processor) o, params);
-            log.info("Found the following service fields: {}", sr);
+            log.debug("Found the following service fields: {}", sr);
             for (ServiceRef ref : sr) {
                 computeGraph.addReference(ref);
                 dependencyInjection.add(ref);

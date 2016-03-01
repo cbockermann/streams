@@ -159,7 +159,7 @@ public final class Keys implements Serializable {
      * 
      * @param ks
      */
-    protected Keys(String... ks) {
+    public Keys(String... ks) {
         final ArrayList<String> keyValues = new ArrayList<String>();
 
         for (String k : ks) {

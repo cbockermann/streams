@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Data;
+import stream.Keys;
 import stream.ProcessContext;
 import stream.expressions.version2.ConditionedProcessor;
 import stream.io.Sink;
@@ -43,7 +44,7 @@ public class Emitter extends ConditionedProcessor {
 
     protected Sink[] sinks;
 
-    protected String[] keys;
+    protected Keys keys;
     protected boolean skip = false;
 
     @Override
@@ -59,7 +60,8 @@ public class Emitter extends ConditionedProcessor {
      */
     @Override
     public Data processMatchingData(Data data) throws Exception {
-        emit(data);
+        Data item = keys.refine(data);
+        emit(item);
         return data;
     }
 
@@ -97,20 +99,20 @@ public class Emitter extends ConditionedProcessor {
 
     @Override
     public String toString() {
-        return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys=" + Arrays.toString(keys) + "]";
+        return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys=" + keys + "]";
     }
 
-    public String[] getKeys() {
+    public Keys getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(Keys keys) {
         this.keys = keys;
     }
 
     public void setSink(Sink sink) {
         if (sink != null) {
-            this.keys = new String[] {};
+            this.keys = new Keys("*");
             this.sinks = new Sink[] { sink };
         }
     }

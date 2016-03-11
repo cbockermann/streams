@@ -271,6 +271,10 @@ public final class Keys implements Serializable {
         return selected;
     }
 
+    public boolean isSelected(String key) {
+        return isSelected(key, keyValues);
+    }
+
     public static boolean isSelected(String value, String[] keys) {
 
         if (keys == null || keys.length == 0)

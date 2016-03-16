@@ -3,9 +3,6 @@
  */
 package stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stream.data.DataFactory;
 import stream.util.WildcardPattern;
@@ -159,8 +159,8 @@ public final class Keys implements Serializable {
      *
      * @param ks list of
      */
-    protected Keys(String... ks) {
-        final ArrayList<String> keyValues = new ArrayList<>();
+    public Keys(String... ks) {
+        final ArrayList<String> keyValues = new ArrayList<String>();
 
         for (String k : ks) {
             if (!k.trim().isEmpty()) {
@@ -272,6 +272,10 @@ public final class Keys implements Serializable {
         }
 
         return selected;
+    }
+
+    public boolean isSelected(String key) {
+        return isSelected(key, keyValues);
     }
 
     /**

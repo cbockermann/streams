@@ -28,3 +28,6 @@ stream-core/pom.xml.releaseBackup
 dependency-reduced-pom.xml
 streams-performance/doc/streams-performance.log
 streams-performance/doc/streams-performance.pdf
+streams-performance/test.log
+streams-performance/test.pdf
+streams-performance/test.tex

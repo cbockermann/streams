@@ -127,11 +127,12 @@ public class PerformanceTree {
 
 			if (statistics != null) {
 				secs = statistics.processingTime() / 1000.0d;
-                System.out.println("-->" + id + " >>  "
+				double itemsPerSecond = secs == 0 ? 0 : items.doubleValue() / secs;
+				System.out.println("-->" + id + " >>  "
                         + this.statistics.itemsProcessed() + " items processed in "
                         + f.format(statistics.processingTime) + " ms  during overall interval of "
                         + (statistics.end() - statistics.start()) + " ms  => "
-                        + f.format(items.doubleValue() / secs) + " items/second");
+                        + f.format(itemsPerSecond) + " items/second");
             } else {
 				System.out.println("-->" + id + "  :: " + allItemsProcessed()
                         + " items processed in " + f.format(secs)

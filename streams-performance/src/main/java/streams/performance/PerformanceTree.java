@@ -150,7 +150,7 @@ public class PerformanceTree {
      */
     public double startInterval() {
 		double min = Double.MAX_VALUE;
-		if (statistics != null) {
+		if (statistics != null && statistics.itemsProcessed() > 0) {
 			min = Math.min(statistics.start(), min);
 		}
 

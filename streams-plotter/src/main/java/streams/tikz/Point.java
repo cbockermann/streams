@@ -10,6 +10,7 @@ public class Point {
     public final Double x;
     public final Double y;
     public Double energy = 1.0;
+    public double weight = 1.0;
 
     public Point(double x, double y) {
         this.x = x;

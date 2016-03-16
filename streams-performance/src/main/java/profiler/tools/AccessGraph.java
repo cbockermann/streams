@@ -42,7 +42,6 @@ public class AccessGraph {
     public static void main(String[] params) throws Exception {
 
         String[] args = params;
-        args = "/Users/chris/fact-tools-profiling.xml".split(",");
 
         if (args.length < 1) {
             System.err.println("Usage:");

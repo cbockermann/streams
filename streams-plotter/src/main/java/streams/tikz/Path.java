@@ -4,6 +4,8 @@
 package streams.tikz;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +31,23 @@ public class Path implements Component {
         } else {
             cmd = "\\draw";
         }
+    }
+
+    public List<Point> points() {
+        return Collections.unmodifiableList(points);
+    }
+
+    public void addAll(Collection<Point> pts) {
+        Iterator<Point> pt = pts.iterator();
+        while (pt.hasNext()) {
+            Point p = pt.next();
+            add(p);
+        }
+    }
+
+    public Path reverse() {
+        Collections.reverse(points);
+        return this;
     }
 
     public Path set(String key, String val) {

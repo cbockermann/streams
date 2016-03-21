@@ -50,7 +50,11 @@ public class Proxy implements StatefulProcessor {
     public Data process(Data input) {
         items++;
         try {
+            // log.debug("EXEC 'process': proxying {}", delegate);
             Data data = input;
+            if (data == null) {
+                return data;
+            }
 
             if (trackKeys)
                 data = wrap(input);
@@ -82,7 +86,11 @@ public class Proxy implements StatefulProcessor {
     }
 
     public Data wrap(Data item) {
-        log.debug("Wrapping item to record attribute accesses");
+        log.debug("Wrapping item to record attribute accesses, item => {}", item);
+        if (map == null) {
+            log.warn("Type map missing in proxy of {}", this.delegate);
+            log.warn("No type-mapper available for wrapping item {}!", item);
+        }
         return new DataWrapper(item, map);
     }
 

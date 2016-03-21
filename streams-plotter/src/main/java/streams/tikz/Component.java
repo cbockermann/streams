@@ -7,7 +7,7 @@ package streams.tikz;
  * @author chris
  *
  */
-public interface Component {
+public interface Component extends Element {
 
     public String toTikzString();
 

@@ -24,14 +24,22 @@ public class Series extends ArrayList<Double> {
         this.name = name;
     }
 
+    public String name() {
+        return name;
+    }
+
     public double min() {
         if (isEmpty()) {
             return Double.NaN;
         }
-        Double min = get(0);
-        for (int i = 1; i < size(); i++) {
+        Double min = null;
+        for (int i = 0; i < size(); i++) {
             Double v = get(i);
-            if (v < min) {
+            if (Double.isNaN(v)) {
+                continue;
+            }
+
+            if (min == null || v < min) {
                 min = v;
             }
         }
@@ -42,10 +50,13 @@ public class Series extends ArrayList<Double> {
         if (isEmpty()) {
             return Double.NaN;
         }
-        Double max = get(0);
-        for (int i = 1; i < size(); i++) {
+        Double max = null;
+        for (int i = 0; i < size(); i++) {
             Double v = get(i);
-            if (v > max) {
+            if (Double.isNaN(v)) {
+                continue;
+            }
+            if (max == null || v > max) {
                 max = v;
             }
         }

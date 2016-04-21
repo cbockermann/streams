@@ -60,7 +60,8 @@ public class ParameterValidator {
                 params.put(name, field.getType());
 
                 if (info.required() && !vals.containsKey(name)) {
-                    throw new ParameterException("Field '" + name + "' is missing required value!");
+                    throw new ParameterException("Field '" + name + "' of class '" + clazz.getCanonicalName()
+                            + "' is missing required value!");
                 }
 
             }

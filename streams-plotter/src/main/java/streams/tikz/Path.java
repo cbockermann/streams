@@ -169,4 +169,16 @@ public class Path implements Component {
 
         return new Rectangle(new Point(minX, maxY), new Point(maxX, minY));
     }
+
+    public Range getRangeX() {
+        Double minX = points.get(0).x;
+        Double maxX = points.get(0).x;
+
+        for (Point p : points) {
+            minX = Math.min(minX, p.x);
+            maxX = Math.max(maxX, p.x);
+        }
+
+        return new Range(minX, maxX);
+    }
 }

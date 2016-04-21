@@ -16,7 +16,7 @@ import java.util.Properties;
  * @author chris
  * 
  */
-public class Plot {
+public class Plot2 {
 
     public final static String VERSION = "0.1";
 
@@ -34,14 +34,15 @@ public class Plot {
 
     public final Properties opts = new Properties();
 
-    final List<Path> paths = new ArrayList<Path>();
-    final List<Shape> shapes = new ArrayList<Shape>();
-
-    final List<Inline> inlines = new ArrayList<Inline>();
+    final List<Element> elements = new ArrayList<Element>();
+    // final List<Path> paths = new ArrayList<Path>();
+    // final List<Shape> shapes = new ArrayList<Shape>();
+    //
+    // final List<Inline> inlines = new ArrayList<Inline>();
 
     boolean debug = false;
 
-    public Plot() {
+    public Plot2() {
 
     }
 
@@ -54,15 +55,15 @@ public class Plot {
     }
 
     public void add(Inline inline) {
-        inlines.add(inline);
+        elements.add(inline);
     }
 
     public void add(Path path) {
-        this.paths.add(path);
+        this.elements.add(path);
     }
 
     public void add(Shape shape) {
-        this.shapes.add(shape);
+        this.elements.add(shape);
     }
 
     public String toString() {
@@ -73,7 +74,7 @@ public class Plot {
         s.println("% ");
 
         s.println("% ");
-        s.println("% plot has " + paths.size() + " paths.");
+        s.println("% plot has " + elements.size() + " elements.");
 
         Point origin = new Point(0, 0);
         if (debug) {
@@ -84,16 +85,16 @@ public class Plot {
             s.println("\\node[circle,minimum size=2pt,inner sep=0pt,fill=black] at " + origin + " {};");
         }
 
-        for (Path p : paths) {
+        for (Element e : elements) {
 
-            Path shifted = p.shift(0, minY);
-            s.println(shifted.toString());
-            // Path scaled = shifted.scale(scaleX, scaleY);
-            // s.println(scaled.toString());
-        }
+            if (e instanceof Path) {
+                Path p = (Path) e;
+                Path shifted = p.shift(0, minY);
+                s.println(shifted.toString());
+                continue;
+            }
 
-        for (Shape shape : shapes) {
-            s.println(shape.toString());
+            s.println(e.toString());
         }
 
         if (axis) {
@@ -125,13 +126,6 @@ public class Plot {
             s.println("\\node[scale=" + Tikz.format(getDoubleOption("y-axis.label.scale", 0.75)) + ",rotate=90] at "
                     + new Point(midX, midY) + "{ \\color{" + color + "}{\\textsf{ " + opts.getProperty("y-axis.label")
                     + "} } };");
-        }
-
-        s.println("%");
-        s.println("% plot has " + inlines.size() + " inlinde code snippets:");
-        for (Inline inline : inlines) {
-            s.println("% inline code:");
-            s.println(inline);
         }
 
         s.println();

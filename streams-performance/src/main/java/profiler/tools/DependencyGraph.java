@@ -56,7 +56,7 @@ public class DependencyGraph {
         Map<String, Dependency> deps = new HashMap<String, Dependency>();
 
         String[] args = params;
-        args = "/Users/chris/fact-tools-profiling.xml".split(",");
+        args = "/Users/chris/fact-minimal-perf.xml".split(",");
 
         if (args.length < 1) {
             System.err.println("Usage:");
@@ -135,7 +135,7 @@ public class DependencyGraph {
         }
 
         for (Dependency d : new TreeSet<Dependency>(available.values())) {
-            System.out.print("'" + d.key + "' depends in: ");
+            System.out.print("'" + d.key + "' depends on: ");
             for (String dep : closure(d)) {
                 System.out.print(" '" + dep + "'");
             }

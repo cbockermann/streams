@@ -22,15 +22,15 @@ public class ProxyInjection {
 
     public ProxyNode inject(Processor p) {
         if (p instanceof ProcessorList) {
-            log.info("Found processor-list: {}", p);
+            log.debug("Found processor-list: {}", p);
             return inject((ProcessorList) p);
         }
-
+        log.debug("Creating proxy for regular processor {}", p);
         return new ProxyNode(p);
     }
 
     public ProxyNode inject(ProcessorList list) {
-
+        log.debug("creating proxy for processor-list {}", list);
         ProxyNode tree = new ProxyNode(list);
         for (int i = 0; i < list.getProcessors().size(); i++) {
             Processor p = list.getProcessors().get(i);

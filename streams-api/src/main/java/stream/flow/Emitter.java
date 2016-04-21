@@ -60,7 +60,10 @@ public class Emitter extends ConditionedProcessor {
      */
     @Override
     public Data processMatchingData(Data data) throws Exception {
-        Data item = keys.refine(data);
+        Data item = data;
+        if (keys != null) {
+            item = keys.refine(data);
+        }
         emit(item);
         return data;
     }

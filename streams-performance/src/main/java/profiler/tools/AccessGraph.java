@@ -4,8 +4,9 @@
 package profiler.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import stream.util.URLUtilities;
+import stream.util.Variables;
 import stream.util.XMLUtils;
 import streams.tikz.Point;
 import streams.tikz.Tikz;
@@ -58,7 +61,9 @@ public class AccessGraph {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.parse(input);
 
-        PrintStream p = new PrintStream(new FileOutputStream(output));
+        StringWriter sw = new StringWriter();
+
+        PrintWriter p = new PrintWriter(sw);
 
         List<String> ks = new ArrayList<String>();
 
@@ -160,5 +165,18 @@ public class AccessGraph {
         }
 
         p.close();
+
+        FileWriter fw = new FileWriter(output);
+        String tex = sw.toString();
+
+        if (System.getProperty("use-template") != null) {
+            Variables vars = new Variables();
+            vars.put("tikz.picture", tex);
+            String template = URLUtilities.readContentOrEmpty(AccessGraph.class.getResource("/tikz-template.tex"));
+            tex = vars.expand(template);
+        }
+
+        fw.write(tex);
+        fw.close();
     }
 }

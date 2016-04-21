@@ -28,6 +28,11 @@ public class Series extends ArrayList<Double> {
         return name;
     }
 
+    public Series setName(String s) {
+        this.name = s;
+        return this;
+    }
+
     public double min() {
         if (isEmpty()) {
             return Double.NaN;

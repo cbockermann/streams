@@ -196,6 +196,7 @@ public class Inspect {
         String[] args = params;
 
         args = "/Users/chris/Uni/Projekte/fact-tools/cb-performance/profile-cb-analysis-data.xml *".split(" ");
+        args = "/Users/chris/fact-minimal-perf.xml *".split(" ");
 
         final File profile = new File(args[0]);
         final List<String> classPatterns = new ArrayList<String>();

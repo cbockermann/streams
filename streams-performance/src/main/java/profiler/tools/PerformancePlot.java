@@ -4,8 +4,9 @@
 package profiler.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,7 +19,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import stream.util.WildcardPattern;
+import stream.Keys;
+import stream.util.URLUtilities;
+import stream.util.Variables;
 import stream.util.XMLUtils;
 import streams.tikz.Path;
 import streams.tikz.Point;
@@ -51,7 +54,7 @@ public class PerformancePlot {
             output = new File(args[1]);
         }
 
-        String filter = System.getProperty("processors", "*");
+        Keys filter = new Keys(System.getProperty("processors", "*"));
         LinkedHashMap<String, Double> columns = new LinkedHashMap<String, Double>();
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -70,7 +73,7 @@ public class PerformancePlot {
 
                 // boolean interest = className.contains("features"); // ||
                 // // className.contains("BasicExtraction");
-                boolean interest = WildcardPattern.matches(filter, className);
+                boolean interest = filter.isSelected(className);
                 if (!interest) {
                     log.info("  >>> skipping");
                     continue;
@@ -103,7 +106,8 @@ public class PerformancePlot {
 
         scaleY = maxY / max;
 
-        PrintStream p = new PrintStream(new FileOutputStream(output));
+        StringWriter sw = new StringWriter();
+        PrintWriter p = new PrintWriter(sw);
         // p.println("\\begin{tikzpicture}");
 
         double xoff = 0.0;
@@ -141,5 +145,23 @@ public class PerformancePlot {
         // p.println("\\end{tikzpicture}");
 
         p.close();
+
+        FileWriter fw = new FileWriter(output);
+        String tex = sw.toString();
+
+        if (System.getProperty("use-template") != null) {
+            Variables vars = new Variables();
+            StringBuffer s = new StringBuffer();
+            s.append("\\begin{tikzpicture}[scale=0.4,transform shape]\n");
+            s.append(tex + "\n");
+            s.append("\\end{tikzpicture}");
+            vars.put("tikz.picture", s.toString());
+
+            String template = URLUtilities.readContentOrEmpty(AccessGraph.class.getResource("/tikz-template.tex"));
+            tex = vars.expand(template);
+        }
+
+        fw.write(tex);
+        fw.close();
     }
 }

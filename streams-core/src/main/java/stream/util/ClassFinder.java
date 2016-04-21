@@ -42,183 +42,170 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassFinder {
 
-	static Logger log = LoggerFactory.getLogger(ClassFinder.class);
+    static Logger log = LoggerFactory.getLogger(ClassFinder.class);
 
-	public static Class<?>[] getClasses(String packageName)
-			throws ClassNotFoundException, IOException {
-		return getClasses(packageName, ClassFinder.class.getClassLoader());
-	}
+    public static Class<?>[] getClasses(String packageName) throws ClassNotFoundException, IOException {
+        return getClasses(packageName, ClassFinder.class.getClassLoader());
+    }
 
-	/**
-	 * Scans all classes accessible from the context class loader which belong
-	 * to the given package and subpackages.
-	 * 
-	 * @param packageName
-	 *            The base package
-	 * @return The classes
-	 * @throws ClassNotFoundException
-	 * @throws IOException
-	 */
-	public static Class<?>[] getClasses(String packageName, ClassLoader loader)
-			throws ClassNotFoundException, IOException {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		ClassLoader classLoader = loader;
-		log.debug("Using class-loader {}", classLoader);
-		assert classLoader != null;
-		List<URL> resources = new ArrayList<URL>();
-		String path = packageName.replace('.', '/');
-		Enumeration<URL> urlList = classLoader.getResources(path);
-		while (urlList.hasMoreElements()) {
-			resources.add(urlList.nextElement());
-		}
+    /**
+     * Scans all classes accessible from the context class loader which belong
+     * to the given package and subpackages.
+     * 
+     * @param packageName
+     *            The base package
+     * @return The classes
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public static Class<?>[] getClasses(String packageName, ClassLoader loader)
+            throws ClassNotFoundException, IOException {
+        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        ClassLoader classLoader = loader;
+        log.debug("Using class-loader {}", classLoader);
+        assert classLoader != null;
+        List<URL> resources = new ArrayList<URL>();
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> urlList = classLoader.getResources(path);
+        while (urlList.hasMoreElements()) {
+            resources.add(urlList.nextElement());
+        }
 
-		if (classLoader instanceof URLClassLoader) {
-			try (URLClassLoader ucl = (URLClassLoader) classLoader) {
-				URL[] urls = ucl.getURLs();
-				if (urls != null) {
-					for (URL url : urls) {
-						log.debug("Adding URL {} from URLClassLoader", url);
-						resources.add(url);
-					}
-				}
-			}
-		}
+        if (classLoader instanceof URLClassLoader) {
+            try (URLClassLoader ucl = (URLClassLoader) classLoader) {
+                URL[] urls = ucl.getURLs();
+                if (urls != null) {
+                    for (URL url : urls) {
+                        log.debug("Adding URL {} from URLClassLoader", url);
+                        resources.add(url);
+                    }
+                }
+            }
+        }
 
-		List<File> dirs = new ArrayList<File>();
-		for (URL resource : resources) {
-			if (resource.toString().startsWith("jar:")
-					|| resource.toExternalForm().endsWith(".jar")) {
-				log.debug("Scanning jar-file {}", resource.getPath());
+        List<File> dirs = new ArrayList<File>();
+        for (URL resource : resources) {
+            if (resource.toString().startsWith("jar:") || resource.toExternalForm().endsWith(".jar")) {
+                log.debug("Scanning jar-file {}", resource.getPath());
 
-				String p = resource.getPath();
-				if (p.indexOf("!") > 0) {
-					p = p.substring(0, p.indexOf("!"));
-					log.trace("Opening jar '{}'", p);
-				}
-				if (p.startsWith("file:"))
-					p = p.substring("file:".length());
+                String p = resource.getPath();
+                if (p.indexOf("!") > 0) {
+                    p = p.substring(0, p.indexOf("!"));
+                    log.trace("Opening jar '{}'", p);
+                }
+                if (p.startsWith("file:"))
+                    p = p.substring("file:".length());
 
-				classes.addAll(findClasses(new JarFile(p), packageName, loader));
-			} else {
-				log.trace("Checking URL {}", resource);
-				dirs.add(new File(resource.getFile()));
-			}
-		}
+                classes.addAll(findClasses(new JarFile(p), packageName, loader));
+            } else {
+                log.trace("Checking URL {}", resource);
+                dirs.add(new File(resource.getFile()));
+            }
+        }
 
-		for (File directory : dirs) {
-			List<Class<?>> cl = findClasses(directory, packageName);
-			log.debug("Found {} classes in {}", cl.size(), directory);
-			classes.addAll(cl);
-		}
-		return classes.toArray(new Class[classes.size()]);
-	}
+        for (File directory : dirs) {
+            List<Class<?>> cl = findClasses(directory, packageName);
+            log.debug("Found {} classes in {}", cl.size(), directory);
+            classes.addAll(cl);
+        }
+        return classes.toArray(new Class[classes.size()]);
+    }
 
-	public static List<Class<?>> findClasses(JarFile jar, String packageName)
-			throws ClassNotFoundException {
-		return findClasses(jar, packageName, ClassFinder.class.getClassLoader());
-	}
+    public static List<Class<?>> findClasses(JarFile jar, String packageName) throws ClassNotFoundException {
+        return findClasses(jar, packageName, ClassFinder.class.getClassLoader());
+    }
 
-	public static List<Class<?>> findClasses(JarFile jar, String packageName,
-			ClassLoader loader) throws ClassNotFoundException {
+    public static List<Class<?>> findClasses(JarFile jar, String packageName, ClassLoader loader)
+            throws ClassNotFoundException {
 
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		log.debug("Checking jar-file {}", jar.getName());
-		Enumeration<JarEntry> en = jar.entries();
-		while (en.hasMoreElements()) {
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        log.debug("Checking jar-file {}", jar.getName());
+        Enumeration<JarEntry> en = jar.entries();
+        while (en.hasMoreElements()) {
 
-			JarEntry entry = en.nextElement();
-			entry.getName();
-			log.debug("Checking JarEntry '{}'", entry.getName());
+            JarEntry entry = en.nextElement();
+            entry.getName();
+            log.debug("Checking JarEntry '{}'", entry.getName());
 
-			if (entry.getName().endsWith(".class")
-					&& !entry.getName().startsWith("com.rapidminer")
-					&& entry.getName().replaceAll("/", ".")
-							.startsWith(packageName)) {
-				try {
-					String className = entry.getName()
-							.replaceAll("\\.class$", "").replace('/', '.');
-					log.trace("Class-name is: '{}'", className);
-					Class<?> clazz = Class.forName(className); // , false,
-																// loader);
+            if (entry.getName().endsWith(".class") && !entry.getName().startsWith("com.rapidminer")
+                    && entry.getName().replaceAll("/", ".").startsWith(packageName)) {
+                try {
+                    String className = entry.getName().replaceAll("\\.class$", "").replace('/', '.');
+                    log.trace("Class-name is: '{}'", className);
+                    Class<?> clazz = Class.forName(className); // , false,
+                                                               // loader);
 
-					log.trace("Found class {}", clazz);
-					classes.add(clazz);
-				} catch (VerifyError ve) {
+                    log.trace("Found class {}", clazz);
+                    classes.add(clazz);
+                } catch (VerifyError ve) {
 
-				} catch (NoClassDefFoundError ncdfe) {
+                } catch (NoClassDefFoundError ncdfe) {
 
-				} catch (ClassNotFoundException cnfe) {
-					cnfe.printStackTrace();
-					log.error("Failed to locate class for entry '{}': {}",
-							entry, cnfe.getMessage());
-				} catch (Exception e) {
-					log.error("Failed to load class for entry '{}'",
-							entry.getName());
-				}
-			}
+                } catch (ClassNotFoundException cnfe) {
+                    // cnfe.printStackTrace();
+                    // log.error("Failed to locate class for entry '{}': {}",
+                    // entry, cnfe.getMessage());
+                } catch (Exception e) {
+                    log.error("Failed to load class for entry '{}'", entry.getName());
+                }
+            }
 
-		}
+        }
 
-		return classes;
-	}
+        return classes;
+    }
 
-	/**
-	 * Recursive method used to find all classes in a given directory and
-	 * subdirs.
-	 * 
-	 * @param directory
-	 *            The base directory
-	 * @param packageName
-	 *            The package name for classes found inside the base directory
-	 * @return The classes
-	 * @throws ClassNotFoundException
-	 */
-	private static List<Class<?>> findClasses(File directory, String packageName)
-			throws ClassNotFoundException {
+    /**
+     * Recursive method used to find all classes in a given directory and
+     * subdirs.
+     * 
+     * @param directory
+     *            The base directory
+     * @param packageName
+     *            The package name for classes found inside the base directory
+     * @return The classes
+     * @throws ClassNotFoundException
+     */
+    private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
 
-		if (packageName.startsWith("com.rapidminer"))
-			return new ArrayList<Class<?>>();
+        if (packageName.startsWith("com.rapidminer"))
+            return new ArrayList<Class<?>>();
 
-		log.debug("Searching directory '{}' for package '{}'", directory,
-				packageName);
+        log.debug("Searching directory '{}' for package '{}'", directory, packageName);
 
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		if (!directory.exists()) {
-			return classes;
-		}
-		File[] files = directory.listFiles();
-		if (files == null)
-			return classes;
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        if (files == null)
+            return classes;
 
-		for (File file : files) {
-			if (file.isDirectory()) {
-				assert !file.getName().contains(".");
+        for (File file : files) {
+            if (file.isDirectory()) {
+                assert!file.getName().contains(".");
 
-				if (packageName.isEmpty()) {
-					classes.addAll(findClasses(file, file.getName()));
-				} else {
-					classes.addAll(findClasses(file,
-							packageName + "." + file.getName()));
-				}
-			} else if (file.getName().endsWith(".class")) {
-				try {
-					String className = packageName
-							+ '.'
-							+ file.getName().substring(0,
-									file.getName().length() - 6);
+                if (packageName.isEmpty()) {
+                    classes.addAll(findClasses(file, file.getName()));
+                } else {
+                    classes.addAll(findClasses(file, packageName + "." + file.getName()));
+                }
+            } else if (file.getName().endsWith(".class")) {
+                try {
+                    String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
 
-					while (className.startsWith("."))
-						className = className.substring(1);
+                    while (className.startsWith("."))
+                        className = className.substring(1);
 
-					log.debug("Loading class '{}'", className);
-					classes.add(Class.forName(className));
-				} catch (ClassNotFoundException cnfe) {
-				} catch (NoClassDefFoundError ncdfe) {
-				} catch (Exception e) {
-					log.error("Failed to add class: {}", e.getMessage());
-				}
-			}
-		}
-		return classes;
-	}
+                    log.debug("Loading class '{}'", className);
+                    classes.add(Class.forName(className));
+                } catch (ClassNotFoundException cnfe) {
+                } catch (NoClassDefFoundError ncdfe) {
+                } catch (Exception e) {
+                    log.error("Failed to add class: {}", e.getMessage());
+                }
+            }
+        }
+        return classes;
+    }
 }

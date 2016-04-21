@@ -36,144 +36,156 @@ import java.util.Map;
  */
 public class Statistics extends LinkedHashMap<String, Double> {
 
-	/** The unique class ID */
-	private static final long serialVersionUID = 5994452860264445162L;
+    /** The unique class ID */
+    private static final long serialVersionUID = 5994452860264445162L;
 
-	String name = "";
-	String key = "";
+    String name = "";
+    String key = "";
 
-	public Statistics() {
-	}
+    public Statistics() {
+    }
 
-	public Statistics(String name) {
-		this.name = name;
-	}
+    public Statistics(String name) {
+        this.name = name;
+    }
 
-	public Statistics(Statistics stats) {
-		this(stats.getName());
-		this.add(stats);
-	}
+    public Statistics(Statistics stats) {
+        this(stats.getName());
+        this.add(stats);
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public Statistics setName(String name) {
-		this.name = name;
-		return this;
-	}
+    public Statistics setName(String name) {
+        this.name = name;
+        return this;
+    }
 
-	/**
-	 * @return the key
-	 */
-	public String getKey() {
-		return key;
-	}
+    /**
+     * @return the key
+     */
+    public String getKey() {
+        return key;
+    }
 
-	/**
-	 * @param key
-	 *            the key to set
-	 */
-	public Statistics setKey(String key) {
-		this.key = key;
-		return this;
-	}
+    /**
+     * @param key
+     *            the key to set
+     */
+    public Statistics setKey(String key) {
+        this.key = key;
+        return this;
+    }
 
-	/**
-	 * Adds the given statistics vector to this instance.
-	 * 
-	 * @param st
-	 */
-	public synchronized void add(Map<String, Double> st) {
-		for (String key : st.keySet()) {
-			Double d = get(key);
-			if (d == null)
-				d = st.get(key);
-			else
-				d += st.get(key);
+    /**
+     * @see java.util.LinkedHashMap#get(java.lang.Object)
+     */
+    @Override
+    public Double get(Object key) {
+        Double val = super.get(key);
+        if (val == null) {
+            return 0.0;
+        }
+        return val;
+    }
 
-			put(key, d);
-		}
-	}
+    /**
+     * Adds the given statistics vector to this instance.
+     * 
+     * @param st
+     */
+    public synchronized void add(Map<String, Double> st) {
+        for (String key : st.keySet()) {
+            Double d = get(key);
+            if (d == null)
+                d = st.get(key);
+            else
+                d += st.get(key);
 
-	public synchronized void add(Statistics st) {
-		for (String key : st.keySet()) {
-			Double d = get(key);
-			if (d == null)
-				d = st.get(key);
-			else
-				d += st.get(key);
+            put(key, d);
+        }
+    }
 
-			put(key, d);
-		}
-	}
+    public synchronized void add(Statistics st) {
+        for (String key : st.keySet()) {
+            Double d = get(key);
+            if (d == null)
+                d = st.get(key);
+            else
+                d += st.get(key);
 
-	public synchronized void substract(Map<String, Double> st) {
-		for (String key : st.keySet()) {
-			Double d = get(key);
-			if (d == null)
-				d = -st.get(key);
-			else
-				d -= st.get(key);
+            put(key, d);
+        }
+    }
 
-			put(key, d);
-		}
-	}
+    public synchronized void substract(Map<String, Double> st) {
+        for (String key : st.keySet()) {
+            Double d = get(key);
+            if (d == null)
+                d = -st.get(key);
+            else
+                d -= st.get(key);
 
-	public synchronized void max(Map<String, Double> st) {
+            put(key, d);
+        }
+    }
 
-		List<String> keys = new LinkedList<String>(this.keySet());
-		for (String k : st.keySet())
-			if (!keys.contains(k))
-				keys.add(k);
+    public synchronized void max(Map<String, Double> st) {
 
-		for (String key : keys)
-			this.put(key, max(get(key), st.get(key)));
-	}
+        List<String> keys = new LinkedList<String>(this.keySet());
+        for (String k : st.keySet())
+            if (!keys.contains(k))
+                keys.add(k);
 
-	protected Double max(Double d1, Double d2) {
-		if (d1 == null && d2 == null)
-			return Double.NaN;
+        for (String key : keys)
+            this.put(key, max(get(key), st.get(key)));
+    }
 
-		if (d1 == null)
-			return d2;
+    protected Double max(Double d1, Double d2) {
+        if (d1 == null && d2 == null)
+            return Double.NaN;
 
-		if (d2 == null)
-			return d1;
+        if (d1 == null)
+            return d2;
 
-		return Math.max(d1, d2);
-	}
+        if (d2 == null)
+            return d1;
 
-	public Statistics divideBy(String key) {
-		Statistics st = new Statistics();
-		st.putAll(this);
+        return Math.max(d1, d2);
+    }
 
-		Double x = get(key);
-		if (x == null || x == 0.0d)
-			return st;
+    public Statistics divideBy(String key) {
+        Statistics st = new Statistics();
+        st.putAll(this);
 
-		for (String k : keySet()) {
-			if (!k.equals(key)) {
-				Double val = get(k);
-				st.put(k, val / x);
-			}
-		}
-		return st;
-	}
+        Double x = get(key);
+        if (x == null || x == 0.0d)
+            return st;
 
-	public Statistics divideBy(Double val) {
-		Statistics st = new Statistics();
-		for (String k : keySet())
-			st.put(k, get(k) / val);
+        for (String k : keySet()) {
+            if (!k.equals(key)) {
+                Double val = get(k);
+                st.put(k, val / x);
+            }
+        }
+        return st;
+    }
 
-		return st;
-	}
+    public Statistics divideBy(Double val) {
+        Statistics st = new Statistics();
+        for (String k : keySet())
+            st.put(k, get(k) / val);
 
-	public void add(String key, Double val) {
-		if (this.containsKey(key)) {
-			Double d = get(key) + val;
-			put(key, d);
-		} else
-			put(key, val);
-	}
+        return st;
+    }
+
+    public void add(String key, Double val) {
+        if (this.containsKey(key)) {
+            Double d = get(key) + val;
+            put(key, d);
+        } else
+            put(key, val);
+    }
 }

@@ -56,8 +56,9 @@
     <menu name="Development">
       <item name="Maven integration" href="/dev/maven.html"/>
       <item name="Custom Processors" href="dev/index.html" collapse="true">
-	<item name="Implementing Processors" href="dev/processor.html" />
-	<item name="Processor Scripts" href="dev/scripting.html" />
+		<item name="Implementing Processors" href="dev/processor.html" />
+		<item name="Using stream.Keys" href="dev/keys.html" />
+		<item name="Processor Scripts" href="dev/scripting.html" />
       </item>
       <item name="Custom Data Streams" href="dev/streams.html" collapse="true">
       </item>

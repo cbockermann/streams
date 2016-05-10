@@ -39,10 +39,6 @@ import stream.Copy;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.ProcessorList;
-import stream.app.ComputeGraph;
-import stream.app.ComputeGraph.ServiceRef;
-import stream.app.ComputeGraph.SinkRef;
-import stream.app.ComputeGraph.SourceRef;
 import stream.io.Sink;
 import stream.runtime.DependencyInjection;
 import stream.runtime.ProcessContainer;
@@ -51,6 +47,10 @@ import stream.runtime.setup.ServiceFieldInjection;
 import stream.runtime.setup.handler.ProcessElementHandler;
 import stream.service.Service;
 import stream.util.Variables;
+import streams.application.ComputeGraph;
+import streams.application.ComputeGraph.ServiceRef;
+import streams.application.ComputeGraph.SinkRef;
+import streams.application.ComputeGraph.SourceRef;
 
 /**
  * @author hendrik
@@ -146,10 +146,14 @@ public class DefaultProcessFactory implements ProcessFactory {
                 configs[i] = configi;
 
                 configi.setVariables(v);
+
                 Variables local = configi.getVariables();
+                local.put("copy.id", copy.getId());
 
                 String idpid = id + "-" + copy.getId();
                 idpid = local.expand(idpid);
+                // log.info("Setting id of copy to '{}'", idpid);
+                // configi.getAttributes().put("id", idpid);
                 configi.setId(idpid);
                 configi.setCopy(copy);
 
@@ -288,7 +292,7 @@ public class DefaultProcessFactory implements ProcessFactory {
         try {
             o = objectFactory.create(child, params, local);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error in:" + child.getNodeName(), e);
+            throw new IllegalArgumentException("Error while creating instance of '" + child.getNodeName() + "'", e);
         }
         if (o instanceof ProcessorList) {
 
@@ -334,7 +338,7 @@ public class DefaultProcessFactory implements ProcessFactory {
             // injection)
             //
             List<ServiceRef> sr = new ServiceFieldInjection().getServiceRefsForFields((Processor) o, params);
-            log.info("Found the following service fields: {}", sr);
+            log.debug("Found the following service fields: {}", sr);
             for (ServiceRef ref : sr) {
                 computeGraph.addReference(ref);
                 dependencyInjection.add(ref);

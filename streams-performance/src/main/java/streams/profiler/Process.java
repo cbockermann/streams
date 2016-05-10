@@ -50,10 +50,12 @@ public class Process extends DefaultProcess {
     public void init(ApplicationContext context) throws Exception {
         super.init(context);
 
+        log.debug("Applying proxy-injection");
         ProxyInjection injection = new ProxyInjection();
 
         for (int i = 0; i < processors.size(); i++) {
             Processor p = processors.get(i);
+            // log.trace("creating proxy for '{}'", p);
             ProxyNode node = injection.inject(p);
             processors.set(i, node);
             proxies.add(node);

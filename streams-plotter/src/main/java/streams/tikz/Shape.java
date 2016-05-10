@@ -11,14 +11,14 @@ import java.util.Map;
  * @author chris
  * 
  */
-public abstract class Shape extends ArrayList<Path> {
+public abstract class Shape extends ArrayList<Path>implements Element {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7626578691365947838L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7626578691365947838L;
 
-	public final Map<String, String> opts = new HashMap<String, String>();
+    public final Map<String, String> opts = new HashMap<String, String>();
 
-	public abstract Shape scale(double x, double y);
+    public abstract Shape scale(double x, double y);
 }

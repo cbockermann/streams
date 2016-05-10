@@ -78,7 +78,7 @@ public class StreamFactory {
 			urlString = local.expand(urlString);
 
 			if (urlString.startsWith("classpath:")) {
-				String resource = urlParam.substring("classpath:".length());
+				String resource = urlString.substring("classpath:".length());
 				log.debug("Looking up resource '{}'", resource);
 				URL u = ProcessContainer.class.getResource(resource);
 				if (u == null) {

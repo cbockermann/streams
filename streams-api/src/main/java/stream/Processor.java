@@ -23,7 +23,6 @@
  */
 package stream;
 
-
 /**
  * <p>
  * A processor is a simple function that acts on a piece of data. This interface
@@ -42,13 +41,13 @@ package stream;
  */
 public interface Processor {
 
-	/**
-	 * This is the main method for processing items. This method is called
-	 * numerous times - once for each incoming data item.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public Data process(Data input);
+    /**
+     * This is the main method for processing items. This method is called
+     * numerous times - once for each incoming data item.
+     * 
+     * @param input
+     * @return
+     */
+    public Data process(Data item);
 
 }

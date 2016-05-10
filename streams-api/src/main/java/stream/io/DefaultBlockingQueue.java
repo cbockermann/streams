@@ -69,18 +69,18 @@ public class DefaultBlockingQueue implements Queue {
      */
     @Override
     public boolean write(Data item) throws Exception {
-        log.debug("Receiving item {}", item);
+        log.trace("Receiving item {}", item);
         synchronized (closed) {
             if (closed.get()) {
-                log.debug("Attempt to write into closed queue!");
+                log.error("Attempt to write into closed queue '{}'!", id);
                 return false;
             }
-            log.debug("Adding data item to queue");
+            log.trace("Adding data item to queue");
             boolean added = queue.add(item);
             if (added) {
                 closed.notifyAll();
             } else {
-                log.error( "Failed to add item to queue: {}", item);
+                log.error("Failed to add item to queue: {}", item);
             }
             return added;
         }
@@ -92,8 +92,9 @@ public class DefaultBlockingQueue implements Queue {
     @Override
     public boolean write(Collection<Data> data) throws Exception {
         synchronized (closed) {
-            log.debug("Writing {} data items into queue", data.size());
+            log.trace("Writing {} data items into queue", data.size());
             if (closed.get()) {
+                log.error("Attempt to write into closed queue '{}'!", id);
                 return false;
             }
             return queue.addAll(data);
@@ -110,7 +111,6 @@ public class DefaultBlockingQueue implements Queue {
 
         synchronized (closed) {
             closed.set(true);
-
             queue.add(END_OF_STREAM);
             closed.notifyAll();
         }
@@ -128,15 +128,16 @@ public class DefaultBlockingQueue implements Queue {
             }
 
             while (queue.isEmpty()) {
-                log.debug("Waiting for new data to arrive {}", Thread.currentThread());
+                log.trace("Waiting for new data to arrive {}", Thread.currentThread());
                 closed.wait();
 
                 if (closed.get()) {
+                    log.debug("queue '{}' closed, read() => null", this.getId());
                     return null;
                 }
             }
 
-            log.debug("calling .take() on queue[closed={}] with {} elements", closed.get(), queue.size());
+            log.trace("calling .take() on queue[closed={}] with {} elements", closed.get(), queue.size());
             Data item = queue.take();
             if (item == END_OF_STREAM) {
                 log.debug("Found EOF!");

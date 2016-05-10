@@ -32,14 +32,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.app.ComputeGraph;
-import stream.app.ComputeGraph.SinkRef;
 import stream.io.BlockingQueue;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.mock.SimpleMockProcessor;
 import stream.runtime.DefaultProcess;
 import stream.runtime.DependencyInjection;
+import streams.application.ComputeGraph;
+import streams.application.ComputeGraph.SinkRef;
 
 /**
  * @author chris
@@ -51,7 +51,7 @@ public class DependencyInjectionTest {
 
 	/**
 	 * Test method for
-	 * {@link stream.runtime.DependencyInjection#injectDependencies(stream.app.ComputeGraph)}
+	 * {@link stream.runtime.DependencyInjection#injectDependencies(streams.application.ComputeGraph)}
 	 * .
 	 */
 	@Test
@@ -70,7 +70,7 @@ public class DependencyInjectionTest {
 		graph.addReference(new SinkRef(enqueue, "output", ref));
 
 		try {
-			for (stream.app.Reference r : graph.sinkRefs()) {
+			for (streams.application.Reference r : graph.sinkRefs()) {
 				di.add(r);
 			}
 			di.injectDependencies(graph, null);

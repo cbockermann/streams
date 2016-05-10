@@ -132,7 +132,7 @@ public class XMLUtils {
      */
     public static void addUUIDAttributes(Element element, String attributeName) {
 
-        if (element.hasAttribute(UUID_ATTRIBUTE)) {
+        if (element.hasAttribute(attributeName)) {
             return;
         }
 
@@ -146,7 +146,7 @@ public class XMLUtils {
             element.setAttribute("id", id);
         }
 
-        element.setAttribute(UUID_ATTRIBUTE, uuid);
+        element.setAttribute(attributeName, uuid);
 
         NodeList list = element.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {

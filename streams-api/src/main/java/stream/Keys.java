@@ -159,7 +159,7 @@ public final class Keys implements Serializable {
      * 
      * @param ks
      */
-    protected Keys(String... ks) {
+    public Keys(String... ks) {
         final ArrayList<String> keyValues = new ArrayList<String>();
 
         for (String k : ks) {
@@ -269,6 +269,10 @@ public final class Keys implements Serializable {
         }
 
         return selected;
+    }
+
+    public boolean isSelected(String key) {
+        return isSelected(key, keyValues);
     }
 
     public static boolean isSelected(String value, String[] keys) {

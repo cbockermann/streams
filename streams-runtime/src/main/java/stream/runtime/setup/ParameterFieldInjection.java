@@ -49,12 +49,12 @@ public class ParameterFieldInjection extends ParameterValueMapper {
 
             Parameter p = field.getAnnotation(Parameter.class);
             String name = p.name();
-            log.info("Found parameter annotation with name '{}' for field '{}'", name, field.getName());
+            log.debug("Found parameter annotation with name '{}' for field '{}'", name, field.getName());
             if (name == null || name.isEmpty()) {
-                log.info("Parameter annotation for field '{}' has no name, using field name.", field.getName());
+                log.debug("Parameter annotation for field '{}' has no name, using field name.", field.getName());
                 name = field.getName();
             } else {
-                log.info("Using property '{}' as defined by annotation, instead of field name '{}'", p.name(),
+                log.debug("Using property '{}' as defined by annotation, instead of field name '{}'", p.name(),
                         field.getName());
             }
 
@@ -91,14 +91,15 @@ public class ParameterFieldInjection extends ParameterValueMapper {
                     }
                 });
             } else {
-                log.info("Leaving option field '{}' with no parameter value given untouched.", field.getName());
+                log.debug("Leaving option field '{}' with no parameter value given untouched.", field.getName());
             }
 
             if (set != null) {
                 log.debug("Successfully injected value for parameter '{}'", name);
                 injected.add(name);
             } else {
-                log.warn("Failed to set value for parameter '{}' using field-injection", name);
+                log.warn("Failed to set value for parameter '{}' of class '{}' using field-injection", name,
+                        o.getClass().getCanonicalName());
             }
 
             field.setAccessible(accessLevel);

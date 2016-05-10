@@ -8,13 +8,14 @@
 			<PrintData />
 		</stream.monitor.AverageThroughput>
 	</process>
-	
+	<!-- 
 	<monitor interval="1second">
 		<stream.monitor.MemoryUsage id="mem"/>
 		<stream.statistics.AddStatistics service="mem" />
 		<stream.statistics.AddStatistics service="tp" />
 		<PrintData />
 	</monitor>
+	 -->
 	
 </container>
 

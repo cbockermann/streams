@@ -23,8 +23,14 @@
  */
 package stream.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -37,123 +43,161 @@ import stream.io.SourceURL;
 
 public class PropertiesHandler {
 
-	private Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
+    private Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
 
-	/**
-	 * This method adds properties defined in the format as provided by maven's
-	 * <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
-	 * 
-	 * @param pop
-	 *            The XML element that is to be checked for properties
-	 * @param variables
-	 *            The variables that have been gathered so far
-	 * @param systemProperties
-	 *            Variables provided through system properties
-	 */
-	public void handlePropertiesElement(Element prop, Variables variables,
-			Variables systemProperties) {
+    /**
+     * This method adds properties defined in the format as provided by maven's
+     * <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
+     * 
+     * @param pop
+     *            The XML element that is to be checked for properties
+     * @param variables
+     *            The variables that have been gathered so far
+     * @param systemProperties
+     *            Variables provided through system properties
+     */
+    public void handlePropertiesElement(Element prop, Variables variables, Variables systemProperties) {
 
-		String suffix = "";
-		if (prop.hasAttribute("suffix")) {
-			suffix = prop.getAttribute("suffix");
-			log.info("Add suffix {} to properties.", suffix);
-		}
+        String suffix = "";
+        if (prop.hasAttribute("suffix")) {
+            suffix = prop.getAttribute("suffix");
+            log.info("Add suffix {} to properties.", suffix);
+        }
 
-		NodeList children = prop.getChildNodes();
-		if (children.getLength() > 0) {
-			// TextNodes
-			for (int k = 0; k < children.getLength(); k++) {
+        NodeList children = prop.getChildNodes();
+        if (children.getLength() > 0) {
+            // TextNodes
+            for (int k = 0; k < children.getLength(); k++) {
 
-				Node ch = children.item(k);
-				if (ch.getNodeType() == Node.ELEMENT_NODE) {
+                Node ch = children.item(k);
+                if (ch.getNodeType() == Node.ELEMENT_NODE) {
 
-					String key = ch.getNodeName();
-					String value = ch.getTextContent();
+                    String key = ch.getNodeName();
+                    String value = ch.getTextContent();
 
-					variables.set(key + suffix, value);
-				}
-			}
+                    variables.set(key + suffix, value);
+                }
+            }
 
-		}
-		// Properties from URL
-		else if (prop.hasAttribute("url")) {
-			String purl = prop.getAttribute("url");
-			log.debug("Reading properties from URL {}", purl);
-			try {
-				// ORDER IMPORTANT
-				Variables props = new Variables(variables);
-				props.addVariables(systemProperties);
-				purl = props.expand(purl);
-				log.debug("Properties URL is: {}", purl);
+        }
+        // Properties from URL
+        else if (prop.hasAttribute("url")) {
+            String purl = prop.getAttribute("url");
+            log.info("Reading properties from URL {}", purl);
+            try {
+                // ORDER IMPORTANT
+                Variables props = new Variables(variables);
+                props.addVariables(systemProperties);
+                purl = props.expand(purl);
+                log.debug("Properties URL is: {}", purl);
 
-				SourceURL propUrl = new SourceURL(purl);
+                SourceURL propUrl = new SourceURL(purl);
 
-				Properties p = new Properties();
-				p.load(propUrl.openStream());
-				for (Object k : p.keySet()) {
-					String key = k.toString();
-					String value = p.getProperty(key);
-					value = variables.expand(value, false);
-					log.debug("Adding property '{}' = '{}'", key, value);
-					variables.set(key + suffix, value);
-				}
+                Map<String, String> p = this.readProperties(propUrl.openStream());
+                // Properties p = new Properties();
+                // p.load(propUrl.openStream());
+                for (String k : p.keySet()) {
+                    String key = k.toString().trim();
+                    String value = p.get(key);
+                    if (value == null) {
+                        value = "";
+                    }
+                    if (value != null) {
+                        value = value.trim();
+                    }
 
-			} catch (Exception e) {
-				log.error("Failed to read properties from url {}: {}", purl,
-						e.getMessage());
-			}
-			// Properties from URL
-		} else if (prop.hasAttribute("file")) {
-			File file = new File(prop.getAttribute("file"));
-			try {
-				Properties p = new Properties();
-				p.load(new FileInputStream(file));
-				for (Object k : p.keySet()) {
-					variables.set(k.toString() + suffix,
-							p.getProperty(k.toString()));
-				}
-			} catch (Exception e) {
-				log.error("Failed to read properties from file {}: {}", file,
-						e.getMessage());
-			}
-		}
+                    log.info("Reading key '{}' = '{}'", key, value);
+                    try {
+                        value = variables.expand(value, false);
+                    } catch (Exception e) {
+                        log.error("Failed to expand variable '{}' with value '{}'", key, value);
+                        throw e;
+                    }
+                    log.debug("Adding property '{}' = '{}'", key, value);
+                    variables.set(key + suffix, value);
+                }
 
-	}
+            } catch (Exception e) {
+                log.error("Failed to read properties from url {}: {}", purl, e.getMessage());
+                e.printStackTrace();
+            }
+            // Properties from URL
+        } else if (prop.hasAttribute("file")) {
+            File file = new File(prop.getAttribute("file"));
+            try {
+                Properties p = new Properties();
+                p.load(new FileInputStream(file));
+                for (Object k : p.keySet()) {
+                    variables.set(k.toString() + suffix, p.getProperty(k.toString()));
+                }
+            } catch (Exception e) {
+                log.error("Failed to read properties from file {}: {}", file, e.getMessage());
+            }
+        }
 
-	public void handlePropertyElement(Element prop, Variables variables,
-			Variables systemVariables) {
-		if (prop.getNodeName().equalsIgnoreCase("property")) {
+    }
 
-			String key = prop.getAttribute("name");
-			String value = prop.getAttribute("value");
+    public void handlePropertyElement(Element prop, Variables variables, Variables systemVariables) {
+        if (prop.getNodeName().equalsIgnoreCase("property")) {
 
-			if (key != null && !"".equals(key.trim()) && value != null
-					&& !"".equals(value.trim())) {
-				// ORDER IMPORTANT
-				Variables props = new Variables(variables);
-				props.addVariables(systemVariables);
-				String k = key.trim();
-				String v = value.trim();
-				// ORDER IMPORTANT
-				// // All found variables ()
-				v = props.expand(v);
-				// log.info("Setting property {} = {}", k, v);
-				variables.set(k, v);
-			}
-		}
-	}
+            String key = prop.getAttribute("name");
+            String value = prop.getAttribute("value");
 
-	/**
-	 * This method adds all the system properties to the container properties,
-	 * possibly overwriting pre-defined properties.
-	 * 
-	 * @param variables
-	 *            The collection of variables to add the system properties to.
-	 */
-	public void addSystemProperties(Variables variables) {
-		for (Object key : System.getProperties().keySet()) {
-			variables.set(key.toString(), System.getProperty(key.toString()));
-		}
-	}
+            if (key != null && !"".equals(key.trim()) && value != null && !"".equals(value.trim())) {
+                // ORDER IMPORTANT
+                Variables props = new Variables(variables);
+                props.addVariables(systemVariables);
+                String k = key.trim();
+                String v = value.trim();
+                // ORDER IMPORTANT
+                // // All found variables ()
+                v = props.expand(v);
+                // log.info("Setting property {} = {}", k, v);
+                variables.set(k, v);
+            }
+        }
+    }
 
+    /**
+     * This method adds all the system properties to the container properties,
+     * possibly overwriting pre-defined properties.
+     * 
+     * @param variables
+     *            The collection of variables to add the system properties to.
+     */
+    public void addSystemProperties(Variables variables) {
+        for (Object key : System.getProperties().keySet()) {
+            variables.set(key.toString(), System.getProperty(key.toString()));
+        }
+    }
+
+    public Map<String, String> readProperties(InputStream is) throws IOException {
+        Map<String, String> props = new LinkedHashMap<String, String>();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String line = reader.readLine();
+        while (line != null) {
+
+            if (!line.trim().isEmpty() && !line.startsWith("#")) {
+
+                int idx = line.indexOf("=");
+                if (idx > 0 && idx + 1 < line.length()) {
+
+                    // log.info(" Index of '=' is {}", idx);
+                    // log.info("key ~> '{}'", line.substring(0, idx));
+                    // log.info("value ~> '{}'", line.substring(idx + 1));
+
+                    String key = line.substring(0, idx);
+                    String value = line.substring(idx + 1);
+                    props.put(key.trim(), value.trim());
+                }
+            }
+
+            line = reader.readLine();
+        }
+
+        reader.close();
+
+        return props;
+    }
 }

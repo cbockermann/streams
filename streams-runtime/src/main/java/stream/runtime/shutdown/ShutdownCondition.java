@@ -23,7 +23,7 @@
  */
 package stream.runtime.shutdown;
 
-import stream.app.ComputeGraph;
+import streams.application.ComputeGraph;
 
 
 public interface ShutdownCondition {

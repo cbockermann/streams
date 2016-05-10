@@ -13,6 +13,8 @@ import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
 import stream.io.SourceURL;
+import streams.codec.Codec;
+import streams.codec.DefaultCodec;
 
 /**
  * @author chris
@@ -20,91 +22,135 @@ import stream.io.SourceURL;
  */
 public class BobStream extends AbstractStream {
 
-	static Logger log = LoggerFactory.getLogger(BobStream.class);
+    static Logger log = LoggerFactory.getLogger(BobStream.class);
 
-	DataInputStream in;
-	long count = 0L;
-	final Object lock = new Object();
+    DataInputStream in;
+    long count = 0L;
+    final Object lock = new Object();
 
-	long bytesRead = 0L;
-	long firstItem = 0L;
-	long lastItem = 0L;
+    long bytesRead = 0L;
+    long firstItem = 0L;
+    long lastItem = 0L;
 
-	public BobStream(SourceURL url) {
-		super(url);
-	}
+    boolean parse = false;
+    Codec<Data> codec = new DefaultCodec<Data>();
 
-	/**
-	 * @see stream.io.AbstractStream#init()
-	 */
-	@Override
-	public void init() throws Exception {
-		super.init();
+    public BobStream(SourceURL url) {
+        super(url);
+    }
 
-		this.in = new DataInputStream(getInputStream());
-	}
+    /**
+     * @see stream.io.AbstractStream#init()
+     */
+    @Override
+    public void init() throws Exception {
+        super.init();
 
-	/**
-	 * @see stream.io.AbstractStream#readNext()
-	 */
-	@Override
-	public Data readNext() throws Exception {
+        this.in = new DataInputStream(getInputStream());
+    }
 
-		try {
-			synchronized (lock) {
-				final byte[] block = BobCodec.readBlock(in);
+    /**
+     * @see stream.io.AbstractStream#readNext()
+     */
+    @Override
+    public Data readNext() throws Exception {
 
-				if (count == 0) {
-					firstItem = System.currentTimeMillis();
-				}
+        try {
+            synchronized (lock) {
+                final byte[] block = BobCodec.readBlock(in);
 
-				bytesRead += BobCodec.MAGIC_CODE.length;
-				bytesRead += 4;
-				bytesRead += block.length;
+                if (count == 0) {
+                    firstItem = System.currentTimeMillis();
+                }
 
-				lastItem = System.currentTimeMillis();
+                bytesRead += BobCodec.MAGIC_CODE.length;
+                bytesRead += 4;
+                bytesRead += block.length;
 
-				if (block.length == 0) {
-					Double seconds = (lastItem - firstItem) / 1000.0;
-					Double gbit = bytesRead * 8 / 1000.0 / 1000.0 / 1000.0;
-					DecimalFormat fmt = new DecimalFormat("0.00");
-					log.debug("{} blocks read, {} blocks/sec => " + fmt.format(gbit / seconds) + " GBit/s", count,
-							fmt.format(count / seconds));
-					return null;
-				}
+                lastItem = System.currentTimeMillis();
 
-				final Data item = DataFactory.create();
-				item.put("data", block);
-				count++;
-				return item;
-			}
-		} catch (Exception e) {
-			log.error("Failed to read event #{}:  {}", count, e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}
-	}
+                if (block.length == 0) {
+                    Double seconds = (lastItem - firstItem) / 1000.0;
+                    Double gbit = bytesRead * 8 / 1000.0 / 1000.0 / 1000.0;
+                    DecimalFormat fmt = new DecimalFormat("0.00");
+                    log.debug("{} blocks read, {} blocks/sec => " + fmt.format(gbit / seconds) + " GBit/s", count,
+                            fmt.format(count / seconds));
+                    return null;
+                }
 
-	public static void main(String[] args) throws Exception {
+                Data item = null;
+                if (parse) {
+                    item = codec.decode(block);
+                } else {
+                    item = DataFactory.create();
+                    item.put("data", block);
+                }
+                count++;
+                return item;
+            }
+        } catch (Exception e) {
+            log.error("Failed to read event #{}:  {}", count, e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
-		SourceURL source = new SourceURL(args[0]);
-		BobStream stream = new BobStream(source);
-		stream.init();
+    /**
+     * @return the parse
+     */
+    public boolean isParse() {
+        return parse;
+    }
 
-		long start = System.currentTimeMillis();
-		long bytesRead = 0L;
-		Data item = stream.read();
-		while (item != null) {
-			byte[] block = (byte[]) item.get("data");
-			bytesRead += (12 + block.length);
-			item = stream.read();
-		}
-		long end = System.currentTimeMillis();
-		Double secs = (end - start * 1.0d) / 1000.0d;
-		Double dataRate = (bytesRead / 1024 / 1024) / secs;
+    /**
+     * @param parse
+     *            the parse to set
+     */
+    public void setParse(boolean parse) {
+        this.parse = parse;
+    }
 
-		stream.close();
-		DecimalFormat fmt = new DecimalFormat("0.0");
-		log.info("Read {} bytes, ({} MB/sec)", bytesRead, fmt.format(dataRate));
-	}
+    /**
+     * @return the codec
+     */
+    public Codec<Data> getCodec() {
+        return codec;
+    }
+
+    /**
+     * @param codec
+     *            the codec to set
+     */
+    public void setCodec(String codec) {
+        try {
+            @SuppressWarnings("unchecked")
+            Class<Codec<Data>> clazz = (Class<Codec<Data>>) Class.forName(codec);
+            this.codec = clazz.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        SourceURL source = new SourceURL(args[0]);
+        BobStream stream = new BobStream(source);
+        stream.init();
+
+        long start = System.currentTimeMillis();
+        long bytesRead = 0L;
+        Data item = stream.read();
+        while (item != null) {
+            byte[] block = (byte[]) item.get("data");
+            bytesRead += (12 + block.length);
+            item = stream.read();
+        }
+        long end = System.currentTimeMillis();
+        Double secs = (end - start * 1.0d) / 1000.0d;
+        Double dataRate = (bytesRead / 1024 / 1024) / secs;
+
+        stream.close();
+        DecimalFormat fmt = new DecimalFormat("0.0");
+        log.info("Read {} bytes, ({} MB/sec)", bytesRead, fmt.format(dataRate));
+    }
 }

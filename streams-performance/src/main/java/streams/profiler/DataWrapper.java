@@ -39,7 +39,9 @@ public class DataWrapper extends DataImpl {
     @Override
     public Serializable get(Object key) {
         Serializable value = super.get(key);
-        types.read(key.toString(), value);
+        if (types != null) {
+            types.read(key.toString(), value);
+        }
         return value;
     }
 
@@ -48,7 +50,9 @@ public class DataWrapper extends DataImpl {
      */
     @Override
     public Serializable put(String key, Serializable value) {
-        types.write(key, value);
+        if (types != null) {
+            types.write(key, value);
+        }
         return super.put(key, value);
     }
 

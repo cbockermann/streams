@@ -29,22 +29,26 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import stream.app.ComputeGraph;
-import stream.app.ComputeGraph.ServiceRef;
-import stream.app.ComputeGraph.SinkRef;
-import stream.app.ComputeGraph.SourceRef;
-import stream.app.Reference;
+import stream.io.PartitionedStream;
 import stream.io.Queue;
 import stream.io.Sink;
 import stream.io.Source;
+import stream.io.Stream;
 import stream.runtime.setup.ParameterInjection;
 import stream.service.NamingService;
 import stream.service.Service;
+import streams.application.ComputeGraph;
+import streams.application.ComputeGraph.ServiceRef;
+import streams.application.ComputeGraph.SinkRef;
+import streams.application.ComputeGraph.SourceRef;
+import streams.application.Reference;
 
 /**
  * 
@@ -56,9 +60,14 @@ public class DependencyInjection {
 
     static Logger log = LoggerFactory.getLogger(DependencyInjection.class);
 
+    final static boolean PARTITIONED_STREAMS = "true"
+            .equalsIgnoreCase(System.getProperty("partitioned-streams", "false"));
+
     final List<Reference> refs = new ArrayList<Reference>();
+    final Map<String, List<String>> remapping = new LinkedHashMap<String, List<String>>();
 
     public void add(Reference ref) {
+        log.debug("Adding reference  {} -> {}", ref.object(), ref.ids());
         refs.add(ref);
     }
 
@@ -66,9 +75,64 @@ public class DependencyInjection {
         this.refs.addAll(refs);
     }
 
+    protected boolean hasPartitions(String streamId) {
+        return remapping.containsKey(streamId);
+    }
+
+    protected String getNextPartition(String streamId) {
+        List<String> partitions = remapping.get(streamId);
+        if (partitions == null) {
+            return streamId;
+        }
+
+        if (partitions.isEmpty()) {
+            return "_no_more_partitions_left_";
+        }
+
+        String part = partitions.remove(0);
+        log.info("  {} ~> {}", streamId, part);
+        return part;
+    }
+
     public void injectDependencies(ComputeGraph graph, NamingService namingService) throws Exception {
 
         log.debug("Found {} references to be resolved...", refs);
+
+        Map<String, Stream> streamPartitions = new LinkedHashMap<String, Stream>();
+        for (Object s : graph.getAll(Stream.class)) {
+            Stream stream = (Stream) s;
+            String sid = stream.getId();
+            if (PARTITIONED_STREAMS && s instanceof PartitionedStream) {
+                log.info("<EXPERIMENTAL>");
+                log.info("Assigning partitioned streams to multiple copies (sub-stream - consumer mapping)");
+                PartitionedStream ms = (PartitionedStream) s;
+                ms.init();
+                log.info("Found partitioned-stream {}", ms);
+                Map<String, Stream> sub = ms.partitions();
+
+                List<String> parts = new ArrayList<String>();
+
+                for (String id : sub.keySet()) {
+                    streamPartitions.put(sid + ":" + id, sub.get(id));
+                    parts.add(sid + ":" + id);
+                }
+
+                this.remapping.put(sid, parts);
+                log.info("</EXPERIMENTAL>");
+
+            } else {
+                log.info("Object {} is not a partitioned-stream", s);
+                streamPartitions.put(sid, stream);
+            }
+        }
+
+        log.debug("Stream partitions are:");
+        for (String id : streamPartitions.keySet()) {
+            log.debug("  {}  ->   {}", id, streamPartitions.get(id));
+        }
+
+        log.debug("graph has {} streams, {} processes", graph.getAll(Stream.class).size(),
+                graph.getAll(stream.Process.class).size());
 
         Iterator<Reference> it = refs.iterator();
         while (it.hasNext()) {
@@ -129,6 +193,7 @@ public class DependencyInjection {
         String[] refs = ref.ids();
         Source[] sources = new Source[refs.length];
         for (int i = 0; i < sources.length; i++) {
+            log.debug("resolving source[{}] ~>  refs[{}] = {}", i, i, refs[i]);
             sources[i] = graph.sources().get(refs[i]);
 
             if (sources[i] == null) {
@@ -139,8 +204,21 @@ public class DependencyInjection {
                 if (queue instanceof Service) {
                     graph.addService(refs[i], (Service) queue);
                 }
-                log.info("Created new Queue:{} {}", queue.getId(), queue);
+                log.debug("Created new Queue:{} {}", queue.getId(), queue);
                 sources[i] = queue;
+            }
+
+            if (sources[i] instanceof PartitionedStream) {
+                log.info("resoling multi-stream reference   {}  ->  {} ", sources[i], ref.object());
+                String part = getNextPartition(refs[i]);
+                log.info("   re-mapping:   {}  =>  {}", refs[i], part);
+                PartitionedStream ms = (PartitionedStream) sources[i];
+                log.info("parts:  {}", ms.partitions().keySet());
+
+                String id = part.substring(refs[i].length() + 1);
+                Stream stream = ms.partitions().get(id);
+                log.info("   re-assigning  {}.input  ~> {} ", ref.object(), stream);
+                sources[i] = stream;
             }
 
             graph.add(sources[i], ref.object());
@@ -175,7 +253,7 @@ public class DependencyInjection {
         for (Field field : o.getClass().getDeclaredFields()) {
 
             if (DependencyInjection.isServiceImplementation(field.getType())) {
-                log.info("Checking service-field {}", field.getName());
+                log.debug("Checking service-field {}", field.getName());
 
                 String prop = field.getName();
                 stream.annotations.Service sa = field.getAnnotation(stream.annotations.Service.class);
@@ -183,7 +261,7 @@ public class DependencyInjection {
                     prop = sa.name();
                 }
 
-                log.info("Service field '{}' relates to property '{}'", field.getName(), prop);
+                log.debug("Service field '{}' relates to property '{}'", field.getName(), prop);
                 if (prop.equals(property)) {
                     Class<?> valueType;
 

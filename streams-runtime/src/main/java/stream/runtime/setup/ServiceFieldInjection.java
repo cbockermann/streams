@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import stream.Processor;
 import stream.annotations.Service;
-import stream.app.ComputeGraph.ServiceRef;
 import stream.runtime.DependencyInjection;
+import streams.application.ComputeGraph.ServiceRef;
 
 /**
  *

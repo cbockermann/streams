@@ -38,143 +38,151 @@ import stream.data.SequenceID;
  * 
  */
 public abstract class AbstractStream implements Stream {
-	static Logger log = LoggerFactory.getLogger(AbstractStream.class);
+    static Logger log = LoggerFactory.getLogger(AbstractStream.class);
 
-	protected SourceURL url;
-	protected Long limit = new Long(-1L);
-	protected Long count = new Long(0L);
-	protected String prefix = null;
-	protected String id;
-	protected InputStream in;
-	protected boolean closed = false;
-	protected SequenceID seqId = new SequenceID();
-	protected String sequenceKey = null;
+    protected SourceURL url;
+    protected Long limit = new Long(-1L);
+    protected Long count = new Long(0L);
+    protected String prefix = null;
+    protected String id;
+    protected InputStream in;
+    protected boolean closed = false;
+    protected SequenceID seqId = new SequenceID();
+    protected String sequenceKey = null;
 
-	public AbstractStream(SourceURL url) {
-		this.url = url;
-	}
+    public AbstractStream(SourceURL url) {
+        this.url = url;
+    }
 
-	public AbstractStream(InputStream in) {
-		this.in = in;
-	}
+    public AbstractStream(InputStream in) {
+        this.in = in;
+    }
 
-	protected AbstractStream() {
-		this.url = null;
-	}
+    protected AbstractStream() {
+        this.url = null;
+    }
 
-	protected InputStream getInputStream() throws Exception {
-		if (closed)
-			throw new IllegalStateException("Stream must be closed first!");
-		if (in == null) {
-			in = url.openStream();
-			return in;
-		}
+    protected InputStream getInputStream() throws Exception {
+        if (closed)
+            throw new IllegalStateException("Stream must be closed first!");
+        if (in == null) {
+            in = url.openStream();
+            return in;
+        }
 
-		return in;
-	}
+        return in;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	@Parameter(required = true, description = "The ID of this stream for associating it with processes.")
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Parameter(required = true, description = "The ID of this stream for associating it with processes.")
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public SourceURL getUrl() {
-		return url;
-	}
+    public SourceURL getUrl() {
+        return url;
+    }
 
-	public void setUrl(SourceURL url) {
-		this.url = url;
-	}
+    public void setUrl(SourceURL url) {
+        this.url = url;
+    }
 
-	/**
-	 * @return the prefix
-	 */
-	public String getPrefix() {
-		return prefix;
-	}
+    /**
+     * @return the prefix
+     */
+    public String getPrefix() {
+        return prefix;
+    }
 
-	/**
-	 * @param prefix
-	 *            the prefix to set
-	 */
-	@Parameter(required = false, description = "An optional prefix string to prepend to all attribute names.", defaultValue = "")
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+    /**
+     * @param prefix
+     *            the prefix to set
+     */
+    @Parameter(required = false, description = "An optional prefix string to prepend to all attribute names.", defaultValue = "")
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-	public Long getLimit() {
-		return limit;
-	}
+    public Long getLimit() {
+        return limit;
+    }
 
-	@Parameter(required = false, description = "The maximum number of items that this stream should deliver.", defaultValue = "-1", max = Long.MAX_VALUE)
-	public void setLimit(Long limit) {
-		this.limit = limit;
-	}
+    @Parameter(required = false, description = "The maximum number of items that this stream should deliver.", defaultValue = "-1", max = Long.MAX_VALUE)
+    public void setLimit(Long limit) {
+        this.limit = limit;
+    }
 
-	public String getSequenceKey() {
-		return sequenceKey;
-	}
+    public String getSequenceKey() {
+        return sequenceKey;
+    }
 
-	@Parameter(description = "An optional key which should contain a sequence ID for each item. If not specified, not sequence IDs will be generated.")
-	public void setSequenceKey(String sequenceKey) {
-		this.sequenceKey = sequenceKey;
-	}
+    @Parameter(description = "An optional key which should contain a sequence ID for each item. If not specified, not sequence IDs will be generated.")
+    public void setSequenceKey(String sequenceKey) {
+        this.sequenceKey = sequenceKey;
+    }
 
-	/**
-	 * @see stream.io.Stream#read()
-	 */
-	public synchronized Data read() throws Exception {
+    /**
+     * @see stream.io.Stream#read()
+     */
+    public synchronized Data read() throws Exception {
 
-		if (closed || (limit > 0 && count >= limit))
-			return null;
+        if (closed) {
+            log.debug("Read on closed stream '{}'", getId());
+            return null;
+        }
 
-		Data datum = readNext();
-		if (datum == null) {
-			log.debug("End-of-stream reached!");
-			return null;
-		}
+        if ((limit > 0 && count >= limit)) {
+            log.debug("Limit for stream '{}' reached, stream returns 'null'", getId());
+            return null;
+        }
 
-		if (this.id != null)
-			datum.put(SOURCE_KEY, this.id);
+        Data datum = readNext();
+        if (datum == null) {
+            log.debug("End-of-stream reached!");
+            return null;
+        }
 
-		if (this.sequenceKey != null) {
-			SequenceID next = this.seqId.getAndIncrement();
-			datum.put(sequenceKey, next);
-		}
-		if (prefix != null && !prefix.trim().isEmpty()) {
-			Data prefixed = DataFactory.create();
-			for (String key : datum.keySet()) {
-				prefixed.put(prefix + ":" + key, datum.get(key));
-			}
-			datum = prefixed;
-		}
-		count++;
-		return datum;
-	}
+        if (this.id != null)
+            datum.put(SOURCE_KEY, this.id);
 
-	public abstract Data readNext() throws Exception;
+        if (this.sequenceKey != null) {
+            SequenceID next = this.seqId.getAndIncrement();
+            datum.put(sequenceKey, next);
+        }
+        if (prefix != null && !prefix.trim().isEmpty()) {
+            Data prefixed = DataFactory.create();
+            for (String key : datum.keySet()) {
+                prefixed.put(prefix + ":" + key, datum.get(key));
+            }
+            datum = prefixed;
+        }
+        count++;
+        return datum;
+    }
 
-	/**
-	 * @see stream.io.Source#init()
-	 */
-	@Override
-	public void init() throws Exception {
-		closed = false;
-	}
+    public abstract Data readNext() throws Exception;
 
-	/**
-	 * @see stream.io.Source#close()
-	 */
-	@Override
-	public void close() throws Exception {
-		if (in != null)
-			in.close();
-		in = null;
+    /**
+     * @see stream.io.Source#init()
+     */
+    @Override
+    public void init() throws Exception {
+        closed = false;
+    }
 
-		closed = true;
-	}
+    /**
+     * @see stream.io.Source#close()
+     */
+    @Override
+    public void close() throws Exception {
+        log.debug("Closing stream {}", this.getId());
+        if (in != null)
+            in.close();
+        in = null;
+
+        closed = true;
+    }
 }

@@ -4,6 +4,8 @@
 	
 	<process input="data">
 		<PrintData />
+		<!-- 
 		<stream.test.ThrowException every="4" />
+		 -->
 	</process>
 </application>

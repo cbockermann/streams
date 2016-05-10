@@ -47,129 +47,129 @@ import org.slf4j.LoggerFactory;
 
 public class Dependency {
 
-	static Logger log = LoggerFactory.getLogger(Dependency.class);
-	final String groupId;
-	final String artifactId;
-	String version;
-	final ArrayList<String> versions = new ArrayList<String>();
+    static Logger log = LoggerFactory.getLogger(Dependency.class);
+    final String groupId;
+    final String artifactId;
+    String version;
+    final ArrayList<String> versions = new ArrayList<String>();
 
-	public Dependency(String groupId, String artifactId, String version) {
-		this.groupId = groupId;
-		this.artifactId = artifactId;
-		this.version = version;
-	}
+    public Dependency(Dependency copy) {
+        this.groupId = copy.groupId;
+        this.artifactId = copy.artifactId;
+        this.version = copy.version;
+    }
 
-	public File getLocalFile() {
+    public Dependency(String groupId, String artifactId, String version) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+    }
 
-		StringBuffer s = new StringBuffer(System.getProperty("user.home")
-				+ File.separator + ".m2" + File.separator + "repository"
-				+ File.separator);
-		s.append(getPath());
-		File file = new File(s.toString());
-		return file;
-	}
+    public File getLocalFile() {
 
-	public String getPath() {
-		return groupId.replace('.', '/') + "/" + artifactId + "/" + version
-				+ "/" + artifactId + "-" + version + ".jar";
-	}
+        StringBuffer s = new StringBuffer(System.getProperty("user.home") + File.separator + ".m2" + File.separator
+                + "repository" + File.separator);
+        s.append(getPath());
+        File file = new File(s.toString());
+        return file;
+    }
 
-	public String getPomPath() {
-		return groupId.replace('.', '/') + "/" + artifactId + "/" + version
-				+ "/" + artifactId + "-" + version + ".pom";
-	}
+    public String getPath() {
+        return groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + ".jar";
+    }
 
-	public File download() throws Exception {
+    public String getPomPath() {
+        return groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + ".pom";
+    }
 
-		StringBuffer s = new StringBuffer(
-				"http://repo.maven.apache.org/maven2/");
+    public File download() throws Exception {
 
-		s.append(getPath());
+        StringBuffer s = new StringBuffer("http://repo.maven.apache.org/maven2/");
 
-		URL url = new URL(s.toString());
-		InputStream in = url.openStream();
+        s.append(getPath());
 
-		log.info("Downloading library {} from {}", artifactId, url);
-		File file = new File(System.getProperty("user.home") + "/.streams/"
-				+ artifactId + "-" + version + ".jar");
+        URL url = new URL(s.toString());
+        InputStream in = url.openStream();
 
-		File lib = new File(System.getProperty("user.home") + File.separator
-				+ ".streams" + File.separator + getPath());
-		lib.getParentFile().mkdirs();
-		file = lib;
+        log.info("Downloading library {} from {}", artifactId, url);
+        File file = new File(System.getProperty("user.home") + "/.streams/" + artifactId + "-" + version + ".jar");
 
-		FileOutputStream out = new FileOutputStream(file);
+        File lib = new File(System.getProperty("user.home") + File.separator + ".streams" + File.separator + getPath());
+        lib.getParentFile().mkdirs();
+        file = lib;
 
-		byte[] buf = new byte[8192];
-		int total = 0;
-		int read = in.read(buf);
-		while (read > 0) {
-			total += read;
-			out.write(buf, 0, read);
-			read = in.read(buf);
-			// System.out.println(total + " bytes fetched...");
-		}
-		log.info("{} bytes fetched.", total);
-		out.close();
-		return file;
-	}
+        FileOutputStream out = new FileOutputStream(file);
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Dependency)
-			return toString().compareTo(obj.toString()) == 0;
-		return false;
-	}
+        byte[] buf = new byte[8192];
+        int total = 0;
+        int read = in.read(buf);
+        while (read > 0) {
+            total += read;
+            out.write(buf, 0, read);
+            read = in.read(buf);
+            // System.out.println(total + " bytes fetched...");
+        }
+        log.info("{} bytes fetched.", total);
+        out.close();
+        return file;
+    }
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return toString().hashCode();
-	}
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Dependency)
+            return toString().compareTo(obj.toString()) == 0;
+        return false;
+    }
 
-	public String toString() {
-		return groupId + ":" + artifactId + ":" + version;
-	}
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 
-	/**
-	 * @return the groupId
-	 */
-	public String getGroupId() {
-		return groupId;
-	}
+    public String toString() {
+        return groupId + ":" + artifactId + ":" + version;
+    }
 
-	/**
-	 * @return the artifactId
-	 */
-	public String getArtifactId() {
-		return artifactId;
-	}
+    /**
+     * @return the groupId
+     */
+    public String getGroupId() {
+        return groupId;
+    }
 
-	/**
-	 * @return the version
-	 */
-	public String getVersion() {
-		return version;
-	}
+    /**
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+        return artifactId;
+    }
 
-	public void addVersion(String ver) {
-		if (ver != null && !versions.contains(ver.trim())) {
-			this.versions.add(ver.trim());
-		}
-	}
+    /**
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
 
-	public void addVersions(Collection<String> vers) {
-		for (String ver : vers) {
-			addVersion(ver);
-		}
-	}
+    public void addVersion(String ver) {
+        if (ver != null && !versions.contains(ver.trim())) {
+            this.versions.add(ver.trim());
+        }
+    }
 
-	public List<String> availableVersions() {
-		return Collections.unmodifiableList(versions);
-	}
+    public void addVersions(Collection<String> vers) {
+        for (String ver : vers) {
+            addVersion(ver);
+        }
+    }
+
+    public List<String> availableVersions() {
+        return Collections.unmodifiableList(versions);
+    }
 }

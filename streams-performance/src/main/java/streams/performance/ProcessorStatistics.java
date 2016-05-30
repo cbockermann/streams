@@ -32,8 +32,8 @@ public class ProcessorStatistics implements Serializable {
 
     double timeMean = 0.0;
     double m2 = 0.0;
-    double min = 0L;
-    double max = 0L;
+    double min = 0d;
+    double max = 0d;
 
     public ProcessorStatistics(Processor p) {
         this(p.getClass().getName(), p);
@@ -61,6 +61,18 @@ public class ProcessorStatistics implements Serializable {
     }
 
     /**
+     * Reset statistics collected so far (used for mergeable processor stats)
+     */
+    public void reset() {
+        itemsProcessed = 0L;
+        processingTime = 0d;
+        start = 0L;
+        end = 0L;
+        timeMean = 0d;
+        m2 = 0d;
+    }
+
+    /**
      * Put statistic values into a serializable map.
      *
      * @return map containing values about processor
@@ -79,6 +91,19 @@ public class ProcessorStatistics implements Serializable {
         map.put("time.start", start);
         map.put("time.end", end);
         return map;
+    }
+
+    /**
+     * Merge current statistics with given new values. This can be used on the server side
+     * (performance receiver) in order to merge new statistics.
+     */
+    public synchronized void mergeStatistics(ProcessorStatistics data) {
+        itemsProcessed += data.itemsProcessed();
+        min = Math.min(min, data.min);
+        max = Math.max(max, data.max);
+        start = Math.min(start, data.start());
+        end = data.end();
+        processingTime += data.processingTime;
     }
 
     /**

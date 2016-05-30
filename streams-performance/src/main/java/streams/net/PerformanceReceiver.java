@@ -161,40 +161,40 @@ public class PerformanceReceiver extends Thread {
         }
     }
 
-    /**
-     * Updater thread that is started by the performance receiver thread.
-     */
-    public static class Updater extends Thread {
-
-        public void run() {
-            while (true) {
-                try {
-                    Update update = updates.take();
-
-                    String[] path = update.path.split("/");
-                    String app = path[0];
-
-                    PerformanceTree tree = performanceTrees.get(app);
-                    if (tree == null) {
-                        tree = new PerformanceTree("", null);
-                        performanceTrees.put(app, tree);
-                        log.debug("Creating new performance tree for application '{}'", app);
-                    }
-
-                    tree.update(path, update.stats);
-
-                    updateCount.add(app);
-                    int cnt = updateCount.count(app);
-                    if (cnt % 10 == 0) {
-                        tree.print();
-                    }
-
-                } catch (Exception e) {
-                    log.error("Updater thread has been stopped or " + "was interrupted by some exception:" + e);
-                }
-            }
-        }
-    }
+//    /**
+//     * Updater thread that is started by the performance receiver thread.
+//     */
+//    public static class Updater extends Thread {
+//
+//        public void run() {
+//            while (true) {
+//                try {
+//                    Update update = updates.take();
+//
+//                    String[] path = update.path.split("/");
+//                    String app = path[0];
+//
+//                    PerformanceTree tree = performanceTrees.get(app);
+//                    if (tree == null) {
+//                        tree = new PerformanceTree("", null);
+//                        performanceTrees.put(app, tree);
+//                        log.debug("Creating new performance tree for application '{}'", app);
+//                    }
+//
+//                    tree.update(path, update.stats);
+//
+//                    updateCount.add(app);
+//                    int cnt = updateCount.count(app);
+//                    if (cnt % 10 == 0) {
+//                        tree.print();
+//                    }
+//
+//                } catch (Exception e) {
+//                    log.error("Updater thread has been stopped or " + "was interrupted by some exception:" + e);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Dump thread that is used as shutdown hook for the output of performance

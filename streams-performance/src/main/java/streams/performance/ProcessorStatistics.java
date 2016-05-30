@@ -47,17 +47,17 @@ public class ProcessorStatistics implements Serializable {
     /**
      * A simple clone constructor
      * 
-     * @param p
+     * @param statistics
      */
-    public ProcessorStatistics(ProcessorStatistics p) {
-        this.className = p.className;
-        this.objectReference = p.objectReference;
-        this.itemsProcessed = p.itemsProcessed;
-        this.processingTime = p.processingTime;
-        this.start = p.start;
-        this.end = p.end;
-        this.timeMean = p.timeMean;
-        this.m2 = p.m2;
+    public ProcessorStatistics(ProcessorStatistics statistics) {
+        this.className = statistics.className;
+        this.objectReference = statistics.objectReference;
+        this.itemsProcessed = statistics.itemsProcessed;
+        this.processingTime = statistics.processingTime;
+        this.start = statistics.start;
+        this.end = statistics.end;
+        this.timeMean = statistics.timeMean;
+        this.m2 = statistics.m2;
     }
 
     /**

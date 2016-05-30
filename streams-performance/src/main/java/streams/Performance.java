@@ -3,6 +3,11 @@
  */
 package streams;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.InetAddress;
@@ -15,11 +20,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import stream.Data;
 import stream.ProcessContext;
@@ -120,33 +120,6 @@ public class Performance extends ProcessorList {
         }
     }
 
-    public Data executeInnerProcessors(Data data) {
-
-        if (data != null) {
-
-            int i = 0;
-            for (Processor p : processors) {
-                long t0 = System.nanoTime();
-                data = p.process(data);
-                long t1 = System.nanoTime();
-
-                if (items >= ignoreFirst) {
-                    statistics[i].addNanos((t1 - t0));
-                }
-
-                // If any nested processor returns null we stop further
-                // processing.
-                //
-                if (data == null) {
-                    return null;
-                }
-                i++;
-            }
-
-        }
-        return data;
-    }
-
     /**
      * @see stream.ProcessorList#process(stream.Data)
      */
@@ -176,6 +149,31 @@ public class Performance extends ProcessorList {
         }
 
         return result;
+    }
+
+    public Data executeInnerProcessors(Data data) {
+
+        if (data != null) {
+
+            int i = 0;
+            for (Processor p : processors) {
+                long t0 = System.nanoTime();
+                data = p.process(data);
+                long t1 = System.nanoTime();
+
+                if (items >= ignoreFirst) {
+                    statistics[i].addNanos((t1 - t0));
+                }
+
+                // If any nested processor returns null we stop further processing.
+                if (data == null) {
+                    return null;
+                }
+                i++;
+            }
+
+        }
+        return data;
     }
 
     /**

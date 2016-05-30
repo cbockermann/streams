@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,8 +21,6 @@ import javax.xml.transform.stream.StreamResult;
 import stream.Data;
 import stream.ProcessorList;
 import streams.logging.Message;
-import streams.logging.Rlog;
-import streams.net.MessageQueue.Sender;
 import streams.performance.ProcessorStatistics;
 
 /**
@@ -36,22 +33,10 @@ import streams.performance.ProcessorStatistics;
 public class PerformanceWithReset extends Performance {
 
     static Logger log = LoggerFactory.getLogger(PerformanceWithReset.class);
-    Rlog rlog = new Rlog();
-    int every = 10000;
-
-    long items = 0L;
-    long firstItem = 0L;
-    long lastItem = 0L;
 
     boolean processed = false;
 
     final ProcessorStatistics myStatistics;
-    ProcessorStatistics[] statistics = new ProcessorStatistics[0];
-
-    long ignoreFirst = 0;
-
-    File output;
-    Sender sender;
 
     public PerformanceWithReset() {
         myStatistics = new ProcessorStatistics(this);

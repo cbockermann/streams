@@ -3,6 +3,9 @@
  */
 package streams.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataInputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
@@ -13,11 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.net.ssl.SSLServerSocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import stream.Data;
-import stream.util.MultiSet;
 import streams.codec.Codec;
 import streams.codec.DefaultCodec;
 import streams.io.BobCodec;
@@ -35,7 +34,7 @@ public class PerformanceReceiver extends Thread {
     final ServerSocket server;
 
     static Map<String, PerformanceTree> performanceTrees = new LinkedHashMap<>();
-    static MultiSet<String> updateCount = new MultiSet<>();
+//    static MultiSet<String> updateCount = new MultiSet<>();
 
     static LinkedBlockingQueue<Update> updates = new LinkedBlockingQueue<>();
 
@@ -61,9 +60,7 @@ public class PerformanceReceiver extends Thread {
      */
     public void run() {
         try {
-            Updater updater = new Updater();
-            updater.setDaemon(true);
-            updater.start();
+            initUpdater();
 
             while (true) {
                 Socket client = server.accept();
@@ -72,8 +69,20 @@ public class PerformanceReceiver extends Thread {
                 receiver.start();
             }
         } catch (Exception e) {
-            log.error("Performance thread has been stopped or " + "was interrupted by some exception:" + e);
+            log.error("Performance thread has been stopped or was interrupted by some exception:" + e);
         }
+    }
+
+    /**
+     * Initialize updater object. This method can be overwritten in the way as in {@link
+     * MergedPerformanceReceiver}.
+     */
+    protected void initUpdater() {
+        // add updater
+        log.info("Initialize Updater as updater.");
+        Updater updater = new Updater(updates, performanceTrees);
+        updater.setDaemon(true);
+        updater.start();
     }
 
     /**

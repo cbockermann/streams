@@ -100,19 +100,14 @@
 
 			<dependencies>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-core</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
 
-			<properties>
-				<storm.scope>compile</storm.scope>
-				<storm.mainclass>storm.run</storm.mainclass>
-			</properties>
-
 			<build>
-				<finalName>streams-${project.version}</finalName>
+				<finalName>streams</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

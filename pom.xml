@@ -297,17 +297,17 @@
 			</activation>
 			<dependencies>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-api</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-core</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
-					<groupId>org.jwall</groupId>
+					<groupId>de.sfb876</groupId>
 					<artifactId>streams-runtime</artifactId>
 					<version>${project.version}</version>
 				</dependency>

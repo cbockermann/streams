@@ -2,19 +2,19 @@
  *  streams library
  *
  *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
- * 
+ *
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The streams library (and its submodules) is free software: you can 
- *  redistribute it and/or modify it under the terms of the 
- *  GNU Affero General Public License as published by the Free Software 
- *  Foundation, either version 3 of the License, or (at your option) any 
+ *  The streams library (and its submodules) is free software: you can
+ *  redistribute it and/or modify it under the terms of the
+ *  GNU Affero General Public License as published by the Free Software
+ *  Foundation, either version 3 of the License, or (at your option) any
  *  later version.
  *
  *  The stream.ai library (and its submodules) is distributed in the hope
- *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Affero General Public License for more details.
  *
@@ -34,14 +34,14 @@ import stream.annotations.Description;
 
 /**
  * @author chris
- * 
+ *
  */
 @Description(name = "Prediction", group = "Data Stream.Mining")
 public class Prediction implements Processor {
 
 	static Logger log = LoggerFactory.getLogger(Prediction.class);
 
-	PredictionService predictionService;
+	PredictionService learner;
 
 	public void setClassifier(PredictionService predService) {
 		setLearner(predService);
@@ -49,7 +49,7 @@ public class Prediction implements Processor {
 
 	public void setLearner(PredictionService predService) {
 		log.info("Lerner injected: {}", predService);
-		this.predictionService = predService;
+		this.learner = predService;
 	}
 
 	/**
@@ -58,10 +58,10 @@ public class Prediction implements Processor {
 	@Override
 	public Data process(Data data) {
 
-		if (predictionService != null) {
+		if (learner != null) {
 			try {
-				String key = predictionService.getName();
-				Serializable pred = predictionService.predict(data);
+				String key = learner.getName();
+				Serializable pred = learner.predict(data);
 
 				if (key != null && !key.startsWith(Data.PREDICTION_PREFIX)) {
 					key = Data.PREDICTION_PREFIX + ":" + key;

@@ -2,19 +2,19 @@
  *  streams library
  *
  *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
- * 
+ *
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The streams library (and its submodules) is free software: you can 
- *  redistribute it and/or modify it under the terms of the 
- *  GNU Affero General Public License as published by the Free Software 
- *  Foundation, either version 3 of the License, or (at your option) any 
+ *  The streams library (and its submodules) is free software: you can
+ *  redistribute it and/or modify it under the terms of the
+ *  GNU Affero General Public License as published by the Free Software
+ *  Foundation, either version 3 of the License, or (at your option) any
  *  later version.
  *
  *  The stream.ai library (and its submodules) is distributed in the hope
- *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Affero General Public License for more details.
  *
@@ -56,21 +56,21 @@ import stream.utils.FileUtils;
 /**
  * This class implements a generic object factory that is able to instantiate
  * objects from XML elements.
- * 
+ *
  * @author Christian Bockermann &lt;chris@jwall.org&gt;
- * 
+ *
  */
 public class ObjectFactory extends Variables {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     /**
      * Extract the config {@link org.w3c.dom.Element} as a new
      * {@link org.w3c.dom.Document}.
-     * 
+     *
      * @param node
      * @return
      * @throws ParserConfigurationException
@@ -254,7 +254,7 @@ public class ObjectFactory extends Variables {
             if (className.startsWith(creator.getNamespace())) {
                 log.debug("Found object-creator {} for class {}", creator, className);
 
-                object = creator.create(className, parameter, local);
+                object = creator.create(className, p, local);
                 return object;
             }
         }

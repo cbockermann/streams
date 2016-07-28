@@ -106,7 +106,7 @@ public class ProcessContainer implements IContainer, Runnable {
         log.debug("Adding container shutdown-hook");
         Thread t = new Thread() {
             public void run() {
-
+                log.info("Executing shutdown-hook...");
                 if ("disabled".equalsIgnoreCase(System.getProperty("container.shutdown-hook"))) {
                     log.warn("Shutdown-hook disabled...");
                     return;
@@ -774,6 +774,8 @@ public class ProcessContainer implements IContainer, Runnable {
                     e.printStackTrace();
                 }
             }
+        } else {
+            log.info("No supervisor installed; no clean-up!");
         }
         //
         // try {

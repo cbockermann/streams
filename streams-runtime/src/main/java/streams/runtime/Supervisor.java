@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.Process;
+import stream.Processor;
+import stream.ProcessorList;
 import stream.io.Sink;
 import stream.io.Source;
 import stream.runtime.Monitor;
@@ -43,13 +45,36 @@ public class Supervisor implements ProcessListener, Hook {
 
     public Supervisor(ComputeGraph graph) {
         this.dependencies = graph;
+        log.debug("Creating supervisor for graph {}", graph);
+
+        graph.printShutdownStrategy();
+
+        Set<Object> srcs = graph.getSources();
+        for (Object src : srcs) {
+
+            if (!(src instanceof Source)) {
+                continue;
+            }
+
+            Set<Object> ts = graph.getTargets(src);
+            log.debug("  Source '{}'  is read from {} targets: {}", src, ts.size(), ts);
+        }
+
+        Iterator<Process> it = graph.processes().values().iterator();
+        while (it.hasNext()) {
+            Process p = it.next();
+            Set<Sink> outlets = this.collectSinks(p);
+            log.info("Process '{}' has {} outlets: {}", p, outlets.size(), outlets);
+        }
+
+        // System.exit(-1);
     }
 
     /**
      * @see stream.runtime.ProcessListener#processStarted(stream.Process)
      */
     @Override
-    public void processStarted(Process p) {
+    public synchronized void processStarted(Process p) {
         if (p instanceof Monitor) {
             log.info("Monitor #{} started", p);
             return;
@@ -72,7 +97,7 @@ public class Supervisor implements ProcessListener, Hook {
      *      java.lang.Exception)
      */
     @Override
-    public void processError(Process p, Exception e) {
+    public synchronized void processError(Process p, Exception e) {
         log.debug("Process {} finished with error: {}", p, e.getMessage());
         errors.incrementAndGet();
         synchronized (lock) {
@@ -84,7 +109,7 @@ public class Supervisor implements ProcessListener, Hook {
      * @see stream.runtime.ProcessListener#processFinished(stream.Process)
      */
     @Override
-    public void processFinished(Process p) {
+    public synchronized void processFinished(Process p) {
         log.debug("Process {} finished normally...", p);
         int run = running.decrementAndGet();
         finished.incrementAndGet();
@@ -103,12 +128,17 @@ public class Supervisor implements ProcessListener, Hook {
             for (Sink sink : outlets) {
                 int refCount = 0;
 
-                for (Process pr : processOutlets.keySet()) {
-                    Set<Sink> prOuts = processOutlets.get(pr);
-                    if (prOuts.contains(sink)) {
-                        refCount++;
+                Iterator<Process> it = processOutlets.keySet().iterator();
+                while (it.hasNext()) {
+                    Process pr = it.next();
+                    if (pr != null) {
+                        Set<Sink> prOuts = processOutlets.get(pr);
+                        if (prOuts.contains(sink)) {
+                            refCount++;
+                        }
                     }
                 }
+
                 if (refCount == 0) {
                     log.debug("Reference count of {} is 0, closing sink!", sink);
                     try {
@@ -116,7 +146,7 @@ public class Supervisor implements ProcessListener, Hook {
                         // below will automatically call sink.close(), that's
                         // why we
                         // commented out the call here
-                        // sink.close();
+                        sink.close();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -175,9 +205,33 @@ public class Supervisor implements ProcessListener, Hook {
 
         for (Object out : outs) {
             if (out instanceof Sink) {
+                log.debug("Found sink '{}' referenced by {}", out, p);
                 sinks.add((Sink) out);
             } else {
                 sinks.addAll(collectSinks(out));
+            }
+        }
+
+        if (p instanceof Process) {
+            log.debug("Checking sinks referenced by elements of process '{}'", p);
+            for (Processor pr : ((Process) p).getProcessors()) {
+
+                Set<Sink> childSinks = collectSinks(pr);
+
+                if (pr instanceof ProcessorList) {
+                    ProcessorList pl = (ProcessorList) pr;
+                    for (Processor proc : pl.getProcessors()) {
+                        Set<Sink> found = collectSinks(proc);
+                        log.debug("  Found {} sinks referenced by child '{}': {}", found.size(), proc, found);
+                        childSinks.addAll(found);
+                    }
+                } else {
+                    Set<Sink> found = collectSinks(pr);
+                    log.debug("  Found {} sinks referenced by child '{}': {}", found.size(), pr, found);
+                    childSinks.addAll(found);
+                }
+
+                sinks.addAll(childSinks);
             }
         }
 
@@ -185,6 +239,10 @@ public class Supervisor implements ProcessListener, Hook {
     }
 
     public void waitForProcesses() {
+        if (this.running.get() == 0) {
+            return;
+        }
+
         synchronized (lock) {
             try {
                 lock.wait();
@@ -198,7 +256,7 @@ public class Supervisor implements ProcessListener, Hook {
      * @see streams.runtime.Hook#signal(int)
      */
     @Override
-    public void signal(int flags) {
+    public synchronized void signal(int flags) {
         // if (flags == Signals.SHUTDOWN) {
         log.info("Shutdown signal received: '{}'", flags);
         log.info("Closing root sources: {}", dependencies.getRootSources());

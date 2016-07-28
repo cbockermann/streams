@@ -1,0 +1,19 @@
+<container>
+    <property name="num_copies" value="2" />
+
+    <stream id="random" class="stream.io.RandomStream" />
+
+    <queue id="result" />
+
+    <process id="1" input="random" copies="${num_copies}">
+
+        <Enqueue queue="result"/>
+
+    </process>
+
+    <process input="result" id="egal" >
+        <If condition="%{data.att1} &gt; 4.0">
+                <PrintData/>
+        </If>
+    </process>
+</container>

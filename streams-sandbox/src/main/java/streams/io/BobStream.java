@@ -3,8 +3,13 @@
  */
 package streams.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +38,7 @@ public class BobStream extends AbstractStream {
     long lastItem = 0L;
 
     boolean parse = false;
+    boolean gunzip = false;
     Codec<Data> codec = new DefaultCodec<Data>();
 
     public BobStream(SourceURL url) {
@@ -57,7 +63,11 @@ public class BobStream extends AbstractStream {
 
         try {
             synchronized (lock) {
-                final byte[] block = BobCodec.readBlock(in);
+                byte[] block = BobCodec.readBlock(in);
+                if (block == null) {
+                    log.debug("Failed to read more blocks from file! End-Of-File?");
+                    return null;
+                }
 
                 if (count == 0) {
                     firstItem = System.currentTimeMillis();
@@ -78,6 +88,10 @@ public class BobStream extends AbstractStream {
                     return null;
                 }
 
+                if (gunzip) {
+                    block = gunzip(block);
+                }
+
                 Data item = null;
                 if (parse) {
                     item = codec.decode(block);
@@ -88,6 +102,9 @@ public class BobStream extends AbstractStream {
                 count++;
                 return item;
             }
+        } catch (EOFException eof) {
+            log.debug("End of file reached.");
+            return null;
         } catch (Exception e) {
             log.error("Failed to read event #{}:  {}", count, e.getMessage());
             e.printStackTrace();
@@ -129,6 +146,35 @@ public class BobStream extends AbstractStream {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * @return the gunzip
+     */
+    public boolean isGunzip() {
+        return gunzip;
+    }
+
+    /**
+     * @param gunzip
+     *            the gunzip to set
+     */
+    public void setGunzip(boolean gunzip) {
+        this.gunzip = gunzip;
+    }
+
+    public static byte[] gunzip(byte[] buf) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(buf));
+        byte[] tmp = new byte[4 * 1024];
+        int read = in.read(tmp);
+        while (read > 0) {
+            baos.write(tmp, 0, read);
+            read = in.read(tmp);
+        }
+        in.close();
+        baos.close();
+        return baos.toByteArray();
     }
 
     public static void main(String[] args) throws Exception {

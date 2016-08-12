@@ -3,6 +3,11 @@
  */
 package streams.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +31,7 @@ public class ParseBob implements Processor {
 
     static Logger log = LoggerFactory.getLogger(ParseBob.class);
 
+    boolean gzip = false;
     String key = "data";
     Codec<Data> serializer = new DefaultCodec<Data>();
 
@@ -37,6 +43,10 @@ public class ParseBob implements Processor {
         byte[] bytes = (byte[]) input.get(key);
         if (bytes != null) {
             try {
+                if (gzip) {
+                    bytes = gunzip(bytes);
+                }
+
                 Data item = serializer.decode(bytes);
                 input.putAll(item);
             } catch (Exception e) {
@@ -85,5 +95,34 @@ public class ParseBob implements Processor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @return the gzip
+     */
+    public boolean isGzip() {
+        return gzip;
+    }
+
+    /**
+     * @param gzip
+     *            the gzip to set
+     */
+    public void setGzip(boolean gzip) {
+        this.gzip = gzip;
+    }
+
+    public static byte[] gunzip(byte[] buf) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(buf));
+        byte[] tmp = new byte[4 * 1024];
+        int read = in.read(tmp);
+        while (read > 0) {
+            baos.write(tmp, 0, read);
+            read = in.read(tmp);
+        }
+        in.close();
+        baos.close();
+        return baos.toByteArray();
     }
 }

@@ -51,8 +51,18 @@ public class ServiceFieldInjection {
                 } else {
                     String refStr = params.get(property);
                     if (refStr == null) {
-                        throw new RuntimeException("Found service field for '" + field.getName()
-                                + "', but related XML attribute '" + property + "' is not provided!");
+
+                        Service serviceAnnotation = field.getAnnotation(Service.class);
+                        if (serviceAnnotation != null && !serviceAnnotation.required()) {
+                            String name = serviceAnnotation.name();
+                            if (name == null || name.isEmpty()) {
+                                name = field.getName();
+                            }
+                            log.warn("No service injected for optional service field '{}'", name);
+                        } else {
+                            throw new RuntimeException("Found service field for '" + field.getName()
+                                    + "', but related XML attribute '" + property + "' is not provided!");
+                        }
                     } else {
                         refs.add(new ServiceRef(p, property, refStr.split(","), type));
                     }

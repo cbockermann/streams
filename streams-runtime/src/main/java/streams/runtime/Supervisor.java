@@ -103,6 +103,8 @@ public class Supervisor implements ProcessListener, Hook {
         synchronized (lock) {
             lock.notify();
         }
+
+        processFinished(p);
     }
 
     /**

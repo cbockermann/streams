@@ -117,6 +117,7 @@ public class ProcessThread extends Thread implements Hook {
 
     public void run() {
         running = true;
+        Exception error = null;
         try {
 
             log.debug("Starting process {}, notifying listeners {}", process, processListener);
@@ -131,7 +132,9 @@ public class ProcessThread extends Thread implements Hook {
             log.error("Process thread interruped while executing!?");
             ie.printStackTrace();
             executing.set(false);
+            error = ie;
         } catch (Exception e) {
+            error = e;
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             String exceptionDetails = sw.toString();
@@ -162,6 +165,10 @@ public class ProcessThread extends Thread implements Hook {
             }
 
             running = false;
+
+            if (error != null) {
+                throw new RuntimeException("Process stopped after exception: " + error.getMessage(), error.getCause());
+            }
         }
     }
 

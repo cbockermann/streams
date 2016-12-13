@@ -207,6 +207,8 @@ public abstract class AbstractProcess implements stream.Process {
         } catch (Exception e) {
             log.error("Error occurred in process '{}': {}", getId(), e.getMessage());
             throw e;
+        } finally {
+
         }
     }
 

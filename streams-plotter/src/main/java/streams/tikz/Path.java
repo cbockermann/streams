@@ -13,6 +13,9 @@ import java.util.Map;
 
 public class Path implements Component {
 
+    /** The serial class ID */
+    private static final long serialVersionUID = -5408952130231816604L;
+
     public String color = "blue";
     public final Map<String, String> opts = new HashMap<String, String>();
 

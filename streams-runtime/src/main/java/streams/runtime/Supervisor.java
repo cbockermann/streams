@@ -265,6 +265,9 @@ public class Supervisor implements ProcessListener, Hook {
 
         final Set<Source> roots = dependencies.getRootSources();
 
+        if (roots.isEmpty())
+        	return;
+        
         Thread t = new Thread() {
             public void run() {
 

@@ -40,6 +40,9 @@ public class PerfClient {
         String addr = System.getProperty("address", args[0]);
         int port = new Integer(System.getProperty("port", "10000"));
 
+        log.info("Connecting to server at {}", addr);
+        log.info("Using {} parallel connection(s).", clients);
+
         final List<Client> c = new ArrayList<Client>();
 
         for (int i = 0; i < clients; i++) {
@@ -103,15 +106,18 @@ public class PerfClient {
                         Double seconds = duration.doubleValue() / 1000.0;
                         Double gbit = (totalBytes.doubleValue() * 8) / 1000.0 / 1000.0 / 1000.0;
                         Double mbit = (totalBytes.doubleValue() * 8) / 1000.0 / 1000.0;
+                        Double mbyte = (totalBytes.doubleValue()) / 1024.0 / 1024.0;
 
                         if (listener.isEmpty()) {
-                            log.info("total data rate ({} clients) is {} GBit/sec", clients, gbit / seconds);
+                            log.info("total data rate ({} clients) is {} GBit/sec => {} MB/sec", clients,
+                                    gbit / seconds, mbyte / seconds);
                         }
 
                         for (DataListener l : listener) {
                             Data measure = DataFactory.create();
                             measure.put("@timestamp", now);
                             measure.put("mbit/s", mbit / seconds);
+                            measure.put("mb/s", mbyte / seconds);
                             l.dataArrived(measure);
                         }
                     }

@@ -1,0 +1,22 @@
+<container>
+    <property name="num_copies" value="12" />
+
+    <stream id="random" class="stream.io.RandomStream" limit="1200000"/>
+
+    <queue id="result" />
+
+    <process id="${copy.id}" input="random" copies="${num_copies}">
+
+        <issues.CountItems id="${copy.id}" />
+		<SetValue key="writer" value="${copy.id}" />
+        <Enqueue queue="result"/>
+
+    </process>
+
+    <process input="result" id="egal" >
+        <If condition="%{data.att1} &gt; 4.0">
+                <PrintData/>
+                <issues.CountItems id="receiver" />
+        </If>
+    </process>
+</container>

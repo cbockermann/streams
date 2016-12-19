@@ -182,7 +182,7 @@ public class ProcessContainer implements IContainer, Runnable {
     private Exception failFastReason = null;
 
     final static String[] extensions = new String[] { "stream.moa.MoaObjectFactory",
-            "stream.script.JavaScriptProcessorFactory" };
+    "stream.script.JavaScriptProcessorFactory" };
 
     final static Map<String, ElementHandler> autoHandlers = new LinkedHashMap<String, ElementHandler>();
 
@@ -605,6 +605,7 @@ public class ProcessContainer implements IContainer, Runnable {
     public long execute() throws Exception {
 
         if (!container.contains(this)) {
+            log.debug( "Registering new container {}", this);
             container.add(this);
 
             Signals.register(new Hook() {
@@ -701,7 +702,7 @@ public class ProcessContainer implements IContainer, Runnable {
             throw failFastReason;
         }
 
-        // Signals.register(supervisor);
+//        Signals.register(supervisor);
 
         log.debug("{} processes started...", processesStarted);
         while (supervisor.processesDone() < processesStarted) {

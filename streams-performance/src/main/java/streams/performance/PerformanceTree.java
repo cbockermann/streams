@@ -11,6 +11,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
+import streams.net.MergedPerformanceReceiver;
+
 /**
  * Performance tree class is collector class for processor statistics. Possible tree can be as
  * following:
@@ -77,6 +79,37 @@ public class PerformanceTree {
 		} else {
 			log.debug("Updating data for node '{}'", id);
 			statistics = data;
+		}
+	}
+
+	/**
+	 * Update method is used in {@link MergedPerformanceReceiver#run()} to add new performance data
+	 * or merge the existing data with updated statistics.
+	 *
+	 * @param path String representation of performance tree
+	 * @param data new processor statistics data
+	 */
+	public void addOrMerge(String[] path, ProcessorStatistics data) {
+		int depth = depth();
+		log.debug("Looking for node at level '{}'", depth());
+		if (depth < path.length) {
+			String next = path[depth];
+			PerformanceTree down = getChild(next);
+			if (down == null) {
+				log.info("Creating new child tree for '{}' at node '{}'", next, id);
+				down = new PerformanceTree(next, this);
+				sibblings.add(down);
+			}
+
+			down.addOrMerge(path, data);
+		} else {
+			if (statistics == null) {
+				log.debug("Adding data for node '{}'", id);
+				statistics = data;
+			} else {
+				log.debug("Merging data for node '{}'", id);
+				statistics.mergeStatistics(data);
+			}
 		}
 	}
 

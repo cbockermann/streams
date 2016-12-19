@@ -39,69 +39,72 @@ import stream.data.DataFactory;
 @Description(group = "Data Stream.Sources.Synthetic")
 public class RandomStream extends AbstractStream {
 
-	Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
-	Map<String, Object> store = new LinkedHashMap<String, Object>();
+    Map<String, Class<?>> attributes = new LinkedHashMap<String, Class<?>>();
+    Map<String, Object> store = new LinkedHashMap<String, Object>();
 
-	Random[] random = null;
-	String[] keys = new String[] { "att1" };
+    Random[] random = null;
+    String[] keys = new String[] { "att1" };
+    Long id = 0L;
 
-	public RandomStream() {
-		super((SourceURL) null);
-	}
+    public RandomStream() {
+        super((SourceURL) null);
+    }
 
-	/**
-	 * @return the keys
-	 */
-	public String[] getKeys() {
-		return keys;
-	}
+    /**
+     * @return the keys
+     */
+    public String[] getKeys() {
+        return keys;
+    }
 
-	/**
-	 * @param keys
-	 *            the keys to set
-	 */
-	@Parameter(required = false, description = "The attribute names to create (comma separated)")
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
+    /**
+     * @param keys
+     *            the keys to set
+     */
+    @Parameter(required = false, description = "The attribute names to create (comma separated)")
+    public void setKeys(String[] keys) {
+        this.keys = keys;
+    }
 
-	public synchronized Data readNext() throws Exception {
-		Data data = DataFactory.create();
+    public synchronized Data readNext() throws Exception {
+        Data data = DataFactory.create();
 
-		if (keys == null)
-			keys = new String[] { "x1" };
+        data.put("@id", new Long(id++));
 
-		if (random == null)
-			random = new Random[keys.length];
+        if (keys == null)
+            keys = new String[] { "x1" };
 
-		for (int i = 0; i < keys.length; i++) {
-			if (random[i] == null) {
-				random[i] = new Random(i * 1000L);
-			}
+        if (random == null)
+            random = new Random[keys.length];
 
-			data.put(keys[i], next(random[i]));
-		}
-		return data;
-	}
+        for (int i = 0; i < keys.length; i++) {
+            if (random[i] == null) {
+                random[i] = new Random(i * 1000L);
+            }
 
-	public Double next(Random rnd) {
-		return rnd.nextGaussian();
-	}
+            data.put(keys[i], next(random[i]));
+        }
+        return data;
+    }
 
-	public Object get(String key) {
-		return store.get(key);
-	}
+    public Double next(Random rnd) {
+        return rnd.nextGaussian();
+    }
 
-	public Object get(String key, Object init) {
-		if (store.get(key) == null) {
-			store.put(key, init);
-			return init;
-		}
-		return store.get(key);
+    public Object get(String key) {
+        return store.get(key);
+    }
 
-	}
+    public Object get(String key, Object init) {
+        if (store.get(key) == null) {
+            store.put(key, init);
+            return init;
+        }
+        return store.get(key);
 
-	public void set(String key, Object val) {
-		store.put(key, val);
-	}
+    }
+
+    public void set(String key, Object val) {
+        store.put(key, val);
+    }
 }

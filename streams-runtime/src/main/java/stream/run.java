@@ -214,10 +214,10 @@ public class run {
 		try {
 			Properties p = new Properties();
 			InputStream is = run.class
-					.getResourceAsStream("/META-INF/maven/org.jwall/stream-api/pom.properties");
+					.getResourceAsStream("/META-INF/maven/de.sfb876/streams-runtime/pom.properties");
 			if (is != null) {
 				p.load(is);
-				version = p.getProperty("version", "");
+				version = p.getProperty("version");
 			}
 		} catch (Exception e) {
 			// ignore
@@ -225,6 +225,9 @@ public class run {
 
 		// fallback to using Java API
 		if (version == null) {
+			
+			log.warn("Could not obtain streams version from Maven properties");
+			
 			Package aPackage = run.class.getPackage();
 			if (aPackage != null) {
 				version = aPackage.getImplementationVersion();
@@ -232,11 +235,15 @@ public class run {
 					version = aPackage.getSpecificationVersion();
 				}
 			}
+			
 		}
 
 		if (version == null) {
+			
 			// we could not compute the version so use a blank
 			version = "";
+			log.warn("Could neither obtain streams version from Java API");
+			
 		}
 
 		return version;

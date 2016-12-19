@@ -25,10 +25,10 @@
 
 	<process id="orderedQueue" input="ordered">
 	<!-- 
-		<PrintData />
 	 -->
+		<PrintData />
 		<!-- <stream.test.AddDelayAfter100Items /> -->
-		<stream.test.Collector id="collected" />
+		<stream.test.Collector id="collected-${test-uuid}" />
 	</process>
 
 </Container>

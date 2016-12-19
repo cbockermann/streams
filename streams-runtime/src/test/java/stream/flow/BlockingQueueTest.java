@@ -24,12 +24,13 @@
 package stream.flow;
 
 import java.net.URL;
+import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import junit.framework.Assert;
 import stream.runtime.ProcessContainer;
 import stream.test.CollectorService;
 
@@ -44,13 +45,16 @@ public class BlockingQueueTest {
     @Test
     public void test() throws Exception {
 
+        String uuid = UUID.randomUUID().toString();
+        System.setProperty("test-uuid", uuid); // uuid for the collector...
+
         URL url = BlockingQueueTest.class.getResource("/queues/test-blocking-queue.xml");
         ProcessContainer c = new ProcessContainer(url);
 
         long time = c.execute();
         log.info("Container required {} ms for running.", time);
 
-        CollectorService col = c.getContext().lookup("collected", CollectorService.class);
+        CollectorService col = c.getContext().lookup("collected-" + uuid, CollectorService.class);
         log.info("Collector service: {}", col);
 
         int colSize = col.getCollection().size();

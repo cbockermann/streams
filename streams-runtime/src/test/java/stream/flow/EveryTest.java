@@ -54,7 +54,7 @@ public class EveryTest {
         log.info("Container required {} ms for running.", time);
 
         CounterTestService s = c.getContext().lookup("counter-" + uuid, CounterTestService.class);
-
+        log.info("# of counted items: {} / expected: {}", s.getCount(), 10);
         Assert.assertEquals(10, s.getCount());
     }
 }

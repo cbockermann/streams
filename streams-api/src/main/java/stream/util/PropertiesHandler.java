@@ -144,6 +144,9 @@ public class PropertiesHandler {
             String value = prop.getAttribute("value");
 
             if (key != null && !"".equals(key.trim()) && value != null && !"".equals(value.trim())) {
+
+                log.debug("handling element {} with key = '{}', value = '{}'", prop.getNodeName(), key, value);
+
                 // ORDER IMPORTANT
                 Variables props = new Variables(variables);
                 props.addVariables(systemVariables);
@@ -152,7 +155,7 @@ public class PropertiesHandler {
                 // ORDER IMPORTANT
                 // // All found variables ()
                 v = props.expand(v);
-                // log.info("Setting property {} = {}", k, v);
+                log.debug("Setting property '{}' = '{}'", k, v);
                 variables.set(k, v);
             }
         }
@@ -167,6 +170,9 @@ public class PropertiesHandler {
      */
     public void addSystemProperties(Variables variables) {
         for (Object key : System.getProperties().keySet()) {
+            String k = key.toString();
+            String v = System.getProperty(k);
+            log.debug("Adding system property '{}' => '{}'", k, v);
             variables.set(key.toString(), System.getProperty(key.toString()));
         }
     }
@@ -183,9 +189,9 @@ public class PropertiesHandler {
                 int idx = line.indexOf("=");
                 if (idx > 0 && idx + 1 < line.length()) {
 
-                    // log.info(" Index of '=' is {}", idx);
-                    // log.info("key ~> '{}'", line.substring(0, idx));
-                    // log.info("value ~> '{}'", line.substring(idx + 1));
+                    log.debug(" Index of '=' is {}", idx);
+                    log.debug("key ~> '{}'", line.substring(0, idx));
+                    log.debug("value ~> '{}'", line.substring(idx + 1));
 
                     String key = line.substring(0, idx);
                     String value = line.substring(idx + 1);

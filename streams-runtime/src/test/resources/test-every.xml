@@ -16,7 +16,7 @@
 		<PrintData/>
 	     -->
 		<stream.flow.Every n="100">
-			<stream.test.CounterTestProcessor id="counter"/>
+			<stream.test.CounterTestProcessor id="counter-${test-every-uuid}"/>
 		</stream.flow.Every> 
 	</process>
 	

@@ -44,84 +44,84 @@ import stream.util.Variables;
  */
 public class PropertiesHandler implements DocumentHandler {
 
-	static Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
+    static Logger log = LoggerFactory.getLogger(PropertiesHandler.class);
 
-	private stream.util.PropertiesHandler pHandle;
+    private stream.util.PropertiesHandler pHandle;
 
-	public PropertiesHandler() {
-		pHandle = new stream.util.PropertiesHandler();
-	}
+    public PropertiesHandler() {
+        pHandle = new stream.util.PropertiesHandler();
+    }
 
-	/**
-	 * 
-	 * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
-	 *      org.w3c.dom.Document)
-	 */
-	@Override
-	public void handle(IContainer container, Document doc, Variables variables,
-			DependencyInjection depInj) throws Exception {
+    /**
+     * 
+     * @see stream.runtime.setup.handler.DocumentHandler#handle(stream.runtime.ProcessContainer,
+     *      org.w3c.dom.Document)
+     */
+    @Override
+    public void handle(IContainer container, Document doc, Variables variables, DependencyInjection depInj)
+            throws Exception {
+        log.debug("Running properties handler...");
+        // ${Home}/streams.properties already added.(streams.run())
 
-		// ${Home}/streams.properties already added.(streams.run())
+        // Read system properties, e.g defined at command line using the -D
+        // flag:
+        // java -Dproperty-name=property-value
+        //
+        Variables systemVariables = new Variables();
+        pHandle.addSystemProperties(systemVariables);
 
-		// Read system properties, e.g defined at command line using the -D
-		// flag:
-		// java -Dproperty-name=property-value
-		//
-		Variables systemVariables = new Variables();
-		pHandle.addSystemProperties(systemVariables);
+        // // Add variables to systemVariables to have original state (Not
+        // Needed)
+        // systemVariables.addVariables(variables);
 
-		// // Add variables to systemVariables to have original state (Not
-		// Needed)
-		// systemVariables.addVariables(variables);
+        // handle maven-like properties, e.g.
+        // <properties>
+        // <property-name>value-of-property</property-name>
+        // </properties>
+        // and <properties url="${urlToProperties}"
 
-		// handle maven-like properties, e.g.
-		// <properties>
-		// <property-name>value-of-property</property-name>
-		// </properties>
-		// and <properties url="${urlToProperties}"
+        NodeList list = doc.getElementsByTagName("properties");
+        // handle
+        for (int i = 0; i < list.getLength(); i++) {
+            Element e = (Element) list.item(i);
+            pHandle.handlePropertiesElement(e, variables, systemVariables);
+        }
+        // find
+        list = doc.getElementsByTagName("Properties");
+        // handle
+        for (int i = 0; i < list.getLength(); i++) {
+            Element e = (Element) list.item(i);
+            pHandle.handlePropertiesElement(e, variables, systemVariables);
+        }
 
-		NodeList list = doc.getElementsByTagName("properties");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element e = (Element) list.item(i);
-			pHandle.handlePropertiesElement(e, variables, systemVariables);
-		}
-		// find
-		list = doc.getElementsByTagName("Properties");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element e = (Element) list.item(i);
-			pHandle.handlePropertiesElement(e, variables, systemVariables);
-		}
+        // handle property elements, i.e.
+        // <property>
+        // <name>property-name</name>
+        // <value>property-value</value>
+        // </property>
+        //
+        list = doc.getElementsByTagName("property");
+        // handle
+        for (int i = 0; i < list.getLength(); i++) {
+            Element prop = (Element) list.item(i);
+            pHandle.handlePropertyElement(prop, variables, systemVariables);
+        }
+        // find
+        list = doc.getElementsByTagName("Property");
+        // handle
+        for (int i = 0; i < list.getLength(); i++) {
+            Element prop = (Element) list.item(i);
+            pHandle.handlePropertyElement(prop, variables, systemVariables);
+        }
 
-		// handle property elements, i.e.
-		// <property>
-		// <name>property-name</name>
-		// <value>property-value</value>
-		// </property>
-		//
-		list = doc.getElementsByTagName("property");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element prop = (Element) list.item(i);
-			pHandle.handlePropertyElement(prop, variables, systemVariables);
-		}
-		// find
-		list = doc.getElementsByTagName("Property");
-		// handle
-		for (int i = 0; i < list.getLength(); i++) {
-			Element prop = (Element) list.item(i);
-			pHandle.handlePropertyElement(prop, variables, systemVariables);
-		}
+        // add system properties, e.g defined at command line using the -D flag:
+        // java -Dproperty-name=property-value
+        //
+        java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
+        if (!localMachine.getHostAddress().equals(localMachine.getHostName()))
+            variables.put("machine.name", localMachine.getHostName());
+        pHandle.addSystemProperties(variables);
 
-		// add system properties, e.g defined at command line using the -D flag:
-		// java -Dproperty-name=property-value
-		//
-		java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
-		if (!localMachine.getHostAddress().equals(localMachine.getHostName()))
-			variables.put("machine.name", localMachine.getHostName());
-		pHandle.addSystemProperties(variables);
-
-		// process-local properties at processElementHandler
-	}
+        // process-local properties at processElementHandler
+    }
 }

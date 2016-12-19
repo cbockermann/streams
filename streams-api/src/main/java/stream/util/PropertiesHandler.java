@@ -58,10 +58,11 @@ public class PropertiesHandler {
      */
     public void handlePropertiesElement(Element prop, Variables variables, Variables systemProperties) {
 
+        log.debug("Handling properties element '{}'", prop.getNodeName());
         String suffix = "";
         if (prop.hasAttribute("suffix")) {
             suffix = prop.getAttribute("suffix");
-            log.info("Add suffix {} to properties.", suffix);
+            log.debug("  adding suffix {} to properties.", suffix);
         }
 
         NodeList children = prop.getChildNodes();
@@ -74,6 +75,7 @@ public class PropertiesHandler {
 
                     String key = ch.getNodeName();
                     String value = ch.getTextContent();
+                    log.debug("found node '{}' => '{}'", key, value);
 
                     variables.set(key + suffix, value);
                 }
@@ -139,9 +141,10 @@ public class PropertiesHandler {
 
     public void handlePropertyElement(Element prop, Variables variables, Variables systemVariables) {
         if (prop.getNodeName().equalsIgnoreCase("property")) {
-
+            log.debug("Found property element '{}'", prop.getNodeName());
             String key = prop.getAttribute("name");
             String value = prop.getAttribute("value");
+            log.debug("   '{}' => '{}'", key, value);
 
             if (key != null && !"".equals(key.trim()) && value != null && !"".equals(value.trim())) {
 

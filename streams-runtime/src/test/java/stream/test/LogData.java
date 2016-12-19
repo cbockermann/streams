@@ -37,44 +37,44 @@ import stream.expressions.ExpressionResolver;
  */
 public class LogData extends AbstractProcessor {
 
-	static Logger log = LoggerFactory.getLogger(LogData.class);
+    static Logger log = LoggerFactory.getLogger(LogData.class);
 
-	String message;
+    String message;
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * @param message
-	 *            the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @see stream.AbstractProcessor#init(stream.ProcessContext)
-	 */
-	@Override
-	public void init(ProcessContext ctx) throws Exception {
-		super.init(ctx);
-	}
+    /**
+     * @see stream.AbstractProcessor#init(stream.ProcessContext)
+     */
+    @Override
+    public void init(ProcessContext ctx) throws Exception {
+        super.init(ctx);
+    }
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data input) {
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data input) {
 
-		if (message != null) {
-			String text = ExpressionResolver.expand(message, context, input);
-			log.info("Message: '{}'", text);
-		}
-		log.info("Data: {}", input);
-		return input;
-	}
+        if (message != null) {
+            String text = ExpressionResolver.expand(message, context, input);
+            log.info("Message: '{}'", text);
+        }
+        log.info("  Data: {}", input);
+        return input;
+    }
 }

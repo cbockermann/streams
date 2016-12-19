@@ -23,9 +23,6 @@
  */
 package stream.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import stream.ConditionedProcessor;
 import stream.Data;
 import stream.annotations.Description;
@@ -41,7 +38,7 @@ import stream.annotations.Description;
 @Description(group = "Data Stream.Monitoring", name = "Print Data")
 public class PrintData extends ConditionedProcessor {
 
-    static Logger log = LoggerFactory.getLogger(PrintData.class);
+    String prefix = "data-item: ";
 
     /**
      * @see stream.DataProcessor#process(stream.Data)
@@ -52,7 +49,25 @@ public class PrintData extends ConditionedProcessor {
         if (data == null)
             return null;
 
-        log.info("data-item: {}", data);
+        if (prefix != null)
+            System.out.print(prefix);
+
+        System.out.println(data.toString());
         return data;
+    }
+
+    /**
+     * @return the prefix
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
+     * @param prefix
+     *            the prefix to set
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 }

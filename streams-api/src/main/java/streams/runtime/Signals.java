@@ -43,6 +43,7 @@ public class Signals extends Thread {
 
     public static synchronized void register(Hook hook) {
         if (!hooks.contains(hook)) {
+            init();
             hooks.add(hook);
         }
     }

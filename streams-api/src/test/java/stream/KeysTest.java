@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package stream;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import junit.framework.Assert;
 
 /**
  * @author chris
- * 
+ *
  */
 public class KeysTest {
 
@@ -39,10 +40,21 @@ public class KeysTest {
      */
     @Test
     public void testKeysString() {
-        Keys keys = new Keys("A,B,C*");
-
-        Set<String> selected = keys.select(split("A,B,C1,C2,D"));
+        List<String> dataKeySet = split("A,B,C1,C2,D");
+        // test matching some
+        Keys keys = new Keys(split("A,B,C*"));
+        Set<String> selected = keys.select(dataKeySet);
         Assert.assertEquals(4, selected.size());
+
+        // test matching no key
+        keys = new Keys("");
+        selected = keys.select(dataKeySet);
+        Assert.assertEquals(0, selected.size());
+
+        // test matching all
+        keys = new Keys("*");
+        selected = keys.select(dataKeySet);
+        Assert.assertEquals(dataKeySet.size(), selected.size());
     }
 
     /**
@@ -57,7 +69,7 @@ public class KeysTest {
     }
 
     /**
-     * Test method for {@link stream.Keys#select(java.util.Set)}.
+     * Test method for {@link stream.Keys#select(Collection)}.
      */
     @Test
     public void testSelectSetOfString() {

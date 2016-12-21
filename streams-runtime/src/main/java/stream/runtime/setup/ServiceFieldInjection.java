@@ -40,13 +40,13 @@ public class ServiceFieldInjection {
                 Service info = field.getAnnotation(Service.class);
                 if (info != null && !info.name().isEmpty()) {
                     property = info.name();
-                    log.info("Using property '{}' from @Service annotation", info.name());
+                    log.debug("Using property '{}' from @Service annotation", info.name());
                 } else {
-                    log.info("Using property '{}' derived from field name", field.getName());
+                    log.debug("Using property '{}' derived from field name", field.getName());
                 }
 
                 if (DependencyInjection.hasServiceSetter(property, p) != null) {
-                    log.info("A service-setter method for '" + property
+                    log.debug("A service-setter method for '" + property
                             + "' exists, skipping field-injection for this service field.");
                 } else {
                     String refStr = params.get(property);

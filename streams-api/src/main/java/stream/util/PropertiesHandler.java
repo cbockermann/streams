@@ -85,6 +85,11 @@ public class PropertiesHandler {
         // Properties from URL
         else if (prop.hasAttribute("url")) {
             String purl = prop.getAttribute("url");
+            StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+            for (int i = 0; i < ste.length; i++) {
+                log.info("  {}", ste[i].getClassName() + "." + ste[i].getMethodName() + ":" + ste[i].getLineNumber());
+            }
+
             log.info("Reading properties from URL {}", purl);
             try {
                 // ORDER IMPORTANT
@@ -96,8 +101,7 @@ public class PropertiesHandler {
                 SourceURL propUrl = new SourceURL(purl);
 
                 Map<String, String> p = this.readProperties(propUrl.openStream());
-                // Properties p = new Properties();
-                // p.load(propUrl.openStream());
+
                 for (String k : p.keySet()) {
                     String key = k.toString().trim();
                     String value = p.get(key);
@@ -108,7 +112,7 @@ public class PropertiesHandler {
                         value = value.trim();
                     }
 
-                    log.info("Reading key '{}' = '{}'", key, value);
+                    log.debug("Reading key '{}' = '{}'", key, value);
                     try {
                         value = variables.expand(value, false);
                     } catch (Exception e) {

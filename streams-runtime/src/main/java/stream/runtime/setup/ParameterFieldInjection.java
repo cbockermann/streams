@@ -59,7 +59,7 @@ public class ParameterFieldInjection extends ParameterValueMapper {
             }
 
             if (ParameterMethodInjection.hasSetterFor(o, name, field.getType())) {
-                log.warn("Set-method defined for parameter '{}', skipping field-injection for this parameter.", name);
+                log.debug("Set-method defined for parameter '{}', skipping field-injection for this parameter.", name);
                 continue;
             }
 
@@ -92,14 +92,16 @@ public class ParameterFieldInjection extends ParameterValueMapper {
                 });
             } else {
                 log.debug("Leaving option field '{}' with no parameter value given untouched.", field.getName());
+                continue;
             }
 
             if (set != null) {
                 log.debug("Successfully injected value for parameter '{}'", name);
                 injected.add(name);
             } else {
-                log.warn("Failed to set value for parameter '{}' of class '{}' using field-injection", name,
-                        o.getClass().getCanonicalName());
+                log.warn(
+                        "Failed to set value for parameter '{}' of class '{}' using field-injection  (value was: '{}')",
+                        name, o.getClass().getCanonicalName(), value);
             }
 
             field.setAccessible(accessLevel);

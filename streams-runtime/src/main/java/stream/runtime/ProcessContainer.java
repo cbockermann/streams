@@ -72,6 +72,7 @@ import stream.service.Service;
 import stream.util.Variables;
 import stream.util.XIncluder;
 import stream.util.XMLUtils;
+import stream.utils.PrintGraph;
 import streams.application.ComputeGraph;
 import streams.runtime.Hook;
 import streams.runtime.Signals;
@@ -98,15 +99,13 @@ public class ProcessContainer implements IContainer, Runnable {
 
     final static List<ProcessContainer> container = new ArrayList<ProcessContainer>();
 
-    private Boolean runShutdownHook = true;
-
     static {
         // The rescue-shutdown handler in case the VM was killed by a signal...
         //
         log.debug("Adding container shutdown-hook");
         Thread t = new Thread() {
             public void run() {
-                log.info("Executing shutdown-hook...");
+                log.debug("Executing shutdown-hook...");
                 if ("disabled".equalsIgnoreCase(System.getProperty("container.shutdown-hook"))) {
                     log.warn("Shutdown-hook disabled...");
                     return;
@@ -538,41 +537,16 @@ public class ProcessContainer implements IContainer, Runnable {
 
         drawGraph();
 
-        log.info("ProcessContainer is initialized and ready to start:{}", this.toString());
+        log.debug("ProcessContainer is initialized and ready to start:{}", this.toString());
     }
 
     private void drawGraph() {
         ComputeGraph g = computeGraph();
 
-        log.info("######## Sources ########");
-        for (Object o : g.getSources()) {
-            if (o instanceof Source) {
-                log.info("########" + o.toString() + "########");
-                for (Object t : g.getTargets(o)) {
-                    log.info("\t==> " + t.toString());
-                }
-            }
+        String str = PrintGraph.print( g);
+        if( str != null && !str.trim().isEmpty() ){
+            stream.run.log.info( "Compute graph:\n\n{}", str);
         }
-
-        log.info("######## RootSources ########");
-        for (Object o : g.getRootSources()) {
-            log.info(o.toString());
-        }
-
-        // log.info("######## Targets ########");
-        // for (Object o : g.getTargets()) {
-        // log.info(o.toString());
-        // }
-
-        log.info("######## NonRefSinks ########");
-        for (Object o : g.getNonRefQueues()) {
-            log.info("########" + o.toString() + "########");
-            for (Object t : g.getSourcesFor(o)) {
-                log.info("\t==> " + t.toString());
-            }
-
-        }
-
     }
 
     public void registerQueue(String id, Queue queue, boolean externalListener) throws Exception {
@@ -702,7 +676,7 @@ public class ProcessContainer implements IContainer, Runnable {
             throw failFastReason;
         }
 
-//        Signals.register(supervisor);
+        //        Signals.register(supervisor);
 
         log.debug("{} processes started...", processesStarted);
         while (supervisor.processesDone() < processesStarted) {
@@ -749,21 +723,9 @@ public class ProcessContainer implements IContainer, Runnable {
     public void shutdown() {
         log.debug("shutdown()");
 
-        // SoftShutdown shut = new SoftShutdown(this);
-        // log.info("Starting shutdown object 'shut' = {}", shut);
-        // shut.start();
-        //
-        // synchronized (runShutdownHook) {
-        // if (!runShutdownHook)
-        // return;
-        //
-        // // ensure that the shutdown hook is only run *once*
-        // runShutdownHook = false;
-        // }
-
         if (this.supervisor != null) {
 
-            log.info("Calling supervisor.signal(0)!");
+            log.debug("Calling supervisor.signal(0)!");
             supervisor.signal(0);
 
             log.debug("Waiting for remaining processes...");
@@ -778,13 +740,6 @@ public class ProcessContainer implements IContainer, Runnable {
         } else {
             log.info("No supervisor installed; no clean-up!");
         }
-        //
-        // try {
-        // log.info("waiting on shut.join()...");
-        // shut.join();
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
     }
 
     /**

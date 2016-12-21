@@ -327,7 +327,7 @@ public class DefaultProcessFactory implements ProcessFactory {
                 }
                 // false id
                 else {
-                    log.warn(
+                    log.debug(
                             "Processor '{}' specifies an ID attribute '{}' but does not implement a Service interface. Processor will *not* be registered!",
                             o.getClass().getName(), params.get("id"));
                 }

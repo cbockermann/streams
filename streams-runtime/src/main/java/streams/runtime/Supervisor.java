@@ -64,7 +64,7 @@ public class Supervisor implements ProcessListener, Hook {
         while (it.hasNext()) {
             Process p = it.next();
             Set<Sink> outlets = this.collectSinks(p);
-            log.info("Process '{}' has {} outlets: {}", p, outlets.size(), outlets);
+            log.debug("Process '{}' has {} outlets: {}", p, outlets.size(), outlets);
         }
 
         // System.exit(-1);
@@ -76,7 +76,7 @@ public class Supervisor implements ProcessListener, Hook {
     @Override
     public synchronized void processStarted(Process p) {
         if (p instanceof Monitor) {
-            log.info("Monitor #{} started", p);
+            log.debug("Monitor #{} started", p);
             return;
         }
 
@@ -260,14 +260,14 @@ public class Supervisor implements ProcessListener, Hook {
     @Override
     public synchronized void signal(int flags) {
         // if (flags == Signals.SHUTDOWN) {
-        log.info("Shutdown signal received: '{}'", flags);
-        log.info("Closing root sources: {}", dependencies.getRootSources());
+        log.debug("Shutdown signal received: '{}'", flags);
+        log.debug("Closing root sources: {}", dependencies.getRootSources());
 
         final Set<Source> roots = dependencies.getRootSources();
 
         if (roots.isEmpty())
-        	return;
-        
+            return;
+
         Thread t = new Thread() {
             public void run() {
 

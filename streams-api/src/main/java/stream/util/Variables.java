@@ -312,6 +312,14 @@ public class Variables implements Map<String, String>, Serializable {
         return vals;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + "[" + new LinkedHashMap<String, String>(this).toString() + "]";
+    }
+
     public static Variables load(URL url) throws IOException {
 
         Variables vars = new Variables();

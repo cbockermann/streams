@@ -121,7 +121,7 @@ public class DependencyInjection {
                 log.info("</EXPERIMENTAL>");
 
             } else {
-                log.info("Object {} is not a partitioned-stream", s);
+                log.debug("Object {} is not a partitioned-stream", s);
                 streamPartitions.put(sid, stream);
             }
         }

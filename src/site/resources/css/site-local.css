@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300');
+
 body,p,li {
-   font-family: "Arial",Verdana,Arial,Helvetica;
+   font-family: 'Open Sans', sans-serif;
    font-size: 16px;
    line-height: 150%;
    color: #666;
@@ -7,7 +9,7 @@ body,p,li {
 
 body {
 //   background-color: #d0d0d0;
-   background-image: url('../images/header_bg.jpg' );
+//   background-image: url('../images/header_bg.jpg' );
 }
 
 .body {
@@ -30,7 +32,7 @@ body {
 }
 
 #bodyColumn {
-   margin-left: 260px;
+   margin-left: 80px;
 //   padding-top: 10px;
 }
 

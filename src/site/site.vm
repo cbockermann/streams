@@ -422,6 +422,7 @@
   <head>
     <title>$title</title>
     
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
 
     <style type="text/css" media="all">
       @import url("$relativePath/css/maven-base.css");

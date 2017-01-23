@@ -3,7 +3,7 @@
 	<groupId>de.sfb876</groupId>
 	<artifactId>streams</artifactId>
 	<name>streams</name>
-	<version>0.9.28-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<description>The streams library is a multi-module library for processing data from data streams</description>
 
@@ -256,7 +256,7 @@
 		<url>https://bitbucket.org/cbockermann/streams</url>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/cbockermann/streams</developerConnection>
 		<connection>scm:git:ssh://git@bitbucket.org/cbockermann/streams</connection>
-	  <tag>HEAD</tag>
+	  <tag>streams-1.0.0</tag>
   </scm>
 
 

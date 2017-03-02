@@ -38,11 +38,9 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 	protected transient ProcessContext context;
 
 	/**
-	 * @see stream.StatefulProcessor#init()
-	 * @param ctx
-	 *            The process context.
-	 * @throws ex
-	 *             An exception if initialization fails.
+	 * @see StatefulProcessor#init(ProcessContext)
+	 *
+	 * @param ctx	The process context.
 	 */
 	@Override
 	public void init(ProcessContext ctx) throws Exception {
@@ -51,10 +49,7 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 
 	/**
 	 * @see stream.StatefulProcessor#resetState()
-	 * 
-	 * @throws ex
-	 *             An exception if resetting the state (e.g. after recovery)
-	 *             fails.
+	 *
 	 */
 	@Override
 	public void resetState() throws Exception {
@@ -63,8 +58,6 @@ public abstract class AbstractProcessor implements StatefulProcessor {
 	/**
 	 * @see stream.StatefulProcessor#finish()
 	 * 
-	 * @throws ex
-	 *             An exception if a proper shut down of this component fails.
 	 */
 	@Override
 	public void finish() throws Exception {

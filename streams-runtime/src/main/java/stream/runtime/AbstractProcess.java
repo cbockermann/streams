@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.Context;
 import stream.Data;
+import stream.Process;
 import stream.ProcessContext;
 import stream.Processor;
 import stream.StatefulProcessor;
@@ -132,7 +133,7 @@ public abstract class AbstractProcess implements stream.Process {
     }
 
     /**
-     * @see stream.DataProcessor#init(stream.runtime.Context)
+     * @see Process#init(ApplicationContext)
      */
     public void init(ApplicationContext context) throws Exception {
 
@@ -147,7 +148,7 @@ public abstract class AbstractProcess implements stream.Process {
     }
 
     /**
-     * @see stream.DataProcessor#finish()
+     * @see Process#finish()
      */
     public void finish() throws Exception {
         log.debug("Finishing process {} (source: {})...", this, this.getInput());

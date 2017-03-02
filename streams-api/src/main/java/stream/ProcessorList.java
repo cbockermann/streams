@@ -68,7 +68,7 @@ public class ProcessorList extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#init(stream.Context)
+	 * @see stream.AbstractProcessor#init(ProcessContext)
 	 */
 	@Override
 	public void init(ProcessContext context) throws Exception {
@@ -82,7 +82,7 @@ public class ProcessorList extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#finish()
+	 * @see AbstractProcessor#finish()
 	 */
 	@Override
 	public void finish() throws Exception {

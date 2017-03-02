@@ -102,7 +102,7 @@ public class Emitter extends ConditionedProcessor {
 
     @Override
     public String toString() {
-        return "Emitter [sinks=" + Arrays.toString(sinks) + ", keys=" + keys + "]";
+        return "Emitter@" + this.hashCode() + " [sinks=" + Arrays.toString(sinks) + ", keys=" + keys + "]";
     }
 
     public Keys getKeys() {

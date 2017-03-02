@@ -1,3 +1,7 @@
+body, p, div {
+	font-family: 'Open Sans', sans-serif;
+}
+
 .sidebar {
    width: 220px;
 }

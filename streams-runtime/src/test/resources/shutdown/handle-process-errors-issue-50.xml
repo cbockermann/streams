@@ -1,0 +1,12 @@
+<container>
+
+	<stream id="input" class="stream.test.TestStream" limit = "10" />
+
+	<process input="input">
+
+		<streams.test.ProduceErrorAfterNitems n="5" />
+		<stream.test.LogData />
+		
+	</process>
+	
+</container>

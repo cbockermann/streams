@@ -77,7 +77,7 @@ public class ParameterMethodInjection extends ParameterValueMapper {
 
                     if (p.name() != null && !p.name().isEmpty()) {
                         key = p.name();
-                        log.info("Using parameter name '{}' from annotation", key);
+                        log.debug("Using parameter name '{}' from annotation", key);
                     }
 
                     required = p.required();

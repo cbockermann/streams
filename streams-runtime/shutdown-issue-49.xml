@@ -1,0 +1,26 @@
+<container>
+    <property name="num_copies" value="2" />
+
+    <stream id="random" class="stream.generator.RandomStream" limit="100" />
+
+    <queue id="result" />
+    <queue id="out" />
+
+
+    <process id="receiver:${copy.id}" input="random" copies="${num_copies}">
+        <Enqueue queue="result"/>
+    </process>
+
+
+    <process input="result" id="filter" >
+        <If condition="%{data.att1} &gt; 2.0">
+            <PrintData/>
+	    <Enqueue queue="out" />
+        </If>
+    </process>
+
+
+    <process input="out" id="printer">
+    	<PrintData prefix="printer: " />
+    </process>
+</container>

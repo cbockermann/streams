@@ -1,0 +1,7 @@
+<module>
+    
+    <process id="${myId}" input="src">
+		<PrintData/>
+    </process>
+    
+</module>

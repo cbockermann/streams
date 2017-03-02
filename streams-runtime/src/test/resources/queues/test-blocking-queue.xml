@@ -6,9 +6,7 @@
 
 <Container>
 
-	<Property name="limit" value="110" />
-
-	<Stream id="random" class="stream.io.RandomStream" limit="${limit}"
+	<Stream id="random" class="stream.io.RandomStream" limit="110"
 		sequenceKey="@source:item" />
 
 
@@ -27,8 +25,8 @@
 	<!-- 
 		<PrintData />
 	 -->
-		<!-- <stream.test.AddDelayAfter100Items /> -->
-		<stream.test.Collector id="collected" />
+		<stream.test.AddDelayAfter100Items />
+		<stream.test.Collector id="collected-${test-uuid}" />
 	</process>
 
 </Container>

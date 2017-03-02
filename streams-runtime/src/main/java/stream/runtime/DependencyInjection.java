@@ -121,7 +121,7 @@ public class DependencyInjection {
                 log.info("</EXPERIMENTAL>");
 
             } else {
-                log.info("Object {} is not a partitioned-stream", s);
+                log.debug("Object {} is not a partitioned-stream", s);
                 streamPartitions.put(sid, stream);
             }
         }
@@ -183,6 +183,7 @@ public class DependencyInjection {
                 log.debug("Creating implicitly defined queue: {}", queue);
                 sinks[i] = queue;
             }
+            log.debug("EDGE:  Adding {} -> {}", ref.object(), sinks[i]);
             graph.add(ref.object(), sinks[i]);
         }
         return injectResolvedReferences(ref.object(), ref.property(), sinks);

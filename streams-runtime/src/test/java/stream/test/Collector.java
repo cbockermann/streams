@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import stream.Data;
 import stream.Processor;
 
@@ -36,30 +39,34 @@ import stream.Processor;
  */
 public class Collector implements Processor, CollectorService {
 
-	protected final ArrayList<Data> collected = new ArrayList<Data>();
+    static Logger log = LoggerFactory.getLogger(Collector.class);
+    protected final ArrayList<Data> collected = new ArrayList<Data>();
 
-	/**
-	 * @see stream.Processor#process(stream.Data)
-	 */
-	@Override
-	public Data process(Data input) {
-		collected.add(input);
-		return input;
-	}
+    /**
+     * @see stream.Processor#process(stream.Data)
+     */
+    @Override
+    public Data process(Data input) {
+        collected.add(input);
+        log.info("collector contains {} elements", collected.size());
+        return input;
+    }
 
-	/**
-	 * @see stream.service.Service#reset()
-	 */
-	@Override
-	public void reset() throws Exception {
-		collected.clear();
-	}
+    /**
+     * @see stream.service.Service#reset()
+     */
+    @Override
+    public void reset() throws Exception {
+        log.info("Clearing collection (removing {} elements)", collected.size());
+        collected.clear();
+    }
 
-	/**
-	 * @see stream.test.CollectorService#getCollection()
-	 */
-	@Override
-	public List<Data> getCollection() {
-		return Collections.unmodifiableList(collected);
-	}
+    /**
+     * @see stream.test.CollectorService#getCollection()
+     */
+    @Override
+    public List<Data> getCollection() {
+        log.info("Returning {} collected items", collected.size());
+        return Collections.unmodifiableList(collected);
+    }
 }

@@ -33,309 +33,313 @@ import streams.application.ComputeGraph;
  */
 public class ApplicationBuilder {
 
-	static Logger log = LoggerFactory.getLogger(ApplicationBuilder.class);
+    static Logger log = LoggerFactory.getLogger(ApplicationBuilder.class);
 
-	public static ComputeGraph parseGraph(SourceURL url) throws Exception {
-		Document doc = XMLUtils.parseDocument(url.openStream());
-		return parseGraph(doc);
-	}
+    public static ComputeGraph parseGraph(SourceURL url) throws Exception {
+        Document doc = XMLUtils.parseDocument(url.openStream());
+        return parseGraph(doc);
+    }
 
-	public static ComputeGraph parseGraph(Document doc) throws Exception {
+    public static ComputeGraph parseGraph(Document doc) throws Exception {
 
-		ComputeGraph graph = new ComputeGraph();
+        ComputeGraph graph = new ComputeGraph();
 
-		NodeList streams = doc.getElementsByTagName("stream");
-		for (int i = 0; i < streams.getLength(); i++) {
+        List<Element> streams = XMLUtils.getElementsByName(doc.getDocumentElement(), "stream");
+        streams.addAll(XMLUtils.getElementsByName(doc.getDocumentElement(), "Stream"));
 
-			Element stream = (Element) streams.item(i);
-			String id = stream.getAttribute("id");
+        for (int i = 0; i < streams.size(); i++) {
 
-			StreamNode sn = new StreamNode();
-			sn.putAll(XMLUtils.getAttributes(stream));
-			graph.addStream(id, sn);
-		}
+            Element stream = (Element) streams.get(i);
+            String id = stream.getAttribute("id");
 
-		NodeList procs = doc.getElementsByTagName("process");
-		for (int i = 0; i < procs.getLength(); i++) {
-			Element proc = (Element) procs.item(i);
-			String id = proc.getAttribute("id");
-			if (id == null) {
-				id = UUID.randomUUID().toString();
-			}
+            StreamNode sn = new StreamNode();
+            sn.putAll(XMLUtils.getAttributes(stream));
+            graph.addStream(id, sn);
+        }
 
-			ProcessNode process = new ProcessNode();
-			graph.addProcess(id, process);
+        List<Element> procs = XMLUtils.getElementsByName(doc.getDocumentElement(), "process");
+        procs.addAll(XMLUtils.getElementsByName(doc.getDocumentElement(), "Process"));
 
-			String input = proc.getAttribute("input");
-			if (input == null) {
-				throw new RuntimeException("Process '" + id + "' is not connected to any input!");
-			}
+        for (int i = 0; i < procs.size(); i++) {
+            Element proc = (Element) procs.get(i);
+            String id = proc.getAttribute("id");
+            if (id == null || id.trim().isEmpty()) {
+                id = UUID.randomUUID().toString();
+            }
 
-			Source src = graph.sources().get(input);
-			if (src == null) {
-				throw new RuntimeException("Process '" + id + "' references unknown input '" + input + "'!");
-			}
+            ProcessNode process = new ProcessNode();
+            graph.addProcess(id, process);
 
-			Object last = src;
+            String input = proc.getAttribute("input");
+            if (input == null) {
+                throw new RuntimeException("Process '" + id + "' is not connected to any input!");
+            }
 
-			NodeList inner = proc.getChildNodes();
-			for (int j = 0; j < inner.getLength(); j++) {
-				Node n = inner.item(j);
-				if (n.getNodeType() == Node.ELEMENT_NODE) {
-					Element el = (Element) n;
+            Source src = graph.sources().get(input);
+            if (src == null) {
+                throw new RuntimeException("Process '" + id + "' references unknown input '" + input + "'!");
+            }
 
-					ProcessorNode p = new ProcessorNode();
-					p.put("class", el.getNodeName());
+            Object last = src;
 
-					Map<String, String> params = XMLUtils.getAttributes(el);
-					for (String key : params.keySet()) {
-						p.put(key, params.get(key));
-					}
-					graph.add(p);
+            NodeList inner = proc.getChildNodes();
+            for (int j = 0; j < inner.getLength(); j++) {
+                Node n = inner.item(j);
+                if (n.getNodeType() == Node.ELEMENT_NODE) {
+                    Element el = (Element) n;
 
-					graph.add(last, p);
+                    ProcessorNode p = new ProcessorNode();
+                    p.put("class", el.getNodeName());
 
-					process.add(p);
-					last = p;
-				}
-			}
+                    Map<String, String> params = XMLUtils.getAttributes(el);
+                    for (String key : params.keySet()) {
+                        p.put(key, params.get(key));
+                    }
+                    graph.add(p);
 
-			// graph.add(src, process);
-		}
+                    graph.add(last, p);
 
-		return graph;
-	}
+                    process.add(p);
+                    last = p;
+                }
+            }
 
-	public static class StreamNode extends AbstractStream implements stream.util.Node {
-		final Map<String, String> attributes = new LinkedHashMap<String, String>();
+            // graph.add(src, process);
+        }
 
-		/**
-		 * @see stream.io.AbstractStream#readNext()
-		 */
-		@Override
-		public Data readNext() throws Exception {
-			return null;
-		}
+        return graph;
+    }
 
-		/**
-		 * @param key
-		 * @return
-		 * @see java.util.Map#get(java.lang.Object)
-		 */
-		public String get(Object key) {
-			return attributes.get(key);
-		}
+    public static class StreamNode extends AbstractStream implements stream.util.Node {
+        final Map<String, String> attributes = new LinkedHashMap<String, String>();
 
-		/**
-		 * @param key
-		 * @param value
-		 * @return
-		 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-		 */
-		public String put(String key, String value) {
-			return attributes.put(key, value);
-		}
+        /**
+         * @see stream.io.AbstractStream#readNext()
+         */
+        @Override
+        public Data readNext() throws Exception {
+            return null;
+        }
 
-		/**
-		 * @return
-		 * @see java.util.Map#keySet()
-		 */
-		public Set<String> keySet() {
-			return attributes.keySet();
-		}
+        /**
+         * @param key
+         * @return
+         * @see java.util.Map#get(java.lang.Object)
+         */
+        public String get(Object key) {
+            return attributes.get(key);
+        }
 
-		/**
-		 * @param m
-		 * @see java.util.Map#putAll(java.util.Map)
-		 */
-		public void putAll(Map<? extends String, ? extends String> m) {
-			attributes.putAll(m);
-		}
+        /**
+         * @param key
+         * @param value
+         * @return
+         * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+         */
+        public String put(String key, String value) {
+            return attributes.put(key, value);
+        }
 
-		/**
-		 * @see stream.util.Node#set(java.lang.String, java.lang.String)
-		 */
-		@Override
-		public stream.util.Node set(String key, String value) {
-			if (value == null)
-				this.attributes.remove(key);
-			else
-				this.attributes.put(key, value);
-			return this;
-		}
+        /**
+         * @return
+         * @see java.util.Map#keySet()
+         */
+        public Set<String> keySet() {
+            return attributes.keySet();
+        }
 
-		/**
-		 * @see stream.util.Node#attributes()
-		 */
-		@Override
-		public Map<String, String> attributes() {
-			return Collections.unmodifiableMap(attributes);
-		}
-	}
+        /**
+         * @param m
+         * @see java.util.Map#putAll(java.util.Map)
+         */
+        public void putAll(Map<? extends String, ? extends String> m) {
+            attributes.putAll(m);
+        }
 
-	public static class ProcessorNode implements Processor, stream.util.Node {
-		final Map<String, String> attributes = new LinkedHashMap<String, String>();
+        /**
+         * @see stream.util.Node#set(java.lang.String, java.lang.String)
+         */
+        @Override
+        public stream.util.Node set(String key, String value) {
+            if (value == null)
+                this.attributes.remove(key);
+            else
+                this.attributes.put(key, value);
+            return this;
+        }
 
-		/**
-		 * @see stream.Processor#process(stream.Data)
-		 */
-		@Override
-		public Data process(Data input) {
-			return input;
-		}
+        /**
+         * @see stream.util.Node#attributes()
+         */
+        @Override
+        public Map<String, String> attributes() {
+            return Collections.unmodifiableMap(attributes);
+        }
+    }
 
-		/**
-		 * @param key
-		 * @return
-		 * @see java.util.Map#get(java.lang.Object)
-		 */
-		public String get(Object key) {
-			return attributes.get(key);
-		}
+    public static class ProcessorNode implements Processor, stream.util.Node {
+        final Map<String, String> attributes = new LinkedHashMap<String, String>();
 
-		/**
-		 * @param key
-		 * @param value
-		 * @return
-		 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-		 */
-		public String put(String key, String value) {
-			return attributes.put(key, value);
-		}
+        /**
+         * @see stream.Processor#process(stream.Data)
+         */
+        @Override
+        public Data process(Data input) {
+            return input;
+        }
 
-		/**
-		 * @return
-		 * @see java.util.Map#keySet()
-		 */
-		public Set<String> keySet() {
-			return attributes.keySet();
-		}
+        /**
+         * @param key
+         * @return
+         * @see java.util.Map#get(java.lang.Object)
+         */
+        public String get(Object key) {
+            return attributes.get(key);
+        }
 
-		public Map<String, String> attributes() {
-			return Collections.unmodifiableMap(attributes);
-		}
+        /**
+         * @param key
+         * @param value
+         * @return
+         * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+         */
+        public String put(String key, String value) {
+            return attributes.put(key, value);
+        }
 
-		/**
-		 * @see stream.util.Node#set(java.lang.String, java.lang.String)
-		 */
-		@Override
-		public stream.util.Node set(String key, String value) {
-			if (value == null)
-				this.attributes.remove(key);
-			else
-				this.attributes.put(key, value);
-			return this;
-		}
-	}
+        /**
+         * @return
+         * @see java.util.Map#keySet()
+         */
+        public Set<String> keySet() {
+            return attributes.keySet();
+        }
 
-	public static class ProcessNode implements stream.Process, stream.util.Node {
+        public Map<String, String> attributes() {
+            return Collections.unmodifiableMap(attributes);
+        }
 
-		final ArrayList<Processor> processors = new ArrayList<Processor>();
-		final Map<String, String> properties = new LinkedHashMap<String, String>();
-		Source input;
-		Sink output;
+        /**
+         * @see stream.util.Node#set(java.lang.String, java.lang.String)
+         */
+        @Override
+        public stream.util.Node set(String key, String value) {
+            if (value == null)
+                this.attributes.remove(key);
+            else
+                this.attributes.put(key, value);
+            return this;
+        }
+    }
 
-		/**
-		 * @see stream.runtime.LifeCycle#init(stream.Context)
-		 */
-		@Override
-		public void init(ApplicationContext context) throws Exception {
-		}
+    public static class ProcessNode implements stream.Process, stream.util.Node {
 
-		/**
-		 * @see stream.runtime.LifeCycle#finish()
-		 */
-		@Override
-		public void finish() throws Exception {
-		}
+        final ArrayList<Processor> processors = new ArrayList<Processor>();
+        final Map<String, String> properties = new LinkedHashMap<String, String>();
+        Source input;
+        Sink output;
 
-		/**
-		 * @see stream.Process#setInput(stream.io.Source)
-		 */
-		@Override
-		public void setInput(Source ds) {
-			this.input = ds;
-		}
+        /**
+         * @see stream.runtime.LifeCycle#init(stream.Context)
+         */
+        @Override
+        public void init(ApplicationContext context) throws Exception {
+        }
 
-		/**
-		 * @see stream.Process#getInput()
-		 */
-		@Override
-		public Source getInput() {
-			return input;
-		}
+        /**
+         * @see stream.runtime.LifeCycle#finish()
+         */
+        @Override
+        public void finish() throws Exception {
+        }
 
-		/**
-		 * @see stream.Process#setOutput(stream.io.Sink)
-		 */
-		@Override
-		public void setOutput(Sink sink) {
-			this.output = sink;
-		}
+        /**
+         * @see stream.Process#setInput(stream.io.Source)
+         */
+        @Override
+        public void setInput(Source ds) {
+            this.input = ds;
+        }
 
-		/**
-		 * @see stream.Process#getOutput()
-		 */
-		@Override
-		public Sink getOutput() {
-			return output;
-		}
+        /**
+         * @see stream.Process#getInput()
+         */
+        @Override
+        public Source getInput() {
+            return input;
+        }
 
-		/**
-		 * @see stream.Process#add(stream.Processor)
-		 */
-		@Override
-		public void add(Processor p) {
-			processors.add(p);
-		}
+        /**
+         * @see stream.Process#setOutput(stream.io.Sink)
+         */
+        @Override
+        public void setOutput(Sink sink) {
+            this.output = sink;
+        }
 
-		/**
-		 * @see stream.Process#remove(stream.Processor)
-		 */
-		@Override
-		public void remove(Processor p) {
-			processors.remove(p);
-		}
+        /**
+         * @see stream.Process#getOutput()
+         */
+        @Override
+        public Sink getOutput() {
+            return output;
+        }
 
-		/**
-		 * @see stream.Process#getProcessors()
-		 */
-		@Override
-		public List<Processor> getProcessors() {
-			return processors;
-		}
+        /**
+         * @see stream.Process#add(stream.Processor)
+         */
+        @Override
+        public void add(Processor p) {
+            processors.add(p);
+        }
 
-		/**
-		 * @see stream.Process#execute()
-		 */
-		@Override
-		public void execute() throws Exception {
-		}
+        /**
+         * @see stream.Process#remove(stream.Processor)
+         */
+        @Override
+        public void remove(Processor p) {
+            processors.remove(p);
+        }
 
-		/**
-		 * @see stream.Process#getProperties()
-		 */
-		@Override
-		public Map<String, String> getProperties() {
-			return properties;
-		}
+        /**
+         * @see stream.Process#getProcessors()
+         */
+        @Override
+        public List<Processor> getProcessors() {
+            return processors;
+        }
 
-		public Map<String, String> attributes() {
-			return Collections.unmodifiableMap(properties);
-		}
+        /**
+         * @see stream.Process#execute()
+         */
+        @Override
+        public void execute() throws Exception {
+        }
 
-		/**
-		 * @see stream.util.Node#set(java.lang.String, java.lang.String)
-		 */
-		@Override
-		public stream.util.Node set(String key, String value) {
-			if (value == null) {
-				properties.remove(key);
-			} else {
-				properties.put(key, value);
-			}
-			return this;
-		}
+        /**
+         * @see stream.Process#getProperties()
+         */
+        @Override
+        public Map<String, String> getProperties() {
+            return properties;
+        }
 
-	}
+        public Map<String, String> attributes() {
+            return Collections.unmodifiableMap(properties);
+        }
+
+        /**
+         * @see stream.util.Node#set(java.lang.String, java.lang.String)
+         */
+        @Override
+        public stream.util.Node set(String key, String value) {
+            if (value == null) {
+                properties.remove(key);
+            } else {
+                properties.put(key, value);
+            }
+            return this;
+        }
+
+    }
 }

@@ -1,0 +1,16 @@
+<!-- 
+    This simple container experiment checks whether the ServiceInjection is working properly.
+ -->
+<application>
+
+	<Stream id="input" class="stream.test.TestStream" limit = "10" />
+
+	<Process input="input">
+	
+		<streams.service.UseOptionalService />
+
+		<stream.test.LogData />
+		
+	</Process>
+	
+</application>

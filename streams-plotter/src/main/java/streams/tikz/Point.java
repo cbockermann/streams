@@ -3,10 +3,15 @@
  */
 package streams.tikz;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class Point {
+public class Point implements Serializable {
+
+    /** The unique class ID */
+    private static final long serialVersionUID = 2491772211201774332L;
+
     public final Double x;
     public final Double y;
     public Double energy = 1.0;

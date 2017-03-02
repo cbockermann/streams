@@ -1,0 +1,12 @@
+<application>
+    
+    
+    <properties>
+		<myId>123456</myId>        
+    </properties>
+    
+    <stream id="src" class="streams.io.TestStream" limit="10" />
+    
+    <include url="file:src/test/resources/xml/included.xml" />
+    
+</application>

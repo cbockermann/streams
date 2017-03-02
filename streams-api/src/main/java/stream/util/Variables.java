@@ -48,302 +48,298 @@ import org.slf4j.LoggerFactory;
  */
 public class Variables implements Map<String, String>, Serializable {
 
-	/** The unique class ID */
-	private static final long serialVersionUID = -8120239592664368847L;
+    /** The unique class ID */
+    private static final long serialVersionUID = -8120239592664368847L;
 
-	/* A global logger for this class */
-	static Logger log = LoggerFactory.getLogger(Variables.class);
+    /* A global logger for this class */
+    static Logger log = LoggerFactory.getLogger(Variables.class);
 
-	public final static String VAR_PREFIX = "${";
-	public final static String VAR_SUFFIX = "}";
+    public final static String VAR_PREFIX = "${";
+    public final static String VAR_SUFFIX = "}";
 
-	Variables parentContext = null;
+    Variables parentContext = null;
 
-	/* The variables available in this context */
-	protected HashMap<String, String> variables = new HashMap<String, String>();
+    /* The variables available in this context */
+    protected HashMap<String, String> variables = new HashMap<String, String>();
 
-	public Variables() {
-		this(new HashMap<String, String>());
-	}
+    public Variables() {
+        this(new HashMap<String, String>());
+    }
 
-	public Variables(Variables root) {
-		variables = new HashMap<String, String>();
-		this.parentContext = root;
-	}
+    public Variables(Variables root) {
+        variables = new HashMap<String, String>();
+        this.parentContext = root;
+    }
 
-	public Variables(Map<String, String> variables) {
-		this.variables = new HashMap<String, String>(variables);
-	}
+    public Variables(Map<String, String> variables) {
+        this.variables = new HashMap<String, String>(variables);
+    }
 
-	public Variables(Properties p) {
-		this.variables = new HashMap<String, String>();
-		for (Object k : p.keySet())
-			variables.put(k.toString(), p.getProperty(k.toString()));
-	}
+    public Variables(Properties p) {
+        this.variables = new HashMap<String, String>();
+        for (Object k : p.keySet())
+            variables.put(k.toString(), p.getProperty(k.toString()));
+    }
 
-	public void addVariables(Map<String, String> vars) {
-		for (String key : vars.keySet())
-			variables.put(key, vars.get(key));
-	}
+    public void addVariables(Map<String, String> vars) {
+        for (String key : vars.keySet())
+            variables.put(key, vars.get(key));
+    }
 
-	public void set(String key, String val) {
-		variables.put(key, val);
-	}
+    public void set(String key, String val) {
+        variables.put(key, val);
+    }
 
-	public void expandAndAdd(Map<String, String> vars) {
-		Map<String, String> vals = expandAll(vars);
-		for (String key : vals.keySet()) {
-			variables.put(key, vals.get(key));
-		}
-	}
+    public void expandAndAdd(Map<String, String> vars) {
+        Map<String, String> vals = expandAll(vars);
+        for (String key : vals.keySet()) {
+            variables.put(key, vals.get(key));
+        }
+    }
 
-	public Map<String, String> expandAll(Map<String, String> vars) {
-		Map<String, String> expanded = new LinkedHashMap<String, String>();
-		for (String var : vars.keySet()) {
-			expanded.put(var, expand(vars.get(var)));
-		}
-		return expanded;
-	}
+    public Map<String, String> expandAll(Map<String, String> vars) {
+        Map<String, String> expanded = new LinkedHashMap<String, String>();
+        for (String var : vars.keySet()) {
+            expanded.put(var, expand(vars.get(var)));
+        }
+        return expanded;
+    }
 
-	public String expand(String str, boolean replaceMissing) {
-		return substitute(str, replaceMissing);
-	}
+    public String expand(String str, boolean replaceMissing) {
+        return substitute(str, replaceMissing);
+    }
 
-	public String expand(String str) {
-		return substitute(str, false);
-	}
+    public String expand(String str) {
+        return substitute(str, false);
+    }
 
-	public String expand(String str, boolean replaceMissing, boolean postpone) {
-		return substitute(str, replaceMissing, postpone);
-	}
+    public String expand(String str, boolean replaceMissing, boolean postpone) {
+        return substitute(str, replaceMissing, postpone);
+    }
 
-	public String substitute(String str, boolean replaceMissing) {
-		return substitute(str, replaceMissing, false);
-	}
+    public String substitute(String str, boolean replaceMissing) {
+        return substitute(str, replaceMissing, false);
+    }
 
-	private String substitute(String str, boolean replaceMissing,
-			boolean postpone) {
-		String content = str;
-		// ${p1.${p2}_${p3.${p4}}}
-		int t = 0;
-		while (content.indexOf(VAR_PREFIX, t) > -1) {
-			int start = content.indexOf(VAR_PREFIX, t);
-			int start2 = content.indexOf(VAR_PREFIX,
-					start + VAR_PREFIX.length());
-			int end = content.indexOf(VAR_SUFFIX, start + 1);
-			if (start2 >= 0 && start2 < end) {
-				t = start2;
-				continue;
-			}
-			if (end >= start + VAR_PREFIX.length()) {
-				String variable = content.substring(
-						start + VAR_PREFIX.length(), end);
-				log.debug("Found variable: {}", variable);
-				log.trace("   content is: {}", content);
-				if (containsKey(variable)) {
-					String repl = get(variable);
-					if (repl == null)
-						log.info("lookup of '{}' revealed: {}", variable, repl);
-					content = content.substring(0, start) + get(variable)
-							+ content.substring(end + 1);
-				} else {
+    private String substitute(String str, boolean replaceMissing, boolean postpone) {
+        String content = str;
+        // ${p1.${p2}_${p3.${p4}}}
+        int t = 0;
+        while (content.indexOf(VAR_PREFIX, t) > -1) {
+            int start = content.indexOf(VAR_PREFIX, t);
+            int start2 = content.indexOf(VAR_PREFIX, start + VAR_PREFIX.length());
+            int end = content.indexOf(VAR_SUFFIX, start + 1);
+            if (start2 >= 0 && start2 < end) {
+                t = start2;
+                continue;
+            }
+            if (end >= start + VAR_PREFIX.length()) {
+                String variable = content.substring(start + VAR_PREFIX.length(), end);
+                log.debug("Found variable: {} (value: '{}')", variable, content);
+                if (containsKey(variable)) {
+                    String repl = get(variable);
+                    if (repl == null)
+                        log.debug("lookup of '{}' revealed: {}", variable, repl);
+                    content = content.substring(0, start) + get(variable) + content.substring(end + 1);
+                } else {
 
-					if (replaceMissing)
-						content = content.substring(0, start) + ""
-								+ content.substring(end + 1);
-					else {
-						if (postpone) {
-							log.warn(
-									"Cannot resolve variable '{}' in '{}' => need to be resolved at a later stage!",
-									variable, str);
-							content = content.substring(0, start) + VAR_PREFIX
-									+ variable + VAR_SUFFIX
-									+ content.substring(end + 1);
-							t = end + 1;
-							continue;
-						} else {
-							throw new IllegalArgumentException("Property "
-									+ variable + " is not set.");
-						}
-					}
-				}
-			}
-			t = 0;
-		}
-		return content;
-	}
+                    if (replaceMissing)
+                        content = content.substring(0, start) + "" + content.substring(end + 1);
+                    else {
+                        if (postpone) {
+                            log.warn("Cannot resolve variable '{}' in '{}' => need to be resolved at a later stage!",
+                                    variable, str);
+                            content = content.substring(0, start) + VAR_PREFIX + variable + VAR_SUFFIX
+                                    + content.substring(end + 1);
+                            t = end + 1;
+                            continue;
+                        } else {
+                            throw new IllegalArgumentException("Property " + variable + " is not set.");
+                        }
+                    }
+                }
+            }
+            t = 0;
+        }
+        return content;
+    }
 
-	protected boolean containsKey(String key) {
-		return variables.containsKey(key)
-				|| (parentContext != null && parentContext.containsKey(key));
-	}
+    protected boolean containsKey(String key) {
+        return variables.containsKey(key) || (parentContext != null && parentContext.containsKey(key));
+    }
 
-	public String get(String key) {
+    public String get(String key) {
 
-		String val = variables.get(key);
-		if (val != null) {
-			return val;
-		}
+        String val = variables.get(key);
+        if (val != null) {
+            return val;
+        }
 
-		if (parentContext != null) {
-			val = parentContext.get(key);
-		}
-		//
-		// if (val == null) {
-		// val = System.getProperty(key);
-		// }
+        if (parentContext != null) {
+            val = parentContext.get(key);
+        }
+        //
+        // if (val == null) {
+        // val = System.getProperty(key);
+        // }
 
-		return val;
-	}
+        return val;
+    }
 
-	/**
-	 * @see java.util.Map#clear()
-	 */
-	@Override
-	public void clear() {
-		variables.clear();
-	}
+    /**
+     * @see java.util.Map#clear()
+     */
+    @Override
+    public void clear() {
+        variables.clear();
+    }
 
-	/**
-	 * @see java.util.Map#containsKey(java.lang.Object)
-	 */
-	@Override
-	public boolean containsKey(Object key) {
-		if (parentContext != null) {
-			return parentContext.containsKey(key) || variables.containsKey(key);
-		}
+    /**
+     * @see java.util.Map#containsKey(java.lang.Object)
+     */
+    @Override
+    public boolean containsKey(Object key) {
+        if (parentContext != null) {
+            return parentContext.containsKey(key) || variables.containsKey(key);
+        }
 
-		return variables.containsKey(key);
-	}
+        return variables.containsKey(key);
+    }
 
-	/**
-	 * @see java.util.Map#containsValue(java.lang.Object)
-	 */
-	@Override
-	public boolean containsValue(Object value) {
-		if (parentContext != null) {
-			return parentContext.containsValue(value)
-					|| variables.containsValue(value);
-		}
+    /**
+     * @see java.util.Map#containsValue(java.lang.Object)
+     */
+    @Override
+    public boolean containsValue(Object value) {
+        if (parentContext != null) {
+            return parentContext.containsValue(value) || variables.containsValue(value);
+        }
 
-		return variables.containsValue(value);
-	}
+        return variables.containsValue(value);
+    }
 
-	/**
-	 * @see java.util.Map#entrySet()
-	 */
-	@Override
-	public Set<java.util.Map.Entry<String, String>> entrySet() {
-		Set<java.util.Map.Entry<String, String>> entries = new LinkedHashSet<java.util.Map.Entry<String, String>>();
-		if (parentContext != null) {
-			entries.addAll(parentContext.entrySet());
-		}
-		entries.addAll(variables.entrySet());
-		return entries;
-	}
+    /**
+     * @see java.util.Map#entrySet()
+     */
+    @Override
+    public Set<java.util.Map.Entry<String, String>> entrySet() {
+        Set<java.util.Map.Entry<String, String>> entries = new LinkedHashSet<java.util.Map.Entry<String, String>>();
+        if (parentContext != null) {
+            entries.addAll(parentContext.entrySet());
+        }
+        entries.addAll(variables.entrySet());
+        return entries;
+    }
 
-	/**
-	 * @see java.util.Map#get(java.lang.Object)
-	 */
-	@Override
-	public String get(Object key) {
-		if (key == null)
-			return null;
-		return get(key.toString());
-	}
+    /**
+     * @see java.util.Map#get(java.lang.Object)
+     */
+    @Override
+    public String get(Object key) {
+        if (key == null)
+            return null;
+        return get(key.toString());
+    }
 
-	/**
-	 * @see java.util.Map#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		if (parentContext != null)
-			return variables.isEmpty() && parentContext.isEmpty();
-		return variables.isEmpty();
-	}
+    /**
+     * @see java.util.Map#isEmpty()
+     */
+    @Override
+    public boolean isEmpty() {
+        if (parentContext != null)
+            return variables.isEmpty() && parentContext.isEmpty();
+        return variables.isEmpty();
+    }
 
-	/**
-	 * @see java.util.Map#keySet()
-	 */
-	@Override
-	public Set<String> keySet() {
-		if (parentContext != null) {
-			Set<String> keys = new TreeSet<String>(parentContext.keySet());
-			keys.addAll(variables.keySet());
-			return keys;
-		}
+    /**
+     * @see java.util.Map#keySet()
+     */
+    @Override
+    public Set<String> keySet() {
+        if (parentContext != null) {
+            Set<String> keys = new TreeSet<String>(parentContext.keySet());
+            keys.addAll(variables.keySet());
+            return keys;
+        }
 
-		return variables.keySet();
-	}
+        return variables.keySet();
+    }
 
-	/**
-	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public String put(String key, String value) {
-		return variables.put(key, value);
-	}
+    /**
+     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public String put(String key, String value) {
+        return variables.put(key, value);
+    }
 
-	/**
-	 * @see java.util.Map#putAll(java.util.Map)
-	 */
-	@Override
-	public void putAll(Map<? extends String, ? extends String> m) {
-		variables.putAll(m);
-	}
+    /**
+     * @see java.util.Map#putAll(java.util.Map)
+     */
+    @Override
+    public void putAll(Map<? extends String, ? extends String> m) {
+        variables.putAll(m);
+    }
 
-	/**
-	 * @see java.util.Map#remove(java.lang.Object)
-	 */
-	@Override
-	public String remove(Object key) {
-		return variables.remove(key);
-	}
+    /**
+     * @see java.util.Map#remove(java.lang.Object)
+     */
+    @Override
+    public String remove(Object key) {
+        return variables.remove(key);
+    }
 
-	/**
-	 * @see java.util.Map#size()
-	 */
-	@Override
-	public int size() {
-		if (parentContext == null)
-			return this.variables.size();
-		return this.variables.size() + this.parentContext.size();
-	}
+    /**
+     * @see java.util.Map#size()
+     */
+    @Override
+    public int size() {
+        if (parentContext == null)
+            return this.variables.size();
+        return this.variables.size() + this.parentContext.size();
+    }
 
-	/**
-	 * @see java.util.Map#values()
-	 */
-	@Override
-	public Collection<String> values() {
-		List<String> vals = new ArrayList<String>();
-		if (parentContext != null) {
-			vals.addAll(parentContext.values());
-		}
-		vals.addAll(variables.values());
-		return vals;
-	}
+    /**
+     * @see java.util.Map#values()
+     */
+    @Override
+    public Collection<String> values() {
+        List<String> vals = new ArrayList<String>();
+        if (parentContext != null) {
+            vals.addAll(parentContext.values());
+        }
+        vals.addAll(variables.values());
+        return vals;
+    }
 
-	public static Variables load(URL url) throws IOException {
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + "[" + new LinkedHashMap<String, String>(this).toString() + "]";
+    }
 
-		Variables vars = new Variables();
+    public static Variables load(URL url) throws IOException {
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				url.openStream()));
-		String line = reader.readLine();
-		while (line != null) {
-			if (!line.startsWith("#")) {
+        Variables vars = new Variables();
 
-				int idx = line.indexOf("=");
-				if (idx > 0) {
-					String key = line.substring(0, idx);
-					String val = line.substring(idx + 1);
-					vars.put(key, val);
-				}
-			}
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        String line = reader.readLine();
+        while (line != null) {
+            if (!line.startsWith("#")) {
 
-			line = reader.readLine();
-		}
+                int idx = line.indexOf("=");
+                if (idx > 0) {
+                    String key = line.substring(0, idx);
+                    String val = line.substring(idx + 1);
+                    vars.put(key, val);
+                }
+            }
 
-		return vars;
-	}
+            line = reader.readLine();
+        }
+
+        return vars;
+    }
 }

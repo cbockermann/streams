@@ -24,9 +24,9 @@
 package stream.flow;
 
 import java.net.URL;
+import java.util.UUID;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,20 +40,21 @@ import stream.test.CounterTestService;
  */
 public class EveryTest {
 
-	static Logger log = LoggerFactory.getLogger(EveryTest.class);
+    static Logger log = LoggerFactory.getLogger(EveryTest.class);
 
-	@Test
-	public void test() throws Exception {
+    @Test
+    public void test() throws Exception {
 
-		URL url = EveryTest.class.getResource("/test-every.xml");
-		ProcessContainer c = new ProcessContainer(url);
+        String uuid = UUID.randomUUID().toString();
+        System.setProperty("test-every-uuid", uuid);
+        URL url = EveryTest.class.getResource("/test-every.xml");
+        ProcessContainer c = new ProcessContainer(url);
 
-		long time = c.execute();
-		log.info("Container required {} ms for running.", time);
+        long time = c.execute();
+        log.info("Container required {} ms for running.", time);
 
-		CounterTestService s = c.getContext().lookup("counter",
-				CounterTestService.class);
-
-		Assert.assertEquals(10, s.getCount());
-	}
+        CounterTestService s = c.getContext().lookup("counter-" + uuid, CounterTestService.class);
+        log.info("# of counted items: {} / expected: {}", s.getCount(), 10);
+        Assert.assertEquals(10, s.getCount());
+    }
 }

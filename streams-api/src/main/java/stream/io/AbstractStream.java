@@ -184,5 +184,7 @@ public abstract class AbstractStream implements Stream {
         in = null;
 
         closed = true;
+
+        this.notifyAll();
     }
 }

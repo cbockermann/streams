@@ -262,11 +262,14 @@ public class Supervisor implements ProcessListener, Hook {
         // if (flags == Signals.SHUTDOWN) {
         log.debug("Shutdown signal received: '{}'", flags);
         log.debug("Closing root sources: {}", dependencies.getRootSources());
-
+        synchronized (lock) {
+            lock.notify();
+        }
         final Set<Source> roots = dependencies.getRootSources();
 
-        if (roots.isEmpty())
+        if (roots.isEmpty()) {
             return;
+        }
 
         Thread t = new Thread() {
             public void run() {
@@ -283,6 +286,16 @@ public class Supervisor implements ProcessListener, Hook {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    for (Object c : consumers) {
+                        try {
+                            log.info("Notifying consumer {}", c);
+                            c.notify();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     it.remove();
                 }
             }

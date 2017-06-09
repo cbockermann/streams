@@ -44,12 +44,12 @@
         </menu>
         <menu name="Documentation">
             <!--<item name="Overview" href="doc/index.html" >-->
-            <item name="Quickstart" href="quickstart.html" collapse="true"/>
+            <!--<item name="Quickstart" href="quickstart.html" collapse="true"/>-->
             <item name="Basic Concepts" href="doc/concepts.html" collapse="true">
-                <item name="Container" href="doc/concepts.html#container"/>
-                <item name="Stream" href="doc/concepts.html#streams"/>
-                <item name="Process" href="doc/concepts.html#process"/>
-                <item name="Service" href="doc/concepts.html#service"/>
+                <!--<item name="Container" href="doc/concepts.html#container"/>-->
+                <!--<item name="Stream" href="doc/concepts.html#streams"/>-->
+                <!--<item name="Process" href="doc/concepts.html#process"/>-->
+                <!--<item name="Service" href="doc/concepts.html#service"/>-->
             </item>
             <item name="Extended Concepts" href="doc/extensions.html" collapse="true">
             </item>

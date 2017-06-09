@@ -123,7 +123,7 @@ attribute used instead of `x` and the `factor` will be a value used for multipyi
 
 To add these two parameters to our Multiplier, we only need to provide corresponding
 getters and setters:
-
+		
         String key = "x";    // by default we still use 'x'
         Double factor = 2;   // by default we multiply with 2
 
@@ -146,7 +146,7 @@ getters and setters:
         public Double getFactor(){
             return factor;
         }
-        
+
 After compiling this class, we can directly use the new parameters `key` and `factor`
 as XML attributes. For example, to multiply all attributes `z` by `3.1415`, we can
 use the following XML setup:

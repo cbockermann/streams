@@ -25,7 +25,7 @@ process a stream of data that is available in CSV format. The data is
 available from a web-server at the URL
 
 <div style="margin:auto; text-align: center;">
-   <a href="http://www.jwall.org/streams/sample.csv">http://www.jwall.org/streams/sample.csv</a>
+   <a href="http://www.sfb876.de/streams/sample.csv">http://www.sfb876.de/streams/sample.csv</a>
 </div>
 
 The following snippet shows the first 4 lines of that data as it
@@ -39,7 +39,7 @@ a data stream from CSV formatted data:
       <container>
 
          <stream id="myStream" class="stream.io.CsvStream"
-                 url="http://www.jwall.org/streams/sample.csv" />
+                 url="http://www.sfb876.de/streams/sample.csv" />
 
       </container>
 
@@ -55,7 +55,7 @@ which uses the stream as input. This is - again - rather simple:
       <container>
 
          <stream id="myStream" class="stream.io.CsvStream"
-                 url="http://www.jwall.org/streams/sample.csv" />
+                 url="http://www.sfb876.de/streams/sample.csv" />
 
          <process input="myStream"></process>
       </container>
@@ -79,7 +79,7 @@ This makes the overall container definition look as follows:
       <container>
 
          <stream id="myStream" class="stream.io.CsvStream"
-                 url="http://www.jwall.org/streams/sample.csv" />
+                 url="http://www.sfb876.de/streams/sample.csv" />
 
          <process input="myStream">
              <stream.data.PrintData />
@@ -94,7 +94,7 @@ After we added a processor to the process, we are ready to start the container
 and run this stream-process. The *streams* framework provides a simple stream-runner
 that can be found for download at
 <div style="text-align: center;">
-     <a href="http://www.jwall.org/streams/stream-runner.jar">http://www.jwall.org/streams/stream-runner.jar</a>
+     <a href="http://www.sfb876.de/streams/stream-runner.jar">http://www.sfb876.de/streams/stream-runner.jar</a>
 </div>
 
 After downloading that file, we can start the container by issuing:

@@ -1,95 +1,108 @@
 <project name="streams">
-  <bannerLeft>
-    <name>streams</name>
-<!--    <src>http://www-ai.cs.uni-dortmund.de/ci/Medienpool/Seitenbilder/logo_tu.png</src>  -->
-    <href>/</href>
-  </bannerLeft>
-  
-  <bannerRight>
-    <name></name>
-<!--    <src>http://www-ai.cs.uni-dortmund.de/header-bg-topLeft.png</src> -->
-    <href></href>
-  </bannerRight>
-    
-  <publishDate position="right" />
 
-  
-  <body>
-  
-    <links>
-    </links>
+    <custom>
+        <reflowSkin>
+            <theme>bootswatch-spacelab</theme>
+            <brand>
+                <name>Streams Framework</name>
+                <href>index.html</href>
+            </brand>
+            <bottomNav>
+                <column>Streams</column>
+                <column>Documentation</column>
+                <column>Development|reports</column>
+            </bottomNav>
+        </reflowSkin>
+    </custom>
 
-    
-    <menu name="Streams">
-      <item name="Home" href="index.html" collapse="true" />
-      <item name="Quickstart" href="quickstart.html" />
-      <item name="Download" href="download.html" />
-      <item name="Citing streams" href="citing.html" />
-    </menu>
-    <menu name="Documentation">
-      <item name="Overview" href="doc/index.html" collapse="true">
-	<item name="Quickstart" href="quickstart.html" />
-	<item name="Basic Concepts" href="doc/concepts.html" collapse="true">
-	  <item name="Container" href="doc/concepts.html#container" />
-	  <item name="Stream" href="doc/concepts.html#streams" />
-	  <item name="Process" href="doc/concepts.html#process" />
-	  <item name="Service" href="doc/concepts.html#service" />
-	</item>
-	<item name="Extended Concepts" href="doc/extensions.html" collapse="true">
-	</item>
-      </item>
-      <item name="Distributed Processing" href="doc/distribution.html" collapse="true">
-	<item name="Services &amp; Naming" href="doc/distributed/naming.html" />
-	<item name="Remote Containers" href="doc/distributed/remote.html" collapse="true">
-	  <item name="Remote Example" href="doc/distributed/example.html" />
-	</item>
-      </item>
-      <item name="Online Learning" href="doc/learning/index.html" collapse="true">
-	<item name="Generating Streams" href="doc/learning/synthetic.html" />
-	<item name="Counting" href="doc/learning/counter.html" />
-	<item name="Integrating MOA" href="doc/learning/moa.html" />
-      </item>
-      <item name="RapidMiner Plugin" href="doc/rapidminer.html" collapse="true">
-      </item>
-    </menu>
-    
-    <menu name="Development">
-      <item name="Maven integration" href="/dev/maven.html"/>
-      <item name="Custom Processors" href="dev/index.html" collapse="true">
-		<item name="Implementing Processors" href="dev/processor.html" />
-		<item name="Using stream.Keys" href="dev/keys.html" />
-		<item name="Processor Scripts" href="dev/scripting.html" />
-      </item>
-      <item name="Custom Data Streams" href="dev/streams.html" collapse="true">
-      </item>
-    </menu>
-<!--  
-	<menu name="Downloads">
-	  <item name="Latest Versions" href="download.html" />
-	</menu>
-  -->
-<!--
+    <bannerLeft>
+        <name>tu dortmund</name>
+        <src>/images/logo_tu.png</src>
+        <alt>TU Dortmund</alt>
+        <href>http://www.tu-dortmund.de/</href>
+    </bannerLeft>
 
-  -->
+    <bannerRight>
+        <name>ls8</name>
+        <src>/images/header-bg-topLeft.png</src>
+        <alt>LS8</alt>
+        <href>http://www-ai.cs.uni-dortmund.de/</href>
+    </bannerRight>
 
-<!--
-        <menu name="Related Projects">
-		<item name="stream-mining" href="http://kirmes.cs.uni-dortmund.de/stream-mining/"/>
+    <publishDate position="right"/>
+
+    <body>
+
+        <links>
+        </links>
+
+        <menu name="Streams">
+            <item name="Home" href="index.html" collapse="true"/>
+            <item name="Quickstart" href="quickstart.html"/>
+            <item name="Download" href="download.html"/>
+            <item name="Citing streams" href="citing.html"/>
         </menu>
-  -->
+        <menu name="Documentation">
+            <!--<item name="Overview" href="doc/index.html" >-->
+            <item name="Quickstart" href="quickstart.html" collapse="true"/>
+            <item name="Basic Concepts" href="doc/concepts.html" collapse="true">
+                <item name="Container" href="doc/concepts.html#container"/>
+                <item name="Stream" href="doc/concepts.html#streams"/>
+                <item name="Process" href="doc/concepts.html#process"/>
+                <item name="Service" href="doc/concepts.html#service"/>
+            </item>
+            <item name="Extended Concepts" href="doc/extensions.html" collapse="true">
+            </item>
+            <!--</item>-->
+            <item name="Distributed Processing" href="doc/distribution.html" collapse="true">
+                <item name="Services &amp; Naming" href="doc/distributed/naming.html"/>
+                <item name="Remote Containers" href="doc/distributed/remote.html" collapse="true">
+                    <item name="Remote Example" href="doc/distributed/example.html"/>
+                </item>
+            </item>
+            <item name="Online Learning" href="doc/learning/index.html" collapse="true">
+                <item name="Generating Streams" href="doc/learning/synthetic.html"/>
+                <item name="Counting" href="doc/learning/counter.html"/>
+                <item name="Integrating MOA" href="doc/learning/moa.html"/>
+            </item>
+            <item name="RapidMiner Plugin" href="doc/rapidminer.html" collapse="true">
+            </item>
+        </menu>
 
-<menu ref="reports"/>
+        <menu name="Development">
+            <item name="Maven integration" href="/dev/maven.html"/>
+            <item name="Custom Processors" href="dev/index.html" collapse="true">
+                <item name="Implementing Processors" href="dev/processor.html"/>
+                <item name="Using stream.Keys" href="dev/keys.html"/>
+                <item name="Processor Scripts" href="dev/scripting.html"/>
+            </item>
+            <item name="Custom Data Streams" href="dev/streams.html" collapse="true">
+            </item>
+        </menu>
 
-<!--
-	<menu ref="modules" />	
-  -->
-  </body>
+        <menu ref="reports"/>
 
-  <skin>
-    <groupId>org.jwall</groupId>
-    <artifactId>streams-skin</artifactId>
-    <version>1.2</version>
-  </skin>
-  
-  <poweredBy></poweredBy>
+        <!--
+            <menu name="Downloads">
+              <item name="Latest Versions" href="download.html" />
+            </menu>
+                <menu name="Related Projects">
+                <item name="stream-mining" href="http://kirmes.cs.uni-dortmund.de/stream-mining/"/>
+                </menu>
+            <menu ref="modules" />
+          -->
+    </body>
+
+    <skin>
+        <groupId>lt.velykis.maven.skins</groupId>
+        <artifactId>reflow-maven-skin</artifactId>
+        <version>1.1.1</version>
+    </skin>
+    <!--<skin>-->
+    <!--<groupId>org.jwall</groupId>-->
+    <!--<artifactId>streams-skin</artifactId>-->
+    <!--<version>1.2</version>-->
+    <!--</skin>-->
+
+    <poweredBy></poweredBy>
 </project>

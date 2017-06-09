@@ -1,5 +1,5 @@
 
-The <code>streams</code> Framework
+The **streams** Framework
 =======================
 
 The `streams` framework is a Java implementation of a simple stream processing

@@ -9,3 +9,14 @@ body, p, div {
 #banner {
    height: 80px;
 }
+
+/* control the max width of the body and all
+    the menus above it*/
+@media (min-width: 1000px) {
+    .container, .navbar-static-top .container,
+    .navbar-fixed-top .container,
+    .navbar-fixed-bottom .container,
+    .span12, .body-content{
+        width: 950px;
+    }
+}

@@ -22,9 +22,8 @@ The API module is the core artifact, which defines the interfaces and
 basic classes required for running stream processes. The `streams-api`
 dependency is:
 
-       <dependency>
-           <groupId>org.jwall</groupId>
-           <artifactId>streams-api</artifactId>
-           <version>[0.9.11,)</version>
-       </dependency>
-
+	<dependency>
+    	<groupId>de.sfb876</groupId>
+	    <artifactId>streams-api</artifactId>
+    	<version>1.0.0</version>
+	</dependency>

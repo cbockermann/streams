@@ -30,4 +30,4 @@ rest of the *streams* library to start experiments by simply running
 
        # java -jar stream-analysis-0.9.5-SNAPSHOT.jar your-experiment.xml
 
-Examples for experiments can be found e.g. in [Integrating MOA](moa.html).
+Examples for experiments can be found e.g. in [Integrating MOA](moa.md).

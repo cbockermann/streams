@@ -31,3 +31,8 @@ streams-performance/doc/streams-performance.pdf
 streams-performance/test.log
 streams-performance/test.pdf
 streams-performance/test.tex
+*.bbl
+*.blg
+*.out
+*.log
+*.synctex.gz

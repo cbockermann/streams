@@ -12,6 +12,8 @@
                 <column>Documentation</column>
                 <column>Development|reports</column>
             </bottomNav>
+            <highlightJs>true</highlightJs>
+            <highlightJsTheme>github</highlightJsTheme>
         </reflowSkin>
     </custom>
 

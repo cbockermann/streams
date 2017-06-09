@@ -35,11 +35,13 @@ Source Code & Usage
 The source code of the framework is available at [bitbucket.org](https://bitbucket.org/cbockermann/streams/).
 
 Each of the modules can easily be integrated into your own code and used as library by
-listing it as maven dependency. The libraries are currently available via the following
-maven repository:
+listing it as maven dependency. The libraries can be embedded into the existing project via the maven repository:
 
-      <repository>
-         <id>jwall</id>
-         <name>jwall.org Maven Repository</name>
-         <url>http://secure.jwall.org/maven/repository/all</url>
-      </repository>
+```
+<dependency>
+    <groupId>de.sfb876</groupId>
+    <artifactId>streams-api</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+

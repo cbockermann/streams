@@ -21,24 +21,24 @@ The JavaScript language has been part of the Java API for some
 time. The *streams* framework provides a simple `JavaScript`
 processor, that can be used to run JavaScript functions on data items:
 
-       <container>
-          ...
-          <process input="...">
+	<container>
+		...
+		<process input="...">
 
-              <stream.script.JavaScript file="/path/to/myScript.js" />
+			<stream.script.JavaScript file="/path/to/myScript.js" />
 
-          </process>
-       </container>
+		</process>
+	</container>
 
 
 Within the JavaScript environment, the data items are accessible at
 `data`. Below is a simple example of JavaScript code within the file
 `myScript.js`:
 
-       function process(data){
-          var id = data.get( "@id" );
-          if( id != null ){
-             println( "ID of item is: " + id );
-          }
-          return data;
-        }
+	function process(data){
+		var id = data.get( "@id" );
+		if( id != null ){
+			println( "ID of item is: " + id );
+		}
+		return data;
+	}

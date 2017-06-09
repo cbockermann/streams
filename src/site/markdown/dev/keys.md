@@ -64,9 +64,9 @@ Only the wildcards `*` and `?` are used. In addition, the exclamation mark `!` c
 explicit *de-select* a previously selected key.
 
 In the example of the item shown above, we can use the pattern 
-<div style="text-align: center;">
-	<code>feature:*,!feature:width</code>
-</div>
+
+``feature:*,!feature:width``
+
 to select all keys, which start with the string `feature:` and de-select the `feature:width`
 attribute. 
 
@@ -85,22 +85,20 @@ not within the same pattern element.
 The following example selects all patterns with the `feature:color` prefix and uses a regular
 expression to select the pixel-features:
 
-<div style="margin: auto; text-align: center;">
-	<code>feature:color*,/pixel:\d+/</code>
-</div>
+``feature:color*,/pixel:\d+/``
 
 Like the simple wildcard patterns, the regular expressions can be prefixed with an exclamation
 mark to de-select elements from a set.
 
 
 The regular expressions match, if the pattern is somehow found at any part of the attribute
-name. If matching of the full attribute name is required, the regex anchors <code>^</code>
-and <code>$</code> need to be specified. As an example, the pattern `/\d+/` will match all 
+name. If matching of the full attribute name is required, the regex anchors ``^``
+and ``$`` need to be specified. As an example, the pattern `/\d+/` will match all 
 attributes, which include at least one digit. To limit this to attributes which only consist
 of digits in their names, the pattern `/^\d+$/` needs to be used.
 
 
-## Using <code>Keys</code> in Java Processors
+## Using **Keys** in Java Processors
 
 Using the `Keys` functionality in a custom processor is rather straight forward. The `Keys`
 class is instantiated from a String and therefore can be used as any other parameter of a
@@ -109,20 +107,18 @@ processor.
 The following example shows a simple processor that outputs all the keys selected by a wildcard
 pattern using the `stream.Keys` class. By default, it uses the `*` pattern to match all keys.
 
-<div style="text-align: center; margin: auto; width: 600px;">
-<pre style="text-align: left; width: 600px;"><code class="java" style="font-size: 14px;">public class SelectivePrinter implements Processor {
 
-&nbsp;&nbsp;@Parameter
-&nbsp;&nbsp;Keys keys = new Keys("*");
+    public class SelectivePrinter implements Processor {
 
-&nbsp;&nbsp;public Data process( Date item ) {
+		@Parameter
+		Keys keys = new Keys("*");
 
-&nbsp;&nbsp;&nbsp;&nbsp;for( String key : keys.select(item) ){
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println( key + " => " + item.get(key) );
-&nbsp;&nbsp;&nbsp;&nbsp;}
+		public Data process( Date item ) {
 
-&nbsp;&nbsp;&nbsp;&nbsp;return item;
-&nbsp;&nbsp;}
-}
-</code></pre>
-</div>
+			for( String key : keys.select(item) ){
+				System.out.println( key + " => " + item.get(key) );
+		}
+
+		return item;
+		}
+	}

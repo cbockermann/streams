@@ -13,7 +13,7 @@ class or directly implements the
 interface.
 
 
-The <code>DataStream</code> interface
+The **DataStream** interface
 -------------------------------------
 
 The `DataStream` interface mainly provides a single method
@@ -27,7 +27,7 @@ In addition the interface requires implemenations to provide an
 thoroughly closing it upon process completion.
 
 
-Even more Data: <code>MultiStream</code>
+Even more Data: **MultiStream**
 ----------------------------------------
 
 Whereas the `DataStream` represents a single stream of data, the
@@ -39,9 +39,9 @@ The class
 provides an elementary implementation of a MultiStream that only
 requires for the `readNext(Data,Map)` method to be implemented:
 
-       public Data readNext( Data item, Map<String,DataStream> substreams ) {
-           //
-           // implement your multi-stream logic and fill the data item
-           //
-           return item;
-       }
+	public Data readNext( Data item, Map<String,DataStream> substreams ) {
+		//
+		// implement your multi-stream logic and fill the data item
+		//
+		return item;
+	}

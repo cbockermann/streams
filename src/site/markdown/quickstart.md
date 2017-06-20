@@ -32,7 +32,7 @@ Running the Stream Process
 
 The simple process defined above can be run by
 
-     # java -jar stream-runner.jar first-process.xml
+	java -jar stream-runner.jar first-process.xml
 
 The process will simply read the stream in CSV-format and execute the
 processor `PrintData` for each item obtained from the stream.

@@ -12,7 +12,7 @@
 	</parent>
 	
 	<properties>
-		<streams.version>0.9.26-SNAPSHOT</streams.version>
+		<streams.version>1.0.0</streams.version>
 	</properties>
 
 	<dependencies>

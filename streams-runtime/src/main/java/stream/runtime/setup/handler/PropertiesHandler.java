@@ -117,10 +117,12 @@ public class PropertiesHandler implements DocumentHandler {
         // add system properties, e.g defined at command line using the -D flag:
         // java -Dproperty-name=property-value
         //
-        java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
-        if (!localMachine.getHostAddress().equals(localMachine.getHostName()))
-            variables.put("machine.name", localMachine.getHostName());
-        pHandle.addSystemProperties(variables);
+        // java.net.InetAddress localMachine =
+        // java.net.InetAddress.getLocalHost();
+        // if
+        // (!localMachine.getHostAddress().equals(localMachine.getHostName()))
+        // variables.put("machine.name", localMachine.getHostName());
+        // pHandle.addSystemProperties(variables);
 
         // process-local properties at processElementHandler
     }

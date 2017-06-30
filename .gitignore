@@ -36,3 +36,4 @@ streams-performance/test.tex
 *.out
 *.log
 *.synctex.gz
+test.csv

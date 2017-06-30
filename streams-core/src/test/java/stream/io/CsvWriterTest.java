@@ -4,6 +4,7 @@
 package stream.io;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class CsvWriterTest {
 	@Test
 	public void test() {
 
+		log.info("Testing CSV writer in 'library mode'");
 		ContainerContext container = new ContainerContext(UUID.randomUUID().toString());
 
 		List<Data> items = new ArrayList<Data>();
@@ -66,6 +68,18 @@ public class CsvWriterTest {
 
 			writer.finish();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testFromXML() {
+		URL url = CsvWriterTest.class.getResource("/stream/io/csv-writer-test.xml");
+		log.info("Testing CSV setup from {}", url);
+		System.setProperty("hostname", "127.0.0.1");
+		try {
+			stream.run.main(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

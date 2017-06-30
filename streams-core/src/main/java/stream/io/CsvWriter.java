@@ -32,7 +32,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -51,12 +50,12 @@ import stream.expressions.version2.StringExpression;
 import stream.service.Service;
 
 /**
- * <p>
- * This class implements a listener which will write all its incoming data into
- * a one-by-one line output.
- * </p>
+ * This class implements a simple CSV output writer. The default separator is a
+ * semicolon. The class extends AbstractWriter, which in turn implements the
+ * ConditionedProcessor interface. Thus, it is possible to specify conditions to
+ * the items that shall be written out as CSV.
  * 
- * @author Christian Bockermann &lt;chris@jwall.org&gt;
+ * @author Christian Bockermann
  */
 @Description(group = "Data Stream.Output")
 public class CsvWriter extends AbstractWriter implements Service {
@@ -197,7 +196,7 @@ public class CsvWriter extends AbstractWriter implements Service {
 		// changed. in
 		// any of these cases, we need to open a new output stream for writing
 		//
-		if (lastUrlString == null || !expandedUrlString.equals(lastUrlString)) {
+		if (p == null || lastUrlString == null || !expandedUrlString.equals(lastUrlString)) {
 
 			// if 'p' exists, this means there has been a previous file and just
 			// the
@@ -226,20 +225,17 @@ public class CsvWriter extends AbstractWriter implements Service {
 			try {
 				lastUrlString = expandedUrlString;
 				this.url = new URL(expandedUrlString);
-				file = new File(url.toURI());
+				file = new File(url.getPath()); // .toURI());
 
 				OutputStream out;
 				if (file.getAbsolutePath().endsWith(".gz"))
-					out = new GZIPOutputStream(new FileOutputStream(file,
-							append));
+					out = new GZIPOutputStream(new FileOutputStream(file, append));
 				else
 					out = new FileOutputStream(file, append);
 
 				p = new PrintStream(out, false, "UTF-8");
 				lastHeader = null;
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -276,8 +272,7 @@ public class CsvWriter extends AbstractWriter implements Service {
 			return;
 		}
 
-		if (!headerWritten
-				|| (keys == null && datum.keySet().size() > headers.size())) {
+		if (!headerWritten || (keys == null && datum.keySet().size() > headers.size())) {
 			// p.print("# ");
 			Iterator<String> it = this.selectedKeys(datum).iterator();
 

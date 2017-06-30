@@ -29,12 +29,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import net.minidev.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minidev.json.JSONObject;
 import stream.Data;
+import stream.ProcessContext;
 import stream.data.DataFactory;
 
 /**
@@ -48,36 +48,52 @@ import stream.data.DataFactory;
  */
 public class JSONWriter extends AbstractWriter {
 
-	static Logger log = LoggerFactory.getLogger(JSONWriter.class);
+    static Logger log = LoggerFactory.getLogger(JSONWriter.class);
 
-	PrintStream p;
+    PrintStream p;
 
-	public JSONWriter() {
-		super();
-	}
+    public JSONWriter() {
+        super();
+    }
 
-	public JSONWriter(File file) throws IOException {
-		this(new FileOutputStream(file));
-	}
+    public JSONWriter(File file) throws IOException {
+        this(new FileOutputStream(file));
+    }
 
-	public JSONWriter(OutputStream out) throws IOException {
-		p = new PrintStream(out);
-	}
+    public JSONWriter(OutputStream out) throws IOException {
+        p = new PrintStream(out);
+    }
 
-	/**
-	 * @see stream.io.CsvWriter#write(stream.Data)
-	 */
-	@Override
-	public void write(Data datum) {
-		Data item = DataFactory.create();
-		for (String key : this.selectedKeys(datum)) {
-			if (datum.containsKey(key))
-				item.put(key, datum.get(key));
-		}
+    /**
+     * @see stream.AbstractProcessor#init(stream.ProcessContext)
+     */
+    @Override
+    public void init(ProcessContext ctx) throws Exception {
+        super.init(ctx);
+        if (p == null) {
+            log.debug("Opening output URL {}", getUrl());
+            String file = getUrl();
+            if (file.startsWith("file:")) {
+                file = file.substring("file:".length());
+            }
+            p = new PrintStream(new FileOutputStream(new File(this.getUrl())));
+        }
+    }
+
+    /**
+     * @see stream.io.CsvWriter#write(stream.Data)
+     */
+    @Override
+    public void write(Data datum) {
+        Data item = DataFactory.create();
+        for (String key : this.selectedKeys(datum)) {
+            if (datum.containsKey(key))
+                item.put(key, datum.get(key));
+        }
         if (p != null) {
-		    p.println(JSONObject.toJSONString(item));
+            p.println(JSONObject.toJSONString(item));
         } else {
             log.error("JSONWriter has not been set right: PrintStream is null.");
         }
-	}
+    }
 }

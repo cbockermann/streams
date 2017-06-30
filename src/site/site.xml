@@ -56,7 +56,8 @@
             <item name="Extended Concepts" href="doc/extensions.html" collapse="true">
             </item>
             <!--</item>-->
-            <item name="Distributed Processing" href="doc/distribution.html" collapse="true">
+            <item name="Distributed Processing" href="doc/distributed/dsps.html" collapse="true">
+            <!--<item name="Distributed Processing" href="doc/distribution.html" collapse="true">-->
                 <item name="Services &amp; Naming" href="doc/distributed/naming.html"/>
                 <item name="Remote Containers" href="doc/distributed/remote.html" collapse="true">
                     <item name="Remote Example" href="doc/distributed/example.html"/>

@@ -43,3 +43,46 @@ Based on the conventions and patterns used, components of the
 patterns of the `streams` library allows for quickly adding custom
 classes to the streaming processes without much trouble.
 
+
+### Overview of the packages
+
+
+#### fact-tools
+#### streams-video
+#### streams-twitter
+
+
+### ML
+
+#### [streams-weka](https://bitbucket.org/cbockermann/streams-weka)
+Embed processors for machine learning from WEKA.
+
+#### [streams-analysis](https://bitbucket.org/cbockermann/stream-analysis)
+Embed processors for streaming machine learning algorithms from the MOA library.
+
+#### streams-mining
+
+#### streams-rapidminer
+ 
+=============
+### Distributed frameworks
+#### [streams-mapred](https://bitbucket.org/cbockermann/streams-mapred)
+Designing the native MapReduce jobs
+
+#### [streams-storm](https://bitbucket.org/cbockermann/streams-storm)
+Designing the native Apache Storm jobs.
+
+#### [streams-flink](https://github.com/alexeyegorov/streams-flink)
+Designing the native Apache Flink jobs.
+
+#### streams-spark
+Designing the native Apache Spark (Streaming) jobs.
+
+#### streams-hdfs
+ 
+### Other:
+#### streams-mail
+#### streams-soccer
+#### streams-starter
+#### stream-sandbox
+#### streams-environment

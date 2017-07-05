@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.annotations.ParameterException;
+import streams.runtime.ConfigurationError;
 
 /**
  * This class provides the mapping of an input string to the desired output
@@ -93,10 +94,19 @@ public class ParameterValueMapper {
                     String s = str.toString();
                     po = c.newInstance(s);
                     log.debug("Invoking {}({})", po);
+                } catch (streams.runtime.ConfigurationError error) {
+                    // found caught a streams internal error - e.g. due to
+                    // config problems
+                    throw error;
                 } catch (NoSuchMethodException nsm) {
                     throw new ParameterException(
                             "Class '" + type.getComponentType() + "' does not provide String-arg constructor!");
                 } catch (InvocationTargetException ite) {
+
+                    if (ite.getTargetException() instanceof ConfigurationError) {
+                        throw (ConfigurationError) ite.getTargetException();
+                    }
+
                     throw new ParameterException("InvocationTargetException while creating object of class '"
                             + type.getComponentType() + "' from string '" + str + "'!");
                 } catch (IllegalAccessException iae) {

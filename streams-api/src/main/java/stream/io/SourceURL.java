@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import stream.urls.Connection;
 import stream.urls.FilesConnection;
+import stream.urls.MalformedURLError;
 import stream.urls.SSLConnection;
 import stream.urls.TcpConnection;
 import stream.urls.TcpListener;
@@ -156,8 +156,10 @@ public class SourceURL implements Serializable {
         this.url = null;
         this.urlString = urlString;
 
-        if (!hasProtocol(urlString))
-            throw new MalformedURLException("Missing Protocol in: " + urlString);
+        if (!hasProtocol(urlString)) {
+            log.info("SourceURL string is missing protocol!");
+            throw new MalformedURLError(urlString, "Protocol missing!");
+        }
 
         if (urlString.toLowerCase().startsWith(PROTOCOL_FILE) || urlString.toLowerCase().startsWith(PROTOCOL_CLASSPATH)
                 || urlString.toLowerCase().startsWith(PROTOCOL_FIFO)) {

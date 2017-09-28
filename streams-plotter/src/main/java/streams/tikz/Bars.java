@@ -15,75 +15,90 @@ import org.slf4j.LoggerFactory;
  */
 public class Bars extends Shape {
 
-	/** The unique class ID */
-	private static final long serialVersionUID = 7976889057103530705L;
+    /** The unique class ID */
+    private static final long serialVersionUID = 7976889057103530705L;
 
-	static Logger log = LoggerFactory.getLogger(Bars.class);
+    static Logger log = LoggerFactory.getLogger(Bars.class);
 
-	String color = "blue";
-	public double width = 0.5;
-	public double margin = 0.0;
+    String color = "blue";
+    public double width = 0.5;
+    public double margin = 0.0;
 
-	public double xOffset = 0.0;
-	public double yOffset = 0.0;
+    public double xOffset = 0.0;
+    public double yOffset = 0.0;
 
-	final Series data;
+    final Series data;
+    String title = null;
 
-	public Bars(Series data) {
-		this.data = data;
-		xOffset = width / 2.0;
-	}
+    public Bars(Series data) {
+        this.data = data;
+        xOffset = width / 2.0;
+    }
 
-	/**
-	 * @see streams.tikz.Path#toString()
-	 */
-	@Override
-	public String toString() {
+    public Bars title(String title) {
+        this.title = title;
+        return this;
+    }
 
-		log.info("Plotting Bars with {} data points", data.size());
+    /**
+     * @see streams.tikz.Path#toString()
+     */
+    @Override
+    public String toString() {
 
-		StringWriter writer = new StringWriter();
-		PrintWriter p = new PrintWriter(writer);
+        log.info("Plotting Bars with {} data points", data.size());
 
-		for (int i = 0; i < data.size(); i++) {
+        StringWriter writer = new StringWriter();
+        PrintWriter p = new PrintWriter(writer);
 
-			Double x = new Double(i);
-			Double y = data.get(i);
-			p.println("%  bar (" + x + "," + y + ")");
+        double x = 0.0;
+        double maxY = 0.0;
 
-			Path bar = new Path(true);
+        for (int i = 0; i < data.size(); i++) {
 
-			bar.set("color", "blue");
-			bar.opts.putAll(opts);
+            Double y = data.get(i);
+            p.println("%  bar (" + x + "," + y + ")");
 
-			double left = x + margin + xOffset;
-			double right = x + width - margin + xOffset;
+            Path bar = new Path(true);
 
-			bar.add(new Point(left, 0.0));
-			bar.add(new Point(left, y));
-			bar.add(new Point(right, y));
-			bar.add(new Point(right, 0.0));
+            bar.set("color", "blue");
+            bar.opts.putAll(opts);
 
-			p.println(bar.toString());
-		}
+            double left = x + margin + xOffset;
+            double right = x + width - margin + xOffset;
 
-		p.close();
-		return writer.toString();
-	}
+            bar.add(new Point(left, 0.0));
+            bar.add(new Point(left, y));
+            bar.add(new Point(right, y));
+            bar.add(new Point(right, 0.0));
 
-	/**
-	 * @see streams.tikz.Path#scale(double, double)
-	 */
-	@Override
-	public Shape scale(double x, double y) {
+            x += (margin * 3.0);
+            maxY = Math.max(maxY, y);
+            p.println(bar.toString());
+        }
 
-		Series data = new Series();
-		for (int i = 0; i < data.size(); i++) {
-			data.add(this.data.get(i) * y);
-		}
+        double middleX = x * 0.5;
+        if (title != null) {
+            writer.write("\\node[scale=0.75] at " + new Point(middleX, maxY + 0.5) + " {\\textsf{" + title + "}};");
+        }
 
-		Bars scaled = new Bars(data);
-		scaled.opts.putAll(opts);
-		return scaled;
-	}
+        p.close();
+        return writer.toString();
+    }
+
+    /**
+     * @see streams.tikz.Path#scale(double, double)
+     */
+    @Override
+    public Shape scale(double x, double y) {
+
+        Series data = new Series();
+        for (int i = 0; i < data.size(); i++) {
+            data.add(this.data.get(i) * y);
+        }
+
+        Bars scaled = new Bars(data);
+        scaled.opts.putAll(opts);
+        return scaled;
+    }
 }

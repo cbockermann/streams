@@ -78,12 +78,14 @@ public class SetValue extends ConditionedProcessor {
 
 		if (key != null && value != null) {
 			Serializable val = null;
-			if (value == "null") {
+			if (value.equals("null")) {
 				if (scope.contains(Context.DATA_CONTEXT_NAME)
-						|| scope.isEmpty())
+						|| scope.isEmpty()) {
 					data.remove(key);
-				else if (scope.contains(Context.PROCESS_CONTEXT_NAME))
+				}
+				else if (scope.contains(Context.PROCESS_CONTEXT_NAME)) {
 					context.set(key, null);
+				}
 			} else
 				try {
 					Serializable s = (exp == null) ? null : exp.get(context,
@@ -93,10 +95,12 @@ public class SetValue extends ConditionedProcessor {
 					e.printStackTrace();
 				}
 
-			if (scope.contains(Context.DATA_CONTEXT_NAME) || scope.isEmpty())
+			if (scope.contains(Context.DATA_CONTEXT_NAME) || scope.isEmpty()) {
 				data.put(key, val);
-			if (scope.contains(Context.PROCESS_CONTEXT_NAME))
+			}
+			if (scope.contains(Context.PROCESS_CONTEXT_NAME)) {
 				context.set(key, val);
+			}
 
 		}
 

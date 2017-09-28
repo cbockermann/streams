@@ -81,7 +81,7 @@ public abstract class ConditionedProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * @see stream.DataProcessor#process(stream.Data)
+	 * @see stream.AbstractProcessor#process(Data)
 	 */
 	@Override
 	public Data process(Data data) {

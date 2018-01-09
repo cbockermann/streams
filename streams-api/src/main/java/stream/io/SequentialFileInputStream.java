@@ -28,11 +28,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +55,11 @@ import org.slf4j.LoggerFactory;
  */
 public class SequentialFileInputStream extends InputStream {
 	/* A global logger for this class */
-	static Logger log = LoggerFactory
-			.getLogger(SequentialFileInputStream.class);
+	static Logger log = LoggerFactory.getLogger(SequentialFileInputStream.class);
 
 	/*
-	 * This constant object implements a comparator for files, which determines
-	 * the order in which this file stream processes files
+	 * This constant object implements a comparator for files, which determines the
+	 * order in which this file stream processes files
 	 */
 	final static Comparator<File> FILE_ORDER = new Comparator<File>() {
 		public int compare(File arg0, File arg1) {
@@ -88,7 +89,7 @@ public class SequentialFileInputStream extends InputStream {
 
 	/* The input-stream of the current file */
 	FileInputStream reader;
-	FileChannel channel;
+	ReadableByteChannel channel;
 
 	String pattern = "";
 
@@ -104,10 +105,9 @@ public class SequentialFileInputStream extends InputStream {
 	final ByteBuffer buffer = ByteBuffer.allocate(1);
 
 	/**
-	 * Creates a new SequentialInputStream, which will read the specified file
-	 * and any subsequent files that match the file's name, possibly and a
-	 * appended number, i.e. for the file <code>/tmp/test.log</code> the stream
-	 * will read
+	 * Creates a new SequentialInputStream, which will read the specified file and
+	 * any subsequent files that match the file's name, possibly and a appended
+	 * number, i.e. for the file <code>/tmp/test.log</code> the stream will read
 	 * 
 	 * <pre>
 	 *    /tmp/test.log
@@ -129,9 +129,9 @@ public class SequentialFileInputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * This creates a SequentialInputStream which will remove any files that
-	 * have completeley been read (i.e. they have been processed until EOF
-	 * <b>and</b> another, newer file matching the pattern does exist).
+	 * This creates a SequentialInputStream which will remove any files that have
+	 * completeley been read (i.e. they have been processed until EOF <b>and</b>
+	 * another, newer file matching the pattern does exist).
 	 * </p>
 	 * <p>
 	 * Whether the old files are to be removed is determined by the
@@ -144,13 +144,11 @@ public class SequentialFileInputStream extends InputStream {
 	 *            Whether the old files should be removed or not.
 	 * @throws IOException
 	 */
-	public SequentialFileInputStream(File file, boolean removeAfterRead)
-			throws IOException {
+	public SequentialFileInputStream(File file, boolean removeAfterRead) throws IOException {
 		this(file, file.getName() + "(\\.\\d+)?$", removeAfterRead);
 	}
 
-	public SequentialFileInputStream(File file, String pattern,
-			boolean removeAfterRead) throws IOException {
+	public SequentialFileInputStream(File file, String pattern, boolean removeAfterRead) throws IOException {
 		this.file = file;
 		this.current = this.file;
 		this.pattern = pattern;
@@ -174,8 +172,8 @@ public class SequentialFileInputStream extends InputStream {
 	/**
 	 * This method checks if there exists a next file in the sequence.
 	 * 
-	 * @return <code>true</code> if a new file exists, which may indicate that
-	 *         the current file is finished.
+	 * @return <code>true</code> if a new file exists, which may indicate that the
+	 *         current file is finished.
 	 */
 	protected boolean hasNext() {
 		File dir = file.getParentFile();
@@ -190,16 +188,15 @@ public class SequentialFileInputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * This method closes the current file an opens the next file in the
-	 * sequence. If no <i>next</i> file exists, this method will block until one
-	 * has been created.
+	 * This method closes the current file an opens the next file in the sequence.
+	 * If no <i>next</i> file exists, this method will block until one has been
+	 * created.
 	 * </p>
 	 * 
 	 * @throws IOException
 	 */
 	protected void openNextFile() throws IOException {
-		log.debug("Current file {} seems to have ended, checking for next one",
-				current);
+		log.debug("Current file {} seems to have ended, checking for next one", current);
 		boolean proceeded = false;
 
 		do {
@@ -210,8 +207,7 @@ public class SequentialFileInputStream extends InputStream {
 
 			for (File f : dir.listFiles()) {
 				if (matchesSequence(f) && !finished.contains(f)) {
-					// log.info(
-					// "  File {} is considered a candidate to proceed", f );
+					log.debug("  File {} is considered a candidate to proceed", f);
 					files.add(f);
 				}
 			}
@@ -220,8 +216,7 @@ public class SequentialFileInputStream extends InputStream {
 												// finished.contains( current )
 												// );
 			for (File file : sequence) {
-				log.debug("   file: {} (modified: {})", file,
-						file.lastModified());
+				log.debug("   file: {} (modified: {})", file, file.lastModified());
 			}
 			if (!sequence.isEmpty()) {
 				if (reader != null) {
@@ -237,16 +232,18 @@ public class SequentialFileInputStream extends InputStream {
 				finished.add(current);
 				read = 0L;
 				reader = new FileInputStream(current);
-				channel = reader.getChannel();
+				if (current.getName().endsWith(".gz")) {
+					channel = Channels.newChannel(new GZIPInputStream(reader));
+				} else {
+					channel = reader.getChannel();
+				}
 				log.debug("Now reading from '{}'", current);
 				proceeded = true;
 			} else {
 				try {
 					log.debug("After reading {} bytes from {}", read, current);
 					log.debug("   a total of {} bytes read so far", total);
-					log.debug(
-							"No sequential file found for {}, sleeping for {} ms and checking again...",
-							file, sleep);
+					log.debug("No sequential file found for {}, sleeping for {} ms and checking again...", file, sleep);
 					Thread.sleep(sleep);
 				} catch (Exception e) {
 				}
@@ -256,8 +253,8 @@ public class SequentialFileInputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * This read method is basically a read of the current open file. It will
-	 * block if there is no more data and no new file exists.
+	 * This read method is basically a read of the current open file. It will block
+	 * if there is no more data and no new file exists.
 	 * </p>
 	 * 
 	 * @see java.io.InputStream#read()
@@ -289,9 +286,9 @@ public class SequentialFileInputStream extends InputStream {
 					// log.debug(
 					// "Waiting {} ms for new data to arrive at file {}",
 					// sleep, current);
-					// log.debug("   file '{}' has size {}", current,
+					// log.debug(" file '{}' has size {}", current,
 					// current.length());
-					// log.debug("   channel pos is: {}", channel.position());
+					// log.debug(" channel pos is: {}", channel.position());
 					Thread.sleep(sleep);
 					waitingTime += sleep;
 				} catch (Exception e) {

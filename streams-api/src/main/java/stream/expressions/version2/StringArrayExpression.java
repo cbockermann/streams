@@ -82,9 +82,9 @@ public class StringArrayExpression extends AbstractExpression<String[]> {
 			String st = s.toString();
 			// TODO remove whitespace?
 			String[] rs = st.split(",");
-			for (int i = 0; i < rs.length; i++) {
-				rs[i] = rs[i].replace(" ", "");
-			}
+			// for (int i = 0; i < rs.length; i++) {
+			// rs[i] = rs[i].replace(" ", "");
+			// }
 			return rs;
 		}
 

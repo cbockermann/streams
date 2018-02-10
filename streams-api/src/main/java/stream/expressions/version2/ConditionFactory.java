@@ -23,14 +23,14 @@
  */
 package stream.expressions.version2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Hendrik Blom
@@ -104,8 +104,7 @@ public class ConditionFactory {
 		if (t.isLeaf()) {
 			if (t.getRoot().contains("null"))
 				return createNullCondition(t.getRoot());
-			if (t.getRoot().contains("true") || t.getRoot().contains("TRUE")
-					|| t.getRoot().contains("false")
+			if (t.getRoot().contains("true") || t.getRoot().contains("TRUE") || t.getRoot().contains("false")
 					|| t.getRoot().contains("FALSE")) {
 				return createBooleanCondition(t.getRoot());
 			}
@@ -120,11 +119,9 @@ public class ConditionFactory {
 
 		// t is no LEAF
 		if (t.getOp().equals("AND"))
-			return new AndCondition(createCondition(t.left),
-					createCondition(t.right));
+			return new AndCondition(createCondition(t.left), createCondition(t.right));
 		if (t.getOp().equals("OR"))
-			return new OrCondition(createCondition(t.left),
-					createCondition(t.right));
+			return new OrCondition(createCondition(t.left), createCondition(t.right));
 
 		throw new IllegalArgumentException("Bad ConditionTree \n" + t);
 	}
@@ -143,7 +140,8 @@ public class ConditionFactory {
 	/**
 	 * Create equals-true-condition out of a given string expression.
 	 *
-	 * @param expr expression value as string
+	 * @param expr
+	 *            expression value as string
 	 * @return condition
 	 */
 	private Condition extractEqualsTrueExpression(String expr) {
@@ -157,7 +155,8 @@ public class ConditionFactory {
 	/**
 	 * Create equals-false-condition out of a given string expression.
 	 *
-	 * @param expr expression value as string
+	 * @param expr
+	 *            expression value as string
 	 * @return condition
 	 */
 	private Condition extractEqualsFalseExpression(String expr) {
@@ -169,13 +168,16 @@ public class ConditionFactory {
 	}
 
 	/**
-	 * Check if given expression contains upper or lower case of given value (true or false)
+	 * Check if given expression contains upper or lower case of given value (true
+	 * or false)
 	 *
-	 * @param expr  expression value
-	 * @param value boolean value, true or false
+	 * @param expr
+	 *            expression value
+	 * @param value
+	 *            boolean value, true or false
 	 * @return true or false
 	 */
-	private boolean containsBool (String expr, String value) {
+	private boolean containsBool(String expr, String value) {
 		return expr.contains(value.toUpperCase()) || expr.contains(value.toLowerCase());
 	}
 
@@ -218,9 +220,9 @@ public class ConditionFactory {
 				return extractEqualsTrueExpression(exps[0]);
 			}
 		}
-		if("FALSE".equals(c.trim()) || "false".equals(c.trim()))
+		if ("FALSE".equals(c.trim()) || "false".equals(c.trim()))
 			return new FalseCondition(c);
-		if("TRUE".equals(c.trim()) || "true".equals(c.trim()))
+		if ("TRUE".equals(c.trim()) || "true".equals(c.trim()))
 			return new TrueCondition(c);
 		throw new IllegalArgumentException("Bad ConditionString" + c);
 	}
@@ -303,8 +305,7 @@ public class ConditionFactory {
 			Expression<String> right = createOrBuildStringExpression(exps[1]);
 			return new NotEqualsRXCondition(left, right);
 		}
-		throw new IllegalArgumentException(
-				"Unknown Operator in the given Expression" + c);
+		throw new IllegalArgumentException("Unknown Operator in the given Expression" + c);
 	}
 
 	private OperatorCondition<Double> createDoubleCondition(String c) {
@@ -393,8 +394,7 @@ public class ConditionFactory {
 	}
 
 	@SuppressWarnings("unused")
-	private void checkBrackets(String ex, String bracketOpen,
-			String bracketClose) {
+	private void checkBrackets(String ex, String bracketOpen, String bracketClose) {
 		// Test brackets
 		boolean run = true;
 		String testB = ex;
@@ -415,9 +415,8 @@ public class ConditionFactory {
 					String se = "";
 					if (s2 < testB.length())
 						se = testB.substring(s2 + 1);
-					throw new IllegalArgumentException("1:Bad " + bracketOpen
-							+ "..." + bracketClose + ":" + ss + "__"
-							+ bracketOpen + "__" + se);
+					throw new IllegalArgumentException(
+							"1:Bad " + bracketOpen + "..." + bracketClose + ":" + ss + "__" + bracketOpen + "__" + se);
 				}
 				// only one } left or }{}
 				if (s1 < 0 && e1 >= 0 || (e1 < s1 && s1 > 0 && e1 >= 0)) {
@@ -427,9 +426,8 @@ public class ConditionFactory {
 					String se = "";
 					if (e1 < testB.length())
 						se = testB.substring(e1 + 1);
-					throw new IllegalArgumentException("1:Bad " + bracketOpen
-							+ "..." + bracketClose + ":" + ss + "__"
-							+ bracketClose + "__" + se);
+					throw new IllegalArgumentException(
+							"1:Bad " + bracketOpen + "..." + bracketClose + ":" + ss + "__" + bracketClose + "__" + se);
 				}
 				// only one { left
 				if (s1 >= 0 && e1 < 0) {
@@ -439,9 +437,8 @@ public class ConditionFactory {
 					String se = "";
 					if (s1 < testB.length())
 						se = testB.substring(s1 + 1);
-					throw new IllegalArgumentException("1:Bad " + bracketOpen
-							+ "..." + bracketClose + ":" + ss + "__"
-							+ bracketOpen + "__" + se);
+					throw new IllegalArgumentException(
+							"1:Bad " + bracketOpen + "..." + bracketClose + ":" + ss + "__" + bracketOpen + "__" + se);
 				}
 
 				testB = testB.substring(e1 + 1);
@@ -564,8 +561,7 @@ public class ConditionFactory {
 
 	}
 
-	private String brackets(String ex, int count)
-			throws IllegalArgumentException {
+	private String brackets(String ex, int count) throws IllegalArgumentException {
 
 		// TODO Aufwerten der Fehlermeldung
 		List<Integer> ms = find(ex, "(");
@@ -604,8 +600,7 @@ public class ConditionFactory {
 		return ex.replace(subexp, key);
 	}
 
-	public List<Integer> find(String condition, String f)
-			throws IllegalArgumentException {
+	public List<Integer> find(String condition, String f) throws IllegalArgumentException {
 		List<Integer> results = new ArrayList<Integer>();
 		boolean run = true;
 		int start = 0;
@@ -724,7 +719,7 @@ public class ConditionFactory {
 			return s.toString();
 		}
 
-		private void evalRecursive(String[] split){
+		private void evalRecursive(String[] split) {
 			left.root = split[0];
 			right.root = split[1];
 			leaf = false;

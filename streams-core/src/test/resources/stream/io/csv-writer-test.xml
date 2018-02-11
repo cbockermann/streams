@@ -1,0 +1,11 @@
+<application>
+    
+    <stream id="data" class="stream.test.TestStream" limit="1000"/>
+    
+    <process input="data">
+        <PrintData />
+        
+        <stream.io.CsvWriter url="file:test.csv" keys="!*,@id,x_1,x_3" />
+    </process>
+    
+</application>

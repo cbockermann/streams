@@ -48,8 +48,7 @@ import stream.util.Variables;
  */
 public class DocGenerator {
 
-	public final static Class<?>[] CLASSES = new Class<?>[] { Processor.class,
-			Stream.class };
+	public final static Class<?>[] CLASSES = new Class<?>[] { Processor.class, Stream.class };
 
 	final static DocConverter converter = new MarkdownToTexConverter();
 
@@ -70,8 +69,7 @@ public class DocGenerator {
 			outDir.mkdirs();
 
 		if (!outDir.isDirectory())
-			throw new Exception("Failed to create output directory '"
-					+ outDir.getAbsolutePath() + "'!");
+			throw new Exception("Failed to create output directory '" + outDir.getAbsolutePath() + "'!");
 
 		log.info("Searching for processors,streams,...");
 		DocTree tree = DocTree.findDocs(CLASSES, packages);
@@ -80,16 +78,14 @@ public class DocGenerator {
 
 		URL packageUrl = DocGenerator.class.getResource("/streams.pkg");
 		if (packageUrl != null) {
-			File streamsPkg = new File(outDir.getAbsolutePath()
-					+ File.separator + "streams.pkg");
+			File streamsPkg = new File(outDir.getAbsolutePath() + File.separator + "streams.pkg");
 			log.info("Copying {} to {}", packageUrl, streamsPkg);
 			URLUtilities.copy(packageUrl, streamsPkg);
 		}
 	}
 
 	public static void write(URL url, PrintStream out) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				url.openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		String line = reader.readLine();
 		while (line != null) {
 			out.println(line);
@@ -98,8 +94,7 @@ public class DocGenerator {
 		reader.close();
 	}
 
-	public static void copy(InputStream in, OutputStream out)
-			throws IOException {
+	public static void copy(InputStream in, OutputStream out) throws IOException {
 		byte[] buf = new byte[8192];
 		int read = in.read(buf);
 		while (read > 0) {
@@ -127,8 +122,7 @@ public class DocGenerator {
 			tree.print("  ");
 			List<File> indexFiles = tree.generateDocs(outDir);
 
-			String doc = URLUtilities.readContentOrEmpty(DocGenerator.class
-					.getResource("/API.tex"));
+			String doc = URLUtilities.readContentOrEmpty(DocGenerator.class.getResource("/API.tex"));
 
 			StringBuffer incl = new StringBuffer();
 
@@ -140,14 +134,12 @@ public class DocGenerator {
 			vars.put("includes", incl.toString());
 
 			doc = vars.expand(doc);
-			PrintStream p = new PrintStream(new File(outDir.getCanonicalPath()
-					+ File.separator + "API.tex"));
+			PrintStream p = new PrintStream(new File(outDir.getCanonicalPath() + File.separator + "API.tex"));
 			p.println(doc);
 			p.close();
 
 			URLUtilities.copy(DocGenerator.class.getResource("/streams.pkg"),
-					new File(outDir.getCanonicalPath() + File.separator
-							+ "streams.pkg"));
+					new File(outDir.getCanonicalPath() + File.separator + "streams.pkg"));
 
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());

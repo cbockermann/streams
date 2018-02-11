@@ -24,12 +24,12 @@
 package stream.io;
 
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import junit.framework.Assert;
 import stream.Data;
 
 /**
@@ -42,6 +42,7 @@ public class CsvStreamTest {
 
 	@Test
 	public void testWithHeader() {
+		log.info("Running  'testWithHeader()'");
 
 		try {
 			SourceURL src = new SourceURL("classpath:/stream1.csv");
@@ -51,8 +52,7 @@ public class CsvStreamTest {
 			Data item = stream.read();
 			log.info("item: {}", item);
 
-			Assert.assertTrue(item.containsKey("x")
-					&& item.containsKey("stream"));
+			Assert.assertTrue(item.containsKey("x") && item.containsKey("stream"));
 
 			stream.close();
 
@@ -64,6 +64,7 @@ public class CsvStreamTest {
 
 	@Test
 	public void testKeys() {
+		log.info("Running  'testKeys()'");
 
 		try {
 			SourceURL src = new SourceURL("classpath:/stream1.csv");
@@ -75,8 +76,7 @@ public class CsvStreamTest {
 			Data item = stream.read();
 			log.info("item: {}", item);
 
-			Assert.assertTrue(item.containsKey("x")
-					&& item.containsKey("stream"));
+			Assert.assertTrue(item.containsKey("x") && item.containsKey("stream"));
 
 			stream.close();
 
@@ -88,6 +88,7 @@ public class CsvStreamTest {
 
 	@Test
 	public void testKeysSkipComments() {
+		log.info("Running  'testKeysSkipComments()'");
 
 		try {
 			SourceURL src = new SourceURL("classpath:/stream2.csv");
@@ -97,8 +98,7 @@ public class CsvStreamTest {
 			Data item = stream.read();
 			log.info("item: {}", item);
 
-			Assert.assertFalse(item.containsKey("x")
-					&& item.containsKey("stream"));
+			Assert.assertFalse(item.containsKey("x") && item.containsKey("stream"));
 
 			stream.close();
 

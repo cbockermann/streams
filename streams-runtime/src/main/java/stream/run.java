@@ -127,21 +127,28 @@ public class run {
      */
     public static void main(String[] args) throws Exception {
 
-        List<String> params = handleArguments(args);
-        if (params == null || params.isEmpty()) {
-            return;
-        }
-
-        setupOutput();
-
-        URL url;
         try {
-            url = new URL(params.get(0));
+            List<String> params = handleArguments(args);
+            if (params == null || params.isEmpty()) {
+                System.err.println( "Missing arguments! Expecting at least an XML file!");
+                System.exit(1);
+                return;
+            }
+
+            setupOutput();
+
+            URL url;
+            try {
+                url = new URL(params.get(0));
+            } catch (Exception e) {
+                File f = new File(params.get(0));
+                url = f.toURI().toURL();
+            }
+            main(url);
         } catch (Exception e) {
-            File f = new File(params.get(0));
-            url = f.toURI().toURL();
+            System.err.println( "streams exited on error: " + e.getMessage());
+            System.exit(1);
         }
-        main(url);
     }
 
     public static void main(URL url) throws Exception {
@@ -156,25 +163,12 @@ public class run {
         ProcessContainer container = new ProcessContainer(url, null, vars);
 
         log.info("Starting process-container...");
-        // if (true) {
-        // System.out.println("You're using Eclipse; click in this console and "
-        // +
-        // "press ENTER to call System.exit() and run the shutdown routine.");
-        // try {
-        // System.in.read();
-        // } catch (IOException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // System.exit(0);
-        // }
+
         container.run();
         log.info("Container finished.");
-
     }
 
     public static void main(URL url, Map<String, ElementHandler> elementHandler) throws Exception {
-
         StreamRuntime.setupLogging();
 
         Variables vars = StreamRuntime.loadUserProperties();

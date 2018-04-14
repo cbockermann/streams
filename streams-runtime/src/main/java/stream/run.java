@@ -147,6 +147,7 @@ public class run {
             main(url);
         } catch (Exception e) {
             System.err.println( "streams exited on error: " + e.getMessage());
+            e.printStackTrace(System.err);
             System.exit(1);
         }
     }

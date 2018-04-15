@@ -700,6 +700,11 @@ public class ProcessContainer implements IContainer, Runnable {
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);
 		log.debug("ProcessContainer finished all processes after {} ms", (end - start));
+
+		if (this.failFastReason != null) {
+			throw this.failFastReason;
+		}
+
 		return end - start;
 	}
 

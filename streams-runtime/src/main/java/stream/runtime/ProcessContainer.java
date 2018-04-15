@@ -643,11 +643,14 @@ public class ProcessContainer implements IContainer, Runnable {
 			 */
 			@Override
 			public void processError(Process p, Exception e) {
-				super.processError(p, e);
-				log.error("Process {} signaled an error: {}", p, e.getMessage());
-				log.debug("Forcing fail-fast shutdown of application...");
-				failFastReason = e;
-				shutdown();
+				synchronized (this) {
+					super.processError(p, e);
+					log.error("Process {} signaled an error: {}", p, e.getMessage());
+					log.debug("Forcing fail-fast shutdown of application...");
+					failFastReason = e;
+					shutdown();
+					notifyAll();
+				}
 			}
 		};
 		this.supervisor = supervisor;
@@ -700,7 +703,10 @@ public class ProcessContainer implements IContainer, Runnable {
 		long end = System.currentTimeMillis();
 		log.trace("Running processes: {}", processes);
 		log.debug("ProcessContainer finished all processes after {} ms", (end - start));
-
+		synchronized (this) {
+			log.debug("Waiting for error handlers to finish");
+			wait(1000);
+		}
 		if (this.failFastReason != null) {
 			throw this.failFastReason;
 		}

@@ -1,0 +1,10 @@
+<Container>
+	<Stream id="random" class="stream.io.RandomStream" limit="10" />
+
+	<property name="property.empty" value=""/>
+
+	<process id="reader" input="random">
+		<stream.test.SystemPropertyProcessor property="${property.empty}" />
+	</process>
+
+</Container>

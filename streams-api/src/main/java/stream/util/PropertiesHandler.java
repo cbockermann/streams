@@ -2,19 +2,19 @@
  *  streams library
  *
  *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
- * 
+ *
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The streams library (and its submodules) is free software: you can 
- *  redistribute it and/or modify it under the terms of the 
- *  GNU Affero General Public License as published by the Free Software 
- *  Foundation, either version 3 of the License, or (at your option) any 
+ *  The streams library (and its submodules) is free software: you can
+ *  redistribute it and/or modify it under the terms of the
+ *  GNU Affero General Public License as published by the Free Software
+ *  Foundation, either version 3 of the License, or (at your option) any
  *  later version.
  *
  *  The stream.ai library (and its submodules) is distributed in the hope
- *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Affero General Public License for more details.
  *
@@ -48,7 +48,7 @@ public class PropertiesHandler {
     /**
      * This method adds properties defined in the format as provided by maven's
      * <code>&lt;properties&gt;...&lt;/properties&gt;</code> element.
-     * 
+     *
      * @param pop
      *            The XML element that is to be checked for properties
      * @param variables
@@ -150,14 +150,18 @@ public class PropertiesHandler {
             String value = prop.getAttribute("value");
             log.debug("   '{}' => '{}'", key, value);
 
-            if (key != null && !"".equals(key.trim()) && value != null && !"".equals(value.trim())) {
+            if (key != null && !"".equals(key.trim())) {
 
                 log.debug("handling element {} with key = '{}', value = '{}'", prop.getNodeName(), key, value);
+                String k = key.trim();
+
+                if (value == null) {
+                    variables.set(k, value);
+                }
 
                 // ORDER IMPORTANT
                 Variables props = new Variables(variables);
                 props.addVariables(systemVariables);
-                String k = key.trim();
                 String v = value.trim();
                 // ORDER IMPORTANT
                 // // All found variables ()
@@ -171,7 +175,7 @@ public class PropertiesHandler {
     /**
      * This method adds all the system properties to the container properties,
      * possibly overwriting pre-defined properties.
-     * 
+     *
      * @param variables
      *            The collection of variables to add the system properties to.
      */

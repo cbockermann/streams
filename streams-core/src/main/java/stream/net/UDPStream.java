@@ -26,6 +26,7 @@ package stream.net;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,8 @@ import stream.Data;
 import stream.data.DataFactory;
 import stream.io.AbstractStream;
 import stream.io.SourceURL;
+import streams.runtime.Hook;
+import streams.runtime.Signals;
 
 /**
  * @author chris
@@ -46,7 +49,8 @@ public class UDPStream extends AbstractStream implements Runnable {
 	protected Integer port;
 	protected DatagramSocket socket;
 
-	protected boolean running = false;
+	final static Data eof = DataFactory.create();
+	protected AtomicBoolean running = new AtomicBoolean(false);
 
 	protected Integer packetSize = 1024;
 	protected Integer backlog = 100;
@@ -78,13 +82,32 @@ public class UDPStream extends AbstractStream implements Runnable {
 	@Override
 	public void init() throws Exception {
 		socket = new DatagramSocket(port); // , InetAddress.getByName(address));
-		if (running && t.isAlive()) {
+		if (running.get() && t.isAlive()) {
 			log.error("UDP-Stream {} already running.", this);
 			return;
 		}
 
 		t = new Thread(this);
+		t.setDaemon(true);
 		t.start();
+
+		Signals.register( new Hook() {
+
+            @Override
+            public void signal(int flags) {
+                log.debug( "Setting running=false");
+                running.set(false);
+                log.debug( "Adding EOF item");
+                queue.add( eof);
+                try {
+                    if( t != null ) {
+                    t.interrupt();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+		});
 	}
 
 	/**
@@ -102,6 +125,10 @@ public class UDPStream extends AbstractStream implements Runnable {
 					return null;
 			}
 		}
+		
+		if( item == eof ) {
+		    return null;
+		}
 
 		Data datum = DataFactory.create();
 		datum.putAll(item);
@@ -113,7 +140,7 @@ public class UDPStream extends AbstractStream implements Runnable {
 	 */
 	@Override
 	public void close() throws Exception {
-		running = false;
+		running.set(false);
 	}
 
 	/**
@@ -122,9 +149,9 @@ public class UDPStream extends AbstractStream implements Runnable {
 	@Override
 	public void run() {
 
-		running = true;
+		running.set(true);
 
-		while (running) {
+		while (running.get()) {
 			try {
 				byte[] buf = new byte[packetSize];
 				DatagramPacket packet = new DatagramPacket(buf, packetSize);
@@ -205,6 +232,10 @@ public class UDPStream extends AbstractStream implements Runnable {
 	 */
 	@Override
 	public Data readNext() throws Exception {
-		return queue.take();
+		Data item=  queue.take();
+		if( item == eof) {
+		    return null;
+		}
+		return item;
 	}
 }

@@ -23,7 +23,22 @@ public class SteadyState extends AbstractProcessor {
 
     final Map<String,Serializable> states = new LinkedHashMap<String,Serializable>();
     Keys keys = new Keys("*");
+
     
+    /**
+     * @return the keys
+     */
+    public Keys getKeys() {
+        return keys;
+    }
+
+    /**
+     * @param keys the keys to set
+     */
+    public void setKeys(Keys keys) {
+        this.keys = keys;
+    }
+
     /**
      * @see stream.Processor#process(stream.Data)
      */

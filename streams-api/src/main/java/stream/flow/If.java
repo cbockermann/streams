@@ -93,8 +93,7 @@ public class If extends ProcessorList {
 				return input;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return input;
+			throw new RuntimeException(e);
 		}
 	}
 }

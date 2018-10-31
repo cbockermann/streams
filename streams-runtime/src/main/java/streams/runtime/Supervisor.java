@@ -288,11 +288,13 @@ public class Supervisor implements ProcessListener, Hook {
                     }
 
                     for (Object c : consumers) {
-                        try {
-                            log.info("Notifying consumer {}", c);
-                            c.notify();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        synchronized(c) {
+                            try {
+                                log.info("Notifying consumer {}", c);
+                                c.notify();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 

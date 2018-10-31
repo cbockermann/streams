@@ -143,7 +143,7 @@ public class MapValues implements Processor {
 		}
 
 		Serializable to = mapping.get(val);
-		if (to == null) {
+		if (to != null) {
 			data.put(key, to);
 		} else {
 			data.put(key, defaultValue);

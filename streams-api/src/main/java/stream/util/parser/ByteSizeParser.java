@@ -39,25 +39,27 @@ public class ByteSizeParser {
 	public final static Long KILOBYTE = 1024 * BYTE;
 	public final static Long MEGABYTE = 1024 * KILOBYTE;
 	public final static Long GIGABYTE = 1024 * MEGABYTE;
-	public final static Long PETABYTE = 1024 * GIGABYTE;
+	public final static Long TERABYTE = 1024 * GIGABYTE;
+	public final static Long PETABYTE = 1024 * TERABYTE;
 
 	static {
 		UNITS.put("b", BYTE);
 		UNITS.put("kb", KILOBYTE);
 		UNITS.put("mb", MEGABYTE);
 		UNITS.put("gb", GIGABYTE);
+		UNITS.put("tb", TERABYTE);
 		UNITS.put("pb", PETABYTE);
 	}
 
 	public static Long parseByteSize(String str) throws Exception {
 
-		long time = 0L;
+		Double bytes = 0.0;
 
 		String s = str.trim();
 		while (s.length() > 0) {
 
 			String[] tok = readLong(s);
-			Long i = new Long(tok[0]);
+			Double i = new Double(tok[0]);
 
 			s = tok[1].trim();
 			tok = readUnit(s);
@@ -78,22 +80,28 @@ public class ByteSizeParser {
 			}
 
 			Long ms = UNITS.get(unit);
-			time += i * ms;
+			bytes += i * ms;
 
 			s = tok[1].trim();
 		}
 
-		return time;
+		return bytes.longValue();
 	}
 
 	public static String[] readLong(String str) {
 
 		StringBuffer s = new StringBuffer();
 		int i = 0;
-		while (i < str.length() && isDigit(str, i))
+		int separators = 0;
+		while (i < str.length() && (isDigit(str, i) || (separators < 1 && isDecimalSeparator(str, i))))
 			s.append(str.charAt(i++));
 
-		return new String[] { s.toString(), str.substring(i).trim() };
+		return new String[] { s.toString().replace( ',', '.'), str.substring(i).trim() };
+	}
+	
+	public static boolean isDecimalSeparator(String str, int i ) {
+	        char c = str.charAt(i);
+	        return c == ',' || c == '.';
 	}
 
 	public static String[] readUnit(String str) {

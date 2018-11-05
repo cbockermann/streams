@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import stream.data.DataFactory;
-import stream.flow.Collect;
 import stream.util.WildcardPattern;
 
 /**

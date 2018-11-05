@@ -117,4 +117,13 @@ public class KeysTest {
         Assert.assertFalse(selected.contains("pixel:2"));
         Assert.assertFalse(selected.contains("pixel:3"));
     }
+
+    @Test
+    public void testCaseSensitive() {
+        Keys keys = new Keys("*case", false);
+        List<String> features = split("UPPERCASE,lowercase");
+        Set<String> selected = keys.select(features);
+
+        Assert.assertEquals(1, selected.size());
+    }
 }

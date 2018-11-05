@@ -2,19 +2,19 @@
  *  streams library
  *
  *  Copyright (C) 2011-2014 by Christian Bockermann, Hendrik Blom
- * 
+ *
  *  streams is a library, API and runtime environment for processing high
  *  volume data streams. It is composed of three submodules "stream-api",
  *  "stream-core" and "stream-runtime".
  *
- *  The streams library (and its submodules) is free software: you can 
- *  redistribute it and/or modify it under the terms of the 
- *  GNU Affero General Public License as published by the Free Software 
- *  Foundation, either version 3 of the License, or (at your option) any 
+ *  The streams library (and its submodules) is free software: you can
+ *  redistribute it and/or modify it under the terms of the
+ *  GNU Affero General Public License as published by the Free Software
+ *  Foundation, either version 3 of the License, or (at your option) any
  *  later version.
  *
  *  The stream.ai library (and its submodules) is distributed in the hope
- *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+ *  that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Affero General Public License for more details.
  *
@@ -29,20 +29,33 @@ import java.util.Stack;
 public class WildcardPattern {
 
 	String pattern = "*";
+	Boolean caseInsensitive = true;
 
 	public WildcardPattern(String pattern) {
 		this.pattern = pattern;
 	}
 
+	public WildcardPattern(String pattern, boolean caseInsensitive) {
+		this.pattern = pattern;
+		this.caseInsensitive = caseInsensitive;
+	}
+
 	public boolean matches(String input) {
-		return matches(pattern, input);
+		return matches(pattern, input, caseInsensitive);
 	}
 
 	public static boolean matches(String pattern, String input) {
+		return matches(pattern, input, false);
+	}
 
-		String filename = input.toLowerCase();
-		String wildcardMatcher = pattern.toLowerCase();
+	public static boolean matches(String pattern, String input, boolean caseInsensitive) {
 
+		String filename = input;
+		String wildcardMatcher = pattern;
+		if (caseInsensitive) {
+			filename = input.toLowerCase();
+			wildcardMatcher = pattern.toLowerCase();
+		}
 		if (filename == null && wildcardMatcher == null) {
 			return true;
 		}
@@ -125,7 +138,7 @@ public class WildcardPattern {
 
 	/**
 	 * Splits a string into a number of tokens.
-	 * 
+	 *
 	 * @param text
 	 *            the text to split
 	 * @return the tokens, never null

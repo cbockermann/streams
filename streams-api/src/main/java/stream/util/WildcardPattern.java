@@ -45,7 +45,7 @@ public class WildcardPattern {
 	}
 
 	public static boolean matches(String pattern, String input) {
-		return matches(pattern, input, false);
+		return matches(pattern, input, true);
 	}
 
 	public static boolean matches(String pattern, String input, boolean caseInsensitive) {

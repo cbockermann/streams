@@ -142,15 +142,30 @@ public final class Keys implements Serializable {
 
     final String[] keyValues;
 
+    boolean caseInsensitive = true;
+
     /**
      * This constructor will split the argument string by occurences of the
-     * <code>'</code> character and create a <code>Keys</code> instance of the
+     * <code>,</code> character and create a <code>Keys</code> instance of the
      * resulting substrings.
      *
      * @param kString
      */
     public Keys(String kString) {
         this(kString.split(","));
+    }
+
+    /**
+     * This constructor will split the argument string by occurences of the
+     * <code>,</code> character and create a <code>Keys</code> instance of the
+     * resulting substrings.
+     *
+     * @param kString
+     * @param caseInsensitive
+     */
+    public Keys(String kString, boolean caseInsensitive) {
+        this(kString);
+        this.caseInsensitive = caseInsensitive;
     }
 
     /**
@@ -171,8 +186,25 @@ public final class Keys implements Serializable {
         this.keyValues = keyValues.toArray(new String[keyValues.size()]);
     }
 
+    /**
+     * This constructor creates an instance of <code>Keys</code> with the given
+     * list of key names. Each key name may contain wildcards.
+     *
+     * @param caseInsensitive
+     * @param ks list of
+     */
+    public Keys(boolean caseInsensitive, String... ks) {
+        this(ks);
+        this.caseInsensitive = caseInsensitive;
+    }
+
     public Keys(Collection<String> ks) {
         this(ks.toArray(new String[ks.size()]));
+    }
+
+    public Keys(Collection<String> ks, boolean caseInsensitive) {
+        this(ks);
+        this.caseInsensitive = caseInsensitive;
     }
 
     public Set<String> select(Data item) {
@@ -188,7 +220,7 @@ public final class Keys implements Serializable {
      * @param names key set retrieved from data item
      */
     public Set<String> select(Collection<String> names) {
-        return select(names, keyValues);
+        return select(names, keyValues, caseInsensitive);
     }
 
     public final String toString() {
@@ -232,18 +264,26 @@ public final class Keys implements Serializable {
     }
 
     public static Set<String> select(Data item, String filter) {
+        return select(item, filter, true);
+    }
+
+    public static Set<String> select(Data item, String filter, boolean caseInsensitive) {
         if (filter == null || item == null)
             return new LinkedHashSet<String>();
 
-        return select(item, filter.split(","));
+        return select(item, filter.split(","), caseInsensitive);
     }
 
     public static Set<String> select(Data item, String[] keys) {
+        return select(item, keys, true);
+    }
+
+    public static Set<String> select(Data item, String[] keys, boolean caseInsensitive) {
         Set<String> selected = new LinkedHashSet<String>();
         if (item == null)
             return selected;
 
-        return select(item.keySet(), keys);
+        return select(item.keySet(), keys, caseInsensitive);
     }
 
     /**
@@ -251,8 +291,9 @@ public final class Keys implements Serializable {
      *
      * @param ks   key set retrieved from a data item
      * @param keys keys given by wildcards etc.
+     * @param caseInsensitive if the matching should be case insensitive or not, does not affect regex matches
      */
-    public static Set<String> select(Collection<String> ks, String[] keys) {
+    public static Set<String> select(Collection<String> ks, String[] keys, boolean caseInsensitive) {
         Set<String> selected = new LinkedHashSet<String>();
         if (ks == null)
             return selected;
@@ -267,15 +308,26 @@ public final class Keys implements Serializable {
         // iterate through all keys from set of keys out of data item
         // and add those matching (wildcard) keys
         for (String key : ks) {
-            if (isSelected(key, keys))
+            if (isSelected(key, keys, caseInsensitive))
                 selected.add(key);
         }
 
         return selected;
     }
 
+
+    /**
+     * Select from key set of a data item given keys.
+     *
+     * @param ks   key set retrieved from a data item
+     * @param keys keys given by wildcards etc.
+     */
+    public static Set<String> select(Collection<String> ks, String[] keys) {
+        return select(ks, keys, true);
+    }
+
     public boolean isSelected(String key) {
-        return isSelected(key, keyValues);
+        return isSelected(key, keyValues, caseInsensitive);
     }
 
     /**
@@ -283,9 +335,10 @@ public final class Keys implements Serializable {
      *
      * @param value string value of key from data item
      * @param keys array of keys (e.g. using wildcards)
+     * @param caseInsensitive if the matching should be case insensitive or not, does not affect regex matches
      * @return true iff value matches any key; otherwise, false
      */
-    public static boolean isSelected(String value, String[] keys) {
+    public static boolean isSelected(String value, String[] keys, boolean caseInsensitive) {
 
         if (keys == null || keys.length == 0) {
             return false;
@@ -296,13 +349,13 @@ public final class Keys implements Serializable {
         for (String pattern : keys) {
             if (pattern.startsWith("!")) {
                 pattern = pattern.substring(1);
-                if (included && matches(pattern, value)) {
+                if (included && matches(pattern, value, caseInsensitive)) {
                     included = false;
                     log.debug("Removing '{}' from selection due to pattern '!{}'", value, pattern);
                 }
             } else {
 
-                if (!included && matches(pattern, value)) {
+                if (!included && matches(pattern, value, caseInsensitive)) {
                     included = true;
                     log.debug("Adding '{}' to selection due to pattern '{}'", value, pattern);
                 }
@@ -313,13 +366,25 @@ public final class Keys implements Serializable {
     }
 
     /**
+     * Check if given value matches any of keys.
+     *
+     * @param value string value of key from data item
+     * @param keys array of keys (e.g. using wildcards)
+     * @return true iff value matches any key; otherwise, false
+     */
+    public static boolean isSelected(String value, String[] keys) {
+        return isSelected(value, keys, true);
+    }
+
+    /**
      * Check if given pattern matches value.
      *
      * @param pattern pattern using regular expression and/or wildcards
      * @param value   string value
+     * @param caseInsensitive if the matching should be case insensitive or not, does not affect regex matches
      * @return true iff match, false otherwise
      */
-    private static boolean matches(String pattern, String value) {
+    private static boolean matches(String pattern, String value, boolean caseInsensitive) {
 
         if (pattern.startsWith("/") && pattern.endsWith("/")) {
             //
@@ -330,7 +395,18 @@ public final class Keys implements Serializable {
             return m.find();
         }
 
-        return WildcardPattern.matches(pattern, value);
+        return WildcardPattern.matches(pattern, value, caseInsensitive);
+    }
+
+    /**
+     * Check if given pattern matches value.
+     *
+     * @param pattern pattern using regular expression and/or wildcards
+     * @param value   string value
+     * @return true iff match, false otherwise
+     */
+    private static boolean matches(String pattern, String value) {
+        return matches(pattern, value, true);
     }
 
     /**
@@ -341,4 +417,21 @@ public final class Keys implements Serializable {
     public String[] getKeyValues() {
         return keyValues;
     }
+
+    /**
+     * Return if this Keys instance matches keys case insensitive or not  (Does not affect regex matches)
+     * @return caseInsensitive
+     */
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    /**
+     * Set if this Keys instance should match keys case insensitive or not (Does not affect regex matches)
+     * @param caseInsensitive
+     */
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
 }

@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>[1.5.8,)</version>
+			<version>[1.5.8,1.8.0-alpha)</version>
 		</dependency>
 		<dependency>
 			<groupId>colt</groupId>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>[1.5.8,)</version>
+			<version>[1.5.8,1.8-alpha)</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
